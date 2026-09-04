@@ -9,3 +9,4 @@ statsmodels
 requests
 jupyter
 python-dotenv
+yfinance
