@@ -9,3 +9,5 @@ statsmodels
 requests
 jupyter
 python-dotenv
+xgboost
+imbalanced-learn
