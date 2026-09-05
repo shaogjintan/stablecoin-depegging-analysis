@@ -45,60 +45,64 @@
 | Dynamic threshold label (Y equation) | **Yes, exactly** | Same formula, same constants (α=1/3, K=10). |
 | Price/volume change-rate features | **Yes** (block 1) | 1d/7d/30d instead of 1h/24h/7d/30d — we're daily-only, no 1h analogue. |
 | Volatility features | **Yes** (block 4) | Realized Daily Volatility (Rogers-Satchell), Price Deviation & Downward Price Deviation (5d/30d). |
-| Market-cap/supply features (block 2) | No | Not in our raw dataset (`ERC20-stablecoins/`). |
-| Sentiment features (block 3) | No | Not in our raw dataset; also wasn't predictive in their own results. |
-| BTC/ETH spillover versions of every feature | No | Out of scope for this pass. |
+| **BTC/ETH spillover features** | **Yes** (partial) | Price/volume change-rate + Realized Daily Volatility for BTC and ETH, merged onto every coin's row. Peg-deviation features ("distance from $1") are *not* computed for BTC/ETH — that formula is meaningless for a non-pegged, non-$1 asset (see script docstring), so we deliberately diverge from a literal reading here. |
+| Market-cap/supply features (block 2) | No | Not obtainable from Yahoo Finance's free OHLCV endpoint. |
+| Sentiment features (block 3) | No | No equivalent free data source; also wasn't predictive in their own results. |
 | Logistic Regression, Random Forest | **Yes** | XGBoost dropped — out of scope per brief. |
 | Train/test split: stratified random | **Yes, deliberately** | Copied *as-is*, flaws included — see §4. |
 | SMOTE | **No, deliberately** | Brief asked for "simple" LR/RF; watching them fail on imbalanced coins without it is itself evidence for the shortcomings slide (see §4). |
-| Coin roster | Adapted | Paper uses USDT/USDC/BUSD/DAI; we don't have BUSD locally, so we ran usdt/usdc/dai/pax (our closest analogues) plus ustc/wluna as a bonus — the two algorithmic coins the paper excluded entirely. |
+| **Sample period** | **Yes — Jan 2022 to Dec 2023** | Matched exactly (see §3: 729 rows vs. their 730). |
+| Coin roster | **Yes, plus extras** | USDT/USDC/BUSD/DAI all included. Added PAX, USTC, WLUNA on top — PAX matches our project's other raw dataset; USTC/WLUNA are the two algorithmic coins Lee et al. excluded entirely (see §4). |
 
-**Data gap fixed along the way**: the label formula needs trailing 30-day *trading volume*, which our local `ERC20-stablecoins/price_data/*.csv` files don't contain (OHLC only). CoinGecko's free API no longer serves data older than 365 days, so we pulled daily volume from Yahoo Finance instead (`data/volume/*_volume_data.csv`, Feb 20 – Nov 4 2022, gitignored — regenerate by re-running the fetch if needed).
+**Data source note**: everything (price *and* volume, for every asset including BTC/ETH) now comes from **Yahoo Finance** (`data/ohlcv/*_ohlcv.csv`, gitignored, 2021-11-15 to 2023-12-31 — a ~45-day lookback margin before the analysis window so 30-day rolling features are already "full" from day one). We initially tried to reuse this project's other raw dataset (`ERC20-stablecoins/price_data/`), but it has **no volume column at all** (the label formula needs it) and only spans Apr–Nov 2022 (vs. the paper's full 2 years) — a genuine data gap, not a design choice. CoinGecko's free API — the more obvious fix — now refuses to serve data older than 365 days, which is why Yahoo Finance stands in for the paper's actual source (CoinMarketCap).
 
 ---
 
 ## 3. Our results
 
-**Label summary** (dynamic threshold, 2022-05-02 → 2022-11-01, after the 30-day feature/label warm-up):
+**Label summary** (dynamic threshold, full 2022-01-01 → 2023-12-30 window — matches Lee et al.'s period almost exactly, 729 rows vs. their 730):
 
-| coin | n_obs | n_depeg_days | depeg_rate |
-|---|---|---|---|
-| usdt | 184 | 55 | 29.9% |
-| usdc | 184 | 1 | 0.5% |
-| dai | 184 | 2 | 1.1% |
-| pax | 184 | 11 | 6.0% |
-| ustc | 184 | 179 | 97.3% |
-| wluna | 184 | 184 | 100.0% |
+| coin | n_obs | date range | n_depeg_days | depeg_rate | Lee et al.'s rate |
+|---|---|---|---|---|---|
+| usdt | 729 | 2022-01-01 → 2023-12-30 | 179 | 24.6% | 23.0% |
+| usdc | 729 | 2022-01-01 → 2023-12-30 | 49 | 6.7% | 2.2% |
+| dai | 729 | 2022-01-01 → 2023-12-30 | 14 | 1.9% | 1.9% |
+| pax | 729 | 2022-01-01 → 2023-12-30 | 17 | 2.3% | n/a (not in paper) |
+| busd | 729 | 2022-01-01 → 2023-12-30 | 208 | 28.5% | 26.4% |
+| ustc | 729 | 2022-01-01 → 2023-12-30 | 658 | 90.3% | n/a (excluded by paper) |
+| wluna | 281 | 2022-01-01 → 2022-10-08 | 281 | 100.0% | n/a (excluded by paper; Yahoo's price history for this ticker ends Oct 2022) |
 
 **Model performance** (stratified random split, faithful to their Table 5 method):
 
 | coin | model | accuracy | precision | recall | F1 | specificity | ROC-AUC |
 |---|---|---|---|---|---|---|---|
-| usdt | Logistic Regression | 0.696 | 0.000 | 0.000 | 0.000 | 1.000 | 0.487 |
-| usdt | Random Forest | 0.946 | 0.938 | 0.882 | **0.909** | 0.974 | 0.992 |
-| usdc | Logistic Regression | 1.000 | 0 | 0 | 0.000 | 1.000 | — |
-| usdc | Random Forest | 1.000 | 0 | 0 | 0.000 | 1.000 | — |
-| dai | Logistic Regression | 0.982 | 0 | 0 | 0.000 | 1.000 | 1.000 |
-| dai | Random Forest | 0.982 | 0 | 0 | 0.000 | 1.000 | 1.000 |
-| pax | Logistic Regression | 0.946 | 0 | 0 | 0.000 | 1.000 | 0.214 |
-| pax | Random Forest | 0.946 | 0 | 0 | 0.000 | 1.000 | 0.811 |
-| ustc | Logistic Regression | 0.964 | 0.964 | 1.000 | 0.982 | 0.000 | 1.000 |
-| ustc | Random Forest | 1.000 | 1.000 | 1.000 | 1.000 | 1.000 | 1.000 |
+| usdt | Logistic Regression | 0.781 | 0.875 | 0.130 | 0.226 | 0.994 | 0.612 |
+| usdt | Random Forest | 0.909 | 0.854 | 0.759 | **0.804** | 0.958 | 0.943 |
+| usdc | Logistic Regression | 0.936 | 0.667 | 0.133 | 0.222 | 0.995 | 0.595 |
+| usdc | Random Forest | 0.945 | 1.000 | 0.200 | **0.333** | 1.000 | 0.947 |
+| dai | Logistic Regression | 0.968 | 0.000 | 0.000 | 0.000 | 0.986 | 0.690 |
+| dai | Random Forest | 0.977 | 0.000 | 0.000 | 0.000 | 0.995 | 0.820 |
+| pax | Logistic Regression | 0.977 | 0.000 | 0.000 | 0.000 | 1.000 | 0.615 |
+| pax | Random Forest | 0.977 | 0.000 | 0.000 | 0.000 | 1.000 | 0.612 |
+| busd | Logistic Regression | 0.831 | 0.931 | 0.435 | 0.593 | 0.987 | 0.767 |
+| busd | Random Forest | 0.918 | 0.844 | 0.871 | **0.857** | 0.936 | 0.967 |
+| ustc | Logistic Regression | 0.936 | 0.965 | 0.965 | 0.965 | 0.667 | 0.973 |
+| ustc | Random Forest | 0.982 | 0.985 | 0.995 | **0.990** | 0.857 | 0.997 |
 | wluna | — | — | — | — | — | — | single-class target, no model fit possible |
 
 ---
 
 ## 4. Interpretation — did it replicate?
 
-**Yes, on the mechanism and the core finding.** Not on exact numbers — different coins, period, and a reduced feature set mean an exact match was never the bar.
+**Yes — on both the mechanism and the core empirical finding, now with the same sample period and much closer depeg rates.**
 
-- **Depeg rates land in the same range as theirs** despite different data: USDC 0.5% (theirs 2.2%), DAI 1.1% (theirs 1.9%) — both low single digits; USDT 29.9% (theirs 23.0%) — both high because it's a high-turnover coin that genuinely wobbled. The formula behaves consistently across datasets.
-- **USDT is the fair head-to-head comparison** (only coin here with enough positive examples for both models to be meaningfully tested): RF F1 (0.909) far exceeds LR F1 (0.000), reproducing their exact qualitative claim — *"logistic regression generally performs poorly, while Random Forest and XGBoost show good predictive effectiveness."* Ours is more extreme in both directions than theirs (LR 0.531→0.909 vs RF 0.744 in the paper), consistent with our much smaller feature set (11 vs 66) and sample (184 vs 730 days).
-- **usdc/dai/pax collapse to F1 = 0 for both models** — expected, not a bug: we deliberately skipped SMOTE (out of scope per brief), and this is *exactly* the failure mode SMOTE exists to fix in their own paper. Reproducing the problem is itself evidence we understood why they needed it.
-- **ustc/wluna (~97–100% depeg rate) can't be benchmarked against the paper** — Lee et al. excluded algorithmic stablecoins. But this result is the clearest evidence for our project's own critique: a ~100% depeg rate here isn't "179–184 independent crisis days," it's **one continuous collapse (the May 9 UST/LUNA crash) spanning almost the entire observation window.** Lee et al.'s daily-binary, stratified-random-split design has no way to tell "many independent bad days" apart from "one very long bad day" — precisely the pseudo-replication trap our professor flagged.
+- **Depeg rates now closely track theirs**, using the same ~2-year window: DAI 1.9% (theirs 1.9%, exact), USDT 24.6% (theirs 23.0%), BUSD 28.5% (theirs 26.4%). USDC comes out higher (6.7% vs. their 2.2%) — plausibly a genuine data-source difference (Yahoo's USDC-USD feed vs. their CoinMarketCap feed can disagree on intraday high/low, which is exactly what the threshold checks against), not a formula error, since every other coin lines up closely.
+- **RF beats LR on every well-populated coin**, reproducing their headline claim directly: USDT (F1 0.804 vs 0.226), BUSD (0.857 vs 0.593), USDC (0.333 vs 0.222). The gap is consistent across all three, not a one-off — a stronger replication of the pattern than the previous (shorter-window) version of this script managed.
+- **DAI and PAX still collapse to F1 = 0 for both models** — their depeg rates (1.9%, 2.3%) are low enough that "always predict no depeg" remains the easy way out without SMOTE. This is *expected*, not a failure: it's the exact problem Lee et al. built SMOTE to solve, and we deliberately left SMOTE out (see §2). Note this is a smaller, more contained failure than in the previous 7-month-window version of this script (which also failed on USDC) — a longer, more representative window helps, but doesn't fix a fundamentally rare-event class on its own.
+- **USTC/WLUNA remain impossible to benchmark against the paper** (both excluded from their study) but are the most useful result of all for our own purposes: USTC now shows a 90.3% depeg rate over the full window, and WLUNA 100% — not because either coin generated hundreds of independent crisis days, but because most of their remaining trading history sits *after* the May 9, 2022 collapse, so nearly every subsequent day is trivially still "depegged." This is the pseudo-replication trap named explicitly in our professor's feedback, visible directly in our own numbers.
 
 ### Two concrete shortcomings this replication surfaces (for the presentation)
-1. **No episode structure**: their per-day label treats a single multi-week crash as dozens/hundreds of "independent" positive observations (visible starkly in our ustc/wluna rows).
+1. **No episode structure**: a per-day label treats one multi-month collapse as hundreds of "independent" positive observations (starkest in ustc/wluna, but the same logic inflates every coin's counted "depeg days").
 2. **Random split, not chronological**: stratified-random sampling can place days from the same crash on both sides of the train/test split, leaking information across an episode boundary — the opposite of the chronological/purged split this project uses.
 
 ---
@@ -111,4 +115,4 @@ cd stablecoin-depegging-analysis
 python models/lee_et_al_replication.py
 ```
 
-Requires `data/volume/*_volume_data.csv` to exist (Yahoo Finance daily OHLCV pull, gitignored) and `ERC20-stablecoins/price_data/price_data/*.csv` (this project's raw price data) to be present one level up from the repo root.
+Requires `data/ohlcv/*_ohlcv.csv` to exist — daily OHLCV pulled from Yahoo Finance (via `yfinance`) for usdt, usdc, dai, pax, busd, ustc, wluna, btc, eth, covering 2021-11-15 to 2023-12-31 (gitignored; re-run the fetch to regenerate). This project's other raw dataset, `ERC20-stablecoins/`, is **not** used by this script — see §2 for why.

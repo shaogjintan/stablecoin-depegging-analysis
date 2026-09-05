@@ -18,6 +18,10 @@ ENV/
 # Data (large/regenerable — keep raw & processed data out of git)
 data/
 
+# Regenerable script output (regenerate with the corresponding script)
+models/lee_replication_label_summary.csv
+models/lee_replication_results.csv
+
 # OS / editor
 .DS_Store
 Thumbs.db
