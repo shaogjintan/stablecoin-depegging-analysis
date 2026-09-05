@@ -156,11 +156,11 @@ conclusions are unaffected."*
 
 ## 6. Handoff for other workstreams
 
-- **WS2 (Shao Gjin & Alyssa) — data merge & depeg target engineering:**
+- **WS2 — data merge & depeg target engineering:**
   use `data/may_2022_hourly_prices.csv` directly (columns `timestamp, coin, price,
   volume`, UTC hourly). `data/fear_greed_index.csv` available if needed.
   **UST ends May 13, 2022 — correct, not a bug.**
-- **WS3 (Russell & Vienna):** the full 2-year file
+- **WS3:** the full 2-year file
   `data/hourly_prices_full_2022_2023.csv` is available for any out-of-sample work;
   note the USDC Oct 2022–Feb 2023 Binance suspension gap.
 
