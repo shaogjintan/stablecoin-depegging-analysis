@@ -11,3 +11,5 @@ jupyter
 python-dotenv
 xgboost
 imbalanced-learn
+pyarrow
+umap-learn
