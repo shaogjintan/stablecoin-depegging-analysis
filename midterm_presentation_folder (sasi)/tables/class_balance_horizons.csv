@@ -1,0 +1,4 @@
+Forecast Horizon,Total Usable Windows,Positive Windows (Y=1),Negative Windows (Y=0),Positive Class Rate (%),Class Imbalance Ratio,Excluded (In Crisis),Excluded (Right-Censored)
+1-Hour (h=1),"337,466",71,"337,395",0.021%,1 : 4752,"2,906",6
+6-Hour (h=6),"337,436",426,"337,010",0.126%,1 : 791,"2,906",36
+24-Hour (h=24),"337,328","1,681","335,647",0.498%,1 : 199,"2,906",144
