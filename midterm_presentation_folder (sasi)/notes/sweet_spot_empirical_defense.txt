@@ -1,0 +1,43 @@
+EMPIRICAL JUSTIFICATION OF DEPEG DEFINITION FOR MIDTERM SLIDES
+==============================================================
+Selected Depeg Standard:
+  - Negative Deviation Threshold: 1.0% drop (Price < $0.9900)
+  - Minimum Sustained Duration:   2 consecutive hours
+  - Crisis Recovery Gap:          24 hours (merges ongoing crisis fluctuations)
+  - Target Asset Universe:        6 Major Fiat-Backed Stablecoins (USDT, USDC, BUSD, DAI, TUSD, PAX)
+
+Empirical & Methodological Justification:
+-----------------------------------------
+1. Aligned with Faculty Feedback & Economic Reality:
+   A 1.0% drop (< $0.99) directly matches the faculty's recommended standard.
+   Sub-0.5% price movements (e.g. 0.1% to 0.3%) reflect ordinary DEX liquidity provider
+   spreads, pool fee tiers (0.05% / 0.3%), and transient arbitrage lags. A 100 bps
+   drop exceeds standard cross-venue redemption and arbitrage fees, signifying
+   true bank run pressure or reserve impairment.
+
+2. Filtering Flash-Loan and Oracle Micro-Blips:
+   Requiring >= 2 consecutive hours eliminates single-tick oracle glitches, temporary
+   block reorganizations, and MEV flash-loan attacks that recover in under 60 seconds
+   without threatening redemption viability.
+
+3. Effective Sample Size Across 6 Fiat Giants:
+   At (1.0%, >=2h), the pooled dataset captures exactly 71 independent depeg episodes
+   across 340,378 observed coin-hours (2018-2025):
+     - TrueUSD (TUSD): 21 episodes
+     - Paxos Standard (PAX): 14 episodes
+     - Tether (USDT): 13 episodes
+     - USD Coin (USDC): 10 episodes
+     - Dai (DAI): 8 episodes
+     - Binance USD (BUSD): 5 episodes
+   Every single major coin contributes between 5 and 21 independent episodes, ensuring
+   no single bank run dominates the training set.
+
+4. 24-Hour Recovery Separation Window:
+   Systemic banking collapses (e.g., Silicon Valley Bank in March 2023) feature prolonged
+   multi-day turbulence. Grouping sub-threshold hours separated by < 24h into a single
+   continuous episode prevents artificial pseudo-replication from inflating metrics.
+
+5. Clear Rationale for Rare-Event Machine Learning:
+   Because positive early-warning windows comprise < 0.5% of non-crisis hours, models
+   will be evaluated using Precision-Recall AUC (PR-AUC) and Brier calibration rather
+   than misleading classification accuracy.

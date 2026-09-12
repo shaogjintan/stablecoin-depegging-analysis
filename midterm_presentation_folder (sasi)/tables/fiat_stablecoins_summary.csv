@@ -1,0 +1,7 @@
+Stablecoin,Issuer / Protocol,Collateral Model,Peak Mcap ($B),Data Start,Data End,Total Observed Hours,"Depeg Episodes (1%, 2h)",Total In-Crisis Hours,Lowest Price ($),Primary Historical Depeg Catalyst
+USDT,Tether Limited,Off-chain Fiat Custodial,140.0,2018-01-01,2025-12-31,70105,13,226,0.9538,"May 2022 UST contagion ($0.9538), Oct 2018 banking panic"
+USDC,Circle / Centre,Regulated Fiat Custodial,55.0,2018-10-05,2025-12-30,63448,10,105,0.865,"March 2023 Silicon Valley Bank collapse ($3.3B cash uninsured, $0.8650)"
+BUSD,Paxos Trust / Binance,NYDFS Regulated Fiat,23.0,2019-09-20,2024-02-28,38948,5,33,0.9387,Feb 2023 NYDFS regulatory shutdown / orderly run ($0.9387)
+DAI,MakerDAO (Sky),Crypto-CDP / PSM Fiat Reserve,10.0,2019-11-18,2025-12-31,53624,8,908,0.8859,"March 2023 USDC bank contagion ($0.8859), March 2020 Black Thursday"
+TUSD,Archblock / Techteryx,Real-Time Attested Fiat,3.5,2018-03-23,2025-12-29,68132,21,1321,0.9474,June 2023 Prime Trust banking pause & exchange delistings ($0.9474)
+PAX,Paxos Trust Company,NYDFS Regulated Fiat,1.0,2018-09-27,2024-01-01,46121,14,313,0.8956,March 2023 US regional banking crisis contagion ($0.8956)
