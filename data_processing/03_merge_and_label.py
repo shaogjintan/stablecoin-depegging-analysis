@@ -41,6 +41,7 @@ def build_full_hourly_grid(pv: pd.DataFrame) -> pd.DataFrame:
 
 def merge_sources(pv: pd.DataFrame, onchain: pd.DataFrame, market: pd.DataFrame) -> pd.DataFrame:
     grid = build_full_hourly_grid(pv)
+    pv = pv.drop(columns=["volume"]) # there exists trading volume column already in market features, so drop this one to avoid duplicate column name
     merged = grid.merge(pv, on=["coin", "hour"], how="left")
     merged = merged.merge(onchain, on=["coin", "hour"], how="left")
     merged = merged.merge(market, on=["coin", "hour"], how="left")

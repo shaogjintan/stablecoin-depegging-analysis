@@ -387,11 +387,6 @@ def main():
         raise RuntimeError("No exchange OHLCV collected for any coin!")
 
     volume_df = pd.concat(frames, ignore_index=True)
-    # NOTE: a previous version of this line dropped taker_buy_base_volume
-    # here, then the "if c not in out.columns" loop below silently re-added
-    # it as all-NaN -- meaning real taker-buy data was computed, discarded,
-    # and backfilled empty. Removed; taker_buy_base_volume now survives.
-
     # Join price (DefiLlama, the near-complete reference series) with volume
     # (exchanges). Now that each source's genuinely-zero-trade hours are
     # filled with 0 rather than missing entirely (see fill_hourly_volume_gaps),
