@@ -29,6 +29,10 @@ Only changes, ratios and deviations -- no raw levels. Raw trading volume and
 on-chain counts differ by orders of magnitude between coins (e.g. median
 hourly volume DAI ~70 vs BUSD ~10M), so a pooled tree model would learn
 the level as a coin identifier rather than a market signal.
+Tier 2 adds the 12 on-chain log1p-difference change features built in
+02b_build_onchain_features.py (see ONCHAIN_FEATURES below); apply them to
+master.parquet with `python data_processing/02b_build_onchain_features.py
+--update-master`.
 Not used as features: coin, hour, price (= peg_deviation + 1), duplicate
 scalings (peg_deviation_bps, simple returns), venue metadata, depeg flags,
 episode IDs and labels.
@@ -65,12 +69,17 @@ MARKET_FEATURES = [
     "volume_pct_change_1h", "volume_pct_change_6h", "volume_pct_change_24h",
 ]
 
-# Tier 2: market + on-chain.
-# TODO: these are raw hourly LEVELS, which identify the coin (median tx_count
-# PAX ~12 vs USDT ~5,400). Replace with 1h/6h/24h change features built in
-# 02b before using Tier 2 results.
+# Tier 2: market + on-chain. On-chain columns are 1h/6h/24h log1p-difference
+# change features ({metric}_logdiff_{k}h = log1p(x_t) - log1p(x_{t-k})), built
+# in 02b_build_onchain_features.py on the full hourly grid (true calendar
+# lags). Raw levels (tx_count, ...) are NOT features: their scale differs by
+# orders of magnitude between coins (median tx_count PAX ~12 vs USDT ~5,400)
+# and would act as a coin identifier. Apply with:
+#   python data_processing/02b_build_onchain_features.py --update-master
 ONCHAIN_FEATURES = [
-    "tx_count", "tx_volume", "active_senders", "active_receivers",
+    f"{metric}_logdiff_{k}h"
+    for metric in ("tx_count", "tx_volume", "active_senders", "active_receivers")
+    for k in (1, 6, 24)
 ]
 
 TIERS = {1: MARKET_FEATURES, 2: MARKET_FEATURES + ONCHAIN_FEATURES}
@@ -113,6 +122,12 @@ def load_folds(horizon: int = 24, tier: int = 1,
     features = TIERS[tier]
 
     master, episodes = load_master()
+    missing = [c for c in features if c not in master.columns]
+    if missing:
+        raise KeyError(
+            f"Tier {tier} features missing from master.parquet: {missing}. "
+            "Run: python data_processing/02b_build_onchain_features.py --update-master"
+        )
     keep = at_risk_mask(master, episodes, horizon, recovery_hours)
     master = master[keep]
 
@@ -144,7 +159,7 @@ def main():
                   f"test {len(ys):>6,} rows / {ys.sum():>4,} pos | "
                   f"inner_val {len(f['y_inner_val']):>6,} rows / {f['y_inner_val'].sum():>4,} pos")
 
-    print("\nFeature NaN share in at-risk rows (h=24):")
+    print("\nPer-feature NaN share in at-risk rows (h=24, tier 2):")
     keep = at_risk_mask(master, episodes, 24)
     print(master.loc[keep, TIERS[2]].isna().mean().round(3).to_string())
 
