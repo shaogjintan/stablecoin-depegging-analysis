@@ -1,0 +1,15 @@
+numpy
+pandas
+scipy
+matplotlib
+seaborn
+plotly
+scikit-learn
+statsmodels
+requests
+jupyter
+python-dotenv
+xgboost
+imbalanced-learn
+pyarrow
+umap-learn

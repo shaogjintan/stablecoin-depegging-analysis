@@ -1,25 +1,30 @@
-# Presentation package whitelist
-!midterm_presentation_folder (sasi)/**
-!midterm_presentation_pack (sasi)/**
-
-# Data files (large datasets stay local)
-data/
-*.parquet
-midterm_presentation_folder (sasi)/data/
-
-# Archive (cleaned up clutter)
-archive/
-
-# Python & Environment
+# Byte-compiled / cache
 __pycache__/
 *.py[cod]
 *$py.class
-.venv/
+
+# Virtual environments
 venv/
+.venv/
 env/
+ENV/
+
+# Jupyter
 .ipynb_checkpoints/
 
-# OS & Editor
+# Environment variables / secrets
+.env
+
+# Data (large/regenerable — keep raw & processed data out of git)
+data/
+
+# OS / editor
 .DS_Store
 Thumbs.db
-*.lock
+.vscode/
+.idea/
+
+# Distribution / packaging
+build/
+dist/
+*.egg-info/
