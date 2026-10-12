@@ -51,30 +51,50 @@ def fetch_defillama_hourly(
     coin_id: str,
     start_s: str,
     end_s: str,
-    chunk_hours: int = 400
+    chunk_hours: int = 100, 
+    sample_minutes: int = 15,
+    max_stale_min: int = 60
 ) -> pd.DataFrame:
-    """Fetch hourly historical price points from DefiLlama chart API.
-
-    Requests are kept on exact hour boundaries and use searchWidth=1800 (match
-    the stored point nearest each hour within +/-30 min). DefiLlama's stored
-    points sit a few minutes off the hour, so requests whose start drifts off
-    :00 silently return only a handful of points per chunk."""
-    start_ts = int(pd.Timestamp(start_s, tz="UTC").floor("h").timestamp())
-    end_ts = int(pd.Timestamp(end_s, tz="UTC").timestamp())
+    """Fetch hourly CLOSE prices from the DefiLlama chart API.
+ 
+    Rows are labelled by bar START: the row stamped 10:00 is the close of the
+    10:00-11:00 bar, i.e. the last stored observation at or before 11:00:00.
+    Observations after the bar end are never used.
+ 
+    The API only returns the stored point nearest each requested mark, and that
+    point can fall just after the mark. So instead of asking for one point per
+    hour, we sample every `sample_minutes` (searchWidth = half a step), collect
+    all observations with their real timestamps, and pick the close per bar
+    locally with a backward as-of join.
+ 
+    max_stale_min: oldest observation allowed for a bar's close, measured back
+    from the bar end. 60 means "must lie inside the bar"; use <= 60.
+    Bars with no qualifying observation stay missing, then are forward-filled
+    for at most 3 hours (forward only, so no later price leaks in).
+    """
+    if 60 % sample_minutes != 0:
+        raise ValueError("sample_minutes must divide 60")
+ 
+    step = sample_minutes * 60
+    start_floor = pd.Timestamp(start_s, tz="UTC").floor("h")
+    end_dt = pd.Timestamp(end_s, tz="UTC")
+    start_ts = int(start_floor.timestamp())
+    end_ts = int(end_dt.timestamp())
     cur_ts = start_ts
     rows = []
-
+ 
     total_hours = max(1, (end_ts - start_ts) // 3600)
     print(f"\n[{dt.datetime.now():%H:%M:%S}] Fetching {coin_name:<6} ({coin_id}) {start_s} -> {end_s} (~{total_hours:,} hrs)...", flush=True)
-
+ 
     calls = 0
     consecutive_empty = 0
     while cur_ts < end_ts:
         hours_left = int((end_ts - cur_ts) // 3600) + 1
         chunk = min(chunk_hours, hours_left)
-        url = (f"https://coins.llama.fi/chart/{coin_id}?start={cur_ts}&span={chunk}"
-               f"&period=1h&searchWidth=1800")
-
+        span = -(-chunk * 3600 // step)  # ceil: number of sample points
+        url = (f"https://coins.llama.fi/chart/{coin_id}?start={cur_ts}&span={span}"
+               f"&period={sample_minutes}m&searchWidth={step // 2}")
+ 
         success = False
         prices = []
         for attempt in range(5):
@@ -93,7 +113,7 @@ def fetch_defillama_hourly(
             except requests.RequestException:
                 time.sleep(2.0 * (attempt + 1))
                 continue
-
+ 
         calls += 1
         if not success or not prices:
             consecutive_empty += 1
@@ -103,53 +123,64 @@ def fetch_defillama_hourly(
             cur_ts += chunk * 3600
             time.sleep(0.1)
             continue
-
+ 
         consecutive_empty = 0
         for p in prices:
-            rows.append({
-                "coin": coin_name,
-                "timestamp_raw": p["timestamp"],
-                "price": float(p["price"]),
-            })
-
-        # fixed hour-aligned step (never re-anchor on the returned timestamps,
-        # which drift off the hour)
+            rows.append({"timestamp_raw": p["timestamp"], "price": float(p["price"])})
+ 
+        # fixed step (never re-anchor on returned timestamps)
         cur_ts += chunk * 3600
-
+ 
         time.sleep(0.12)
         if calls % 25 == 0:
-            print(f"  ...progress: reached {pd.to_datetime(cur_ts, unit='s', utc=True):%Y-%m-%d %H:%M} ({len(rows):,} rows)", flush=True)
-
+            print(f"  ...progress: reached {pd.to_datetime(cur_ts, unit='s', utc=True):%Y-%m-%d %H:%M} ({len(rows):,} obs)", flush=True)
+ 
     if not rows:
         print(f"  WARNING: No data collected for {coin_name}!")
         return pd.DataFrame()
-
-    df = pd.DataFrame(rows)
-    df["timestamp"] = pd.to_datetime(df["timestamp_raw"], unit="s", utc=True).dt.round("h")
-    df = df[df["timestamp"] <= pd.Timestamp(end_s, tz="UTC")]  # rounding can spill past end
-    df = df.sort_values("timestamp").drop_duplicates(subset=["timestamp"], keep="last")
-
-    grid = pd.date_range(df["timestamp"].min(), df["timestamp"].max(), freq="h", tz="UTC")
-    df = df.set_index("timestamp").reindex(grid)
-    df["coin"] = coin_name
-    n_raw = df["price"].notna().sum()
-    # fill only short gaps (<= 3h) by FORWARD-FILLING the last observed price;
-    # longer gaps stay missing rather than becoming flat prices that hide (or
-    # fake) depegs. Previously this used linear interpolation, which draws a
-    # line to the NEXT observed price -- look-ahead in every feature built from
-    # a filled hour, and gaps cluster around stress, exactly where it matters.
-    # Forward-fill uses only past information, so each hour reflects what was
-    # actually known at that time.
-    df["price"] = df["price"].ffill(limit=3)
-    n_interpolate = df["price"].notna().sum()
-    df = df.reset_index().rename(columns={"index": "timestamp"})
-    n_grid = len(df)
-    df = df[["coin", "timestamp", "price"]].dropna(subset=["price"])
-
-    print(f"  -> SUCCESS {coin_name}: {len(df):,} hourly rows | {df['timestamp'].min():%Y-%m-%d %H:%M} .. {df['timestamp'].max():%Y-%m-%d %H:%M} "
-          f"| raw coverage {n_raw / n_grid:.1%}, after forward-fill {n_interpolate/n_grid:.1%}, {n_grid - len(df):,} hrs left missing")
+ 
+    # raw observations at their real timestamps (no rounding)
+    obs = pd.DataFrame(rows)
+    obs["obs_ts"] = pd.to_datetime(obs["timestamp_raw"], unit="s", utc=True).astype("datetime64[ns, UTC]")
+    obs = (obs[["obs_ts", "price"]]
+           .sort_values("obs_ts")
+           .drop_duplicates(subset=["obs_ts"], keep="last"))
+ 
+    # bars that have fully closed by end_s: label = bar start, close = bar end
+    last_label = end_dt.floor("h") - pd.Timedelta(hours=1)
+    if last_label < start_floor:
+        print(f"  WARNING: range too short for any complete hourly bar for {coin_name}")
+        return pd.DataFrame()
+    bars = pd.DataFrame({"timestamp": pd.date_range(start_floor, last_label, freq="h")})
+    bars["bar_end"] = (bars["timestamp"] + pd.Timedelta(hours=1)).astype("datetime64[ns, UTC]")
+ 
+    # last observation at or before bar end (never after), at most max_stale_min old
+    m = pd.merge_asof(
+        bars, obs,
+        left_on="bar_end", right_on="obs_ts",
+        direction="backward",
+        tolerance=pd.Timedelta(minutes=max_stale_min),
+    )
+ 
+    # trim the grid to the span where we actually have observations
+    first_ok, last_ok = m["price"].first_valid_index(), m["price"].last_valid_index()
+    if first_ok is None:
+        print(f"  WARNING: No usable closes for {coin_name}!")
+        return pd.DataFrame()
+    m = m.loc[first_ok:last_ok].copy()
+ 
+    n_raw = m["price"].notna().sum()
+    # forward-fill short gaps only (<= 3h). Forward-only keeps the "never past the
+    # bar end" rule; interpolation would blend in a later price.
+    m["price"] = m["price"].ffill(limit=3)
+    n_filled = m["price"].notna().sum()
+    n_grid = len(m)
+    m["coin"] = coin_name
+    df = m[["coin", "timestamp", "price"]].dropna(subset=["price"])
+ 
+    print(f"  -> SUCCESS {coin_name}: {len(df):,} hourly close rows | {df['timestamp'].min():%Y-%m-%d %H:%M} .. {df['timestamp'].max():%Y-%m-%d %H:%M} "
+          f"| raw coverage {n_raw / n_grid:.1%}, after ffill {n_filled / n_grid:.1%}, {n_grid - len(df):,} hrs left missing")
     return df
-
 
 def fetch_all_coin_prices() -> pd.DataFrame:
     """Fetch price data for all coins from DefiLlama."""
