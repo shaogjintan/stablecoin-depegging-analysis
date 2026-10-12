@@ -133,16 +133,21 @@ def fetch_defillama_hourly(
     df = df.set_index("timestamp").reindex(grid)
     df["coin"] = coin_name
     n_raw = df["price"].notna().sum()
-    # fill only short gaps (<= 3h); longer gaps stay missing rather than
-    # becoming flat forward-filled prices that hide (or fake) depegs
-    df["price"] = df["price"].interpolate(method="time", limit=3, limit_area="inside")
+    # fill only short gaps (<= 3h) by FORWARD-FILLING the last observed price;
+    # longer gaps stay missing rather than becoming flat prices that hide (or
+    # fake) depegs. Previously this used linear interpolation, which draws a
+    # line to the NEXT observed price -- look-ahead in every feature built from
+    # a filled hour, and gaps cluster around stress, exactly where it matters.
+    # Forward-fill uses only past information, so each hour reflects what was
+    # actually known at that time.
+    df["price"] = df["price"].ffill(limit=3)
     n_interpolate = df["price"].notna().sum()
     df = df.reset_index().rename(columns={"index": "timestamp"})
     n_grid = len(df)
     df = df[["coin", "timestamp", "price"]].dropna(subset=["price"])
 
     print(f"  -> SUCCESS {coin_name}: {len(df):,} hourly rows | {df['timestamp'].min():%Y-%m-%d %H:%M} .. {df['timestamp'].max():%Y-%m-%d %H:%M} "
-          f"| raw coverage {n_raw / n_grid:.1%}, interpolated {n_interpolate/n_grid:.1%}, {n_grid - len(df):,} hrs left missing")
+          f"| raw coverage {n_raw / n_grid:.1%}, after forward-fill {n_interpolate/n_grid:.1%}, {n_grid - len(df):,} hrs left missing")
     return df
 
 

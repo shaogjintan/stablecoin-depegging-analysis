@@ -106,7 +106,10 @@ OUTLIER_REVIEW_THRESHOLD = 50_000_000
 # ---------------------------------------------------------------------------
 # Leakage control
 # ---------------------------------------------------------------------------
-EMBARGO_HOURS = 24
-# train = hours before this (minus the horizon), test = hours after it.
-# 2023-01-01 -> ~59% of rows in train, 22 of 105 episodes (5 coins) in test
-SPLIT_CUTOFF = "2023-01-01"
+EMBARGO_HOURS = 24  # drop first 24h after each split boundary (feature lookback)
+PURGE_HOURS = 24    # drop last 24h before each split boundary (label look-ahead)
+# Expanding-window CV (see splits.py): for each year Y in this range, train on
+# everything before Y and test on Y. Replaces the old single
+# 2018-22 / 2023 / 2024-25 train/val/test split.
+OOS_START_YEAR = 2021
+OOS_END_YEAR = 2025

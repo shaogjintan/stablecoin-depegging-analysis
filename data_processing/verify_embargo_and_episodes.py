@@ -5,8 +5,8 @@ and Train-Validation-Test Episode Distribution.
 Outputs:
 1. Autocorrelation Function (ACF) decay across hourly lags (proving why 24h embargo is required).
 2. Depeg episode duration and inter-episode gap statistics.
-3. 3-way chronological split episode and observation counts for Train (2018-2022),
-   Validation (2023), and Test (2024-2025).
+3. Expanding-window CV fold checks (see splits.py): train/test gap and shared
+   episodes per fold, and out-of-sample episode counts by coin.
 """
 
 import sys
@@ -17,20 +17,14 @@ import matplotlib.pyplot as plt
 
 # Add current directory to path
 sys.path.insert(0, str(Path(__file__).parent))
-from config import PROCESSED_DATA_DIR, FIAT_COINS, FORECAST_HORIZONS_HOURS, EMBARGO_HOURS
+from config import (PROCESSED_DATA_DIR, FIAT_COINS, FORECAST_HORIZONS_HOURS, EMBARGO_HOURS,
+                    PURGE_HOURS, OOS_START_YEAR, OOS_END_YEAR)
+from splits import expanding_window_folds
 
 
 def load_master_and_episodes():
-    # Check possible file names
     master_path = PROCESSED_DATA_DIR / "master.parquet"
-    if not master_path.exists():
-        master_path = PROCESSED_DATA_DIR / "master_hourly_dataset.parquet"
-    if not master_path.exists():
-        master_path = PROCESSED_DATA_DIR / "master_hourly_dataset_fiat.parquet"
-
     episodes_path = PROCESSED_DATA_DIR / "depeg_episodes.parquet"
-    if not episodes_path.exists():
-        episodes_path = PROCESSED_DATA_DIR / "depeg_episodes_fiat.parquet"
 
     print(f"Loading master from: {master_path}")
     print(f"Loading episodes from: {episodes_path}")
@@ -78,41 +72,34 @@ def analyze_autocorrelation(master: pd.DataFrame):
 
 def analyze_episodes_and_splits(master: pd.DataFrame, episodes: pd.DataFrame):
     print("\n" + "=" * 60)
-    print("EMPIRICAL TEST 2: 3-WAY CHRONOLOGICAL SPLIT VALIDATION")
+    print("EMPIRICAL TEST 2: EXPANDING-WINDOW CV FOLD VALIDATION")
     print("=" * 60)
-    print("Partitions:")
-    print("  Train:      Start      -> 2022-12-31 23:00 (Includes May 2022 Terra/USDT crash)")
-    print("  Validation: 2023-01-01 -> 2023-12-31 23:00 (Includes March 2023 SVB/USDC crisis)")
-    print("  Test:       2024-01-01 -> 2025-12-31 23:00 (Out-of-sample forward evaluation)")
-    print("  Purge:      24 hours before each boundary (no label overlap)")
-    print("  Embargo:    24 hours after each boundary (no rolling feature memory leakage)")
+    print(f"For each year Y in {OOS_START_YEAR}-{OOS_END_YEAR}: train on everything before Y, test on Y")
+    print(f"  Purge:   {PURGE_HOURS} hours before each boundary (no label overlap)")
+    print(f"  Embargo: {EMBARGO_HOURS} hours after each boundary (no rolling feature memory leakage)")
 
-    train_end = pd.Timestamp("2022-12-31 23:00:00", tz="UTC")
-    val_start = pd.Timestamp("2023-01-01 00:00:00", tz="UTC")
-    val_end   = pd.Timestamp("2023-12-31 23:00:00", tz="UTC")
-    test_start= pd.Timestamp("2024-01-01 00:00:00", tz="UTC")
+    folds = expanding_window_folds(master, episodes)
 
-    # Filter to fiat coins
-    fiat_eps = episodes[episodes["coin"].isin(FIAT_COINS)].copy()
-    
-    # Classify episodes by start time
-    train_eps = fiat_eps[fiat_eps["start"] <= train_end]
-    val_eps   = fiat_eps[(fiat_eps["start"] >= val_start) & (fiat_eps["start"] <= val_end)]
-    test_eps  = fiat_eps[fiat_eps["start"] >= test_start]
+    # Leakage checks: train ends >= purge before test starts, and no episode
+    # has rows on both sides of a fold's boundary.
+    print("\nLeakage checks per fold:")
+    for f in folds:
+        gap_h = (f["test"]["hour"].min() - f["train"]["hour"].max()).total_seconds() / 3600
+        shared = set(f["train"]["episode_id"].dropna()) & set(f["test"]["episode_id"].dropna())
+        ok = gap_h > PURGE_HOURS + EMBARGO_HOURS - 1 and not shared
+        print(f"  Fold {f['year']}: train->test gap {gap_h:.0f}h, "
+              f"shared episodes {len(shared)} -> {'OK' if ok else 'FAIL'}")
 
-    print(f"\nTotal Fiat Depeg Episodes: {len(fiat_eps)}")
-    print(f"  Train Episodes (2018-2022):       {len(train_eps)} ({len(train_eps)/len(fiat_eps):.1%})")
-    print(f"  Validation Episodes (2023):       {len(val_eps)} ({len(val_eps)/len(fiat_eps):.1%})")
-    print(f"  Test Episodes (2024-2025):         {len(test_eps)} ({len(test_eps)/len(fiat_eps):.1%})")
-
-    print("\nEpisode distribution by coin across partitions:")
+    # Out-of-sample episodes per fold, by coin (episodes with rows in the test year)
+    print("\nOut-of-sample episodes per fold, by coin:")
     summary = pd.DataFrame({
-        "Train (2018-22)": train_eps["coin"].value_counts(),
-        "Validation (2023)": val_eps["coin"].value_counts(),
-        "Test (2024-25)": test_eps["coin"].value_counts(),
-    }).fillna(0).astype(int)
-    summary["Total"] = summary.sum(axis=1)
+        f"Test {f['year']}": (episodes[episodes["episode_id"].isin(f["test"]["episode_id"].dropna())]
+                              ["coin"].value_counts())
+        for f in folds
+    }).reindex(FIAT_COINS).fillna(0).astype(int)
+    summary["Pooled OOS"] = summary.sum(axis=1)
     print(summary.to_string())
+    print(f"\nTotal episodes scored out of sample: {summary['Pooled OOS'].sum()} of {len(episodes)}")
 
     return summary
 

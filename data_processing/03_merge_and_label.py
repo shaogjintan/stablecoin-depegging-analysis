@@ -42,6 +42,10 @@ def build_full_hourly_grid(pv: pd.DataFrame) -> pd.DataFrame:
 def merge_sources(pv: pd.DataFrame, onchain: pd.DataFrame, market: pd.DataFrame) -> pd.DataFrame:
     grid = build_full_hourly_grid(pv)
     pv = pv.drop(columns=["volume"]) # there exists trading volume column already in market features, so drop this one to avoid duplicate column name
+    # drop raw trade count and taker-buy volume: Bitfinex (USDT/DAI) reports
+    # neither, so they're 100% NaN for those coins and a pooled tree model
+    # would learn the missingness as a coin identifier (see 02a docstring)
+    pv = pv.drop(columns=["trades", "taker_buy_base_volume"])
     merged = grid.merge(pv, on=["coin", "hour"], how="left")
     merged = merged.merge(onchain, on=["coin", "hour"], how="left")
     merged = merged.merge(market, on=["coin", "hour"], how="left")

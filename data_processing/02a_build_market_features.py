@@ -11,16 +11,15 @@ rather than left in as a spurious signal.
 OUTPUT: data/processed/hourly_market_features_fiat.parquet
   coin, hour, peg_deviation, peg_deviation_bps, return_1h, log_return_1h,
   return_6h, log_return_6h, return_24h, log_return_24h,
-  realised_vol_6h, realised_vol_24h, trading_volume, trades, trades_pct_change_1h,
+  realised_vol_6h, realised_vol_24h, trading_volume,
   volume_pct_change_1h, volume_pct_change_6h, volume_pct_change_24h,
-  taker_buy_ratio, venue, venue_switch
+  venue_switch
 
-taker_buy_ratio is NaN for DAI/USDT (100% of rows) -- their source, Bitfinex,
-doesn't report taker-buy volume at all, unlike Binance for the other four
-coins. Kept as a ratio rather than raw taker_buy_base_volume because the raw
-figure is in each coin's own unscaled units and isn't comparable across coins;
-the ratio is. This is a real, permanent coverage gap for those two coins, not
-a bug -- handle it the same way as any other partial-coverage column here.
+No trade-count or taker-buy features: Bitfinex (the source for USDT and DAI)
+doesn't report either, so they'd be NaN for 100% of those two coins' rows. A
+pooled tree model would learn that missingness pattern as a coin identifier
+rather than a market signal, so trades_pct_change_1h and taker_buy_ratio are
+not built. (01 still downloads the raw columns; 03 drops them from master.)
 """
 import numpy as np
 import pandas as pd
@@ -79,20 +78,15 @@ def build_exchange_features(df: pd.DataFrame) -> pd.DataFrame:
     df["volume_pct_change_6h"] = pct_6h.where(df["hours_since_venue_start"] >= 7)
     df["volume_pct_change_24h"] = pct_24h.where(df["hours_since_venue_start"] >= 25)
 
-    # share of that hour's volume from aggressive (taker) buys -- a ratio
-    # rather than the raw taker_buy_base_volume, which is in each coin's own
-    # unscaled units and not comparable across coins. Computed within the
-    # hour, so (unlike the pct-change features above) it doesn't need venue-
-    # switch masking -- there's no prior-hour comparison to be thrown off by
-    # a source change. NaN wherever volume is 0 or taker data isn't reported
-    # at all (DAI/USDT, see module docstring).
-    df["taker_buy_ratio"] = (df["taker_buy_base_volume"] / df["volume"]).replace([np.inf, -np.inf], np.nan)
-    df["trades_pct_change_1h"] = df["trades"].pct_change().replace([np.inf, -np.inf], np.nan)
+    # taker_buy_ratio and trades_pct_change_1h were removed here: Bitfinex
+    # (USDT/DAI) reports neither, so both were 100% NaN for those coins and a
+    # pooled tree model would learn the missingness as a coin identifier.
+    # See module docstring.
 
     df = df.rename(columns={"volume": "trading_volume"})
-    return df[["coin", "hour", "trading_volume", "trades",
+    return df[["coin", "hour", "trading_volume",
                "volume_pct_change_1h", "volume_pct_change_6h", "volume_pct_change_24h",
-               "taker_buy_ratio", "trades_pct_change_1h", "venue", "venue_switch"]]
+               "venue", "venue_switch"]]
 
 
 def main():
@@ -106,7 +100,7 @@ def main():
 
     merged = price_feats.merge(exch_feats, on=["coin", "hour"], how="left")
     merged = merged.sort_values(["coin", "hour"]).reset_index(drop=True)
-    merged = merged.drop(columns=["trades", "venue"])
+    merged = merged.drop(columns=["venue"])
 
     merged.to_parquet(OUT_PATH, index=False)
 
@@ -115,8 +109,6 @@ def main():
         rows=("hour", "size"),
         realised_vol_24h_coverage=("realised_vol_24h", lambda s: s.notna().mean()),
         volume_pct_change_24h_coverage=("volume_pct_change_24h", lambda s: s.notna().mean()),
-        trades_pct_change_1h_coverage=("trades_pct_change_1h", lambda s: s.notna().mean()),
-        taker_buy_ratio_coverage=("taker_buy_ratio", lambda s: s.notna().mean())
     )
     print(cov.round(3).to_string())
 

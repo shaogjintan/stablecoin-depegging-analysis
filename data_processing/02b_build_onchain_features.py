@@ -78,7 +78,7 @@ def load_coin_csv(coin: str, path: Path) -> pd.DataFrame | None:
     # "2018-01-22 08:00:00.000 UTC" -> tz-aware UTC timestamp. Strip the
     # trailing " UTC" (pandas' parser is inconsistent about combining a
     # literal "UTC" suffix with tz_localize), then localize explicitly,
-    # tz-AWARE, matching hourly_price.parquet's `hour` column
+    # tz-AWARE, matching hourly_stablecoin.parquet's `hour` column
     hour_str = df["hour"].astype(str).str.replace(" UTC", "", regex=False)
     df["hour"] = pd.to_datetime(hour_str, format="%Y-%m-%d %H:%M:%S.%f").dt.tz_localize("UTC")
 
