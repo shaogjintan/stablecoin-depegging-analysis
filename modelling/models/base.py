@@ -63,6 +63,11 @@ class BaseModel(ABC):
     name: str = "base"
     needs_imputation: bool = True
     param_grid: list[dict] = [{}]
+    # True for models whose fit() uses X_val for early stopping (XGBoost).
+    # train.py --tune then follows the nested-CV pattern: candidates fit on
+    # X_inner_train (early stopping on X_inner_val), and the winner is refit
+    # on the full X_train with n_estimators = best_iteration (no eval set).
+    supports_early_stopping: bool = False
 
     def get_params(self) -> dict:
         """Configuration snapshot for the results log."""
