@@ -18,6 +18,9 @@ ENV/
 # Data (large/regenerable — keep raw & processed data out of git)
 data/
 
+# Modelling scratch (predictions, model artifacts; final tables/figures -> reports/)
+results/
+
 # OS / editor
 .DS_Store
 Thumbs.db
