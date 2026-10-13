@@ -116,7 +116,8 @@ def _xy(part: pd.DataFrame, features: list[str], horizon: int):
 def load_folds(horizon: int = 24, tier: int = 1,
                recovery_hours: int = RECOVERY_HOURS) -> list[dict]:
     """One dict per CV fold with X/y for train, test, inner_train, inner_val,
-    and test_meta (coin, hour, episode_id) for the test rows."""
+    test_meta (coin, hour, episode_id) for the test rows, and
+    inner_val_meta (same columns) for the inner validation rows."""
     if horizon not in FORECAST_HORIZONS_HOURS:
         raise ValueError(f"horizon must be one of {FORECAST_HORIZONS_HOURS}")
     features = TIERS[tier]
@@ -137,6 +138,7 @@ def load_folds(horizon: int = 24, tier: int = 1,
         for name in ["train", "test", "inner_train", "inner_val"]:
             fold[f"X_{name}"], fold[f"y_{name}"] = _xy(f[name], features, horizon)
         fold["test_meta"] = f["test"][META_COLS].reset_index(drop=True)
+        fold["inner_val_meta"] = f["inner_val"][META_COLS].reset_index(drop=True)
         out.append(fold)
     return out
 

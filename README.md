@@ -370,3 +370,45 @@ positives per fold for each horizon.
 | h=1 | 339,414 | 83 | 49 |
 | h=6 | 339,384 | 495 | 294 |
 | h=24 | 339,276 | 1,930 | 1,153 |
+
+### `models/`, `train.py`, `evaluate.py` — model contract & orchestrator
+
+**Rule: every model implements `modelling/models/base.py`'s `BaseModel` and is
+registered in `modelling/models/__init__.py`.** Teammates implement against
+this contract — no personal training loops.
+
+`BaseModel` requires:
+
+```python
+class MyModel(BaseModel):
+    name = "my_model"                # CLI name in train.py
+    needs_imputation = True          # False if NaN-native (e.g. XGBoost)
+    param_grid = [{"C": 0.1}, ...]   # combos tried by --tune
+
+    def fit(self, X_train, y_train, X_val=None, y_val=None): ...
+    def predict_proba(self, X) -> np.ndarray: ...   # shape (n, 2), col 1 = P(y=1)
+    def get_params(self) -> dict: ...               # for the results log
+```
+
+If `needs_imputation` is `True`, `train.py` median-imputes each column using
+the training fold only (`MedianImputer`). Registered so far: `baseline`
+(constant positive-rate prior; the report-table floor).
+
+**Train** (from the repo root):
+
+```bash
+python modelling/train.py --model baseline --horizon 24 --tier 1 --tag smoke
+python modelling/train.py --model xgboost   --horizon 24 --tier 2 --tag run01 --tune
+```
+
+Per fold it fits on `X_train` (early stopping on `X_inner_val` if supported),
+saves predictions to `results/predictions/` and model artifacts
+(`joblib` + params JSON) to `results/models/`, logs inner-val PR-AUC, then
+pools the OOS test predictions and runs `evaluate.py`: pooled PR-AUC /
+ROC-AUC / Brier, per-coin and per-episode tables, and the alarm-curve CSV
+(`results/evaluation/`). `results/` is gitignored — final tables and figures
+go under `reports/`.
+
+**Evaluate any pooled run** with `python modelling/evaluate.py` (self-test)
+or import `evaluate_run` / `pooled_metrics` / `select_threshold` (thresholds
+tuned on `inner_val` only — Alyssa extends the sweep here).
