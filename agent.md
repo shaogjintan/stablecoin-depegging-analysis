@@ -188,7 +188,7 @@ old PR-AUC-tuned model — the recall objective helped a lot).
 4. **`venue_switch` appears twice** (`venue_switch_x` / `venue_switch_y`) — `prepare_data.py` ignores both.
 5. **Raw levels leak coin identity** (RF accuracy 0.70 levels vs 0.41 logdiffs) — the reason Tier 2 uses change features.
 6. **2024 and 2025 test sets have ~6 positives each** — always evaluate on pooled OOS predictions, never per-year.
-7. **Git/GitHub:** `sasssyboujee/DSE4101-Topic-2-Project` is *not* a registered fork — push feature branches **directly to `shaogjintan/stablecoin-depegging-analysis`** and open PRs there.
+7. **Git/GitHub:** `sasssyboujee/DSE4101-Topic-2-Project` is *not* a registered fork — push feature branches **directly to `shaogjintan/stablecoin-depegging-analysis`** and open PRs there. **Create feature branches from `upstream/main`** (`git fetch upstream && git checkout upstream/main -b feature/...`), never from a stale local `main` — branching from local main re-introduced old milestone folders into upstream (2026-10-13 incident, cleaned up right after).
 8. **Large file:** `master.parquet` (68 MB) is committed to git despite GitHub's 50 MB recommendation — keep committing it (the team's convention); don't add LFS mid-project.
 9. **Recall-first terminology:** we minimize **false negatives** (missed depegs) and accept false positives (false alarms). "True negatives" are correct non-alarms — do NOT reduce those. Headline = episode-level recall vs alarm rate; PR-AUC is secondary.
 10. **Thresholds are tuned on inner_val only** (`select_threshold` in evaluate.py), then applied to OOS test. Never tune the threshold on test rows.
