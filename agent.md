@@ -149,8 +149,14 @@ old PR-AUC-tuned model — the recall objective helped a lot).
 - Recall-tuning improved XGBoost up to ~19x at h=24 (tier 1: 2% -> 39% @ 1% rate);
   it is a credible complement, not yet a replacement for persistence.
 - At h=1 no model is strong (49 events; catching >90% costs ~80-90% alarm rate).
-- Next idea worth testing: **OR-combining persistence + XGBoost alarms** at a
-  shared budget (union of alarms) — likely beats either alone.
+- **OR-combination tested** (`modelling/combine_alarms.py` →
+  `reports/combination_results.csv`): unioning persistence + XGBoost alarms
+  at a shared budget helps only marginally — +1 episode at h=24 (2% budget:
+  0.8367 vs 0.8163) and +1–2 episodes at h=6; at the 1% budget XGBoost adds
+  nothing. Persistence already catches most of what XGBoost catches at low
+  rates, so the simple peg-stress rule remains the recommended headline alarm;
+  XGBoost is a small add-on at 2–5% budgets (and relatively more useful at h=1,
+  +0.10 at 5%).
 
 **Pooled OOS PR-AUC** (secondary; full table in `reports/modelling_comparison.csv`):
 
