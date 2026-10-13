@@ -412,3 +412,25 @@ go under `reports/`.
 **Evaluate any pooled run** with `python modelling/evaluate.py` (self-test)
 or import `evaluate_run` / `pooled_metrics` / `select_threshold` (thresholds
 tuned on `inner_val` only — Alyssa extends the sweep here).
+
+### Recall-first early-warning evaluation (headline metric)
+
+Per the group decision (2026-10-13), the goal is to **catch every depeg
+episode** (minimize false negatives) and tolerate false alarms. The headline
+metric is therefore **episode-level recall vs the hourly alarm rate**, not
+PR-AUC (which stays secondary).
+
+```bash
+# tune for recall at a 1% alarm-rate budget (instead of PR-AUC):
+python modelling/train.py --model xgboost --horizon 24 --tier 2 --tag rec \
+       --tune --tune-metric recall_at_rate --max-alarm-rate 0.01
+
+# operating table: episode recall at 0.5/1/2/5% alarm budgets and the alarm
+# rate needed for 90/95/99% episode recall, plus per-episode caught/missed CSVs:
+python modelling/alarm_report.py --save reports/recall_operating_points.csv --alarm-tables
+```
+
+Key result so far: peg-stress persistence catches **81.6% of the 49 OOS
+episodes at a 1% alarm rate (h=24)**; recall-tuned XGBoost reaches 38.8–40.8%
+(same budget) and needs a 23.8% alarm rate for 90% episode recall. Full table:
+`reports/recall_operating_points.csv`.
