@@ -132,40 +132,45 @@ hourly alarm rate** (`modelling/alarm_report.py` →
 `reports/recall_operating_points.csv`). Pooled PR-AUC is kept only as a
 secondary ranking number.
 
-**Episode recall at a 1% alarm-rate budget** (49 OOS episodes, pooled 2021–25):
+**Episode recall at a 1% alarm-rate budget** (44 OOS episodes, pooled 2021–25;
+post Javier's PR #8 master — see the data note below):
 
 | Model | h=1 | h=6 | h=24 |
 |---|---|---|---|
 | Constant prior | — | — | — |
-| Persistence (−peg_deviation) | 0.27 | 0.53 | **0.82** |
-| XGBoost recall-tuned Tier 1 | 0.14 | 0.16 | 0.39 |
-| XGBoost recall-tuned Tier 2 | 0.14 | 0.22 | 0.41 |
+| Persistence (−peg_deviation) | 0.30 | 0.61 | **0.80** |
+| XGBoost recall-tuned Tier 1 | 0.20 | 0.23 | 0.05 |
+| XGBoost recall-tuned Tier 2 | 0.09 | 0.27 | 0.09 |
 
 Alarm rate needed for 90% episode recall: persistence h=24 needs **2.4%**;
-XGBoost Tier 2 h=24 (recall-tuned) needs **23.8%** (down from 71.7% for the
-old PR-AUC-tuned model — the recall objective helped a lot).
+XGBoost recall-tuned needs 39.5% (tier 1) / 58.0% (tier 2) at h=24.
 
 - Peg-stress persistence is the strongest single early-warning signal at h=6/24.
-- Recall-tuning improved XGBoost up to ~19x at h=24 (tier 1: 2% -> 39% @ 1% rate);
-  it is a credible complement, not yet a replacement for persistence.
-- At h=1 no model is strong (49 events; catching >90% costs ~80-90% alarm rate).
+- The recall objective helped XGBoost most at h=6 (0.23–0.27 @ 1%), but on the
+  new master it is weak at h=24 — persistence remains the headline alarm.
+- At h=1 no model is strong (44 events; catching >90% costs ~70–90% alarm rate).
 - **OR-combination tested** (`modelling/combine_alarms.py` →
-  `reports/combination_results.csv`): unioning persistence + XGBoost alarms
-  at a shared budget helps only marginally — +1 episode at h=24 (2% budget:
-  0.8367 vs 0.8163) and +1–2 episodes at h=6; at the 1% budget XGBoost adds
-  nothing. Persistence already catches most of what XGBoost catches at low
-  rates, so the simple peg-stress rule remains the recommended headline alarm;
-  XGBoost is a small add-on at 2–5% budgets (and relatively more useful at h=1,
-  +0.10 at 5%).
+  `reports/combination_results.csv`): unioning persistence + XGBoost alarms at
+  a shared budget helps only marginally — at h=24 the union equals persistence
+  alone (gain 0 at every budget); at h=6 it adds +1–2 episodes (union 0.48 vs
+  0.41 at 1%, tier 1); at h=1 +2–3 episodes. Persistence already catches most
+  of what XGBoost catches at low rates.
 
 **Pooled OOS PR-AUC** (secondary; full table in `reports/modelling_comparison.csv`):
 
 | Model | h=1 | h=6 | h=24 |
 |---|---|---|---|
-| Constant prior (floor) | 0.0003 | 0.0018 | 0.0069 |
-| Persistence (−peg_deviation) | 0.0025 | 0.0097 | **0.0220** |
-| XGBoost Tier 1 | 0.0017 | **0.0124** | 0.0093 |
-| XGBoost Tier 2 | 0.0011 | 0.0037 | 0.0102 |
+| Constant prior (floor) | 0.0003 | 0.0015 | 0.0059 |
+| Persistence (−peg_deviation) | 0.0023 | 0.0100 | **0.0197** |
+| XGBoost Tier 1 | 0.0077 | **0.0151** | 0.0057 |
+| XGBoost Tier 2 | 0.0039 | 0.0113 | 0.0073 |
+
+**Data note (2026-10-13, Javier PR #8):** `master.parquet` was re-generated —
+now 345,361 rows × 45 cols with a `common_sample` flag (all market + on-chain
+features non-NaN; it is a flag, not a filter). The episode manifest changed:
+**44 OOS episodes** (was 49), and the h=24 OOS positives are now 1,031 (was
+1,153). All tables/figures on main were recomputed against this master on
+2026-10-14; numbers from before that date refer to the old dataset.
 
 - XGBoost beats both baselines at h=6 on PR-AUC; at h=24 persistence wins.
 - **Tier 2 − Tier 1 ≈ 0** on PR-AUC; on-chain change features do not clearly

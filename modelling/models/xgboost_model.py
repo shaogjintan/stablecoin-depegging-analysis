@@ -64,13 +64,14 @@ class XGBModel(BaseModel):
             spw = float(self.scale_pos_weight)
 
         use_es = X_val is not None
+        n_estimators = max(int(self.n_estimators), 1)  # 0 trees predicts constants
         clf = XGBClassifier(
             tree_method="hist",
             learning_rate=self.learning_rate,
             max_depth=self.max_depth,
             min_child_weight=self.min_child_weight,
             scale_pos_weight=spw,
-            n_estimators=self.n_estimators,
+            n_estimators=n_estimators,
             early_stopping_rounds=self.early_stopping_rounds if use_es else None,
             eval_metric="aucpr",
             n_jobs=self.n_jobs,
