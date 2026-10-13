@@ -6,6 +6,12 @@ This is the "constant prior" baseline from the Phase 3/4 plan -- a model that
 learns nothing but the base rate; its pooled OOS PR-AUC equals the positive
 rate and is the floor any real model must beat. It also doubles as the smoke
 model for `modelling/train.py` (trivial to fit, NaN-native).
+
+PersistenceModel: the "peg stress persists" benchmark -- score = -peg_deviation
+(current distance below $1, clipped at 0). It ranks hours by how stressed the
+peg already is, with no learning and no on-chain data (tier-independent).
+Brier is not meaningful for it (scores live in [0, 0.01]); PR-AUC / ROC-AUC
+rankings are what it contributes to the comparison table.
 """
 from __future__ import annotations
 
@@ -34,3 +40,20 @@ class ConstantPriorModel(BaseModel):
 
     def get_params(self) -> dict:
         return {"name": self.name, "positive_rate": self.positive_rate_}
+
+
+class PersistenceModel(BaseModel):
+    name = "persistence"
+    needs_imputation = False
+    param_grid = [{}]
+
+    def fit(self, X_train, y_train, X_val=None, y_val=None) -> "PersistenceModel":
+        return self
+
+    def predict_proba(self, X) -> np.ndarray:
+        dev = np.asarray(X["peg_deviation"], dtype=float)
+        p = np.clip(-dev, 0.0, 0.01)  # stress = distance below $1 (at-risk rows: <= 0.01)
+        return np.column_stack([1.0 - p, p])
+
+    def get_params(self) -> dict:
+        return {"name": self.name, "score": "-peg_deviation clipped to [0, 0.01]"}

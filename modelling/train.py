@@ -13,8 +13,10 @@ Per fold (2021..2025):
      results/predictions/{model}_{tier}_{h}_{year}.parquet and the model to
      results/models/ (joblib + params JSON); log inner-val PR-AUC.
 
-With --tune: grid-search `model.param_grid` on inner-val PR-AUC, refit the
-best configuration on the full training fold, and log the chosen params.
+With --tune: nested-CV pattern -- grid-search `model.param_grid` with
+candidates fit on X_inner_train and early stopping on X_inner_val (held
+out), selected by inner-val PR-AUC; the winner is refit on the full X_train
+(n_estimators = best_iteration for early-stopping models), params logged.
 (Phase 4 defines the XGBoost grid; the plumbing lives here.)
 
 Finally the test predictions are pooled across folds and passed to
@@ -67,21 +69,32 @@ def _predict(model, imp, X):
     return model.predict_proba(X)[:, 1]
 
 
-def _tune_fit(get_model_fn, name, X_train, y_train, X_val, y_val):
-    """Grid over model.param_grid, select by inner-val PR-AUC, refit best."""
+def _tune_fit(get_model_fn, name, X_inner_train, y_inner_train, X_val, y_val):
+    """Nested-CV tuning: grid over model.param_grid, candidates fit on the
+    inner training set with early stopping on inner_val (genuinely held out),
+    selected by inner-val PR-AUC. Returns (best_combo, log, best_iteration).
+
+    best_iteration is the winning candidate's early-stopping iteration for
+    early-stopping models; the caller refits the winner on the full X_train
+    with n_estimators=best_iteration, so the final model never early-stops
+    on rows it was trained on."""
     best = None
+    best_iter = None
     log = []
     for combo in get_model_fn(name).param_grid:
-        cand, imp = _fit_one(get_model_fn(name, **combo), X_train, y_train, X_val, y_val)
+        cand, imp = _fit_one(get_model_fn(name, **combo),
+                             X_inner_train, y_inner_train, X_val, y_val)
         p_val = _predict(cand, imp, X_val)
         pr = pooled_metrics(y_val, p_val)["pr_auc"]
-        log.append({"params": combo, "inner_pr_auc": float(pr)})
+        log.append({"params": combo, "inner_pr_auc": float(pr),
+                    "best_iteration": getattr(cand, "best_iteration_", None)})
         if best is None or pr > best[0]:
             best = (pr, combo)
+            best_iter = getattr(cand, "best_iteration_", None)
     best_pr, best_combo = best
     print(f"    tuned: {len(log)} combos -> best inner-val PR-AUC {best_pr:.4f} "
-          f"params {best_combo}")
-    return best_combo, log
+          f"params {best_combo} (best_iteration={best_iter})")
+    return best_combo, log, best_iter
 
 
 def main(argv=None) -> int:
@@ -115,14 +128,21 @@ def main(argv=None) -> int:
               f"test {len(X_test):,} / {fold['y_test'].sum():,} pos")
 
         if args.tune:
-            best_combo, tune_log = _tune_fit(get_model, args.model,
-                                             X_train, y_train, X_val, y_val)
+            best_combo, tune_log, best_iter = _tune_fit(
+                get_model, args.model,
+                fold["X_inner_train"], fold["y_inner_train"], X_val, y_val)
             tune_log_all.append({"year": year, "combos": tune_log})
+            if best_iter is not None:  # early-stopping model: refit without eval set
+                best_combo = {**best_combo, "n_estimators": int(best_iter)}
+                refit_val, refit_yval = None, None
+            else:
+                refit_val, refit_yval = X_val, y_val
         else:
             best_combo = {}
+            refit_val, refit_yval = X_val, y_val
 
         model, imp = _fit_one(get_model(args.model, **best_combo),
-                              X_train, y_train, X_val, y_val)
+                              X_train, y_train, X_val=refit_val, y_val=refit_yval)
 
         p_val = _predict(model, imp, X_val)
         p_test = _predict(model, imp, X_test)
