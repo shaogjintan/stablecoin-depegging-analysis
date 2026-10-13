@@ -108,11 +108,14 @@ Unzips the per-coin Dune Analytics CSVs from `dune_onchain.zip` into
 | `tx_count` | Number of on-chain transfers in the hour |
 | `tx_volume` | Total tokens transferred in the hour |
 | `active_senders`, `active_receivers` | Distinct wallets sending / receiving |
+| `{metric}_logdiff_{1h,6h,24h}` | On-chain **change** features: `log1p(x_t) − log1p(x_{t−k})` for `tx_count`, `tx_volume`, `active_senders`, `active_receivers` |
 | `total_volume_usd`, `whale_tx_count`, `median_transfer_usd`, `transfer_gini` | Optional; included only if present in the CSV |
 
-> **Note:** the output holds raw hourly on-chain counts only. The script
-> computes `tx_count_pct_change` / `tx_volume_pct_change` but doesn't save
-> them, and no 1h/6h/24h change features are built yet.
+> **Note:** the output holds raw hourly on-chain counts plus the 12
+> log1p-difference change features. Change features are computed per coin on
+> the full hourly grid, so each lag is a true calendar window; the diff is NaN
+> whenever either endpoint is unobserved. Raw levels are for reference only —
+> the Tier 2 model uses the change features, never the levels.
 
 ### `03_merge_and_label.py` — merge, depeg episodes, labels
 
@@ -209,10 +212,14 @@ python data_processing/04_split_train_test.py          # prints CV folds, writes
 python data_processing/verify_embargo_and_episodes.py  # optional: leakage checks on the folds
 ```
 
+> If the gitignored intermediates are missing locally, **do not rerun 01**
+> (1,200+ HTTP requests). Apply the Tier 2 change features directly:
+> `python data_processing/02b_build_onchain_features.py --update-master`
+
 ### Overview
 
 - **One row = one coin-hour.**
-- **345,367 rows × 32 columns.**
+- **345,367 rows × 44 columns** (32 base columns + 12 on-chain change features).
 - **Coins:** USDT, USDC, BUSD, DAI, TUSD, PAX. Sep 2018 – Dec 2025; BUSD ends Feb 2024.
 - **Coverage:** price, trading volume and on-chain data are present for ~93–100% of hours for every coin.
 
@@ -232,7 +239,7 @@ python data_processing/verify_embargo_and_episodes.py  # optional: leakage check
 | Keys | `coin`, `hour` (UTC) | — |
 | Raw market data | `price`, `venue`, `venue_switch_x`, `hours_since_venue_start` | 01 |
 | Market features | `peg_deviation`, `peg_deviation_bps`, `return_1h/6h/24h`, `log_return_1h/6h/24h`, `realised_vol_6h/24h`, `trading_volume`, `volume_pct_change_1h/6h/24h`, `venue_switch_y` | 02a |
-| On-chain data | `tx_count`, `tx_volume`, `active_senders`, `active_receivers` | 02b |
+| On-chain data | `tx_count`, `tx_volume`, `active_senders`, `active_receivers`, plus `{metric}_logdiff_{1h,6h,24h}` change features | 02b |
 | Depeg flags | `is_stablecoin`, `outside_band`, `episode_id`, `in_episode` | 03 |
 | **Targets** | `label_h1`, `label_h6`, `label_h24` | 03 |
 
@@ -299,7 +306,7 @@ Settings: `OOS_START_YEAR`, `OOS_END_YEAR`, `PURGE_HOURS`, `EMBARGO_HOURS` in `c
 
 - `venue_switch` appears twice (`venue_switch_x` / `venue_switch_y`) with the same values.
 - No trade-count or taker-buy features: Bitfinex (USDT, DAI) doesn't report them, so they'd be 100% NaN for those coins and a pooled tree model would learn the missingness as a coin identifier. Dropped in 02a/03.
-- On-chain columns are raw hourly counts; no on-chain change features yet. Their levels differ by orders of magnitude between coins, so they act as coin identifiers (see [Modelling](#modelling-modelling)).
+- On-chain **raw levels** are kept in `master.parquet` for reference only; the Tier 2 model uses the 12 `*_logdiff_*` change features instead, because levels differ by orders of magnitude between coins and would act as coin identifiers (see [Modelling](#modelling-modelling)).
 - 2024 and 2025 each contain a single TUSD episode, so evaluate on the pooled out-of-sample predictions rather than per year.
 
 ## Modelling (`modelling/`)
@@ -329,15 +336,19 @@ differ by orders of magnitude between coins and would act as coin identifiers.
 | Tier | Features |
 |---|---|
 | 1 — market only | `peg_deviation`, `log_return_1h/6h/24h`, `realised_vol_6h/24h`, `volume_pct_change_1h/6h/24h` |
-| 2 — market + on-chain | Tier 1 + `tx_count`, `tx_volume`, `active_senders`, `active_receivers` |
+| 2 — market + on-chain | Tier 1 + `{metric}_logdiff_{1h,6h,24h}` for `tx_count`, `tx_volume`, `active_senders`, `active_receivers` (12 columns) |
 
-> **Tier 2 is not ready:** the on-chain columns are raw levels (median
-> `tx_count` PAX ~12 vs USDT ~5,400). Replace them with 1h/6h/24h change
-> features in `02b` before using Tier 2 results.
+Tier 2 uses **change** features (log1p differences over true calendar hours),
+not raw on-chain levels. If `prepare_data.py` reports them missing from
+`master.parquet`, apply the patch:
 
-Missing feature values stay NaN (volume changes ~11%, on-chain ~3%). XGBoost
-handles NaN natively; for Lasso and Random Forest, impute inside the model
-code, fitted on the training set only.
+```bash
+python data_processing/02b_build_onchain_features.py --update-master
+```
+
+Missing feature values stay NaN (volume changes ~11%, on-chain changes ~5%).
+XGBoost handles NaN natively; for Lasso and Random Forest, impute inside the
+model code, fitted on the training set only.
 
 **Usage** (from the repo root):
 
