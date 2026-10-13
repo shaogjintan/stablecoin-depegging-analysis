@@ -35,7 +35,7 @@ class XGBModel(BaseModel):
         for lr in (0.03, 0.1)
         for d in (3, 5)
         for m in (1, 5)
-        for s in ("auto", 10, 100)
+        for s in ("auto", 10, 100, 500)  # 500 added for the recall-first rework
     ]
 
     def __init__(self, learning_rate: float = 0.1, max_depth: int = 5,
