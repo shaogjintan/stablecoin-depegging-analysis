@@ -182,7 +182,8 @@ def main(argv=None) -> int:
             tune_log_all.append({"year": year, "tune_metric": args.tune_metric,
                                  "combos": tune_log})
             if best_iter is not None:  # early-stopping model: refit without eval set
-                best_combo = {**best_combo, "n_estimators": int(best_iter)}
+                # best_iteration is 0-based; a 0-tree model predicts constants
+                best_combo = {**best_combo, "n_estimators": max(int(best_iter) + 1, 1)}
                 refit_val, refit_yval = None, None
             else:
                 refit_val, refit_yval = X_val, y_val
