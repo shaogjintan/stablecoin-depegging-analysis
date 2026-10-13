@@ -142,6 +142,18 @@ def build_labels(df: pd.DataFrame, episodes: pd.DataFrame) -> pd.DataFrame:
 
     return df
 
+def flag_common_sample(
+    df: pd.DataFrame,
+    market_features: list,
+    onchain_features: list
+) -> pd.DataFrame:
+    df = df.copy()
+    required_features = market_features + onchain_features
+    missing = [col for col in required_features if col not in df.columns]
+    if missing:
+        raise ValueError(f"Missing required features: {missing}")
+    df["common_sample"] = (df["is_stablecoin"] & df[required_features].notna().all(axis=1))
+    return df
 
 def main():
     price = pd.read_parquet(PROCESSED_DATA_DIR / "hourly_stablecoin.parquet")
@@ -153,6 +165,16 @@ def main():
     merged = flag_episodes(merged)
     episodes = build_episode_table(merged)
     merged = build_labels(merged, episodes)
+    market_features = ["peg_deviation","peg_deviation_bps","return_1h","log_return_1h","return_6h","log_return_6h","return_24h","log_return_24h","realised_vol_6h","realised_vol_24h","trading_volume","volume_pct_change_1h","volume_pct_change_6h","volume_pct_change_24h"]
+    onchain_metrics = ["tx_count","tx_volume","active_senders","active_receivers"]
+    onchain_lags = [1, 6, 24]
+    onchain_features = [f"{metric}_logdiff_{lag}h" for metric in onchain_metrics for lag in onchain_lags]
+
+    merged = flag_common_sample(merged,market_features,onchain_features)
+    coverage = (merged.groupby("coin").agg(total_hours=("hour", "size"),common_hours=("common_sample", "sum")))
+    coverage["retained_pct"] = (100 * coverage["common_hours"] / coverage["total_hours"])
+    print("\nCOMMON SAMPLE COVERAGE")
+    print(coverage.round(2).to_string())
 
     merged.to_parquet(PROCESSED_DATA_DIR / "master.parquet", index=False)
     merged.to_csv(PROCESSED_DATA_DIR / "master.csv", index=False)
@@ -162,7 +184,6 @@ def main():
     print(f"Master dataset: {len(merged):,} coin-hour rows")
     print(f"Depeg episodes found: {len(episodes)}")
     print(episodes)
-
 
 if __name__ == "__main__":
     main()
