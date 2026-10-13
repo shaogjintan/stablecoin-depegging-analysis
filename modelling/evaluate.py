@@ -68,31 +68,101 @@ def pooled_metrics(y_true, y_score) -> dict:
     return out
 
 
-def select_threshold(y_inner, p_inner, criterion: str = "f1") -> dict:
-    """Pick the decision threshold on inner-val predictions (default: best F1).
+def alarm_sweep(y_true, y_score) -> pd.DataFrame:
+    """Exact sweep over every distinct score (descending): alarms fired,
+    true positives, hour-level recall and alarm rate at each threshold.
 
-    Alyssa extends this hook with the full threshold-sweep / PR-curve
-    analysis. Thresholds must be tuned on inner_val only -- never on test.
+    This is the backbone of the recall-first evaluation: it lets us pick the
+    operating point (recall vs alarm rate) instead of a single precision/
+    recall balance."""
+    yt, ys = _valid(y_true, y_score)
+    n = len(ys)
+    n_pos = int(yt.sum())
+    cols = ["threshold", "n_alarms", "tp", "recall", "alarm_rate"]
+    if n == 0 or n_pos == 0:
+        return pd.DataFrame(columns=cols)
+    order = np.argsort(-ys, kind="stable")
+    y_sorted = yt[order]
+    s_sorted = ys[order]
+    cum_tp = np.cumsum(y_sorted)
+    change = np.concatenate([[True], s_sorted[1:] != s_sorted[:-1]])
+    idx = np.where(change)[0]          # first occurrence of each distinct score
+    ends = np.concatenate([idx[1:], [n]])  # exclusive end of each score block
+    return pd.DataFrame({
+        "threshold": s_sorted[idx],
+        "n_alarms": ends,
+        "tp": cum_tp[ends - 1],
+        "recall": cum_tp[ends - 1] / n_pos,
+        "alarm_rate": ends / n,
+    })
+
+
+def select_threshold(y_inner, p_inner, criterion: str = "f1",
+                     target_recall: float = 0.9,
+                     max_alarm_rate: float | None = None,
+                     beta: float = 5) -> dict:
+    """Pick the decision threshold on inner-val predictions.
+
+    Criteria (the recall-first ones are for the early-warning rework):
+      - "f1":                  best F1 (original behaviour)
+      - "f_beta":              best F-beta (beta weights recall beta^2 times
+                               precision; beta=5 => "miss nothing" leaning)
+      - "recall_at_alarm_rate": maximize hour-level recall subject to
+                               alarm_rate <= max_alarm_rate (requires
+                               max_alarm_rate)
+      - "rate_at_recall":      minimize alarm rate subject to
+                               recall >= target_recall
+    Thresholds must be tuned on inner_val only -- never on test.
     """
     yt, ys = _valid(y_inner, p_inner)
-    out = {"threshold": float("nan"), "f1": float("nan"),
-           "precision": float("nan"), "recall": float("nan"),
-           "n": len(yt), "n_pos": int(yt.sum())}
-    if len(yt) == 0 or yt.sum() == 0:
+    n, n_pos = len(yt), int(yt.sum())
+    out = {"threshold": float("nan"), "n": n, "n_pos": n_pos,
+           "recall": float("nan"), "alarm_rate": float("nan"),
+           "f1": float("nan"), "precision": float("nan")}
+    if n == 0 or n_pos == 0:
         return out
-    precision, recall, thresholds = precision_recall_curve(yt, ys)
-    eps = np.finfo(float).eps
-    f1 = 2 * precision * recall / (precision + recall + eps)  # len = len(thresholds) + 1
+
     if criterion == "f1":
+        precision, recall, thresholds = precision_recall_curve(yt, ys)
+        eps = np.finfo(float).eps
+        f1 = 2 * precision * recall / (precision + recall + eps)
         i = int(np.nanargmax(f1[:-1]))
+        out.update(threshold=float(thresholds[i]), f1=float(f1[i]),
+                   precision=float(precision[i]), recall=float(recall[i]))
+        return out
+
+    if criterion == "f_beta":
+        precision, recall, thresholds = precision_recall_curve(yt, ys)
+        eps = np.finfo(float).eps
+        fb = (1 + beta**2) * precision * recall / (beta**2 * precision + recall + eps)
+        i = int(np.nanargmax(fb[:-1]))
+        out.update(threshold=float(thresholds[i]), f1=float("nan"),
+                   precision=float(precision[i]), recall=float(recall[i]))
+        return out
+
+    sweep = alarm_sweep(yt, ys)
+    if criterion == "recall_at_alarm_rate":
+        if max_alarm_rate is None:
+            raise ValueError("recall_at_alarm_rate requires max_alarm_rate")
+        feasible = sweep[sweep["alarm_rate"] <= max_alarm_rate]
+        if feasible.empty:  # even the top score exceeds the budget -> alarm on it anyway
+            row = sweep.iloc[0]
+        else:
+            row = feasible.iloc[feasible["recall"].argmax()]
+    elif criterion == "rate_at_recall":
+        feasible = sweep[sweep["recall"] >= target_recall]
+        if feasible.empty:  # can't hit the target -> the top-score row
+            row = sweep.iloc[0]
+        else:
+            row = feasible.iloc[feasible["alarm_rate"].argmin()]
     else:
-        raise ValueError(f"Unknown criterion '{criterion}' (only 'f1' implemented)")
-    out.update(
-        threshold=float(thresholds[i]),
-        f1=float(f1[i]),
-        precision=float(precision[i]),
-        recall=float(recall[i]),
-    )
+        raise ValueError(
+            f"Unknown criterion '{criterion}' "
+            "(f1, f_beta, recall_at_alarm_rate, rate_at_recall)")
+    out.update(threshold=float(row["threshold"]),
+               recall=float(row["recall"]),
+               alarm_rate=float(row["alarm_rate"]),
+               tp=int(row["tp"]), n_alarms=int(row["n_alarms"]))
     return out
 
 
@@ -180,6 +250,77 @@ def per_episode_table(preds: pd.DataFrame,
     return df
 
 
+def episode_alarm_table(preds: pd.DataFrame, episodes: pd.DataFrame,
+                        threshold: float) -> pd.DataFrame:
+    """Per-episode alarm verdict at one threshold: caught (the episode's
+    strongest onset-hour score >= threshold), the catch lead time, and the
+    score. 'Caught' is the early-warning headline: an episode is missed only
+    if NO hour that predicts it was alarmed."""
+    per_ep = per_episode_table(preds, episodes)
+    per_ep["caught"] = per_ep["y_score"] >= threshold
+    per_ep["alarm_lead_hours"] = per_ep["lead_hours"].where(per_ep["caught"])
+    return per_ep
+
+
+def episode_recall_curve(preds: pd.DataFrame, episodes: pd.DataFrame) -> pd.DataFrame:
+    """Recall-first operating curve: for every hourly threshold, the hourly
+    alarm rate (fraction of OOS hours alarmed) vs episode-level recall
+    (fraction of OOS depeg episodes with at least one alarmed onset hour)."""
+    per_ep = per_episode_table(preds, episodes)
+    ep_scores = np.sort(per_ep["y_score"].to_numpy(dtype=float))  # ascending
+    sweep = alarm_sweep(preds["y_true"], preds["y_score"])
+    n_ep = len(ep_scores)
+    if n_ep == 0:
+        return sweep.assign(episode_recall=0.0)
+    # count of episode scores >= threshold via searchsorted on ascending array
+    counts_ge = n_ep - np.searchsorted(ep_scores, sweep["threshold"].to_numpy(), side="left")
+    out = sweep.copy()
+    out["episode_recall"] = counts_ge / n_ep
+    return out[["threshold", "alarm_rate", "recall", "episode_recall"]]
+
+
+def operating_points(curve: pd.DataFrame,
+                     recall_targets=(0.90, 0.95, 0.99),
+                     alarm_rates=(0.005, 0.01, 0.02, 0.05)) -> dict:
+    """Summarize a recall-first curve.
+
+    Returns:
+      "recall_at_rate": DataFrame (rows = alarm-rate budgets) with the max
+          episode recall achievable at each budget and the threshold;
+      "rate_at_recall": DataFrame (rows = recall targets) with the min alarm
+          rate needed to reach each target and the threshold."""
+    recall_rows = []
+    for rate in alarm_rates:
+        feasible = curve[curve["alarm_rate"] <= rate]
+        if feasible.empty:
+            recall_rows.append({"alarm_rate": rate, "episode_recall": float("nan"),
+                                "threshold": float("nan")})
+        else:
+            r = feasible.iloc[feasible["episode_recall"].argmax()]
+            recall_rows.append({"alarm_rate": rate,
+                                "episode_recall": float(r["episode_recall"]),
+                                "threshold": float(r["threshold"])})
+    rate_rows = []
+    for target in recall_targets:
+        feasible = curve[curve["episode_recall"] >= target]
+        if feasible.empty:
+            rate_rows.append({"target_recall": target, "alarm_rate": float("nan"),
+                              "threshold": float("nan")})
+        else:
+            r = feasible.iloc[feasible["alarm_rate"].argmin()]
+            rate_rows.append({"target_recall": target,
+                              "alarm_rate": float(r["alarm_rate"]),
+                              "threshold": float(r["threshold"])})
+    return {"recall_at_rate": pd.DataFrame(recall_rows),
+            "rate_at_recall": pd.DataFrame(rate_rows)}
+
+
+def missed_episodes(alarm_table: pd.DataFrame) -> pd.DataFrame:
+    """The episodes the model missed at the chosen threshold (false negatives)."""
+    return alarm_table.loc[~alarm_table["caught"],
+                           ["episode_id", "coin", "episode_start", "y_score"]]
+
+
 def evaluate_run(preds: pd.DataFrame, tag: str,
                  out_dir: str | Path = RESULTS_DIR) -> dict:
     """Evaluate pooled OOS predictions: pooled + per-coin + per-episode tables
@@ -240,9 +381,30 @@ def _self_test() -> int:
     curve = alarm_curve(y, s_perfect, thresholds=np.array([0.5, 0.85]))
     assert curve.loc[0, "tp"] == 2 and curve.loc[1, "tp"] == 1, curve
 
+    # recall-first criteria: 4 negatives at 0.1..0.4, positives at 0.8/0.9
+    y2 = np.array([0, 0, 0, 0, 1, 1])
+    s2 = np.array([0.1, 0.2, 0.3, 0.4, 0.8, 0.9])
+    sw = alarm_sweep(y2, s2)
+    assert sw["alarm_rate"].is_monotonic_increasing, "rates rise as threshold descends"
+    # top score 0.9 is a positive -> recall starts at 0.5; lowest threshold -> 1.0
+    assert abs(sw["recall"].max() - 1.0) < 1e-12 and abs(sw["recall"].min() - 0.5) < 1e-12
+    assert abs(sw["alarm_rate"].iloc[0] - 1 / 6) < 1e-12  # only the top score alarmed
+
+    th_r = select_threshold(y2, s2, criterion="recall_at_alarm_rate", max_alarm_rate=0.5)
+    # at <=50% alarm rate: alarm the two positives only -> recall 1.0, rate 2/6
+    assert abs(th_r["recall"] - 1.0) < 1e-12 and abs(th_r["alarm_rate"] - 2 / 6) < 1e-12, th_r
+    assert th_r["threshold"] > 0.4
+
+    th_t = select_threshold(y2, s2, criterion="rate_at_recall", target_recall=1.0)
+    assert abs(th_t["recall"] - 1.0) < 1e-12 and abs(th_t["alarm_rate"] - 2 / 6) < 1e-12, th_t
+
+    th_b = select_threshold(y2, s2, criterion="f_beta", beta=5)
+    assert abs(th_b["recall"] - 1.0) < 1e-12, th_b  # beta=5 -> prefer catching both
+
     print("evaluate.py self-test: PASS "
           f"(PR-AUC perfect={m['pr_auc']}, flat={m_flat['pr_auc']}, "
-          f"threshold={th['threshold']:.3f} F1={th['f1']:.3f})")
+          f"threshold={th['threshold']:.3f} F1={th['f1']:.3f}, "
+          f"recall@rate={th_r['recall']:.2f}@{th_r['alarm_rate']:.2%})")
     return 0
 
 

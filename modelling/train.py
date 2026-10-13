@@ -34,12 +34,18 @@ import sys
 from pathlib import Path
 
 import joblib
+import numpy as np
 import pandas as pd
 
 REPO_ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(REPO_ROOT))
 
-from modelling.evaluate import evaluate_run, pooled_metrics, print_report  # noqa: E402
+from modelling.evaluate import (  # noqa: E402
+    evaluate_run,
+    pooled_metrics,
+    print_report,
+    select_threshold,
+)
 from modelling.models import get_model  # noqa: E402
 from modelling.prepare_data import load_folds  # noqa: E402
 
@@ -69,10 +75,41 @@ def _predict(model, imp, X):
     return model.predict_proba(X)[:, 1]
 
 
-def _tune_fit(get_model_fn, name, X_inner_train, y_inner_train, X_val, y_val):
+def _candidate_score(tune_metric: str, y_val, p_val, beta: float,
+                     max_alarm_rate: float | None) -> tuple[float, dict]:
+    """Score a tuning candidate on inner-val predictions.
+
+    tune_metric:
+      - "pr_auc":             pooled PR-AUC (original behaviour)
+      - "f_beta":             best F-beta over thresholds (beta weights recall
+                              beta^2 times precision)
+      - "recall_at_rate":     max hour-level recall subject to alarm rate <=
+                              max_alarm_rate (early-warning objective)
+    """
+    if tune_metric == "pr_auc":
+        return pooled_metrics(y_val, p_val)["pr_auc"], {}
+    if tune_metric == "f_beta":
+        th = select_threshold(y_val, p_val, criterion="f_beta", beta=beta)
+        p, r = th["precision"], th["recall"]
+        if np.isnan(p) or np.isnan(r) or p + r == 0:
+            return -np.inf, {}
+        fb = (1 + beta**2) * p * r / (beta**2 * p + r)
+        return float(fb), {"threshold": th["threshold"]}
+    if tune_metric == "recall_at_rate":
+        th = select_threshold(y_val, p_val, criterion="recall_at_alarm_rate",
+                              max_alarm_rate=max_alarm_rate)
+        return float(th["recall"]), {"threshold": th["threshold"],
+                                     "alarm_rate": th["alarm_rate"]}
+    raise ValueError(f"unknown tune metric '{tune_metric}'")
+
+
+def _tune_fit(get_model_fn, name, X_inner_train, y_inner_train, X_val, y_val,
+              tune_metric: str = "pr_auc", beta: float = 5,
+              max_alarm_rate: float | None = None):
     """Nested-CV tuning: grid over model.param_grid, candidates fit on the
     inner training set with early stopping on inner_val (genuinely held out),
-    selected by inner-val PR-AUC. Returns (best_combo, log, best_iteration).
+    selected by the tune metric (inner-val PR-AUC, F-beta, or recall at an
+    alarm-rate budget). Returns (best_combo, log, best_iteration).
 
     best_iteration is the winning candidate's early-stopping iteration for
     early-stopping models; the caller refits the winner on the full X_train
@@ -85,15 +122,17 @@ def _tune_fit(get_model_fn, name, X_inner_train, y_inner_train, X_val, y_val):
         cand, imp = _fit_one(get_model_fn(name, **combo),
                              X_inner_train, y_inner_train, X_val, y_val)
         p_val = _predict(cand, imp, X_val)
-        pr = pooled_metrics(y_val, p_val)["pr_auc"]
-        log.append({"params": combo, "inner_pr_auc": float(pr),
-                    "best_iteration": getattr(cand, "best_iteration_", None)})
-        if best is None or pr > best[0]:
-            best = (pr, combo)
+        score, extra = _candidate_score(tune_metric, y_val, p_val, beta,
+                                        max_alarm_rate)
+        log.append({"params": combo, f"inner_{tune_metric}": float(score),
+                    "best_iteration": getattr(cand, "best_iteration_", None),
+                    **extra})
+        if best is None or score > best[0]:
+            best = (score, combo)
             best_iter = getattr(cand, "best_iteration_", None)
-    best_pr, best_combo = best
-    print(f"    tuned: {len(log)} combos -> best inner-val PR-AUC {best_pr:.4f} "
-          f"params {best_combo} (best_iteration={best_iter})")
+    best_score, best_combo = best
+    print(f"    tuned: {len(log)} combos -> best inner-val {tune_metric} "
+          f"{best_score:.4f} params {best_combo} (best_iteration={best_iter})")
     return best_combo, log, best_iter
 
 
@@ -105,7 +144,14 @@ def main(argv=None) -> int:
     parser.add_argument("--tier", type=int, choices=[1, 2], default=1)
     parser.add_argument("--tag", default=None, help="run tag for outputs (default: auto)")
     parser.add_argument("--tune", action="store_true",
-                        help="grid-search model.param_grid on inner-val PR-AUC")
+                        help="grid-search model.param_grid on the inner-val tune metric")
+    parser.add_argument("--tune-metric", default="pr_auc",
+                        choices=["pr_auc", "f_beta", "recall_at_rate"],
+                        help="inner-val candidate scoring metric (default pr_auc)")
+    parser.add_argument("--beta", type=float, default=5,
+                        help="beta for tune-metric f_beta (recall weight)")
+    parser.add_argument("--max-alarm-rate", type=float, default=0.01,
+                        help="alarm-rate budget for tune-metric recall_at_rate")
     args = parser.parse_args(argv)
 
     tag = args.tag or f"{args.model}_t{args.tier}_h{args.horizon}"
@@ -130,8 +176,11 @@ def main(argv=None) -> int:
         if args.tune:
             best_combo, tune_log, best_iter = _tune_fit(
                 get_model, args.model,
-                fold["X_inner_train"], fold["y_inner_train"], X_val, y_val)
-            tune_log_all.append({"year": year, "combos": tune_log})
+                fold["X_inner_train"], fold["y_inner_train"], X_val, y_val,
+                tune_metric=args.tune_metric, beta=args.beta,
+                max_alarm_rate=args.max_alarm_rate if args.tune_metric == "recall_at_rate" else None)
+            tune_log_all.append({"year": year, "tune_metric": args.tune_metric,
+                                 "combos": tune_log})
             if best_iter is not None:  # early-stopping model: refit without eval set
                 best_combo = {**best_combo, "n_estimators": int(best_iter)}
                 refit_val, refit_yval = None, None
@@ -177,6 +226,9 @@ def main(argv=None) -> int:
             "year": year, "tag": tag,
             "params": model.get_params(),
             "tune": args.tune,
+            "tune_metric": args.tune_metric if args.tune else None,
+            "beta": args.beta if args.tune_metric == "f_beta" else None,
+            "max_alarm_rate": args.max_alarm_rate if args.tune_metric == "recall_at_rate" else None,
             "tune_log": tune_log_all[-1] if args.tune else None,
             "inner_val_pr_auc": float(inner_pr),
         }

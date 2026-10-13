@@ -105,9 +105,13 @@ Then **register it** in `modelling/models/__init__.py` (`MODEL_REGISTRY["my_mode
 ```bash
 python modelling/prepare_data.py                                   # data sanity check
 python modelling/train.py --model xgboost --horizon 24 --tier 1 --tag run01 --tune
+python modelling/train.py --model xgboost --horizon 24 --tier 1 --tag rec \
+       --tune --tune-metric recall_at_rate --max-alarm-rate 0.01   # recall-first tuning
 python modelling/train.py --model baseline --horizon 24 --tier 1 --tag base    # constant prior
 python modelling/train.py --model persistence --horizon 24 --tier 1 --tag pers # peg-stress baseline
-python modelling/compare_runs.py [--save reports/modelling_comparison.csv]
+python modelling/compare_runs.py [--save reports/modelling_comparison.csv]    # PR-AUC table (secondary)
+python modelling/alarm_report.py --save reports/recall_operating_points.csv \
+       --alarm-tables                                               # recall-first table (HEADLINE)
 python modelling/shap_analysis.py --model xgboost --horizon 24 --tier 2
 python modelling/evaluate.py                                       # self-test
 python modelling/checks/test_tier2_features.py                     # leakage probe
@@ -115,13 +119,46 @@ python modelling/checks/test_tier2_features.py                     # leakage pro
 python data_processing/02b_build_onchain_features.py --update-master
 ```
 
-Outputs: per-fold predictions → `results/predictions/`, models + params JSON → `results/models/`, pooled OOS report + alarm curve → `results/evaluation/`, SHAP figures → `reports/figures/`.
+Outputs: per-fold predictions → `results/predictions/`, models + params JSON → `results/models/`, pooled OOS report + alarm curve → `results/evaluation/`, SHAP figures → `reports/figures/`, recall-first operating table → `reports/recall_operating_points.csv`, per-episode caught/missed tables → `reports/alarm_tables/`.
 
 ---
 
 ## 7. Findings so far (build on these — don't redo the work)
 
-**Pooled OOS PR-AUC** (tuned 24-combo grid × 5 folds; full table in `reports/modelling_comparison.csv`):
+**Headline objective (group decision 2026-10-13): early-warning — catch every
+depeg episode (minimize false negatives / missed depegs), false alarms are
+acceptable.** The headline metric is therefore **episode-level recall vs the
+hourly alarm rate** (`modelling/alarm_report.py` →
+`reports/recall_operating_points.csv`). Pooled PR-AUC is kept only as a
+secondary ranking number.
+
+**Episode recall at a 1% alarm-rate budget** (49 OOS episodes, pooled 2021–25):
+
+| Model | h=1 | h=6 | h=24 |
+|---|---|---|---|
+| Constant prior | — | — | — |
+| Persistence (−peg_deviation) | 0.27 | 0.53 | **0.82** |
+| XGBoost recall-tuned Tier 1 | 0.14 | 0.16 | 0.39 |
+| XGBoost recall-tuned Tier 2 | 0.14 | 0.22 | 0.41 |
+
+Alarm rate needed for 90% episode recall: persistence h=24 needs **2.4%**;
+XGBoost Tier 2 h=24 (recall-tuned) needs **23.8%** (down from 71.7% for the
+old PR-AUC-tuned model — the recall objective helped a lot).
+
+- Peg-stress persistence is the strongest single early-warning signal at h=6/24.
+- Recall-tuning improved XGBoost up to ~19x at h=24 (tier 1: 2% -> 39% @ 1% rate);
+  it is a credible complement, not yet a replacement for persistence.
+- At h=1 no model is strong (49 events; catching >90% costs ~80-90% alarm rate).
+- **OR-combination tested** (`modelling/combine_alarms.py` →
+  `reports/combination_results.csv`): unioning persistence + XGBoost alarms
+  at a shared budget helps only marginally — +1 episode at h=24 (2% budget:
+  0.8367 vs 0.8163) and +1–2 episodes at h=6; at the 1% budget XGBoost adds
+  nothing. Persistence already catches most of what XGBoost catches at low
+  rates, so the simple peg-stress rule remains the recommended headline alarm;
+  XGBoost is a small add-on at 2–5% budgets (and relatively more useful at h=1,
+  +0.10 at 5%).
+
+**Pooled OOS PR-AUC** (secondary; full table in `reports/modelling_comparison.csv`):
 
 | Model | h=1 | h=6 | h=24 |
 |---|---|---|---|
@@ -130,10 +167,16 @@ Outputs: per-fold predictions → `results/predictions/`, models + params JSON �
 | XGBoost Tier 1 | 0.0017 | **0.0124** | 0.0093 |
 | XGBoost Tier 2 | 0.0011 | 0.0037 | 0.0102 |
 
-- XGBoost **beats both baselines at h=6**; at h=24 the naive peg-stress persistence wins. h=1 is noise (49 pooled positives).
-- **Tier 2 − Tier 1 ≈ 0** (h=24 +0.0009, h=6 −0.0087): on-chain change features do not clearly improve pooled PR-AUC.
-- **SHAP** (pooled OOS, h=6/24): `realised_vol_24h` is 33–45% of |SHAP|, then `peg_deviation`, `realised_vol_6h`, volume changes — matches the literature. **On-chain share: 6.1% (h=24), 7.0% (h=6)**; top on-chain: `tx_volume_logdiff_24h`, `active_receivers_logdiff_24h`, `active_senders_logdiff_24h`.
-- **Brier caution:** `scale_pos_weight` inflates XGBoost probabilities (Brier 0.08–0.11 vs 0.005 baselines). Compare models on PR-AUC / ROC-AUC (ranking metrics), not Brier, unless probabilities are recalibrated.
+- XGBoost beats both baselines at h=6 on PR-AUC; at h=24 persistence wins.
+- **Tier 2 − Tier 1 ≈ 0** on PR-AUC; on-chain change features do not clearly
+  improve the ranking metric (see SHAP below).
+- **SHAP** (pooled OOS, h=6/24): `realised_vol_24h` is 33–45% of |SHAP|, then
+  `peg_deviation`, `realised_vol_6h`, volume changes — matches the literature.
+  **On-chain share: 6.1% (h=24), 7.0% (h=6)**; top on-chain:
+  `tx_volume_logdiff_24h`, `active_receivers_logdiff_24h`, `active_senders_logdiff_24h`.
+- **Brier caution:** `scale_pos_weight` inflates XGBoost probabilities. Compare
+  models on PR-AUC / ROC-AUC or the recall-first curve, not Brier, unless
+  probabilities are recalibrated.
 
 ---
 
@@ -147,6 +190,8 @@ Outputs: per-fold predictions → `results/predictions/`, models + params JSON �
 6. **2024 and 2025 test sets have ~6 positives each** — always evaluate on pooled OOS predictions, never per-year.
 7. **Git/GitHub:** `sasssyboujee/DSE4101-Topic-2-Project` is *not* a registered fork — push feature branches **directly to `shaogjintan/stablecoin-depegging-analysis`** and open PRs there.
 8. **Large file:** `master.parquet` (68 MB) is committed to git despite GitHub's 50 MB recommendation — keep committing it (the team's convention); don't add LFS mid-project.
+9. **Recall-first terminology:** we minimize **false negatives** (missed depegs) and accept false positives (false alarms). "True negatives" are correct non-alarms — do NOT reduce those. Headline = episode-level recall vs alarm rate; PR-AUC is secondary.
+10. **Thresholds are tuned on inner_val only** (`select_threshold` in evaluate.py), then applied to OOS test. Never tune the threshold on test rows.
 
 ---
 
@@ -154,16 +199,19 @@ Outputs: per-fold predictions → `results/predictions/`, models + params JSON �
 
 | Member | Assignment | Status |
 |---|---|---|
-| Sasi | Tier 2 features, orchestrator, XGBoost, SHAP | ✅ done (PRs #3–#6) |
-| Javier | L1 logistic regression → register `"logistic"` | ⬜ implement |
-| Russell | Random forest → register `"random_forest"` | ⬜ implement |
-| Alyssa | Threshold sweep / PR curves → extend `evaluate.py::select_threshold` | ⬜ extend |
-| Vienna | Robustness: `--horizon 1/6`, `load_folds(recovery_hours=0)` | ⬜ run |
+| Sasi | Tier 2 features, orchestrator, XGBoost, SHAP, recall-first rework | ✅ done (PRs #3–#7) |
+| Javier | L1 logistic regression → register `"logistic"` (tune with `--tune-metric recall_at_rate`) | ⬜ implement |
+| Russell | Random forest → register `"random_forest"` (same) | ⬜ implement |
+| Alyssa | Threshold sweep / PR curves → `evaluate.py::select_threshold` now has f1/f_beta/recall@rate/rate@recall | ✅ hooks ready |
+| Vienna | Robustness: `--horizon 1/6`, `load_folds(recovery_hours=0)` | ✅ verified running |
 | Shao Gjin | PR review, governance, final slide packaging | ⬜ review |
 
-**Remaining integration (Phase 6):** pooled Tier 1 vs Tier 2 table including Javier's and Russell's rows; confirm Vienna's knobs run through `train.py`; update README/`agent.md` with final results.
+**Remaining integration (Phase 6):** run Javier's and Russell's models through
+`train.py` with the recall objective and add their rows to
+`reports/recall_operating_points.csv`; optionally test the OR-combination of
+persistence + XGBoost alarms; final README/`agent.md` polish.
 
-**PR merge order:** #2 (docs) anytime → #3 (Tier 2) → #4 (infra) → #5 (XGBoost) → #6 (SHAP). Each branch builds on the previous one.
+**PR merge order:** #2–#6 merged → #7 (recall-first rework) next. #7 builds on main.
 
 ---
 
