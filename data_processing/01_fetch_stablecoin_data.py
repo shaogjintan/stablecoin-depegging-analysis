@@ -249,18 +249,23 @@ def fetch_binance_month(symbol: str, month: str) -> pd.DataFrame | None:
         return None
     with zipfile.ZipFile(io.BytesIO(r.content)) as z:
         raw = z.read(z.namelist()[0]).decode("utf-8")
-    df = pd.read_csv(io.StringIO(raw), header=None, names=BINANCE_KLINE_COLS)
+    # Keep only the fields needed downstream. The archive contains many
+    # columns we never use (for example trades / taker-buy volumes), and
+    # materialising them just adds noise and unnecessary storage.
+    df = pd.read_csv(
+        io.StringIO(raw),
+        header=None,
+        usecols=[0, 5],
+        names=["open_time", "volume"],
+    )
     # Binance switched kline archives from millisecond to microsecond open_time
     # from Jan 2025 onward (13-digit vs 16-digit). Parsing 2025+ as ms silently
     # overflows to the year 57385, which then gets dropped by the date-range
     # filter downstream with no error -- detect the unit from the magnitude.
     unit = "us" if df["open_time"].iloc[0] > 10**14 else "ms"
     df["hour"] = pd.to_datetime(df["open_time"], unit=unit, utc=True).dt.floor("h")
-    for c in ["open", "high", "low", "close", "volume", "quote_volume", "taker_buy_base_volume"]:
-        df[c] = df[c].astype(float)
-    df["trades"] = df["trades"].astype(int)
-    return df[["hour", "open", "high", "low", "close", "volume", "quote_volume",
-               "trades", "taker_buy_base_volume"]]
+    df["volume"] = df["volume"].astype(float)
+    return df[["hour", "volume"]]
 
 
 def fetch_binance_range(symbol: str, start_s: str, end_s: str) -> pd.DataFrame:
@@ -467,10 +472,7 @@ def main():
           f"{price_only:,} price-only hours have no exchange coverage "
           f"({volume_unmatched:,} exchange rows fell outside price's coverage and were dropped)")
 
-    for c in ["volume", "trades", "taker_buy_base_volume"]:
-        if c not in out.columns:
-            out[c] = pd.NA
-    out = out[["coin", "hour", "price", "volume", "trades", "taker_buy_base_volume",
+    out = out[["coin", "hour", "price", "volume",
                "venue", "venue_switch", "hours_since_venue_start"]]
     out.to_parquet(OUT_PATH, index=False)
     print(f"\nSaved {len(out):,} rows -> {OUT_PATH}")

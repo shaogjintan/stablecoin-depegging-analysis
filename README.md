@@ -69,8 +69,6 @@ observed price (past information only, no look-ahead); longer gaps stay missing.
 | `hour` | Hour timestamp (UTC) |
 | `price` | USD price (DefiLlama) |
 | `volume` | Exchange trading volume for the hour; 0 if no trades, NaN before the exchange's data starts |
-| `trades` | Number of trades (Binance only; NaN for Bitfinex coins). **Dropped in 03**, not used as a feature |
-| `taker_buy_base_volume` | Volume where the buyer was the taker (Binance only; NaN for Bitfinex coins). **Dropped in 03**, not used as a feature |
 | `venue` | Source exchange for the volume (`binance` / `bitfinex`); NaN if no exchange coverage |
 | `venue_switch` | True on the first row of each new venue segment |
 | `hours_since_venue_start` | Hours since the current venue segment began, so rolling volume changes can skip a data-source switch |

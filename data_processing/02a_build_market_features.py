@@ -19,7 +19,7 @@ No trade-count or taker-buy features: Bitfinex (the source for USDT and DAI)
 doesn't report either, so they'd be NaN for 100% of those two coins' rows. A
 pooled tree model would learn that missingness pattern as a coin identifier
 rather than a market signal, so trades_pct_change_1h and taker_buy_ratio are
-not built. (01 still downloads the raw columns; 03 drops them from master.)
+not built. 
 """
 import numpy as np
 import pandas as pd
@@ -86,7 +86,7 @@ def build_exchange_features(df: pd.DataFrame) -> pd.DataFrame:
     df = df.rename(columns={"volume": "trading_volume"})
     return df[["coin", "hour", "trading_volume",
                "volume_pct_change_1h", "volume_pct_change_6h", "volume_pct_change_24h",
-               "venue", "venue_switch"]]
+               "venue"]]
 
 
 def main():

@@ -8,38 +8,34 @@ plus `test_meta` (coin, hour, episode_id) so pooled OOS predictions can be
 traced back to coins and dates.
 
 Folds come from data_processing/splits.py (24h purge, 24h embargo,
-boundary-straddling episodes dropped). This module only selects the at-risk
-sample and the feature columns -- it doesn't change master.parquet.
+boundary-straddling episodes dropped). This module only selects the sample
+and the feature columns -- it doesn't change master.parquet.
 
-AT-RISK SAMPLE (the risk set)
-The label is the ONSET of a NEW depeg episode. A coin can only start a new
-episode while it is on peg, so an hour is at risk only if:
-  1. it is not inside an ongoing episode (in_episode == False), and
-  2. it is not in the recovery window: the RECOVERY_HOURS after an episode's
-     last below-band hour. Recovery = 24h back above $0.99 (DEPEG_GAP_HOURS;
-     slide 10), since any dip within that window is merged into the same
-     episode and can't be a new onset. The coin re-enters the risk set only
-     once it has recovered.
-  3. it has a label (label_h{h} not NaN: has a price and isn't right-censored).
-Rows outside the risk set are dropped from every set (train, test, inner).
-Set RECOVERY_HOURS = 0 to keep recovery-window hours (robustness check).
+SAMPLE (team convention since PR #11, 2026-10-14)
+The canonical sample is `prediction_eligible_h{h} == True` from
+master.parquet: rows with complete features (common_sample), an above-band
+price, not inside an episode (in_episode covers the recovery window since
+PR #11), and an observed label_h{h} (not right-censored). load_folds() uses
+it automatically and falls back to the legacy at-risk mask (at_risk_mask)
+on older masters.
 
 FEATURES
 Only changes, ratios and deviations -- no raw levels. Raw trading volume and
 on-chain counts differ by orders of magnitude between coins (e.g. median
 hourly volume DAI ~70 vs BUSD ~10M), so a pooled tree model would learn
 the level as a coin identifier rather than a market signal.
+Tier 1 also includes `peg_stress = clip(-peg_deviation, 0, 0.01)`, a derived
+one-split "stressed regime" feature computed here (pipeline untouched).
 Tier 2 adds the 12 on-chain log1p-difference change features built in
-02b_build_onchain_features.py (see ONCHAIN_FEATURES below); apply them to
-master.parquet with `python data_processing/02b_build_onchain_features.py
---update-master`.
+02b_build_onchain_features.py (see ONCHAIN_FEATURES below).
 Not used as features: coin, hour, price (= peg_deviation + 1), duplicate
 scalings (peg_deviation_bps, simple returns), venue metadata, depeg flags,
 episode IDs and labels.
 
 Missing feature values are left as NaN. XGBoost handles NaN natively; for
 Lasso / Random Forest, impute inside the modelling code, fitted on the
-training set only.
+training set only. Note: the eligible sample already excludes rows with
+missing features, so NaNs are rare inside folds.
 
 Usage (run from the repo root):
     from modelling.prepare_data import load_folds
@@ -64,6 +60,7 @@ RECOVERY_HOURS = DEPEG_GAP_HOURS  # 24h
 # Tier 1: market only (Lee et al. 2025 style)
 MARKET_FEATURES = [
     "peg_deviation",
+    "peg_stress",  # clip(-peg_deviation, 0, 0.01): one-split "stressed" regime
     "log_return_1h", "log_return_6h", "log_return_24h",
     "realised_vol_6h", "realised_vol_24h",
     "volume_pct_change_1h", "volume_pct_change_6h", "volume_pct_change_24h",
@@ -101,12 +98,27 @@ def recovery_window_mask(df: pd.DataFrame, episodes: pd.DataFrame,
 
 def at_risk_mask(df: pd.DataFrame, episodes: pd.DataFrame, horizon: int,
                  recovery_hours: int = RECOVERY_HOURS) -> pd.Series:
-    """Rows in the risk set for horizon h (see module docstring)."""
+    """Rows in the risk set for horizon h (see module docstring).
+
+    Legacy sample. Since PR #11 (2026-10-14) the canonical sample is
+    prediction_eligible_h{h} from master.parquet: feature-complete rows
+    (common_sample), above-band price, not in an episode, with an observed
+    label. load_folds() uses that automatically; this remains for
+    robustness checks."""
     return (
         ~df["in_episode"]
         & ~recovery_window_mask(df, episodes, recovery_hours)
         & df[f"label_h{horizon}"].notna()
     )
+
+
+def prediction_eligible_mask(df: pd.DataFrame, horizon: int) -> pd.Series | None:
+    """The canonical training/evaluation sample flag (team convention, PR #11),
+    or None when the column is absent (older master versions)."""
+    col = f"prediction_eligible_h{horizon}"
+    if col in df.columns:
+        return df[col].astype(bool)
+    return None
 
 
 def _xy(part: pd.DataFrame, features: list[str], horizon: int):
@@ -123,13 +135,17 @@ def load_folds(horizon: int = 24, tier: int = 1,
     features = TIERS[tier]
 
     master, episodes = load_master()
+    master = master.copy()
+    master["peg_stress"] = np.clip(-master["peg_deviation"], 0.0, 0.01)
     missing = [c for c in features if c not in master.columns]
     if missing:
         raise KeyError(
             f"Tier {tier} features missing from master.parquet: {missing}. "
             "Run: python data_processing/02b_build_onchain_features.py --update-master"
         )
-    keep = at_risk_mask(master, episodes, horizon, recovery_hours)
+    keep = prediction_eligible_mask(master, horizon)
+    if keep is None:  # pre-PR-#11 master: fall back to the legacy risk set
+        keep = at_risk_mask(master, episodes, horizon, recovery_hours)
     master = master[keep]
 
     out = []
@@ -145,15 +161,16 @@ def load_folds(horizon: int = 24, tier: int = 1,
 
 def main():
     master, episodes = load_master()
+    master = master.copy()
+    master["peg_stress"] = np.clip(-master["peg_deviation"], 0.0, 0.01)
     n = len(master)
     in_ep = master["in_episode"]
-    recov = recovery_window_mask(master, episodes)
     print(f"master: {n:,} rows | in episode: {in_ep.sum():,} | "
-          f"recovery window ({RECOVERY_HOURS}h): {recov.sum():,}")
+          f"prediction_eligible: {int(master['prediction_eligible'].sum()):,}")
 
     for h in FORECAST_HORIZONS_HOURS:
-        keep = at_risk_mask(master, episodes, h)
-        print(f"\n=== h = {h}: at-risk rows {keep.sum():,} of {n:,} "
+        keep = prediction_eligible_mask(master, h)
+        print(f"\n=== h = {h}: eligible rows {keep.sum():,} of {n:,} "
               f"({keep.mean():.1%}), positives {int(master.loc[keep, f'label_h{h}'].sum()):,} ===")
         for f in load_folds(horizon=h, tier=1):
             yt, ys = f["y_train"], f["y_test"]
@@ -161,8 +178,8 @@ def main():
                   f"test {len(ys):>6,} rows / {ys.sum():>4,} pos | "
                   f"inner_val {len(f['y_inner_val']):>6,} rows / {f['y_inner_val'].sum():>4,} pos")
 
-    print("\nPer-feature NaN share in at-risk rows (h=24, tier 2):")
-    keep = at_risk_mask(master, episodes, 24)
+    print("\nPer-feature NaN share in eligible rows (h=24, tier 2):")
+    keep = prediction_eligible_mask(master, 24)
     print(master.loc[keep, TIERS[2]].isna().mean().round(3).to_string())
 
 
