@@ -1,23 +1,26 @@
-"""
-Merge hourly price & volume data + market features + on-chain features, 
-define depeg episodes explicitly
-and build forecasting labels for each horizon h.
+"""Merge hourly sources, identify depeg episodes, and build forecast labels.
 
-Definitions (edit in config.py, not here):
-  - One observation = one coin-hour.
-  - "Depegged" hour: price < 0.99 
-    Downward only -- trading above the peg is not counted as a depeg.
-  - "Depeg episode": starts with >= DEPEG_MIN_DURATION_HOURS (default: 2)
-    consecutive depegged hours. After that, any dip (of any length) within
-    DEPEG_GAP_HOURS (default: 24) of the episode's last depegged hour is
-    bridged into it, so same-coin episodes are always separated by more than
-    DEPEG_GAP_HOURS above the band. Bridged gap hours belong to the episode
-    (excluded from labels) but don't count towards n_hours, which is hours
-    spent below the band.
-  - Label for horizon h, at a NORMAL (non-depegged) hour t: 1 if a new
-    depeg episode starts anywhere in (t, t+h], else 0. Hours already inside
-    an ongoing episode, hours with no price, and hours whose look-ahead runs
-    past the coin's last observation get NaN.
+Definitions (thresholds and horizons are configured in config.py):
+  - One observation is one coin-hour. A downward depeg hour has price below
+    1 - DEPEG_BAND; above-peg prices do not count as depegs.
+  - An episode begins with at least DEPEG_MIN_DURATION_HOURS consecutive
+    below-band hours. Its recovery window starts at the first above-band hour
+    after the last qualifying dip and lasts DEPEG_GAP_HOURS hours. A qualifying
+    dip beginning during recovery joins the episode and restarts the clock.
+    Short dips do not reset it. Recovery hours, including missing-price hours,
+    belong to the episode but are not counted in n_hours. The episode table's
+    end is the end of this recovery window (or the dataset boundary).
+  - At an above-band hour t outside an episode, label_h{h} is 1 if an episode
+    starts in (t, t+h], or 0 if no onset occurs and the outcome window is
+    observed. A known onset makes the label 1 even if a later price is missing.
+    Without a known onset, an unclassified missing future price makes it NaN.
+    Below-band hours, episode hours, missing current prices, and horizons past
+    the coin's final observation have NaN labels.
+  - prediction_eligible marks forecast origins with complete common-sample
+    features, a known above-band price, and no active episode/recovery window.
+    prediction_eligible_h{h} additionally requires label_h{h} to be observed,
+    so it is intended for horizon-specific training/evaluation samples. Live
+    prediction eligibility should not depend on future label availability.
 
 Train/test splitting and the embargo flag live in 05_split_train_test.py.
 """
@@ -40,58 +43,71 @@ def build_full_hourly_grid(pv: pd.DataFrame) -> pd.DataFrame:
 
 
 def merge_sources(pv: pd.DataFrame, onchain: pd.DataFrame, market: pd.DataFrame) -> pd.DataFrame:
+    keys = ["coin", "hour"]
+    for name, source in [("price/volume", pv), ("on-chain", onchain), ("market", market)]:
+        duplicates = source.duplicated(keys, keep=False)
+        if duplicates.any():
+            examples = source.loc[duplicates, keys].drop_duplicates().head(5).to_dict("records")
+            raise ValueError(f"{name} data has duplicate coin-hour keys; examples: {examples}")
+
     grid = build_full_hourly_grid(pv)
     pv = pv.drop(columns=["volume"]) # there exists trading volume column already in market features, so drop this one to avoid duplicate column name
     # drop raw trade count and taker-buy volume: Bitfinex (USDT/DAI) reports
     # neither, so they're 100% NaN for those coins and a pooled tree model
     # would learn the missingness as a coin identifier (see 02a docstring)
-    pv = pv.drop(columns=["trades", "taker_buy_base_volume"])
-    merged = grid.merge(pv, on=["coin", "hour"], how="left")
-    merged = merged.merge(onchain, on=["coin", "hour"], how="left")
-    merged = merged.merge(market, on=["coin", "hour"], how="left")
+    merged = grid.merge(pv, on=keys, how="left", validate="one_to_one")
+    merged = merged.merge(onchain, on=keys, how="left", validate="one_to_one")
+    merged = merged.merge(market, on=keys, how="left", validate="one_to_one")
     merged = merged.sort_values(["coin", "hour"]).reset_index(drop=True)
-    merged["is_stablecoin"] = merged["coin"].isin(FIAT_COINS)
     return merged
 
 
 def flag_episodes(df: pd.DataFrame) -> pd.DataFrame:
     df = df.copy()
     df["outside_band"] = df["peg_deviation"] < -DEPEG_BAND  # downward depegs only
-    df.loc[~df["is_stablecoin"], "outside_band"] = False  # never flag auxiliary coins
-
     df["episode_id"] = pd.array([None] * len(df), dtype="object")
-    for coin, g in df[df["is_stablecoin"]].groupby("coin"):
+    for coin, g in df.groupby("coin"):
         idx = g.index
         outside = g["outside_band"].fillna(False).to_numpy()
-        # identify runs of True values. Once a run qualifies as an episode
-        # (>= DEPEG_MIN_DURATION_HOURS consecutive below-band hours), any dip
-        # within DEPEG_GAP_HOURS of its last below-band hour is bridged into it
-        # (inactivity gap to merge continuous ongoing crash)
-        run_id = np.zeros(len(outside), dtype=int)
-        current = 0
-        last_out = None
-        streak = 0          # consecutive below-band hours ending at last_out
-        qualified = False   # current run has had a >= MIN-hour consecutive dip
-        valid_runs = set()
-        for i in range(len(outside)):
-            if outside[i]:
-                if last_out == i - 1:
-                    streak += 1
-                elif qualified and i - last_out - 1 <= DEPEG_GAP_HOURS:
-                    run_id[last_out + 1:i] = current  # fill the bridged gap
-                    streak = 1
-                else:
-                    current += 1
-                    streak = 1
-                    qualified = False
-                run_id[i] = current
-                last_out = i
-                if streak >= DEPEG_MIN_DURATION_HOURS:
-                    qualified = True
-                    valid_runs.add(current)
-        for i, r in enumerate(run_id):
-            if r in valid_runs:
-                df.loc[idx[i], "episode_id"] = f"{coin}_{r}"
+        # First collect only qualifying consecutive below-band runs.
+        runs = []
+        i = 0
+        while i < len(outside):
+            if not outside[i]:
+                i += 1
+                continue
+
+            # Find the complete consecutive below-band run before deciding
+            # whether it qualifies. A short run after an episode is ignored
+            # completely and therefore cannot move last_out.
+            run_start = i
+            while i < len(outside) and outside[i]:
+                i += 1
+            run_end = i - 1
+            run_length = run_end - run_start + 1
+            if run_length >= DEPEG_MIN_DURATION_HOURS:
+                runs.append((run_start, run_end))
+
+        # Cluster qualifying runs when the next run starts within the recovery
+        # window, measured from the first above-band hour after the prior run.
+        # Extend each cluster through its full recovery window, even if no later
+        # qualifying run occurs, so those hours are not forecast origins.
+        clusters = []
+        for run_start, run_end in runs:
+            if clusters:
+                prev_start, prev_end, prev_last_out = clusters[-1]
+                recovery_start = prev_last_out + 1
+                if run_start - recovery_start <= DEPEG_GAP_HOURS:
+                    clusters[-1] = (prev_start, run_end, run_end)
+                    continue
+            clusters.append((run_start, run_end, run_end))
+
+        for episode_num, (episode_start, last_out, _) in enumerate(clusters, start=1):
+            # The first above-band hour is last_out + 1; include 24 hours
+            # from that anchor, making the next independent onset eligible
+            # only after the recovery window has elapsed.
+            episode_end = min(last_out + DEPEG_GAP_HOURS + 1, len(outside) - 1)
+            df.loc[idx[episode_start:episode_end + 1], "episode_id"] = f"{coin}_{episode_num}"
 
     df["in_episode"] = df["episode_id"].notna()
     return df
@@ -123,6 +139,8 @@ def build_labels(df: pd.DataFrame, episodes: pd.DataFrame) -> pd.DataFrame:
             starts_arr = np.array(sorted(ep_starts.get(coin, [])))
             mask_coin = df["coin"] == coin
             hours = df.loc[mask_coin, "hour"].to_numpy()
+            prices = df.loc[mask_coin, "price"].to_numpy()
+            in_episode = df.loc[mask_coin, "in_episode"].to_numpy()
             last_hour = max_hour_per_coin[coin]
             labels = np.full(len(hours), np.nan)
             for i, t in enumerate(hours):
@@ -132,12 +150,28 @@ def build_labels(df: pd.DataFrame, episodes: pd.DataFrame) -> pd.DataFrame:
                 # true negative -- leave it NaN rather than defaulting to 0.
                 if window_end > last_hour:
                     continue
+                # A known episode onset makes this a positive label even if
+                # a later price in the window is missing.
                 hit = np.any((starts_arr > t) & (starts_arr <= window_end)) if len(starts_arr) else False
-                labels[i] = 1.0 if hit else 0.0
+                if hit:
+                    labels[i] = 1.0
+                    continue
+
+                # Without a known onset, an unclassified missing price could
+                # hide one. Missing hours bridged into an episode are known.
+                future_slice = slice(i + 1, i + h + 1)
+                missing_unclassified = (
+                    pd.isna(prices[future_slice]) & ~in_episode[future_slice]
+                )
+                if missing_unclassified.any():
+                    continue
+                labels[i] = 0.0
             df.loc[mask_coin, col] = labels
-        # exclude hours already inside an active episode from this label
+        # Predictions are only made from above-threshold hours outside an
+        # active episode. This excludes brief dips and bridged recovery gaps.
+        df.loc[df["outside_band"], col] = np.nan
         df.loc[df["in_episode"], col] = np.nan
-        # no observed price at t -> can't tell if t is normal, so no label
+        # no observed price at t -> can't tell if t is above the threshold
         df.loc[df["price"].isna(), col] = np.nan
 
     return df
@@ -152,7 +186,29 @@ def flag_common_sample(
     missing = [col for col in required_features if col not in df.columns]
     if missing:
         raise ValueError(f"Missing required features: {missing}")
-    df["common_sample"] = (df["is_stablecoin"] & df[required_features].notna().all(axis=1))
+    df["common_sample"] = df[required_features].notna().all(axis=1)
+    return df
+
+
+def flag_prediction_eligibility(df: pd.DataFrame) -> pd.DataFrame:
+    """Flag usable prediction origins and horizon-specific labeled samples.
+
+    `prediction_eligible` depends only on information available at the row's
+    hour. Horizon-specific flags additionally require an observed label, making
+    them convenient for training/evaluation sample selection.
+    """
+    df = df.copy()
+    df["prediction_eligible"] = (
+        df["common_sample"]
+        & df["price"].ge(1 - DEPEG_BAND)
+        & ~df["in_episode"]
+    )
+    for h in FORECAST_HORIZONS_HOURS:
+        label_col = f"label_h{h}"
+        eligible_col = f"prediction_eligible_h{h}"
+        if label_col not in df.columns:
+            raise ValueError(f"Missing label column: {label_col}")
+        df[eligible_col] = df["prediction_eligible"] & df[label_col].notna()
     return df
 
 def main():
@@ -171,6 +227,7 @@ def main():
     onchain_features = [f"{metric}_logdiff_{lag}h" for metric in onchain_metrics for lag in onchain_lags]
 
     merged = flag_common_sample(merged,market_features,onchain_features)
+    merged = flag_prediction_eligibility(merged)
     coverage = (merged.groupby("coin").agg(total_hours=("hour", "size"),common_hours=("common_sample", "sum")))
     coverage["retained_pct"] = (100 * coverage["common_hours"] / coverage["total_hours"])
     print("\nCOMMON SAMPLE COVERAGE")
