@@ -12,12 +12,11 @@ boundary-straddling episodes dropped). This module only selects the sample
 and the feature columns -- it doesn't change master.parquet.
 
 SAMPLE (team convention since PR #11, 2026-10-14)
-The canonical sample is `prediction_eligible_h{h} == True` from
-master.parquet: rows with complete features (common_sample), an above-band
-price, not inside an episode (in_episode covers the recovery window since
-PR #11), and an observed label_h{h} (not right-censored). load_folds() uses
-it automatically and falls back to the legacy at-risk mask (at_risk_mask)
-on older masters.
+The canonical sample is the tier- and horizon-specific eligibility flag from
+master.parquet: rows with complete features for that tier, an above-band price,
+and an observed label_h{h}. Recovery rows may be included if they meet those
+conditions. load_folds() selects the appropriate flag and falls back to the
+legacy at-risk mask (at_risk_mask) on older masters.
 
 FEATURES
 Only changes, ratios and deviations -- no raw levels. Raw trading volume and
@@ -100,10 +99,8 @@ def at_risk_mask(df: pd.DataFrame, episodes: pd.DataFrame, horizon: int,
                  recovery_hours: int = RECOVERY_HOURS) -> pd.Series:
     """Rows in the risk set for horizon h (see module docstring).
 
-    Legacy sample. Since PR #11 (2026-10-14) the canonical sample is
-    prediction_eligible_h{h} from master.parquet: feature-complete rows
-    (common_sample), above-band price, not in an episode, with an observed
-    label. load_folds() uses that automatically; this remains for
+    Legacy sample. The canonical sample uses tier-specific eligibility flags
+    from master.parquet; this mask remains as a fallback for older masters and
     robustness checks."""
     return (
         ~df["in_episode"]
@@ -112,10 +109,11 @@ def at_risk_mask(df: pd.DataFrame, episodes: pd.DataFrame, horizon: int,
     )
 
 
-def prediction_eligible_mask(df: pd.DataFrame, horizon: int) -> pd.Series | None:
+def prediction_eligible_mask(df: pd.DataFrame, horizon: int, tier: int = 1) -> pd.Series | None:
     """The canonical training/evaluation sample flag (team convention, PR #11),
     or None when the column is absent (older master versions)."""
-    col = f"prediction_eligible_h{horizon}"
+    model = "market" if tier == 1 else "common"
+    col = f"prediction_eligible_{model}_h{horizon}"
     if col in df.columns:
         return df[col].astype(bool)
     return None
@@ -143,7 +141,7 @@ def load_folds(horizon: int = 24, tier: int = 1,
             f"Tier {tier} features missing from master.parquet: {missing}. "
             "Run: python data_processing/02b_build_onchain_features.py --update-master"
         )
-    keep = prediction_eligible_mask(master, horizon)
+    keep = prediction_eligible_mask(master, horizon, tier)
     if keep is None:  # pre-PR-#11 master: fall back to the legacy risk set
         keep = at_risk_mask(master, episodes, horizon, recovery_hours)
     master = master[keep]
@@ -166,10 +164,11 @@ def main():
     n = len(master)
     in_ep = master["in_episode"]
     print(f"master: {n:,} rows | in episode: {in_ep.sum():,} | "
-          f"prediction_eligible: {int(master['prediction_eligible'].sum()):,}")
+          f"market eligible: {int(master['prediction_eligible_market'].sum()):,} | "
+          f"common (market + on-chain) eligible: {int(master['prediction_eligible_common'].sum()):,}")
 
     for h in FORECAST_HORIZONS_HOURS:
-        keep = prediction_eligible_mask(master, h)
+        keep = prediction_eligible_mask(master, h, tier=1)
         print(f"\n=== h = {h}: eligible rows {keep.sum():,} of {n:,} "
               f"({keep.mean():.1%}), positives {int(master.loc[keep, f'label_h{h}'].sum()):,} ===")
         for f in load_folds(horizon=h, tier=1):
@@ -179,7 +178,7 @@ def main():
                   f"inner_val {len(f['y_inner_val']):>6,} rows / {f['y_inner_val'].sum():>4,} pos")
 
     print("\nPer-feature NaN share in eligible rows (h=24, tier 2):")
-    keep = prediction_eligible_mask(master, 24)
+    keep = prediction_eligible_mask(master, 24, tier=2)
     print(master.loc[keep, TIERS[2]].isna().mean().round(3).to_string())
 
 
