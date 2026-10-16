@@ -34,9 +34,10 @@ HORIZONS = (1, 6, 24)
 
 
 def cascade_curve(scores: pd.DataFrame, master: pd.DataFrame,
-                  episodes: pd.DataFrame, horizon: int) -> pd.DataFrame:
+                  episodes: pd.DataFrame, horizon: int, tier: int) -> pd.DataFrame:
     """Episode recall vs alarm-rate curve for horizon h using h=24 scores."""
-    sub = master[master[f"prediction_eligible_h{horizon}"]].copy()
+    model = "market" if tier == 1 else "common"
+    sub = master[master[f"prediction_eligible_{model}_h{horizon}"]].copy()
     sub = sub[["coin", "hour", f"label_h{horizon}", "episode_id"]]
     m = sub.merge(scores, on=["coin", "hour"], how="left")
     covered = m["y_score"].notna().mean()
@@ -71,7 +72,7 @@ def main(argv=None) -> int:
     print(f"alarm cascade: h=24 xgboost (tier {args.tier}, {args.tag}) scores "
           f"re-thresholded for h=1/6/24\n")
     for h in HORIZONS:
-        curve = cascade_curve(scores, master, episodes, h)
+        curve = cascade_curve(scores, master, episodes, h, args.tier)
         ops = operating_points(curve)
         print(f"--- horizon {h} "
               f"(coverage of h-eligible rows by h24 scores: {curve['coverage'].iloc[0]:.1%}) ---")
