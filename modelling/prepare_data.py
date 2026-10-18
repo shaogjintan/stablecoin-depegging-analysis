@@ -110,12 +110,19 @@ def at_risk_mask(df: pd.DataFrame, episodes: pd.DataFrame, horizon: int,
 
 
 def prediction_eligible_mask(df: pd.DataFrame, horizon: int, tier: int = 1) -> pd.Series | None:
-    """The canonical training/evaluation sample flag (team convention, PR #11),
-    or None when the column is absent (older master versions)."""
-    model = "market" if tier == 1 else "common"
+    """The canonical training/evaluation sample flag (team convention, PR #13),
+    or None when the column is absent (older master versions).
+
+    Tier 1 (market features) -> prediction_eligible_market_h{h};
+    Tier 2 (market + on-chain) -> prediction_eligible_market_onchain_h{h}."""
+    model = "market" if tier == 1 else "market_onchain"
     col = f"prediction_eligible_{model}_h{horizon}"
     if col in df.columns:
         return df[col].astype(bool)
+    # pre-PR-#13 masters: try the plain eligibility column
+    col_legacy = f"prediction_eligible_h{horizon}"
+    if col_legacy in df.columns:
+        return df[col_legacy].astype(bool)
     return None
 
 
@@ -165,7 +172,7 @@ def main():
     in_ep = master["in_episode"]
     print(f"master: {n:,} rows | in episode: {in_ep.sum():,} | "
           f"market eligible: {int(master['prediction_eligible_market'].sum()):,} | "
-          f"common (market + on-chain) eligible: {int(master['prediction_eligible_common'].sum()):,}")
+          f"market+onchain eligible: {int(master['prediction_eligible_market_onchain'].sum()):,}")
 
     for h in FORECAST_HORIZONS_HOURS:
         keep = prediction_eligible_mask(master, h, tier=1)
