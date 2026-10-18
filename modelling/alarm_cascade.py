@@ -36,8 +36,10 @@ HORIZONS = (1, 6, 24)
 def cascade_curve(scores: pd.DataFrame, master: pd.DataFrame,
                   episodes: pd.DataFrame, horizon: int, tier: int) -> pd.DataFrame:
     """Episode recall vs alarm-rate curve for horizon h using h=24 scores."""
-    model = "market" if tier == 1 else "common"
-    sub = master[master[f"prediction_eligible_{model}_h{horizon}"]].copy()
+    col = f"prediction_eligible_{'market' if tier == 1 else 'market_onchain'}_h{horizon}"
+    if col not in master.columns:  # pre-PR-#13 masters
+        col = f"prediction_eligible_h{horizon}"
+    sub = master[master[col]].copy()
     sub = sub[["coin", "hour", f"label_h{horizon}", "episode_id"]]
     m = sub.merge(scores, on=["coin", "hour"], how="left")
     covered = m["y_score"].notna().mean()
