@@ -98,6 +98,26 @@ class MyModel(BaseModel):
 
 Then **register it** in `modelling/models/__init__.py` (`MODEL_REGISTRY["my_model"] = MyModel`). Done — `train.py` handles folds, imputation, tuning, saving, and evaluation for you. Example: `modelling/models/xgboost_model.py`.
 
+### Tuning standard (everyone uses this — no per-person GridSearch loops)
+
+`train.py --tune` IS the standardized tuning pipeline. Per fold:
+1. candidates = every combo in your model's `param_grid`, each fit on
+   `X_inner_train` with early stopping on `X_inner_val` (if supported);
+2. scored on `X_inner_val` by `--tune-metric` — standard is
+   `recall_at_rate --max-alarm-rate 0.01` (PR-AUC = secondary);
+3. winner refit on the full `X_train` (`n_estimators = best_iteration + 1`
+   for early-stopping models);
+4. chosen params + per-combo scores logged per fold in `results/models/*.json`.
+
+To stay comparable across models, align on: same folds (expanding window
+2021–25), same tier-specific sample (automatic in `load_folds`), same metric
+(recall@1% budget), light grids (<=32 combos), and `random_state=42` in every
+estimator. For sklearn models (logistic, RF) set `needs_imputation=True` —
+train-only median imputation is applied by `train.py`.
+
+Decision thresholds are NEVER chosen on test data: `alarm_report.py` selects
+them per fold on `inner_val` and applies them to the fold's test year.
+
 ---
 
 ## 6. Exact commands (run from the repo root)
@@ -127,57 +147,53 @@ Outputs: per-fold predictions → `results/predictions/`, models + params JSON �
 
 **Headline objective (group decision 2026-10-13): early-warning — catch every
 depeg episode (minimize false negatives / missed depegs), false alarms are
-acceptable.** The headline metric is therefore **episode-level recall vs the
-hourly alarm rate** (`modelling/alarm_report.py` →
-`reports/recall_operating_points.csv`). Pooled PR-AUC is kept only as a
-secondary ranking number.
+acceptable.** The headline metric is **episode-level recall vs the hourly alarm
+rate** with **leak-free threshold selection** (updated 2026-10-18 after Alyssa's
+review + prof): thresholds are chosen per fold on **inner_val**, applied to that
+fold's test year, then pooled (`modelling/alarm_report.py` →
+`reports/recall_operating_points.csv`). Pooled PR-AUC is a secondary number.
 
 **Episode recall at a 1% alarm-rate budget** (32/33/34 OOS episodes at h=1/6/24,
-pooled 2021–25; sample = `prediction_eligible_h{h}` since PR #11 — see the data
-note below):
+pooled 2021–25; tier-specific samples — see the data note below):
 
 | Model | h=1 | h=6 | h=24 |
 |---|---|---|---|
 | Constant prior | — | — | — |
-| Persistence (−peg_deviation) | 0.22 | 0.46 | **0.79** |
-| XGBoost recall-tuned Tier 1 | 0.09 | 0.15 | 0.09 |
-| XGBoost recall-tuned Tier 2 | 0.03 | 0.15 | 0.06 |
+| Persistence (−peg_deviation) | 0.06 | 0.12 | 0.35 |
+| XGBoost recall-tuned Tier 1 | 0.13 | 0.12 | 0.24 |
+| XGBoost recall-tuned Tier 2 | **0.13** | 0.12 | **0.35** |
 
-Alarm rate needed for 90% episode recall: persistence h=24 needs **3.1%**
-(95% at 11.7%, 99% at 13.8%); XGBoost needs 41.0% (tier 1) / 39.5% (tier 2).
+Alarm rate needed for 90% episode recall (the headline operating point):
+XGBoost Tier 2 wins — h=24 **1.8%** (vs persistence 4.7%, Tier 1 4.5%);
+h=1 **0.7%**; h=6 **3.3%**. XGBoost Tier 2 now matches persistence at the 1%
+budget and beats it on the 90%-recall cost.
 
-- Peg-stress persistence is the strongest single early-warning signal at h=6/24.
-- **Bundle experiments (2026-10-14, XGBoost improvements):**
-  - Sample now `prediction_eligible_h{h}` (feature-complete rows; team convention).
-  - `peg_stress` derived feature added (effect confounded with the sample change;
-    h=1 inner-val PR-AUCs improved a lot but h=24 OOS is unchanged/weak).
-  - **Alarm smoothing (2 consecutive hours) — NEGATIVE result:** it destroys
-    episode recall (persistence 0.79 → 0.05 at the 1% budget) because depeg
-    warning spikes are single-hour; do not use (`modelling/alarm_smoothing.py`).
-  - **Cascade (one h=24 model for h=1/6) — mixed:** worse at low budgets
-    (h=6: 0.06 vs dedicated 0.15 @ 1%), but a similar 90%-recall alarm rate
-    (49.5% vs 52.8% at h=6 tier 2). Not a clear win; keep dedicated models
-    (`modelling/alarm_cascade.py`).
-  - **OR-combination** (`modelling/combine_alarms.py` →
-    `reports/combination_results.csv`): union adds +1 episode at h=24 and
-    +1–2 at h=6 vs persistence alone (coarse-grid numbers; exact sweep numbers
-    in the operating table). Persistence stays the headline alarm.
+- On the refined v5 labels the honest (inner-val threshold) protocol flips the
+  earlier conclusion: **Tier 2 (on-chain) now shows its value at h=24** (0.35
+  vs 0.24 at the 1% budget; 1.8% vs 4.5% for 90% recall).
+- Peg-stress persistence remains the best *single-feature* rule; XGBoost Tier 2
+  is the recommended headline alarm system.
+- **Bundle experiments (2026-10-14):** alarm smoothing (2 consecutive hours) is
+  a NEGATIVE result (kills recall); cascade (one h=24 model for h=1/6) is mixed
+  (kept as analysis tools). OR-combination adds little beyond the better single
+  system (see `reports/combination_results.csv`).
 
 **Pooled OOS PR-AUC** (secondary; full table in `reports/modelling_comparison.csv`):
 
 | Model | h=1 | h=6 | h=24 |
 |---|---|---|---|
-| Constant prior (floor) | 0.0002 | 0.0012 | 0.0049 |
-| Persistence (−peg_deviation) | 0.0035 | 0.0102 | **0.0148** |
-| XGBoost Tier 1 | 0.0006 | 0.0026 | 0.0076 |
-| XGBoost Tier 2 | 0.0004 | 0.0021 | 0.0045 |
+| Constant prior (floor) | 0.0003 | 0.0020 | 0.0063 |
+| Persistence (−peg_deviation) | 0.0624 | 0.0626 | 0.0479 |
+| XGBoost Tier 1 | 0.0410 | 0.0114 | 0.0215 |
+| XGBoost Tier 2 | 0.0271 | 0.0561 | 0.0330 |
 
-**Data note (2026-10-14, Alyssa PR #11):** `master.parquet` was re-generated —
-345,361 rows × 47 cols with `prediction_eligible` + `prediction_eligible_h1/h6/h24`
-(complete common-sample features, above-band price, not in an episode, observed
-label). The episode manifest and labels were refined: **32/33/34 OOS episodes**
-at h=1/6/24 (was 44 after PR #8, 49 originally). All tables/figures on main are
-computed against this master; earlier numbers refer to older datasets.
+**Data note (2026-10-17, Alyssa PR #13):** `master.parquet` is 345,361 × 55 with
+tier-specific eligibility — Tier 1 sample = `prediction_eligible_market_h{h}`
+(295k rows), Tier 2 = `prediction_eligible_market_onchain_h{h}` (271k rows).
+Labels refined again (positives: 208 / 751 / 2,232 at h=1/6/24; 79 episodes;
+32/33/34 OOS at h=1/6/24). For the Tier-1-vs-Tier-2 comparison, note the two
+samples differ (Tier 2 is a subset) — the feature effect is isolated by the
+delta, but sample composition also differs; flag in the report.
 
 - XGBoost beats both baselines at h=6 on PR-AUC; at h=24 persistence wins.
 - **Tier 2 − Tier 1 ≈ 0** on PR-AUC; on-chain change features do not clearly
