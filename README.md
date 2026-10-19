@@ -29,25 +29,25 @@ The final output is the master dataset; see [Master dataset](#master-dataset-dat
 
 ### Pipeline at a glance
 
-**`03_merge_and_label.py` is the script that creates `master.parquet`.**
+**`merge_and_label.py` is the script that creates `master.parquet`.**
 Every output goes to `data/processed/`, except the unzipped Dune CSVs (`data/raw/dune_onchain/`).
 
 | Step | Script | Reads | Writes |
 |---|---|---|---|
-| 01 | `01_fetch_stablecoin_data.py` | Internet (DefiLlama, Binance, Bitfinex) | `data/processed/hourly_stablecoin.parquet` |
-| 02a | `02a_build_market_features.py` | `hourly_stablecoin.parquet` | `data/processed/hourly_stablecoin_market_features.parquet` |
-| 02b | `02b_build_onchain_features.py` | `dune_onchain.zip` (repo root) | `data/raw/dune_onchain/*.csv` (unzipped) and `data/processed/hourly_stablecoin_onchain_features.parquet` |
-| **03** | **`03_merge_and_label.py`** | **outputs of 01, 02a, 02b** | **`data/processed/master.parquet`** (+ `.csv`) and `data/processed/depeg_episodes.parquet` (+ `.csv`) |
-| 04 | `04_split_train_test.py` | `master.parquet`, `depeg_episodes.parquet` | `data/processed/cv_folds_summary.csv` (fold summary only; no split datasets) |
+| 1 | `fetch_stablecoin_data.py` | Internet (DefiLlama, Binance, Bitfinex) | `data/processed/hourly_stablecoin.parquet` |
+| 2a | `build_market_features.py` | `hourly_stablecoin.parquet` | `data/processed/hourly_stablecoin_market_features.parquet` |
+| 2b | `build_onchain_features.py` | `dune_onchain.zip` (repo root) | `data/raw/dune_onchain/*.csv` (unzipped) and `data/processed/hourly_stablecoin_onchain_features.parquet` |
+| **3** | **`merge_and_label.py`** | **outputs of 1, 2a, 2b** | **`data/processed/master.parquet`** (+ `.csv`) and `data/processed/depeg_episodes.parquet` (+ `.csv`) |
+| — | `modelling/reporting/partition_report.py` | model-ready folds from `modelling/prepare_data.py` | `data/processed/cv_folds_summary.csv` (summary only; no split datasets) |
 | — | `verify_embargo_and_episodes.py` | `master.parquet`, `depeg_episodes.parquet` | Nothing (prints checks) |
 
 Other files in `data_processing/`:
 
 - `config.py`: all settings (coins, dates, depeg thresholds, horizons, purge/embargo, CV years).
-- `splits.py`: the expanding-window fold function that modelling code imports (see [Cross-validation folds](#cross-validation-folds)).
+- `splits.py`: reusable expanding-window fold logic imported by `modelling/prepare_data.py` (see [Cross-validation folds](#cross-validation-folds)).
 - `PROPOSAL_PHASE_2_NOTES.md`, `PROPOSAL_UPDATES_WEEK_7.md`: Phase 2 proposal notes. They describe the **old** 3-way split.
 
-### `01_fetch_stablecoin_data.py` — market data
+### `fetch_stablecoin_data.py` — market data
 
 **This step fetches market (price/exchange) data only; no on-chain data.**
 On-chain data comes from `dune_onchain.zip` in step `02b`.
@@ -73,7 +73,7 @@ observed price (past information only, no look-ahead); longer gaps stay missing.
 | `venue_switch` | True on the first row of each new venue segment |
 | `hours_since_venue_start` | Hours since the current venue segment began, so rolling volume changes can skip a data-source switch |
 
-### `02a_build_market_features.py` — market features
+### `build_market_features.py` — market features
 
 Turns step 01's price and volume into per-coin features. All features look
 backward only (no look-ahead).
@@ -91,7 +91,7 @@ backward only (no look-ahead).
 | `volume_pct_change_1h/6h/24h` | Volume change over the past 1/6/24 hours; NaN right after an exchange switch |
 | `venue_switch` | Carried over from step 01 |
 
-### `02b_build_onchain_features.py` — on-chain data
+### `build_onchain_features.py` — on-chain data
 
 Unzips the per-coin Dune Analytics CSVs from `dune_onchain.zip` into
 `data/raw/dune_onchain/`, infers the coin from each filename (e.g.
@@ -115,7 +115,7 @@ Unzips the per-coin Dune Analytics CSVs from `dune_onchain.zip` into
 > whenever either endpoint is unobserved. Raw levels are for reference only —
 > the Tier 2 model uses the change features, never the levels.
 
-### `03_merge_and_label.py` — merge, depeg episodes, labels
+### `merge_and_label.py` — merge, depeg episodes, labels
 
 Combines everything into one master table, finds depeg episodes, and creates
 the prediction targets. Thresholds are set in `config.py`.
@@ -162,11 +162,12 @@ the prediction targets. Thresholds are set in `config.py`.
 > - Positive labels are rare: about 0.02% (h=1), 0.15% (h=6) and 0.6% (h=24)
 >   of rows.
 
-### `04_split_train_test.py` — cross-validation folds (summary only)
+### `partition_report.py` — model-ready cross-validation summary
 
 Shows how `master.parquet` will be split for modelling. **It does not create
-any training or test datasets.** The split logic lives in `splits.py`, and
-modelling code calls it directly to build the folds in memory.
+any training or test datasets. It reports the actual tier- and horizon-
+eligible folds returned by `modelling/prepare_data.py`, including its sample
+filtering and the purge/embargo/boundary-episode rules from `splits.py`.
 
 What it does:
 
@@ -176,8 +177,8 @@ What it does:
    - **test:** year Y, minus the first 24h (embargo)
    - **inner_train / inner_val:** the same split one year earlier, for tuning
    - Episodes overlapping a fold boundary are dropped from that fold.
-3. Prints rows, episodes and positive labels (h1/h6/h24) for every set in every
-   fold, plus the pooled out-of-sample total (49 of 83 episodes).
+3. Prints model-eligible rows, positive labels, and episode IDs present for
+   every set in every fold, plus pooled out-of-sample totals.
 
 **Input:** `data/processed/master.parquet`, `data/processed/depeg_episodes.parquet`  
 **Output:** `data/processed/cv_folds_summary.csv`, one row per fold × set × horizon
@@ -197,22 +198,22 @@ and example code are in [Cross-validation folds](#cross-validation-folds).
 ## Master dataset (`data/processed/master.parquet`)
 
 **This is the single source of truth for modelling.** It is created by
-`data_processing/03_merge_and_label.py`.
+`data_processing/merge_and_label.py`.
 
 **How to rebuild it** (from the repo root):
 
 ```powershell
-python data_processing/01_fetch_stablecoin_data.py
-python data_processing/02a_build_market_features.py
-python data_processing/02b_build_onchain_features.py
-python data_processing/03_merge_and_label.py
-python data_processing/04_split_train_test.py          # prints CV folds, writes cv_folds_summary.csv
+python data_processing/fetch_stablecoin_data.py
+python data_processing/build_market_features.py
+python data_processing/build_onchain_features.py
+python data_processing/merge_and_label.py
+python modelling/reporting/partition_report.py        # reports model-ready folds, writes cv_folds_summary.csv
 python data_processing/verify_embargo_and_episodes.py  # optional: leakage checks on the folds
 ```
 
 > If the gitignored intermediates are missing locally, **do not rerun 01**
 > (1,200+ HTTP requests). Apply the Tier 2 change features directly:
-> `python data_processing/02b_build_onchain_features.py --update-master`
+> `python data_processing/build_onchain_features.py --update-master`
 
 ### Overview
 
@@ -341,7 +342,7 @@ not raw on-chain levels. If `prepare_data.py` reports them missing from
 `master.parquet`, apply the patch:
 
 ```bash
-python data_processing/02b_build_onchain_features.py --update-master
+python data_processing/build_onchain_features.py --update-master
 ```
 
 Missing feature values stay NaN (volume changes ~11%, on-chain changes ~5%).

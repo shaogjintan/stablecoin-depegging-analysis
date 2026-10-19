@@ -22,7 +22,7 @@ NUS DSE4101 capstone (Digital Currencies Group 1). **Research question:** can in
 | # | Rule |
 |---|---|
 | R1 | `data_processing/` is **FROZEN**. The only sanctioned change (Tier 2 change features in `02b`) is **already done**. |
-| R2 | **NEVER run `01_fetch_stablecoin_data.py`** (1,200+ HTTP requests). `master.parquet` is committed and current. |
+| R2 | **NEVER run `fetch_stablecoin_data.py`** (1,200+ HTTP requests). `master.parquet` is committed and current. |
 | R3 | All modelling data access goes through `modelling/prepare_data.py` → `load_folds()`. Never read raw CSVs/parquets inside model code. |
 | R4 | Raw on-chain levels (`tx_count`, `tx_volume`, `active_senders`, `active_receivers`) are **NOT features** — they identify the coin (RF probe: 0.70 acc). Use the `*_logdiff_*` columns instead. |
 | R5 | No personal folders or duplicate pipelines. One feature branch per task (`feature/<name>`), PR into `main`, Shao Gjin reviews. |
@@ -37,7 +37,7 @@ data/
   processed/master.parquet          # canonical 44-col dataset (source of truth, committed)
   processed/depeg_episodes.parquet  # 83 validated episodes manifest
   processed/master_backup_32col.parquet  # pre-Tier-2 backup (gitignored, local only)
-data_processing/                    # FROZEN pipeline (01 fetch, 02a market, 02b on-chain, 03 merge+label, 04 splits, splits.py, config.py, verify_embargo_and_episodes.py)
+data_processing/                    # FROZEN pipeline (fetch_stablecoin_data.py, build_market_features.py, build_onchain_features.py, merge_and_label.py, splits.py, config.py, verify_embargo_and_episodes.py)
 modelling/                          # ACTIVE workspace
   prepare_data.py                   # THE data contract: load_folds(horizon, tier, recovery_hours)
   models/base.py                    # BaseModel + MedianImputer (model contract)
@@ -136,7 +136,7 @@ python modelling/shap_analysis.py --model xgboost --horizon 24 --tier 2
 python modelling/evaluate.py                                       # self-test
 python modelling/checks/test_tier2_features.py                     # leakage probe
 # If master.parquet ever lacks the *_logdiff_* columns:
-python data_processing/02b_build_onchain_features.py --update-master
+python data_processing/build_onchain_features.py --update-master
 ```
 
 Outputs: per-fold predictions → `results/predictions/`, models + params JSON → `results/models/`, pooled OOS report + alarm curve → `results/evaluation/`, SHAP figures → `reports/figures/`, recall-first operating table → `reports/recall_operating_points.csv`, per-episode caught/missed tables → `reports/alarm_tables/`.
@@ -247,7 +247,7 @@ persistence + XGBoost alarms; final README/`agent.md` polish.
 
 | Symptom | Fix |
 |---|---|
-| `load_folds(tier=2)` says features missing | `python data_processing/02b_build_onchain_features.py --update-master` |
+| `load_folds(tier=2)` says features missing | `python data_processing/build_onchain_features.py --update-master` |
 | `compare_runs.py` prints nothing | `results/predictions/` is empty — run `train.py` first |
 | `shap_analysis.py` can't find models | models live in `results/models/` per trained config — train that config first |
 | `--model <name>` unknown | model not registered — add it to `models/__init__.py` |
