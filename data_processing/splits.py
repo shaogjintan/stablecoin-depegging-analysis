@@ -8,7 +8,7 @@ For each test year Y from OOS_START_YEAR to OOS_END_YEAR:
     everything before Y-1, validate on Y-1), for nested tuning of
     hyperparameters and the decision threshold without touching year Y
 
-Pooling the test predictions across all folds scores every episode from
+Pooling the test predictions across folds scores every episode from
 OOS_START_YEAR onwards out of sample, while staying strictly chronological.
 
 Leakage control (same rules as the old single 3-way split):
@@ -19,8 +19,8 @@ Leakage control (same rules as the old single 3-way split):
   - Episode-aware: any depeg episode overlapping a boundary window
     [boundary - purge, boundary + embargo] is dropped from every set in that fold.
 
-Rows are returned unfiltered (unlabelled rows included); filter on
-label_h{h}.notna() and apply any at-risk filtering in the modelling step.
+Rows are returned unfiltered (unlabelled rows included); modelling/prepare_data.py
+applies the tier- and horizon-specific eligibility filters.
 
 Usage from modelling code (run from the repo root):
     import sys; sys.path.insert(0, "data_processing")

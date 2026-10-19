@@ -27,7 +27,8 @@ Definitions (thresholds and horizons are configured in config.py):
     target label to be observed, for training/evaluation sample selection.
     Live prediction eligibility should not depend on future label availability.
 
-Train/test splitting and the embargo flag live in 05_split_train_test.py.
+Train/test splitting lives in splits.py; model-ready reporting is in
+modelling/reporting/partition_report.py.
 """
 import numpy as np
 import pandas as pd

@@ -26,7 +26,7 @@ the level as a coin identifier rather than a market signal.
 Tier 1 also includes `peg_stress = clip(-peg_deviation, 0, 0.01)`, a derived
 one-split "stressed regime" feature computed here (pipeline untouched).
 Tier 2 adds the 12 on-chain log1p-difference change features built in
-02b_build_onchain_features.py (see ONCHAIN_FEATURES below).
+build_onchain_features.py (see ONCHAIN_FEATURES below).
 Not used as features: coin, hour, price (= peg_deviation + 1), duplicate
 scalings (peg_deviation_bps, simple returns), venue metadata, depeg flags,
 episode IDs and labels.
@@ -67,11 +67,11 @@ MARKET_FEATURES = [
 
 # Tier 2: market + on-chain. On-chain columns are 1h/6h/24h log1p-difference
 # change features ({metric}_logdiff_{k}h = log1p(x_t) - log1p(x_{t-k})), built
-# in 02b_build_onchain_features.py on the full hourly grid (true calendar
+# in build_onchain_features.py on the full hourly grid (true calendar
 # lags). Raw levels (tx_count, ...) are NOT features: their scale differs by
 # orders of magnitude between coins (median tx_count PAX ~12 vs USDT ~5,400)
 # and would act as a coin identifier. Apply with:
-#   python data_processing/02b_build_onchain_features.py --update-master
+#   python data_processing/build_onchain_features.py --update-master
 ONCHAIN_FEATURES = [
     f"{metric}_logdiff_{k}h"
     for metric in ("tx_count", "tx_volume", "active_senders", "active_receivers")
@@ -133,8 +133,9 @@ def _xy(part: pd.DataFrame, features: list[str], horizon: int):
 def load_folds(horizon: int = 24, tier: int = 1,
                recovery_hours: int = RECOVERY_HOURS) -> list[dict]:
     """One dict per CV fold with X/y for train, test, inner_train, inner_val,
-    test_meta (coin, hour, episode_id) for the test rows, and
-    inner_val_meta (same columns) for the inner validation rows."""
+    plus coin/hour/episode_id metadata for all four partitions. Test and inner
+    validation metadata retain the `test_meta` and `inner_val_meta` keys used by
+    existing callers."""
     if horizon not in FORECAST_HORIZONS_HOURS:
         raise ValueError(f"horizon must be one of {FORECAST_HORIZONS_HOURS}")
     features = TIERS[tier]
@@ -146,7 +147,7 @@ def load_folds(horizon: int = 24, tier: int = 1,
     if missing:
         raise KeyError(
             f"Tier {tier} features missing from master.parquet: {missing}. "
-            "Run: python data_processing/02b_build_onchain_features.py --update-master"
+            "Run: python data_processing/build_onchain_features.py --update-master"
         )
     keep = prediction_eligible_mask(master, horizon, tier)
     if keep is None:  # pre-PR-#11 master: fall back to the legacy risk set
@@ -158,6 +159,8 @@ def load_folds(horizon: int = 24, tier: int = 1,
         fold = {"year": f["year"], "horizon": horizon, "tier": tier, "features": features}
         for name in ["train", "test", "inner_train", "inner_val"]:
             fold[f"X_{name}"], fold[f"y_{name}"] = _xy(f[name], features, horizon)
+        fold["train_meta"] = f["train"][META_COLS].reset_index(drop=True)
+        fold["inner_train_meta"] = f["inner_train"][META_COLS].reset_index(drop=True)
         fold["test_meta"] = f["test"][META_COLS].reset_index(drop=True)
         fold["inner_val_meta"] = f["inner_val"][META_COLS].reset_index(drop=True)
         out.append(fold)

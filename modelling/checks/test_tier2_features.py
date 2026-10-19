@@ -86,7 +86,7 @@ def main() -> int:
     if missing_chg:
         raise SystemExit(
             f"FAIL: change features missing from master.parquet: {missing_chg}. "
-            "Run: python data_processing/02b_build_onchain_features.py --update-master"
+            "Run: python data_processing/build_onchain_features.py --update-master"
         )
     if missing_raw:
         raise SystemExit(f"FAIL: raw on-chain columns missing: {missing_raw}")

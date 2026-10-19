@@ -3,7 +3,7 @@
 Generate separate market and on-chain coverage tables.
 
 Both tables include the number of common coin-hours
-identified by 03_merge_and_label.py.
+identified by merge_and_label.py.
 
 Outputs:
   - market_coverage_table.csv
@@ -70,7 +70,7 @@ def main():
     if "common_sample" not in master.columns:
         raise ValueError(
             "master.parquet does not contain common_sample. "
-            "Run 03_merge_and_label.py first.")
+            "Run merge_and_label.py first.")
 
     common_hours = (
         master.loc[master["common_sample"]]
