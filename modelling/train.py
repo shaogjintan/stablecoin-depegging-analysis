@@ -143,6 +143,14 @@ def main(argv=None) -> int:
     parser.add_argument("--horizon", type=int, choices=[1, 6, 24], default=24)
     parser.add_argument("--tier", type=int, choices=[1, 2], default=1)
     parser.add_argument("--tag", default=None, help="run tag for outputs (default: auto)")
+    parser.add_argument("--model-params", default=None,
+                        help="JSON object of fixed model parameters; cannot be combined with --tune")
+    parser.add_argument("--model-dir", default=str(MODEL_DIR),
+                        help="directory for per-fold model artifacts")
+    parser.add_argument("--pred-dir", default=str(PRED_DIR),
+                        help="directory for per-fold and pooled prediction files")
+    parser.add_argument("--evaluation-dir", default="results/evaluation",
+                        help="directory for evaluation curve outputs")
     parser.add_argument("--tune", action="store_true",
                         help="grid-search model.param_grid on the inner-val tune metric")
     parser.add_argument("--tune-metric", default="pr_auc",
@@ -154,13 +162,23 @@ def main(argv=None) -> int:
                         help="alarm-rate budget for tune-metric recall_at_rate")
     args = parser.parse_args(argv)
 
+    try:
+        fixed_params = json.loads(args.model_params) if args.model_params else {}
+    except json.JSONDecodeError as exc:
+        parser.error(f"--model-params must be valid JSON: {exc}")
+    if not isinstance(fixed_params, dict):
+        parser.error("--model-params must decode to a JSON object")
+    if args.tune and fixed_params:
+        parser.error("--model-params cannot be combined with --tune")
+
     tag = args.tag or f"{args.model}_t{args.tier}_h{args.horizon}"
-    PRED_DIR.mkdir(parents=True, exist_ok=True)
-    MODEL_DIR.mkdir(parents=True, exist_ok=True)
+    pred_dir, model_dir = Path(args.pred_dir), Path(args.model_dir)
+    pred_dir.mkdir(parents=True, exist_ok=True)
+    model_dir.mkdir(parents=True, exist_ok=True)
 
     folds = load_folds(horizon=args.horizon, tier=args.tier)
     print(f"model={args.model} horizon={args.horizon} tier={args.tier} tag={tag} "
-          f"tune={args.tune} | {len(folds)} folds | "
+        f"tune={args.tune} fixed_params={fixed_params} | {len(folds)} folds | "
           f"features: {len(folds[0]['features'])}")
 
     test_parts, tune_log_all = [], []
@@ -188,7 +206,7 @@ def main(argv=None) -> int:
             else:
                 refit_val, refit_yval = X_val, y_val
         else:
-            best_combo = {}
+            best_combo = fixed_params
             refit_val, refit_yval = X_val, y_val
 
         model, imp = _fit_one(get_model(args.model, **best_combo),
@@ -216,17 +234,18 @@ def main(argv=None) -> int:
                 test_parts.append(d)
         fold_preds = pd.concat(parts, ignore_index=True)
         fold_preds.to_parquet(
-            PRED_DIR / f"{args.model}_t{args.tier}_h{args.horizon}_{year}.parquet",
+            pred_dir / f"{args.model}_t{args.tier}_h{args.horizon}_{year}.parquet",
             index=False)
 
         # model artifact + params log
-        artifact = MODEL_DIR / f"{args.model}_t{args.tier}_h{args.horizon}_{year}"
+        artifact = model_dir / f"{args.model}_t{args.tier}_h{args.horizon}_{year}"
         joblib.dump(model, artifact.with_suffix(".joblib"))
         run_info = {
             "model": args.model, "tier": args.tier, "horizon": args.horizon,
             "year": year, "tag": tag,
             "params": model.get_params(),
             "tune": args.tune,
+            "model_params": best_combo,
             "tune_metric": args.tune_metric if args.tune else None,
             "beta": args.beta if args.tune_metric == "f_beta" else None,
             "max_alarm_rate": args.max_alarm_rate if args.tune_metric == "recall_at_rate" else None,
@@ -237,9 +256,9 @@ def main(argv=None) -> int:
 
     # pool OOS test predictions across folds and evaluate
     pooled = pd.concat(test_parts, ignore_index=True)
-    pooled_path = PRED_DIR / f"{args.model}_t{args.tier}_h{args.horizon}_{tag}_pooled_test.parquet"
+    pooled_path = pred_dir / f"{args.model}_t{args.tier}_h{args.horizon}_{tag}_pooled_test.parquet"
     pooled.to_parquet(pooled_path, index=False)
-    res = evaluate_run(pooled, tag=tag)
+    res = evaluate_run(pooled, tag=tag, out_dir=args.evaluation_dir)
     print("\n" + "=" * 78)
     print(f"Run {tag} complete. Pooled OOS evaluation:")
     print_report(res)

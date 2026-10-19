@@ -81,7 +81,7 @@ def _info_path(model: str, tier: int, horizon: int, year: int,
 def _fold_model_params(run_info: dict, model_name: str) -> dict:
     """Recover the selected constructor parameters from train.py's run log."""
     if not run_info.get("tune"):
-        return {}
+        return dict(run_info.get("model_params") or {})
     log = run_info.get("tune_log") or {}
     metric = log.get("tune_metric") or run_info.get("tune_metric")
     combos = log.get("combos", [])
@@ -191,12 +191,12 @@ def _choose_threshold(
     episodes: pd.DataFrame,
     horizon: int,
     budget: float,
-    steps: int,
 ) -> tuple[float, dict]:
     """Choose the lowest threshold meeting the average false-alarm budget.
 
-    Candidate thresholds are score quantiles plus a no-alarm threshold. This
-    gives a deterministic, bounded-cost threshold search.
+    Every distinct observed score is a candidate because predictions are
+    flagged with `score >= threshold`. False-alarm count is non-increasing as
+    the threshold rises, so binary search finds the lowest feasible score.
     """
     scores = validation["y_score"].to_numpy(dtype=float)
     if not len(scores):
@@ -207,43 +207,43 @@ def _choose_threshold(
             f"Validation scores contain {bad_count} non-finite value(s); "
             "cannot select an alarm threshold"
         )
-    quantiles = np.linspace(0.0, 1.0, max(int(steps), 2))
-    candidates = np.unique(np.quantile(scores, quantiles))
-    # An explicit infinity candidate guarantees a no-alarm option for finite
-    # model scores, even when the maximum score is exactly 1.0.
-    no_alarm = float("inf")
-    candidates = np.unique(np.append(candidates, no_alarm))
+    candidates = np.append(np.unique(scores), float("inf"))
 
     target_ids = _targetable_episode_ids(validation, episodes, horizon)
-    n_coin_months = _observed_coin_months(validation)
-    feasible = []
-    for threshold in candidates:
+    n_validation_coin_months = _observed_coin_months(validation)
+    def evaluate(threshold: float) -> dict:
         _, events = build_alarm_events(validation, episodes, float(threshold))
-        false_count, n_coin_months, rate, max_false_by_month = _false_alarm_stats(
-            events, validation, n_coin_months
+        false_count, coin_months, rate, max_false_by_month = _false_alarm_stats(
+            events, validation, n_validation_coin_months
         )
-        if rate <= budget:
-            caught = (
-                set(events.loc[events["is_true_alarm"], "target_episode_id"].dropna().astype(str))
-                if not events.empty else set()
-            )
-            recall = len(caught & target_ids) / len(target_ids) if target_ids else 0.0
-            feasible.append({
-                "threshold": float(threshold),
-                "false_alarms": false_count,
-                "coin_months": n_coin_months,
-                "false_alarms_per_coin_month": rate,
-                "max_false_alarms_in_coin_month": max_false_by_month,
-                "episodes_targetable": len(target_ids),
-                "episodes_warned": len(caught & target_ids),
-                "episode_recall": recall,
-                "alarm_events": len(events),
-            })
-    if not feasible:
-        raise RuntimeError("No threshold met the validation false-alarm budget")
-    # The lowest feasible cutoff flags the most candidate score rows while
-    # staying within the false-alarm budget.
-    best = min(feasible, key=lambda row: row["threshold"])
+        caught = (
+            set(events.loc[events["is_true_alarm"], "target_episode_id"].dropna().astype(str))
+            if not events.empty else set()
+        )
+        recall = len(caught & target_ids) / len(target_ids) if target_ids else 0.0
+        return {
+            "threshold": float(threshold),
+            "false_alarms": false_count,
+            "coin_months": coin_months,
+            "false_alarms_per_coin_month": rate,
+            "max_false_alarms_in_coin_month": max_false_by_month,
+            "episodes_targetable": len(target_ids),
+            "episodes_warned": len(caught & target_ids),
+            "episode_recall": recall,
+            "alarm_events": len(events),
+        }
+
+    # Infinity is always feasible (it flags no rows), so find the first
+    # feasible index in the ascending candidate list.
+    low, high = 0, len(candidates) - 1
+    while low < high:
+        mid = (low + high) // 2
+        stats = evaluate(float(candidates[mid]))
+        if stats["false_alarms_per_coin_month"] <= budget:
+            high = mid
+        else:
+            low = mid + 1
+    best = evaluate(float(candidates[low]))
     return best["threshold"], best
 
 
@@ -257,8 +257,6 @@ def main(argv=None) -> int:
                         help="training run tag (defaults to MODEL_tTIER_hHORIZON)")
     parser.add_argument("--false-alarms-per-coin-month", type=float, default=1.0,
                         help="maximum average validation false alarms per observed coin-month (default: 1)")
-    parser.add_argument("--threshold-steps", type=int, default=101,
-                        help="number of validation score quantiles considered (default: 101)")
     parser.add_argument("--model-dir", default=str(REPO_ROOT / "results/models"))
     parser.add_argument("--out-dir", default=str(REPO_ROOT / "reports/rolling_thresholds"))
     args = parser.parse_args(argv)
@@ -267,8 +265,6 @@ def main(argv=None) -> int:
     model_dir, out_dir = Path(args.model_dir), Path(args.out_dir)
     if args.false_alarms_per_coin_month < 0:
         parser.error("--false-alarms-per-coin-month must be non-negative")
-    if args.threshold_steps < 2:
-        parser.error("--threshold-steps must be at least 2")
 
     folds = load_folds(horizon=args.horizon, tier=args.tier)
     folds_by_year = {fold["year"]: fold for fold in folds}
@@ -304,7 +300,7 @@ def main(argv=None) -> int:
         validation = _validation_prediction_frame(fold, val_scores, args.horizon)
         threshold, val_stats = _choose_threshold(
             validation, episodes, args.horizon,
-            args.false_alarms_per_coin_month, args.threshold_steps,
+            args.false_alarms_per_coin_month,
         )
 
         test = fold["test_meta"].copy()
@@ -322,7 +318,6 @@ def main(argv=None) -> int:
         test_false, test_coin_months, test_false_rate, test_max_false_by_month = (
             _false_alarm_stats(test_events, test, _observed_coin_months(test))
         )
-
         threshold_rows.append({
             "test_year": year,
             "validation_year": year - 1,
