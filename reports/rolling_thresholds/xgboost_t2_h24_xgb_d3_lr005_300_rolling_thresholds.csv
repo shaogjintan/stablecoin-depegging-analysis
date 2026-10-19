@@ -1,0 +1,6 @@
+test_year,validation_year,model,tier,horizon,tag,threshold,validation_false_alarms,validation_coin_months,validation_false_alarms_per_coin_month,validation_max_false_alarms_in_coin_month,validation_episode_recall,validation_alarm_events,validation_flagged_hours,test_false_alarms,test_coin_months,test_false_alarms_per_coin_month,test_max_false_alarms_in_coin_month,test_alarm_events,test_flagged_hours,test_episodes_targetable,test_episodes_warned,test_episode_recall
+2021,2020,xgboost,2,24,xgb_d3_lr005_300,0.7051224708557129,68,72,0.9444444444444444,10,0.4,70,155,224,72,3.111111111111111,15,235,446,19,11,0.5789473684210527
+2022,2021,xgboost,2,24,xgb_d3_lr005_300,0.9061498641967773,72,72,1.0,8,0.10526315789473684,74,105,19,63,0.30158730158730157,4,19,25,9,0,0.0
+2023,2022,xgboost,2,24,xgb_d3_lr005_300,0.5939292311668396,45,63,0.7142857142857143,5,0.1111111111111111,46,93,23,66,0.3484848484848485,4,24,76,3,1,0.3333333333333333
+2024,2023,xgboost,2,24,xgb_d3_lr005_300,0.7324841022491455,62,66,0.9393939393939394,6,0.3333333333333333,63,148,66,60,1.1,12,68,206,2,2,1.0
+2025,2024,xgboost,2,24,xgb_d3_lr005_300,0.7712728977203369,60,60,1.0,12,1.0,62,239,22,56,0.39285714285714285,6,23,65,1,1,1.0
