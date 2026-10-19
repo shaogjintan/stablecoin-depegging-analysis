@@ -10,16 +10,19 @@ Teammates: add your model class here once it subclasses BaseModel
 """
 from .base import BaseModel, MedianImputer
 from .baseline import ConstantPriorModel, PersistenceModel
+from .random_forest_model import RFModel
 from .xgboost_model import XGBModel
 
 MODEL_REGISTRY: dict[str, type[BaseModel]] = {
     "baseline": ConstantPriorModel,
     "persistence": PersistenceModel,
     "xgboost": XGBModel,
+    "random_forest": RFModel,
 }
 
 __all__ = ["BaseModel", "MedianImputer", "ConstantPriorModel",
-           "PersistenceModel", "XGBModel", "MODEL_REGISTRY", "get_model"]
+           "PersistenceModel", "XGBModel", "RFModel", "MODEL_REGISTRY",
+           "get_model"]
 
 
 def get_model(name: str, **kwargs) -> BaseModel:
