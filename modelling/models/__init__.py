@@ -12,12 +12,14 @@ from .base import BaseModel, MedianImputer
 from .baseline import ConstantPriorModel, PersistenceModel
 from .random_forest_model import RFModel
 from .xgboost_model import XGBModel
+from .logreg import LogRegModel
 
 MODEL_REGISTRY: dict[str, type[BaseModel]] = {
     "baseline": ConstantPriorModel,
     "persistence": PersistenceModel,
     "xgboost": XGBModel,
     "random_forest": RFModel,
+    "logreg": LogRegModel,
 }
 
 __all__ = ["BaseModel", "MedianImputer", "ConstantPriorModel",
