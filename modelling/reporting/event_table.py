@@ -25,6 +25,7 @@ OUTPUT (reports/event_tables/)
     2_event_zooms.png     price of each coin around every multi-coin event
     3_onset_gaps.png      hours to nearest other-coin onset (why 48h)
     4_episodes_vs_events.png  per-year episode vs event counts
+    5_coin_year_heatmap.png   episodes per coin per year, with totals
 
 Usage (from the repo root):
     python modelling/reporting/event_table.py
@@ -47,7 +48,7 @@ import pandas as pd  # noqa: E402
 REPO_ROOT = Path(__file__).resolve().parents[2]
 sys.path.insert(0, str(REPO_ROOT / "data_processing"))
 
-from config import DEPEG_BAND, FIAT_COINS, PROCESSED_DATA_DIR  # noqa: E402
+from config import DEPEG_BAND, FIAT_COINS, OOS_START_YEAR, PROCESSED_DATA_DIR  # noqa: E402
 
 # fixed coin -> colour (categorical order, validated for CVD separation);
 # coins are also always labelled, so colour never carries identity alone
@@ -219,6 +220,74 @@ def plot_episodes_vs_events(by_year: pd.DataFrame, path: Path) -> None:
     plt.close(fig)
 
 
+def plot_coin_year_heatmap(by_year: pd.DataFrame, test_start: int, path: Path) -> None:
+    """Episodes per coin per year (one-hue blue ramp), totals as plain columns."""
+    yrs = by_year.loc[by_year["year"] != "total"].copy()
+    coins = [c for c in ["USDT", "USDC", "BUSD", "DAI", "TUSD", "PAX"]
+             if f"episodes_{c}" in yrs.columns]
+    grid = yrs[[f"episodes_{c}" for c in coins]].to_numpy(dtype=float)
+    totals = by_year.loc[by_year["year"] == "total"]
+    ramp = matplotlib.colors.LinearSegmentedColormap.from_list(
+        "blue", ["#f1f6fd", "#cde2fb", "#9ec5f4", "#6da7ec", "#3987e5",
+                 "#256abf", "#184f95", "#0d366b"])
+    n_rows, n_cols = grid.shape
+    fig, ax = plt.subplots(figsize=(8.6, 5.2))
+    ax.grid(False)
+    for s in ax.spines.values():
+        s.set_visible(False)
+    ax.imshow(grid, cmap=ramp, vmin=0, vmax=max(grid.max(), 1), aspect="auto",
+              extent=(-0.5, n_cols - 0.5, n_rows - 0.5, -0.5))
+    # 2px-style surface gaps between cells
+    for x in np.arange(-0.5, n_cols, 1):
+        ax.axvline(x, color=SURFACE, lw=2.5)
+    for y in np.arange(-0.5, n_rows, 1):
+        ax.axhline(y, color=SURFACE, lw=2.5)
+    hi = grid.max()
+    for r in range(n_rows):
+        for c in range(n_cols):
+            v = int(grid[r, c])
+            ax.text(c, r, "–" if v == 0 else str(v), ha="center", va="center",
+                    fontsize=11, fontweight="bold" if v else "normal",
+                    color=(SURFACE if v > hi * 0.5 else (MUTED if v == 0 else INK)))
+    # totals columns (plain text, not coloured: different measure)
+    for j, (col, label) in enumerate([("episodes", "Episodes"), ("events", "Events")]):
+        x = n_cols + 0.35 + j * 1.05
+        ax.text(x, -0.85, label, ha="center", va="bottom", fontsize=9.5,
+                fontweight="bold", color=INK)
+        for r, v in enumerate(yrs[col]):
+            ax.text(x, r, str(int(v)), ha="center", va="center", fontsize=11, color=INK)
+        ax.text(x, n_rows + 0.15, str(int(totals[col].iloc[0])), ha="center",
+                va="center", fontsize=11, fontweight="bold", color=INK)
+    for c, coin in enumerate(coins):
+        ax.text(c, n_rows + 0.15, str(int(totals[f"episodes_{coin}"].iloc[0])),
+                ha="center", va="center", fontsize=11, fontweight="bold", color=INK)
+    ax.text(-0.6, n_rows + 0.15, "Total", ha="right", va="center", fontsize=10,
+            fontweight="bold", color=INK)
+    ax.axhline(n_rows - 0.5 + 0.17, xmin=0, xmax=1, color=GRID, lw=1)
+    # bracket the test years
+    test_rows = [i for i, y in enumerate(yrs["year"]) if int(y) >= test_start]
+    if test_rows:
+        top, bot = test_rows[0] - 0.45, test_rows[-1] + 0.45
+        xb = n_cols + 2.25
+        ax.plot([xb - 0.12, xb, xb, xb - 0.12], [top, top, bot, bot], color=MUTED,
+                lw=1, clip_on=False)
+        ep = int(yrs.loc[yrs["year"].astype(int) >= test_start, "episodes"].sum())
+        ev = int(yrs.loc[yrs["year"].astype(int) >= test_start, "events"].sum())
+        ax.text(xb + 0.12, (top + bot) / 2, f"test years\n{ep} episodes\n{ev} events",
+                ha="left", va="center", fontsize=8.5, color=MUTED, clip_on=False)
+    for c, coin in enumerate(coins):  # same baseline as the totals headers
+        ax.text(c, -0.85, coin, ha="center", va="bottom", fontsize=10, color=INK)
+    ax.set_xticks([])
+    ax.tick_params(length=0, labelsize=10, colors=INK)
+    ax.set_yticks(range(n_rows), yrs["year"].astype(str))
+    ax.set_xlim(-0.5, n_cols + 2.9)
+    ax.set_ylim(n_rows + 0.6, -0.95)
+    ax.set_title("Depeg episodes per coin per year", loc="left", pad=26, fontsize=12)
+    fig.tight_layout()
+    fig.savefig(path, dpi=200)
+    plt.close(fig)
+
+
 def main(argv=None) -> int:
     parser = argparse.ArgumentParser(description=__doc__,
                                      formatter_class=argparse.RawDescriptionHelpFormatter)
@@ -279,6 +348,7 @@ def main(argv=None) -> int:
         plot_event_zooms(eps, ev_tab, prices, args.window_hours, fig_dir / "2_event_zooms.png")
         plot_onset_gaps(eps, args.window_hours, fig_dir / "3_onset_gaps.png")
         plot_episodes_vs_events(by_year, fig_dir / "4_episodes_vs_events.png")
+        plot_coin_year_heatmap(by_year, OOS_START_YEAR, fig_dir / "5_coin_year_heatmap.png")
         print(f"\nSaved figures: {fig_dir}")
     return 0
 
