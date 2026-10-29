@@ -54,10 +54,15 @@ _Source: `reports/local_budget_curve.csv` (budget 1.0 rows), reproduced against 
 
 ## P18 Honest warts (acknowledge on the slide — now evidence-backed)
 
-1. **2022 is a universal miss.** At h=24 T2 every model — including peg-stress persistence —
-   catches **0/9** 2022 episodes at the 1-FA budget, and even at **8 FA/coin-month** XGBoost
-   catches only 2/9. Terra/LUNA-type exogenous shocks had no 24h market/on-chain precursor.
-   → Slide line + P21 limitation + future work ("add off-chain macro features").
+1. **2022 is a universal miss — but it is the JANUARY 2022 wobble, not Terra.**
+   Our 2022 episodes are all Jan 5 – Feb 11, 2022 (market-wide wobble; 9 targetable) plus
+   Nov 13, 2022 (PAX/TUSD, not targetable). At h=24 T2 every model catches **0/9** of those
+   at the 1-FA budget; even at **8 FA/coin-month** XGBoost catches only 2/9.
+   The May 2022 Terra-era dips appear in this price series only as **single-hour wicks**
+   (BUSD $0.9695 for 1h, USDT $0.9876 for 1h) and are excluded by the ≥2-consecutive-hour
+   episode rule — so Terra is outside our scored set, not a model failure.
+   → Slide line: "2022: 0/9 — every model missed the January 2022 market-wide wobble."
+   → P21 limitation: single-hour Terra-era wicks fall outside the 2-hour episode definition.
 2. **2021 false alarms overshoot the budget for every model** (XGB 3.11, logreg 2.51, RF 2.01,
    persistence 2.04 FA/coin-month vs the 1.0 target). The budget is enforced at calibration
    (Y−1) but drifts in volatile test years. → P21 limitation; rank-based thresholds = future work.

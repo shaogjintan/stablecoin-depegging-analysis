@@ -14,8 +14,8 @@ Outputs (under reports/):
                                      only) -- the key research-question evidence
 
 Usage (from the repo root):
-    python modelling/shap_analysis.py --model xgboost --horizon 24 --tier 2
-    python modelling/shap_analysis.py --model xgboost --horizon 24 --tier 1
+    python modelling/feature_importance/shap_analysis.py --model xgboost --horizon 24 --tier 2
+    python modelling/feature_importance/shap_analysis.py --model xgboost --horizon 24 --tier 1
 """
 from __future__ import annotations
 

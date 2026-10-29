@@ -47,7 +47,7 @@ modelling/                          # ACTIVE workspace
   train.py                          # orchestrator (folds, tuning, results)
   evaluate.py                       # pooled metrics, thresholds, alarm curves
   compare_runs.py                   # Tier 1 vs Tier 2 comparison table
-  shap_analysis.py                  # SHAP values, rankings, beeswarms, group shares
+  feature_importance/shap_analysis.py  # SHAP values, rankings, beeswarms, group shares
   checks/test_tier2_features.py     # coin-identity leakage probe + hygiene checks
 reports/
   modelling_comparison.csv          # pooled OOS results table (Phase 4)
@@ -132,7 +132,7 @@ python modelling/train.py --model persistence --horizon 24 --tier 1 --tag pers #
 python modelling/compare_runs.py [--save reports/modelling_comparison.csv]    # PR-AUC table (secondary)
 python modelling/alarm_report.py --save reports/recall_operating_points.csv \
        --alarm-tables                                               # recall-first table (HEADLINE)
-python modelling/shap_analysis.py --model xgboost --horizon 24 --tier 2
+python modelling/feature_importance/shap_analysis.py --model xgboost --horizon 24 --tier 2
 python modelling/evaluate.py                                       # self-test
 python modelling/checks/test_tier2_features.py                     # leakage probe
 # If master.parquet ever lacks the *_logdiff_* columns:
@@ -249,6 +249,6 @@ persistence + XGBoost alarms; final README/`agent.md` polish.
 |---|---|
 | `load_folds(tier=2)` says features missing | `python data_processing/build_onchain_features.py --update-master` |
 | `compare_runs.py` prints nothing | `results/predictions/` is empty — run `train.py` first |
-| `shap_analysis.py` can't find models | models live in `results/models/` per trained config — train that config first |
+| `feature_importance/shap_analysis.py` can't find models | models live in `results/models/` per trained config — train that config first |
 | `--model <name>` unknown | model not registered — add it to `models/__init__.py` |
 | Inner-val PR-AUC suspiciously high | you're early-stopping on training rows — see gotcha #1 |
