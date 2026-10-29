@@ -146,8 +146,8 @@ def _plot(summary: pd.DataFrame, path: Path) -> None:
         d = df[df["tier"] == tier]
         x = np.arange(len(order))
         w = 0.38
-        rt = [d.loc[(d.model == m) & (d.mode == "real_time"), "episode_recall"].iloc[0] for m in order]
-        ex = [d.loc[(d.model == m) & (d.mode == "ex_post"), "episode_recall"].iloc[0] for m in order]
+        rt = [d.loc[(d["model"] == m) & (d["mode"] == "real_time"), "episode_recall"].iloc[0] for m in order]
+        ex = [d.loc[(d["model"] == m) & (d["mode"] == "ex_post"), "episode_recall"].iloc[0] for m in order]
         ax.bar(x - w / 2, rt, w, label="real-time (prior-year threshold)", color="#2a78d6")
         ax.bar(x + w / 2, ex, w, label="ex post (test-year threshold)", color="#eb6834")
         for i, (r, e) in enumerate(zip(rt, ex)):
