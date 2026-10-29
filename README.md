@@ -114,6 +114,12 @@ Unzips the per-coin Dune Analytics CSVs from `dune_onchain.zip` into
 > the full hourly grid, so each lag is a true calendar window; the diff is NaN
 > whenever either endpoint is unobserved. Raw levels are for reference only —
 > the Tier 2 model uses the change features, never the levels.
+>
+> **Chain scope (deck P4 flag):** the Dune CSVs contain no chain column and the
+> zip has no query metadata, so the chain(s) covered by the query are not
+> documented in the repo. Confirm the chain list from the Dune dashboard before
+> the presentation and state it on the data slide (e.g. Ethereum-only vs
+> multi-chain).
 
 ### `merge_and_label.py` — merge, depeg episodes, labels
 
