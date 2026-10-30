@@ -10,13 +10,13 @@ common_sample flag identified by merge_and_label.py.
     (NOT restricted to the common sample).
   - On-chain coverage is restricted to coin-hours where common_sample == True.
 
-Outputs:
+Outputs (written to reports/):
   - market_coverage_table.csv
   - onchain_coverage_table.csv
 """
 
 import pandas as pd
-from config import PROCESSED_DATA_DIR, FIAT_COINS
+from config import PROCESSED_DATA_DIR, REPORT_DIR, FIAT_COINS
 
 def calculate_coverage(df,source_name,observed_col,restrict_to_common):
     """
@@ -99,11 +99,11 @@ def main():
 
     # EXPORT TABLES
     market_coverage.to_csv(
-        PROCESSED_DATA_DIR / "market_coverage_table.csv",
+        REPORT_DIR / "market_coverage_table.csv",
         index=False)
 
     onchain_coverage.to_csv(
-        PROCESSED_DATA_DIR / "onchain_coverage_table.csv",
+        REPORT_DIR / "onchain_coverage_table.csv",
         index=False)
     print("\nBoth coverage tables saved successfully.")
 
