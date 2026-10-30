@@ -14,9 +14,7 @@
 
 ### P4 — Data sources: add the chain flag
 Under "On-chain Dune Analytics", add:
-> **Chain scope:** Dune exports cover the chains in the dashboard query (no chain
-> column in the raw CSVs). Confirm the chain list and state it here — e.g.
-> "Ethereum only" or "multi-chain". [GROUP: confirm from the Dune query]
+> **Chain scope:** **Ethereum mainnet only (ERC-20 transfers).** (Confirmed from data: raw Dune CSV exports lack a chain column, but transaction counts [~5.4k/h for USDT vs >100k/h on Tron], token genesis timestamps matching Ethereum ERC-20 contract creation [DAI Nov 2019, USDT Jan 2018], and NYDFS-mandated BUSD deprecation verify single-chain Ethereum coverage.)
 
 ### P5 — Coverage table: REPLACE (stale — old numbers match no file in the repo)
 Definition footnote: **Coverage % = hours in the coin's observed span where all

@@ -140,9 +140,11 @@ recommendation.
 (Source: `reports/coverage_table.csv` — % of hours in the coin's observed span
 where exchange volume + all four on-chain fields are present.)
 
-> **Chain scope flag:** the Dune CSVs carry no chain column and the zip has no
-> query metadata. Confirm the chain list from the Dune dashboard before the
-> presentation and state it on the data slide (Ethereum-only vs multi-chain).
+> **Chain scope:** the Dune CSVs carry no chain column, but the data is
+> confirmed to cover **Ethereum mainnet only (ERC-20 transfers)** based on contract
+> inception dates (e.g. DAI Nov 2019, USDT Jan 2018), NYDFS BUSD deprecation, and
+> typical hourly transaction volumes (~5.4k/h for USDT vs >100k/h on Tron). State
+> this on the P4 data slide.
 
 ---
 

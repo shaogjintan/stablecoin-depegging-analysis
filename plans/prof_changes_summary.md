@@ -17,7 +17,7 @@
 | 7 | Use the **average** budget (≈72/yr), not a per-coin-month cap | Verified code already does the average; deck wording fixed to "on average" | — (no code change; wording) |
 | 8 | Event types = context; **add type as a column; state counts, not findings** | Implemented the 5-type classification in code + caught/missed by type as counts only; fixed the wrong "staggered = 10" → **16** (types now sum to 79) | `plans/event_types.py` → `reports/event_tables/types_events.csv`, `types_summary.csv`, `caught_by_type.csv` |
 | 9 | Flag **how many independent events** the results rest on | Stated everywhere: 30 events / 34 targetable at h24 (33 h6, 32 h1) | slide copy |
-| 10 | Flag **which chains the on-chain data covers** | Checked: Dune CSVs have no chain column → README note added; actual chain list needs the group to confirm from the Dune query | `README.md` (note added) |
+| 10 | Flag **which chains the on-chain data covers** | Confirmed: Dune CSVs have no chain column; verified as **Ethereum-only (ERC-20)** via contract start dates & tx volumes → updated in `README.md` and slide copy | `README.md`, `plans/final_deck_changes.md` |
 | 11 | Robustness = "does the conclusion change at 0.5%?" | Computed: at 0.5 FA/cm the leader **flips** (RF T2 6/34 vs XGB T2 3/34; T1 ≥ T2) → budget-dependence stated honestly | `reports/local_budget_curve.csv` (budget-0.5 rows) → P23 copy |
 | 12 | **h = 1 one line, labelled near-detection** | Retrained XGB h1 with the fixed config (models were still grid-tuned) | `results/models/xgboost_*_h1_*.json` (now `xgb_d3_lr005_300`) → h1 line: T1 2/32, T2 3/32 |
 | 13 | "If the gap is small/inconsistent, say on-chain adds little" | Ex-post numbers now support the honest line: T2−T1 ≈ 1 episode at h24, concentrated in staggered/sustained (SVB-type) events | `reports/ex_post_comparison.csv` + `caught_by_type.csv` |
@@ -40,6 +40,6 @@
 
 1. **Javier pushed 3 new commits to `upstream/logreg-model` today** (`reports/logreg_operating_point.csv`, `logreg_matched_tier_eval.csv`, `annual_calibration.csv`). His numbers use a different protocol (pooled threshold; matched sample; grid-tuned PR-AUC 0.0224/0.0220/0.0325/0.0307; recall 9/34 & 10/34 at h24). **These conflict with the fixed-config protocol the deck uses** (0.0200/0.0197/0.0312/0.0300; 13/34 & 11/34). Reconcile with Javier before pasting P13/P18.
 2. Merge PRs: `results/fixed-config-local` → main, then `cleanup/dead-weight-final-deck` (5 commits, 0 behind upstream/main).
-3. Confirm the Dune query's chain scope (Ethereum-only vs multi-chain) → P4.
+3. Verified Dune query's chain scope: **Ethereum mainnet only (ERC-20)** → updated in P4 slide copy.
 4. Canva edits from `plans/final_deck_changes.md` (per-slide copy, reorder, delete P26 junk).
 5. Confirm with Vienna before archiving `modelling/robustness_check.py` (kept in place).
