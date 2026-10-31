@@ -1,0 +1,93 @@
+{
+  "model": "logreg",
+  "tier": 1,
+  "horizon": 24,
+  "year": 2025,
+  "tag": "lr01",
+  "params": {
+    "name": "logreg",
+    "C": 1.0,
+    "penalty": "l2",
+    "class_weight": "balanced",
+    "winsor": 0.01
+  },
+  "tune": true,
+  "model_params": {
+    "C": 1.0,
+    "penalty": "l2"
+  },
+  "tune_metric": "pr_auc",
+  "beta": null,
+  "max_alarm_rate": null,
+  "tune_log": {
+    "year": 2025,
+    "tune_metric": "pr_auc",
+    "combos": [
+      {
+        "params": {
+          "C": 0.001,
+          "penalty": "l1"
+        },
+        "inner_pr_auc": 0.1338685911408918,
+        "best_iteration": null
+      },
+      {
+        "params": {
+          "C": 0.01,
+          "penalty": "l1"
+        },
+        "inner_pr_auc": 0.20410056460416012,
+        "best_iteration": null
+      },
+      {
+        "params": {
+          "C": 0.1,
+          "penalty": "l1"
+        },
+        "inner_pr_auc": 0.2906819939557409,
+        "best_iteration": null
+      },
+      {
+        "params": {
+          "C": 1.0,
+          "penalty": "l1"
+        },
+        "inner_pr_auc": 0.29881423878374,
+        "best_iteration": null
+      },
+      {
+        "params": {
+          "C": 0.001,
+          "penalty": "l2"
+        },
+        "inner_pr_auc": 0.1642702525295541,
+        "best_iteration": null
+      },
+      {
+        "params": {
+          "C": 0.01,
+          "penalty": "l2"
+        },
+        "inner_pr_auc": 0.23122749317586655,
+        "best_iteration": null
+      },
+      {
+        "params": {
+          "C": 0.1,
+          "penalty": "l2"
+        },
+        "inner_pr_auc": 0.2891599991468268,
+        "best_iteration": null
+      },
+      {
+        "params": {
+          "C": 1.0,
+          "penalty": "l2"
+        },
+        "inner_pr_auc": 0.29886535544750154,
+        "best_iteration": null
+      }
+    ]
+  },
+  "inner_val_pr_auc": 0.3168677743241803
+}

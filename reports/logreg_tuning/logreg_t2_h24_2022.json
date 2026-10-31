@@ -1,0 +1,93 @@
+{
+  "model": "logreg",
+  "tier": 2,
+  "horizon": 24,
+  "year": 2022,
+  "tag": "lr01",
+  "params": {
+    "name": "logreg",
+    "C": 0.001,
+    "penalty": "l1",
+    "class_weight": "balanced",
+    "winsor": 0.01
+  },
+  "tune": true,
+  "model_params": {
+    "C": 0.001,
+    "penalty": "l1"
+  },
+  "tune_metric": "pr_auc",
+  "beta": null,
+  "max_alarm_rate": null,
+  "tune_log": {
+    "year": 2022,
+    "tune_metric": "pr_auc",
+    "combos": [
+      {
+        "params": {
+          "C": 0.001,
+          "penalty": "l1"
+        },
+        "inner_pr_auc": 0.024389311368681103,
+        "best_iteration": null
+      },
+      {
+        "params": {
+          "C": 0.01,
+          "penalty": "l1"
+        },
+        "inner_pr_auc": 0.02368033280061624,
+        "best_iteration": null
+      },
+      {
+        "params": {
+          "C": 0.1,
+          "penalty": "l1"
+        },
+        "inner_pr_auc": 0.023359513382460534,
+        "best_iteration": null
+      },
+      {
+        "params": {
+          "C": 1.0,
+          "penalty": "l1"
+        },
+        "inner_pr_auc": 0.023302677985089802,
+        "best_iteration": null
+      },
+      {
+        "params": {
+          "C": 0.001,
+          "penalty": "l2"
+        },
+        "inner_pr_auc": 0.023997898185078706,
+        "best_iteration": null
+      },
+      {
+        "params": {
+          "C": 0.01,
+          "penalty": "l2"
+        },
+        "inner_pr_auc": 0.02354629553589553,
+        "best_iteration": null
+      },
+      {
+        "params": {
+          "C": 0.1,
+          "penalty": "l2"
+        },
+        "inner_pr_auc": 0.02336772428335856,
+        "best_iteration": null
+      },
+      {
+        "params": {
+          "C": 1.0,
+          "penalty": "l2"
+        },
+        "inner_pr_auc": 0.023306319583369053,
+        "best_iteration": null
+      }
+    ]
+  },
+  "inner_val_pr_auc": 0.0257680871006712
+}

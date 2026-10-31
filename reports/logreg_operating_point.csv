@@ -1,0 +1,5 @@
+horizon,tier,threshold,false_alarms,coin_months,fa_per_coin_month,episodes_caught,episodes,recall,avg_lead_h
+6,1,0.9723,224,317,0.707,2,33,0.061,2.0
+6,2,0.9751,205,317,0.647,2,33,0.061,2.0
+24,1,0.9344,273,317,0.861,9,34,0.265,5.9
+24,2,0.9244,306,317,0.965,10,34,0.294,7.7

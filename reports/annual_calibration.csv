@@ -1,0 +1,11 @@
+year,tier,threshold,fa_per_coin_month,n_episodes,episodes_caught,recall,avg_lead_hours
+2021,T1 (market only),0.985,0.764,19,6,0.316,0.0
+2021,T2 (+on-chain),0.985,0.778,19,6,0.316,0.0
+2022,T1 (market only),0.95,0.984,9,4,0.444,0.0
+2022,T2 (+on-chain),0.95,0.968,9,5,0.556,0.0
+2023,T1 (market only),0.92,0.939,5,3,0.6,0.0
+2023,T2 (+on-chain),0.92,0.894,5,3,0.6,0.0
+2024,T1 (market only),0.915,1.0,2,1,0.5,0.0
+2024,T2 (+on-chain),0.905,0.967,2,2,1.0,0.0
+2025,T1 (market only),0.885,0.946,1,1,1.0,0.0
+2025,T2 (+on-chain),0.81,1.0,1,1,1.0,0.0
