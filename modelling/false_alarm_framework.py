@@ -146,6 +146,170 @@ def evaluate_configuration(model_name: str, tier: int, horizon: int,
     return year_rows, event_frames, score_frames
 
 
+def _common_sample_fold(tier1_fold: dict, tier2_fold: dict) -> dict:
+    """Restrict a Tier 1 fold to the exact Tier 2 eligible coin-hours."""
+    if int(tier1_fold["year"]) != int(tier2_fold["year"]):
+        raise ValueError("Tier 1 and Tier 2 folds must refer to the same test year")
+    out = dict(tier1_fold)
+    for part in ("train", "inner_train", "inner_val", "test"):
+        meta1 = tier1_fold[f"{part}_meta"].copy()
+        meta2 = tier2_fold[f"{part}_meta"].copy()
+        meta1["hour"] = pd.to_datetime(meta1["hour"], utc=True)
+        meta2["hour"] = pd.to_datetime(meta2["hour"], utc=True)
+        common_keys = set(zip(meta2["coin"], meta2["hour"]))
+        mask = np.fromiter(
+            ((coin, hour) in common_keys
+             for coin, hour in zip(meta1["coin"], meta1["hour"])),
+            dtype=bool, count=len(meta1),
+        )
+        if int(mask.sum()) != len(meta2):
+            raise ValueError(
+                f"Tier 2 {part} rows are not a subset of Tier 1 for year "
+                f"{tier1_fold['year']} (h={tier1_fold['horizon']})"
+            )
+        positions = np.flatnonzero(mask)
+        out[f"X_{part}"] = tier1_fold[f"X_{part}"].iloc[positions].reset_index(drop=True)
+        out[f"y_{part}"] = tier1_fold[f"y_{part}"].iloc[positions].reset_index(drop=True)
+        out[f"{part}_meta"] = meta1.iloc[positions].reset_index(drop=True)
+    return out
+
+
+def evaluate_tier1_on_common_sample(
+    model_name: str, horizon: int, episodes: pd.DataFrame, budget: float,
+) -> dict:
+    """Refit Tier 1 on Tier 2 eligible rows and return pooled OOS metrics."""
+    tier1_folds = load_folds(horizon=horizon, tier=1)
+    tier2_folds = load_folds(horizon=horizon, tier=2)
+    tier2_by_year = {int(fold["year"]): fold for fold in tier2_folds}
+    years, event_frames, score_frames = [], [], []
+
+    for original in tier1_folds:
+        year = int(original["year"])
+        if year not in tier2_by_year:
+            continue
+        fold = _common_sample_fold(original, tier2_by_year[year])
+        val_scores, test_scores = score_fold(fold, model_name)
+
+        val = fold["inner_val_meta"].copy()
+        val["horizon"] = horizon
+        val["y_true"] = fold["y_inner_val"].reset_index(drop=True)
+        val["y_score"] = val_scores
+        if model_name == "baseline":
+            threshold = float("inf")
+            val_stats = {"false_alarms_per_coin_month": 0.0, "episode_recall": 0.0}
+        else:
+            threshold, val_stats = _choose_threshold(val, episodes, horizon, budget)
+
+        test = fold["test_meta"].copy()
+        test["hour"] = pd.to_datetime(test["hour"], utc=True)
+        test["horizon"] = horizon
+        test["split"] = "test"
+        test["y_true"] = fold["y_test"].reset_index(drop=True)
+        test["y_score"] = test_scores
+        flagged, events = build_alarm_events(test, episodes, threshold)
+        target_ids = _targetable_episode_ids(test, episodes, horizon)
+        caught = (
+            set(events.loc[events.is_true_alarm, "target_episode_id"].dropna().astype(str))
+            if not events.empty else set()
+        )
+        false_count, coin_months, false_rate, max_false = _false_alarm_stats(
+            events, test, _observed_coin_months(test)
+        )
+        years.append({
+            "test_year": year,
+            "test_rows": len(test),
+            "test_positive_hours": int(test["y_true"].sum()),
+            "positive_base_rate": float(test["y_true"].mean()) if len(test) else np.nan,
+            "validation_false_alarms_per_coin_month": val_stats["false_alarms_per_coin_month"],
+            "validation_episode_recall": val_stats["episode_recall"],
+            "episodes_caught": len(caught & target_ids),
+            "targetable_episodes": len(target_ids),
+            "alarm_events": len(events),
+            "true_alarm_events": int(events.is_true_alarm.sum()) if not events.empty else 0,
+            "false_alarms": false_count,
+            "coin_months": coin_months,
+            "false_alarms_per_coin_month": false_rate,
+            "max_false_alarms_in_coin_month": max_false,
+            "flagged_hours": len(flagged),
+        })
+        if not events.empty:
+            event_frames.append(events)
+        score_frames.append(pd.DataFrame({
+            "y_true": test["y_true"].to_numpy(), "y_score": test_scores,
+        }))
+
+    if not score_frames:
+        raise RuntimeError(f"No common-sample folds available for {model_name}, h={horizon}")
+    yearly = pd.DataFrame(years)
+    scores = pd.concat(score_frames, ignore_index=True)
+    cls = pooled_metrics(scores["y_true"], scores["y_score"])
+    events = pd.concat(event_frames, ignore_index=True) if event_frames else pd.DataFrame()
+    caught_events = events.loc[events.target_episode_id.notna()] if not events.empty else events
+    false_total = int(yearly.false_alarms.sum())
+    coin_month_total = int(yearly.coin_months.sum())
+    alarm_total = int(yearly.alarm_events.sum())
+    true_total = int(yearly.true_alarm_events.sum())
+    target_total = int(yearly.targetable_episodes.sum())
+    caught_total = int(yearly.episodes_caught.sum())
+    return {
+        "model": model_name,
+        "tag": FIXED_TAGS[model_name],
+        "horizon_hours": horizon,
+        "test_rows": int(cls["n"]),
+        "positive_base_rate": float(cls["pos_rate"]),
+        "average_precision": float(cls["pr_auc"]),
+        "episodes_caught": caught_total,
+        "targetable_episodes": target_total,
+        "episode_recall": caught_total / target_total if target_total else np.nan,
+        "alarm_budget_fa_per_coin_month": budget,
+        "false_alarms": false_total,
+        "coin_months": coin_month_total,
+        "false_alarms_per_coin_month": false_total / coin_month_total if coin_month_total else np.nan,
+        "alarm_events": alarm_total,
+        "true_alarm_events": true_total,
+        "alarm_precision": true_total / alarm_total if alarm_total else np.nan,
+        "median_lead_hours": (
+            float(caught_events["lead_hours"].median())
+            if not caught_events.empty else np.nan
+        ),
+        "max_false_alarms_in_coin_month": int(yearly.max_false_alarms_in_coin_month.max()),
+        "test_years": int(yearly.test_year.nunique()),
+    }
+
+
+def write_tier_comparison(
+    summary: pd.DataFrame, common_tier1: pd.DataFrame, out_path: Path,
+) -> None:
+    """Write a wide, paired Tier 1 vs Tier 2 table on the common sample."""
+    metrics = [
+        "test_rows", "positive_base_rate", "average_precision",
+        "episodes_caught", "targetable_episodes", "episode_recall",
+        "false_alarms", "coin_months", "false_alarms_per_coin_month",
+        "alarm_budget_fa_per_coin_month", "alarm_events", "true_alarm_events",
+        "alarm_precision", "median_lead_hours", "max_false_alarms_in_coin_month",
+    ]
+    tier1 = common_tier1[["model", "tag", "horizon_hours", *metrics]].copy()
+    tier2 = summary.loc[summary.tier.eq(2), [
+        "model", "tag", "horizon_hours", *metrics,
+    ]].copy()
+    tier1 = tier1.rename(columns={c: f"tier1_{c}" for c in metrics})
+    tier2 = tier2.rename(columns={c: f"tier2_{c}" for c in metrics})
+    paired = tier1.merge(tier2, on=["model", "tag", "horizon_hours"],
+                          how="inner", validate="one_to_one")
+    paired["common_test_rows"] = paired["tier1_test_rows"]
+    paired["common_targetable_episodes"] = paired["tier1_targetable_episodes"]
+    for metric in (
+        "positive_base_rate", "average_precision", "episodes_caught",
+        "episode_recall", "false_alarms_per_coin_month", "alarm_precision",
+        "median_lead_hours",
+    ):
+        paired[f"delta_{metric}_tier2_minus_tier1"] = (
+            paired[f"tier2_{metric}"] - paired[f"tier1_{metric}"]
+        )
+    paired["common_sample"] = "Tier 2 eligible coin-hours; Tier 1 refit on same rows"
+    paired.sort_values(["model", "horizon_hours"]).to_csv(out_path, index=False)
+
+
 def main(argv=None) -> int:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--out-dir", default=str(REPO_ROOT / "reports/final_results"))
@@ -154,9 +318,36 @@ def main(argv=None) -> int:
                         default=["baseline", "persistence", "xgboost", "random_forest"])
     parser.add_argument("--tiers", nargs="+", type=int, choices=(1, 2), default=(1, 2))
     parser.add_argument("--horizons", nargs="+", type=int, choices=(1, 6, 24), default=(1, 6, 24))
+    parser.add_argument(
+        "--common-tier-comparison-only", action="store_true",
+        help="create model_comparison_by_tier.csv from existing final results without rerunning all models",
+    )
     args = parser.parse_args(argv)
     if args.false_alarms_per_coin_month < 0:
         parser.error("--false-alarms-per-coin-month must be non-negative")
+
+    out = Path(args.out_dir)
+    if args.common_tier_comparison_only:
+        if 2 not in args.tiers:
+            parser.error("--common-tier-comparison-only requires tier 2 in --tiers")
+        summary_path = out / "model_comparison_summary.csv"
+        if not summary_path.exists():
+            raise FileNotFoundError(
+                f"{summary_path} is missing; run the full evaluation first"
+            )
+        summary = pd.read_csv(summary_path)
+        episodes = pd.read_parquet(PROCESSED_DATA_DIR / "depeg_episodes.parquet")
+        episodes["start"] = pd.to_datetime(episodes["start"], utc=True)
+        common_rows = [
+            evaluate_tier1_on_common_sample(
+                model, horizon, episodes, args.false_alarms_per_coin_month,
+            )
+            for model in args.models for horizon in args.horizons
+        ]
+        write_tier_comparison(summary, pd.DataFrame(common_rows),
+                              out / "model_comparison_by_tier.csv")
+        print(f"Saved {out / 'model_comparison_by_tier.csv'}")
+        return 0
 
     episodes = pd.read_parquet(PROCESSED_DATA_DIR / "depeg_episodes.parquet")
     episodes["start"] = pd.to_datetime(episodes["start"], utc=True)
@@ -216,8 +407,22 @@ def main(argv=None) -> int:
         summary = summary.merge(leads.rename(columns={"lead_hours": "median_lead_hours"}),
                                 on=["model", "tier", "horizon_hours"], how="left")
 
-    out = Path(args.out_dir)
     out.mkdir(parents=True, exist_ok=True)
+    if 2 in args.tiers:
+        common_tier1_rows = []
+        for model in args.models:
+            for horizon in args.horizons:
+                print(
+                    f"Common-sample Tier 1 refit: {model}, horizon {horizon}h",
+                    flush=True,
+                )
+                common_tier1_rows.append(evaluate_tier1_on_common_sample(
+                    model, horizon, episodes, args.false_alarms_per_coin_month,
+                ))
+        write_tier_comparison(
+            summary, pd.DataFrame(common_tier1_rows),
+            out / "model_comparison_by_tier.csv",
+        )
     summary.sort_values(keys).to_csv(out / "model_comparison_summary.csv", index=False)
     yearly.sort_values(keys + ["test_year"]).to_csv(out / "model_comparison_by_year.csv", index=False)
     events.to_csv(out / "model_alarm_events.csv", index=False)
@@ -232,12 +437,17 @@ def main(argv=None) -> int:
         f"Models: {', '.join(args.models)}\nTiers: {', '.join(map(str, args.tiers))}\n"
         f"Horizons (hours): {', '.join(map(str, args.horizons))}\n"
         f"Fixed XGBoost parameters: {XGBOOST_FIXED_PARAMS}\n"
-        f"Fixed random-forest parameters: {RANDOM_FOREST_FIXED_PARAMS}\n",
+        f"Fixed random-forest parameters: {RANDOM_FOREST_FIXED_PARAMS}\n"
+        + ("model_comparison_by_tier.csv refits Tier 1 on Tier 2 eligible "
+           "coin-hours within each fold so both tiers share train, validation, "
+           "and test observations.\n" if 2 in args.tiers else ""),
         encoding="utf-8",
     )
     print(f"Saved {out / 'model_comparison_summary.csv'}")
     print(f"Saved {out / 'model_comparison_by_year.csv'}")
     print(f"Saved {out / 'model_alarm_events.csv'}")
+    if 2 in args.tiers:
+        print(f"Saved {out / 'model_comparison_by_tier.csv'}")
     print(f"Saved {out / 'run_metadata.txt'}")
     return 0
 
