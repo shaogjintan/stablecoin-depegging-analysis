@@ -16,17 +16,15 @@ import argparse
 import sys
 from pathlib import Path
 
-import matplotlib.pyplot as plt
 import pandas as pd
 
 REPO_ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(REPO_ROOT))
 sys.path.insert(0, str(REPO_ROOT / "data_processing"))
 
-from config import DEPEG_GAP_HOURS, PROCESSED_DATA_DIR  # noqa: E402
-from modelling.alarm_events import build_alarm_events  # noqa: E402
-
-
+from config import (  # noqa: E402
+    DEPEG_BAND, DEPEG_GAP_HOURS, DEPEG_MIN_DURATION_HOURS, PROCESSED_DATA_DIR,
+)
 def make_episodes(master: pd.DataFrame, band: float,
                   min_duration: int) -> pd.DataFrame:
     """Create episodes using a down-band and consecutive-hour rule.
@@ -106,14 +104,22 @@ def evaluate_definition(master: pd.DataFrame, config_rows: list[tuple],
         threshold_path = threshold_dir / (
             f"{model}_t{tier}_h{horizon}_{tag}_rolling_thresholds.csv"
         )
-        if not pred_path.exists() or not threshold_path.exists():
+        alarm_path = threshold_dir / (
+            f"{model}_t{tier}_h{horizon}_{tag}_test_alarm_events.csv"
+        )
+        if not pred_path.exists() or not threshold_path.exists() or not alarm_path.exists():
             raise FileNotFoundError(
-                f"Missing predictions or rolling thresholds for {model}, "
-                f"tier {tier}, horizon {horizon}; expected {pred_path} and {threshold_path}"
+                f"Missing predictions, thresholds, or alarm events for {model}, "
+                f"tier {tier}, horizon {horizon}; expected {pred_path}, "
+                f"{threshold_path}, and {alarm_path}"
             )
         predictions = pd.read_parquet(pred_path).copy()
         predictions["hour"] = pd.to_datetime(predictions["hour"], utc=True)
-        thresholds = pd.read_csv(threshold_path).set_index("test_year")["threshold"]
+        fixed_events = pd.read_csv(alarm_path)
+        fixed_events["alarm_hour"] = pd.to_datetime(fixed_events["alarm_hour"], utc=True)
+        month_keys = predictions[["coin", "hour"]].copy()
+        month_keys["coin_month"] = month_keys["hour"].dt.strftime("%Y-%m")
+        coin_months = int(month_keys[["coin", "coin_month"]].drop_duplicates().shape[0])
 
         for band in bands:
             for duration in durations:
@@ -122,21 +128,34 @@ def evaluate_definition(master: pd.DataFrame, config_rows: list[tuple],
                 warned: set[str] = set()
                 targetable: set[str] = set()
                 false_alarms = alarm_events = true_alarms = 0
+                warning_leads = []
                 for year, yearly in predictions.groupby("year", sort=True):
-                    threshold = thresholds.get(int(year))
-                    if threshold is None or pd.isna(threshold):
-                        continue
-                    yearly = yearly.copy()
-                    yearly["horizon"] = horizon
-                    yearly["split"] = "test"
                     targetable.update(_targetable_ids(yearly, episodes, horizon))
-                    _, events = build_alarm_events(yearly, episodes, float(threshold))
+                    events = fixed_events.loc[fixed_events["year"].eq(int(year))]
                     alarm_events += len(events)
-                    if not events.empty:
-                        true_events = events[events["is_true_alarm"]]
-                        true_alarms += len(true_events)
-                        false_alarms += int((~events["is_true_alarm"]).sum())
-                        warned.update(true_events["target_episode_id"].dropna().astype(str))
+                    eps_by_coin = {
+                        coin: group.sort_values("start")
+                        for coin, group in episodes.groupby("coin", sort=False)
+                    }
+                    for event in events.itertuples(index=False):
+                        coin_eps = eps_by_coin.get(event.coin)
+                        if coin_eps is None:
+                            false_alarms += 1
+                            continue
+                        hit = coin_eps.loc[
+                            (coin_eps["start"] > event.alarm_hour)
+                            & (coin_eps["start"] <= event.alarm_hour + pd.Timedelta(hours=horizon))
+                        ]
+                        if hit.empty:
+                            false_alarms += 1
+                        else:
+                            true_alarms += 1
+                            caught_episode = hit.iloc[0]
+                            warned.add(str(caught_episode["episode_id"]))
+                            warning_leads.append(
+                                (caught_episode["start"] - event.alarm_hour)
+                                / pd.Timedelta(hours=1)
+                            )
                 caught = len(warned & targetable)
                 results.append({
                     "model": model, "tag": tag, "tier": tier, "horizon": horizon,
@@ -147,59 +166,117 @@ def evaluate_definition(master: pd.DataFrame, config_rows: list[tuple],
                     "test_episodes_targetable": len(targetable),
                     "test_episodes_warned": caught,
                     "test_episode_recall": caught / len(targetable) if targetable else float("nan"),
+                    "coin_months": coin_months,
                     "test_alarm_events": alarm_events,
                     "test_true_alarm_events": true_alarms,
                     "test_false_alarm_events": false_alarms,
+                    "test_false_alarms_per_coin_month": (
+                        false_alarms / coin_months if coin_months else float("nan")
+                    ),
+                    "test_alarm_precision": (
+                        true_alarms / alarm_events if alarm_events else float("nan")
+                    ),
+                    "median_warning_lead_hours": (
+                        float(pd.Series(warning_leads).median()) if warning_leads else float("nan")
+                    ),
+                    "is_reference_definition": (
+                        abs(band - DEPEG_BAND) < 1e-12
+                        and duration == DEPEG_MIN_DURATION_HOURS
+                    ),
                 })
     return pd.DataFrame(results)
 
 
-def plot_robustness(results: pd.DataFrame, output: Path) -> None:
-    """Show recall and false alarms by persistence, faceted by horizon."""
-    horizons = sorted(results["horizon"].unique())
-    tiers = sorted(results["tier"].unique())
+def _svg_label(x: float, y: float, text: str, *, size: int = 14,
+               anchor: str = "middle", color: str = "#202124", weight: str = "normal") -> str:
+    from html import escape
+    return (f'<text x="{x:.1f}" y="{y:.1f}" font-family="Arial,sans-serif" '
+            f'font-size="{size}" text-anchor="{anchor}" fill="{color}" '
+            f'font-weight="{weight}">{escape(text)}</text>')
+
+
+def _heatmap_svg(results: pd.DataFrame, metric: str, title: str,
+                 value_label: str, *, recall_labels: bool = False) -> str:
     bands = sorted(results["depeg_band"].unique())
-    colors = {0.005: "#4C78A8", 0.01: "#F58518", 0.02: "#54A24B"}
-    fig, axes = plt.subplots(2, len(horizons), figsize=(5 * len(horizons), 8), squeeze=False)
-    metrics = [
-        ("test_episode_recall", "Pooled test episode recall"),
-        ("test_false_alarm_events", "Pooled test false alarm events"),
-    ]
-    for row, (metric, title) in enumerate(metrics):
-        for col, horizon in enumerate(horizons):
-            ax = axes[row, col]
-            subset = results[results["horizon"] == horizon]
-            for tier in tiers:
-                for band in bands:
-                    line = subset[(subset["tier"] == tier)
-                                  & (subset["depeg_band"] == band)]
-                    line = line.groupby("persistence_hours", as_index=False)[metric].mean()
-                    ax.plot(
-                        line["persistence_hours"], line[metric], marker="o",
-                        color=colors.get(band), linestyle="-" if tier == 1 else "--",
-                        label=f"{band:.1%} band, tier {tier}",
-                    )
-            ax.set_title(f"{title} — {horizon}h forecast")
-            ax.set_xlabel("Minimum consecutive hours below peg")
-            ax.set_ylabel("Recall" if metric == "test_episode_recall" else "Event count")
-            if metric == "test_episode_recall":
-                ax.set_ylim(0, 1)
-            ax.grid(alpha=0.25)
-            ax.legend(fontsize=7, frameon=False)
-    fig.suptitle("Sensitivity to depeg band and persistence definition\n"
-                 "Solid = Tier 1; dashed = Tier 2; fixed model scores and thresholds")
-    fig.tight_layout()
-    output.parent.mkdir(parents=True, exist_ok=True)
-    fig.savefig(output, dpi=180, bbox_inches="tight")
-    plt.close(fig)
+    durations = sorted(results["persistence_hours"].unique())
+    width, height = 720, 430
+    left, top, cell_w, cell_h = 185, 130, 112, 72
+    vals = pd.to_numeric(results[metric], errors="coerce")
+    maximum = 1.0 if recall_labels else (float(vals.max()) if vals.notna().any() else 1.0)
+    maximum = max(maximum, 1e-12)
+    parts = [f'<svg xmlns="http://www.w3.org/2000/svg" width="{width}" height="{height}" viewBox="0 0 {width} {height}">',
+             '<rect width="100%" height="100%" fill="white"/>',
+             _svg_label(width / 2, 38, title, size=20, weight="bold"),
+             _svg_label(left + cell_w * len(durations) / 2, 86, "Required consecutive duration (hours)", size=13)]
+    for ci, duration in enumerate(durations):
+        x = left + ci * cell_w + cell_w / 2
+        parts.append(_svg_label(x, top - 16, str(duration), size=14, weight="bold"))
+    for ri, band in enumerate(bands):
+        y = top + ri * cell_h
+        parts.append(_svg_label(left - 20, y + cell_h / 2 + 5, f"{band:.1%}", size=14, anchor="end", weight="bold"))
+        for ci, duration in enumerate(durations):
+            row = results.loc[
+                results["depeg_band"].eq(band)
+                & results["persistence_hours"].eq(duration)
+            ].iloc[0]
+            value = row[metric]
+            ratio = 0.0 if pd.isna(value) else min(max(float(value) / maximum, 0.0), 1.0)
+            if recall_labels:
+                # Lower recall is pale coral; higher recall is pale green.
+                red = int(250 - 90 * ratio)
+                green = int(226 + 20 * ratio)
+                blue = int(220 - 45 * ratio)
+                label = (f"{int(row['test_episodes_warned'])} / "
+                         f"{int(row['test_episodes_targetable'])}")
+            else:
+                # Higher false-alarm rate is stronger red.
+                red = 239
+                green = int(247 - 95 * ratio)
+                blue = int(247 - 105 * ratio)
+                label = "n/a" if pd.isna(value) else f"{float(value):.3f}"
+            fill = f"#{red:02x}{green:02x}{blue:02x}"
+            x = left + ci * cell_w
+            is_ref = bool(row["is_reference_definition"])
+            stroke = "#111111" if is_ref else "#ffffff"
+            stroke_width = 4 if is_ref else 2
+            parts.append(f'<rect x="{x}" y="{y}" width="{cell_w}" height="{cell_h}" fill="{fill}" stroke="{stroke}" stroke-width="{stroke_width}"/>')
+            parts.append(_svg_label(x + cell_w / 2, y + cell_h / 2 + 5, label, size=16, weight="bold"))
+            if is_ref:
+                parts.append(_svg_label(x + cell_w - 7, y + 16, "REF", size=9, anchor="end", color="#111", weight="bold"))
+    parts.extend([
+        _svg_label(left + cell_w * len(durations) / 2, top + cell_h * len(bands) + 44,
+                   "Price band = required drop below $1 peg", size=12, color="#555"),
+        _svg_label(width / 2, height - 20,
+                   "Reference definition: 1% band, 2-hour minimum (outlined)", size=12, color="#444"),
+        "</svg>",
+    ])
+    return "\n".join(parts)
+
+
+def plot_robustness_heatmaps(results: pd.DataFrame, out_dir: Path,
+                             stem: str) -> tuple[Path, Path]:
+    """Write recall and false-alarm-per-coin-month heatmaps as SVGs."""
+    out_dir.mkdir(parents=True, exist_ok=True)
+    recall_path = out_dir / f"{stem}_recall_heatmap.svg"
+    false_path = out_dir / f"{stem}_false_alarms_per_coin_month_heatmap.svg"
+    recall_path.write_text(
+        _heatmap_svg(results, "test_episode_recall", "Episode recall by definition",
+                     "caught / targetable", recall_labels=True), encoding="utf-8"
+    )
+    false_path.write_text(
+        _heatmap_svg(results, "test_false_alarms_per_coin_month",
+                     "False alarms per coin-month by definition", "false alarms / coin-month"),
+        encoding="utf-8",
+    )
+    return recall_path, false_path
 
 
 def main(argv=None) -> int:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--model", default="xgboost")
     parser.add_argument("--tag", default="xgb_d3_lr005_300")
-    parser.add_argument("--tiers", nargs="+", type=int, choices=(1, 2), default=(1, 2))
-    parser.add_argument("--horizons", nargs="+", type=int, choices=(1, 6, 24), default=(1, 6, 24))
+    parser.add_argument("--tiers", nargs="+", type=int, choices=(1, 2), default=(2,))
+    parser.add_argument("--horizons", nargs="+", type=int, choices=(1, 6, 24), default=(24,))
     parser.add_argument("--bands", nargs="+", type=float, default=(0.005, 0.01, 0.02),
                         help="downward depeg bands as fractions (default: 0.005 0.01 0.02)")
     parser.add_argument("--persistence-hours", nargs="+", type=int, default=(1, 2, 3, 4))
@@ -217,13 +294,15 @@ def main(argv=None) -> int:
     result = evaluate_definition(master, config_rows, args.bands, args.persistence_hours)
     out_dir = Path(args.out_dir)
     out_dir.mkdir(parents=True, exist_ok=True)
-    stem = f"{args.model}_{args.tag}_depeg_robustness"
+    tier_label = "t" + "_".join(map(str, args.tiers))
+    horizon_label = "h" + "_".join(map(str, args.horizons))
+    stem = f"{args.model}_{args.tag}_{tier_label}_{horizon_label}_depeg_robustness"
     csv_path = out_dir / f"{stem}.csv"
-    plot_path = out_dir / f"{stem}.png"
     result.to_csv(csv_path, index=False)
-    plot_robustness(result, plot_path)
+    recall_path, false_path = plot_robustness_heatmaps(result, out_dir, stem)
     print(f"Saved robustness table: {csv_path}")
-    print(f"Saved robustness plot: {plot_path}")
+    print(f"Saved recall heatmap: {recall_path}")
+    print(f"Saved false-alarm heatmap: {false_path}")
     return 0
 
 
