@@ -1,0 +1,6 @@
+type,events,episodes
+brief wobble,21,21
+"market-wide, simultaneous",7,21
+"market-wide, staggered",7,16
+short single-coin,12,12
+sustained single-coin,9,9

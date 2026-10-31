@@ -2,28 +2,35 @@
 """
 Generate separate market and on-chain coverage tables.
 
-Both tables include the number of common coin-hours
-identified by merge_and_label.py.
+All inputs are read from master.parquet (committed), which already contains
+the market columns (trading_volume), the on-chain columns (tx_count) and the
+common_sample flag identified by merge_and_label.py.
 
-Outputs:
+  - Market coverage uses every coin-hour with observed trading_volume
+    (NOT restricted to the common sample).
+  - On-chain coverage is restricted to coin-hours where common_sample == True.
+
+Outputs (written to reports/):
   - market_coverage_table.csv
   - onchain_coverage_table.csv
 """
 
 import pandas as pd
-from config import PROCESSED_DATA_DIR, FIAT_COINS
+from config import PROCESSED_DATA_DIR, REPORT_DIR, FIAT_COINS
 
-def calculate_coverage(df,source_name,observed_col,master):
+def calculate_coverage(df,source_name,observed_col,restrict_to_common):
     """
-    Calculate coverage restricted to the common sample.
+    Calculate coverage for one data source.
 
-    Start date, end date, and observed hours are based
-    on coin-hours where common_sample == True.
+    Start date, end date, and observed hours are based on coin-hours where
+    observed_col is not missing. If restrict_to_common is True, only
+    coin-hours where common_sample == True are counted.
     """
-    common = master.loc[master["common_sample"],["coin", "hour"]].drop_duplicates()
-    # Restrict source data to common coin-hours
-    observed = df.loc[df[observed_col].notna(),["coin", "hour"]].drop_duplicates()
-    observed = observed.merge(common,on=["coin", "hour"],how="inner",validate="one_to_one")
+    mask = df[observed_col].notna()
+    if restrict_to_common:
+        # Restrict source data to common coin-hours
+        mask &= df["common_sample"].fillna(False).astype(bool)
+    observed = df.loc[mask,["coin", "hour"]].drop_duplicates()
     rows = []
     for coin in sorted(FIAT_COINS):
         g = observed.loc[observed["coin"] == coin]
@@ -53,18 +60,18 @@ def calculate_coverage(df,source_name,observed_col,master):
             ),
         })
     coverage = pd.DataFrame(rows)
-    print(f"\n{source_name.upper()} COMMON-SAMPLE COVERAGE")
+    label = "COMMON-SAMPLE COVERAGE" if restrict_to_common else "FULL-SAMPLE COVERAGE"
+    print(f"\n{source_name.upper()} {label}")
     print(coverage.to_string(index=False))
     return coverage
 
 def main():
-    # LOAD DATASETS
-    market = pd.read_parquet(PROCESSED_DATA_DIR / "hourly_stablecoin_market_features.parquet")
-    onchain = pd.read_parquet(PROCESSED_DATA_DIR / "hourly_stablecoin_onchain_features.parquet")
-    master = pd.read_parquet(PROCESSED_DATA_DIR / "master.parquet")
-
-    for df in [market, onchain, master]:
-        df["hour"] = pd.to_datetime(df["hour"], utc=True)
+    # LOAD DATASET 
+    master = pd.read_parquet(
+        PROCESSED_DATA_DIR / "master.parquet",
+        columns=["coin", "hour", "common_sample", "trading_volume", "tx_count"],
+    )
+    master["hour"] = pd.to_datetime(master["hour"], utc=True)
 
     # VALIDATE COMMON SAMPLE
     if "common_sample" not in master.columns:
@@ -80,23 +87,23 @@ def main():
 
     # TABLEs 
     market_coverage = calculate_coverage(
-        df=market,
+        df=master,
         source_name="Market",
         observed_col="trading_volume",
-        master=master,)
+        restrict_to_common=False,)
     onchain_coverage = calculate_coverage(
-        df=onchain,
+        df=master,
         source_name="On-chain",
         observed_col="tx_count",
-        master=master,)
+        restrict_to_common=True,)
 
     # EXPORT TABLES
     market_coverage.to_csv(
-        PROCESSED_DATA_DIR / "market_coverage_table.csv",
+        REPORT_DIR / "market_coverage_table.csv",
         index=False)
 
     onchain_coverage.to_csv(
-        PROCESSED_DATA_DIR / "onchain_coverage_table.csv",
+        REPORT_DIR / "onchain_coverage_table.csv",
         index=False)
     print("\nBoth coverage tables saved successfully.")
 

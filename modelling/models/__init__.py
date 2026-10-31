@@ -11,10 +11,7 @@ Teammates: add your model class here once it subclasses BaseModel
 from .base import BaseModel, MedianImputer
 from .baseline import ConstantPriorModel, PersistenceModel
 from .random_forest_model import RFModel
-try:
-    from .xgboost_model import XGBModel
-except Exception:
-    XGBModel = None
+from .xgboost_model import XGBModel
 from .logreg import LogRegModel
 
 MODEL_REGISTRY: dict[str, type[BaseModel]] = {
