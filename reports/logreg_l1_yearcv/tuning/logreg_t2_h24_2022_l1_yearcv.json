@@ -1,0 +1,108 @@
+{
+  "model": "logreg",
+  "tier": 2,
+  "horizon": 24,
+  "test_year": 2022,
+  "tag": "l1_yearcv",
+  "tune": true,
+  "model_params": {
+    "C": 0.01,
+    "penalty": "l1"
+  },
+  "selection_metric": "mean_average_precision_across_eligible_calendar_years",
+  "validation_years": [
+    2019,
+    2020,
+    2021
+  ],
+  "skipped_years": [
+    {
+      "validation_year": 2018,
+      "train_rows": 0,
+      "validation_rows": 1627,
+      "validation_positives": 165,
+      "training_positives": 0,
+      "reason": "training_years_do_not_contain_both_classes"
+    }
+  ],
+  "candidate_scores": [
+    {
+      "C": 0.001,
+      "mean_calendar_year_average_precision": 0.017397776337025522,
+      "per_year_scores": [
+        {
+          "validation_year": 2019,
+          "average_precision": 0.01034793477313025
+        },
+        {
+          "validation_year": 2020,
+          "average_precision": 0.017456082869265213
+        },
+        {
+          "validation_year": 2021,
+          "average_precision": 0.024389311368681103
+        }
+      ]
+    },
+    {
+      "C": 0.01,
+      "mean_calendar_year_average_precision": 0.05419238389005273,
+      "per_year_scores": [
+        {
+          "validation_year": 2019,
+          "average_precision": 0.11988102156602569
+        },
+        {
+          "validation_year": 2020,
+          "average_precision": 0.019015797303516248
+        },
+        {
+          "validation_year": 2021,
+          "average_precision": 0.023680332800616245
+        }
+      ]
+    },
+    {
+      "C": 0.1,
+      "mean_calendar_year_average_precision": 0.03805785894092564,
+      "per_year_scores": [
+        {
+          "validation_year": 2019,
+          "average_precision": 0.07528424704861461
+        },
+        {
+          "validation_year": 2020,
+          "average_precision": 0.015529816391701777
+        },
+        {
+          "validation_year": 2021,
+          "average_precision": 0.023359513382460537
+        }
+      ]
+    },
+    {
+      "C": 1.0,
+      "mean_calendar_year_average_precision": 0.03495578390471765,
+      "per_year_scores": [
+        {
+          "validation_year": 2019,
+          "average_precision": 0.06667765306991598
+        },
+        {
+          "validation_year": 2020,
+          "average_precision": 0.014887020659147161
+        },
+        {
+          "validation_year": 2021,
+          "average_precision": 0.023302677985089802
+        }
+      ]
+    }
+  ],
+  "threshold": 0.9492542325426806,
+  "false_alarm_budget_per_coin_month": 1.0,
+  "outer_train_rows": 136374,
+  "outer_train_positives": 1103,
+  "test_rows": 42787,
+  "test_positives": 222
+}

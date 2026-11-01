@@ -1,0 +1,91 @@
+{
+  "model": "logreg",
+  "tier": 2,
+  "horizon": 1,
+  "test_year": 2021,
+  "tag": "l1_yearcv",
+  "tune": true,
+  "model_params": {
+    "C": 0.01,
+    "penalty": "l1"
+  },
+  "selection_metric": "mean_average_precision_across_eligible_calendar_years",
+  "validation_years": [
+    2019,
+    2020
+  ],
+  "skipped_years": [
+    {
+      "validation_year": 2018,
+      "train_rows": 0,
+      "validation_rows": 1662,
+      "validation_positives": 12,
+      "training_positives": 0,
+      "reason": "training_years_do_not_contain_both_classes"
+    }
+  ],
+  "candidate_scores": [
+    {
+      "C": 0.001,
+      "mean_calendar_year_average_precision": 0.0012736913887771112,
+      "per_year_scores": [
+        {
+          "validation_year": 2019,
+          "average_precision": 0.0011300089821226784
+        },
+        {
+          "validation_year": 2020,
+          "average_precision": 0.001417373795431544
+        }
+      ]
+    },
+    {
+      "C": 0.01,
+      "mean_calendar_year_average_precision": 0.11082715892827161,
+      "per_year_scores": [
+        {
+          "validation_year": 2019,
+          "average_precision": 0.22022292220530432
+        },
+        {
+          "validation_year": 2020,
+          "average_precision": 0.0014313956512388996
+        }
+      ]
+    },
+    {
+      "C": 0.1,
+      "mean_calendar_year_average_precision": 0.10817480326263462,
+      "per_year_scores": [
+        {
+          "validation_year": 2019,
+          "average_precision": 0.21481875258556787
+        },
+        {
+          "validation_year": 2020,
+          "average_precision": 0.001530853939701377
+        }
+      ]
+    },
+    {
+      "C": 1.0,
+      "mean_calendar_year_average_precision": 0.05945207775263097,
+      "per_year_scores": [
+        {
+          "validation_year": 2019,
+          "average_precision": 0.11744428692738519
+        },
+        {
+          "validation_year": 2020,
+          "average_precision": 0.001459868577876755
+        }
+      ]
+    }
+  ],
+  "threshold": 0.9710798660577664,
+  "false_alarm_budget_per_coin_month": 1.0,
+  "outer_train_rows": 85323,
+  "outer_train_positives": 56,
+  "test_rows": 51172,
+  "test_positives": 20
+}
