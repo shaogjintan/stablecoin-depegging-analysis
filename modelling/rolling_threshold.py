@@ -107,12 +107,12 @@ def _false_alarm_stats(
     if n_coin_months is None:
         n_coin_months = _observed_coin_months(predictions)
     false_count = (
-        int((~events["is_true_alarm"]).sum()) if not events.empty else 0
+        int(events["is_true_alarm"].eq(False).sum()) if not events.empty else 0
     )
     rate = false_count / n_coin_months if n_coin_months else float("inf")
     if false_count:
         false_by_month = (
-            events.loc[~events["is_true_alarm"]]
+            events.loc[events["is_true_alarm"].eq(False)]
             .groupby(["coin", "coin_month"])
             .size()
         )
@@ -126,10 +126,10 @@ def _choose_threshold(
     horizon: int,
     budget: float,
 ) -> tuple[float, dict]:
-    """Choose the lowest threshold meeting the average false-alarm budget.
-    Every distinct observed score is a candidate because predictions are
-    flagged with `score >= threshold`. False-alarm count is non-increasing as
-    the threshold rises, so binary search finds the lowest feasible score.
+    """Max validation episode recall under grouped FA/observed coin-month budget.
+
+    Evaluate every distinct score and +inf; tie: fewer false alarms, then
+    higher threshold. Cooldown counts are NOT monotone. Never use test labels.
     """
     scores = validation["y_score"].to_numpy(dtype=float)
     if not len(scores):
@@ -140,7 +140,8 @@ def _choose_threshold(
             f"Validation scores contain {bad_count} non-finite value(s); "
             "cannot select an alarm threshold"
         )
-    candidates = np.append(np.unique(scores), float("inf"))
+    if not np.isfinite(budget) or budget < 0:
+        raise ValueError("Budget must be finite and nonnegative")
     target_ids = _targetable_episode_ids(validation, episodes, horizon)
     n_validation_coin_months = _observed_coin_months(validation)
     def evaluate(threshold: float) -> dict:
@@ -164,16 +165,31 @@ def _choose_threshold(
             "episode_recall": recall,
             "alarm_events": len(events),
         }
-    # Infinity is always feasible (it flags no rows), so find the first
-    # feasible index in the ascending candidate list.
-    low, high = 0, len(candidates) - 1
-    while low < high:
-        mid = (low + high) // 2
-        stats = evaluate(float(candidates[mid]))
-        if stats["false_alarms_per_coin_month"] <= budget:
-            high = mid
-        else:
-            low = mid + 1
-    best = evaluate(float(candidates[low]))
+    from modelling.exact_threshold import exhaustive_counts
+    frame = validation.sort_values(["coin", "hour"]).copy()
+    frame["hour"] = pd.to_datetime(frame["hour"], utc=True)
+    if frame.duplicated(["coin", "hour"]).any():
+        raise ValueError("Duplicate validation coin-hour")
+    times = frame.hour.astype("int64").to_numpy()
+    targets = np.full(len(frame), -1, dtype=np.int64)
+    ids = {ep: i for i, ep in enumerate(sorted(target_ids))}
+    delta = horizon * 3600_000_000_000
+    for coin, group in frame.groupby("coin", sort=False):
+        eps = episodes.loc[episodes.coin.eq(coin)].sort_values("start")
+        starts = pd.to_datetime(eps.start, utc=True).astype("int64").to_numpy()
+        positions = np.flatnonzero(frame.coin.eq(coin))
+        loc = np.searchsorted(starts, times[positions], side="right")
+        for pos, j in zip(positions, loc):
+            if j < len(starts) and starts[j] <= times[pos] + delta:
+                targets[pos] = ids.get(str(eps.iloc[j].episode_id), -1)
+    ends = frame.groupby("coin", sort=False).size().cumsum().to_numpy(dtype=np.int64)
+    cutoffs, caught, false, _ = exhaustive_counts(
+        frame.y_score.to_numpy(dtype=float), times, ends, targets, delta)
+    cutoffs = np.r_[cutoffs, np.inf]
+    caught, false = np.r_[caught, 0], np.r_[false, 0]
+    feasible = np.flatnonzero(false <= budget * n_validation_coin_months)
+    idx = max(feasible, key=lambda i: (caught[i], -false[i], cutoffs[i]))
+    best = evaluate(float(cutoffs[idx]))
+    assert best["episodes_warned"] == caught[idx] and best["false_alarms"] == false[idx]
+    best["candidate_count"] = len(cutoffs)
     return best["threshold"], best
-

@@ -120,6 +120,7 @@ def build_alarm_events(
             last_alarm_hour = alarm_hour
 
     events = pd.DataFrame(event_rows, columns=EVENT_COLUMNS)
+    events["is_true_alarm"] = events["is_true_alarm"].astype(bool)
     return flagged, events
 
 

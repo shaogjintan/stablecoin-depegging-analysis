@@ -1,5 +1,10 @@
 """
-SHAP interpretability for the tuned XGBoost folds (Phase 5).
+LEGACY SHAP interpretability for the tuned XGBoost folds (Phase 5).
+
+For corrected fixed300 scoring fits use:
+    python -m modelling.corrected_xgb --out-dir <new directory>
+This produces aligned h6/h24 T1/T2 SHAP automatically from saved test rows.
+Do not mix this legacy fit's explanations with corrected alarm results.
 
 Loads the per-fold models saved by modelling/train.py
 (results/models/{model}_t{tier}_h{horizon}_{year}.joblib), re-loads the
@@ -32,7 +37,7 @@ import numpy as np
 import pandas as pd
 import shap
 
-REPO_ROOT = Path(__file__).resolve().parents[1]
+REPO_ROOT = Path(__file__).resolve().parents[2]
 sys.path.insert(0, str(REPO_ROOT))
 
 from modelling.prepare_data import (  # noqa: E402
