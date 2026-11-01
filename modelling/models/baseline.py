@@ -3,14 +3,16 @@ Naive baselines for the report table and pipeline smoke tests.
 
 ConstantPriorModel: predicts the training-fold positive rate for every row.
 This is the "constant prior" baseline from the Phase 3/4 plan -- a model that
-learns nothing but the base rate. AP equals prevalence within a single fold;
-pooled AP can differ because the training prior changes across years.
-It also doubles as the smoke
-model for `modelling/train.py` (trivial to fit, NaN-native).
+learns nothing but the training-label base rate. AP equals the evaluation
+positive rate when all evaluation scores are tied (in particular, within a
+fold). Pooled yearly predictions can have different training priors, so pooled
+AP need not equal the pooled positive rate and is not a universal AP floor.
+It also doubles as the smoke model for `modelling/train.py`.
 
 PersistenceModel: the "peg stress persists" benchmark -- score = -peg_deviation
-(current distance below $1, clipped at 0). It ranks hours by how stressed the
-peg already is, with no learning and no on-chain data (tier-independent).
+(min(max(1 - price, 0), 0.01)). It ranks completed bars by how stressed the
+peg already is, with no learning and no on-chain inputs. Its evaluation
+sample is still tier-dependent.
 Brier is not meaningful for it (scores live in [0, 0.01]); PR-AUC / ROC-AUC
 rankings are what it contributes to the comparison table.
 """
