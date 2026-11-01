@@ -68,6 +68,50 @@ class RepairTests(unittest.TestCase):
         self.assertTrue(np.isnan(labels.loc[6, "label_h1"]))
         self.assertTrue(np.isnan(labels.loc[9, "label_h1"]))
 
+    def test_h1_strict_start_inclusive_end_and_negative_observation(self):
+        d = frame(10)
+        starts = pd.DataFrame({
+            "coin": ["A", "A"],
+            "start": pd.to_datetime([d.hour.iloc[2], d.hour.iloc[5]], utc=True),
+        })
+        labels = episode_labels(d, starts, horizons=(1,))
+        self.assertEqual(labels.loc[0, "label_h1"], 0)
+        self.assertEqual(labels.loc[1, "label_h1"], 1)
+        self.assertEqual(labels.loc[2, "label_h1"], 0)
+        self.assertEqual(labels.loc[4, "label_h1"], 1)
+        self.assertEqual(labels.loc[5, "label_h1"], 0)
+        self.assertTrue(np.isnan(labels.loc[9, "label_h1"]))
+
+        d.loc[2, "price"] = np.nan
+        empty = starts.iloc[:0].copy()
+        censored = episode_labels(d, empty, horizons=(1,))
+        self.assertTrue(np.isnan(censored.loc[0, "label_h1"]))
+
+    def test_h1_decision_and_onset_use_completed_bar_closes(self):
+        d = frame(12)
+        d.loc[[4, 5], "price"] = .98
+        corrected, episodes = prepare_corrected(d)
+        self.assertEqual(episodes.iloc[0].start, d.hour.iloc[4] + pd.Timedelta(hours=1))
+        self.assertEqual(corrected.loc[2, "hour"], d.hour.iloc[2] + pd.Timedelta(hours=1))
+        self.assertEqual(corrected.loc[2, "label_h1"], 0)
+        self.assertEqual(corrected.loc[3, "label_h1"], 1)
+
+    def test_h1_alarm_target_and_cooldown_endpoints_are_inclusive(self):
+        hours = pd.date_range("2020-01-01", periods=3, freq="h", tz="UTC")
+        predictions = pd.DataFrame({
+            "coin": "A", "hour": hours, "horizon": 1, "y_true": [1, 0, 0],
+            "y_score": .9,
+        })
+        episodes = pd.DataFrame({
+            "coin": ["A"], "episode_id": ["A_1"], "start": hours[[1]],
+        })
+        _, events = build_alarm_events(predictions, episodes, .5)
+        self.assertEqual(len(events), 2)
+        self.assertTrue(events.iloc[0].is_true_alarm)
+        self.assertEqual(events.iloc[0].lead_hours, 1)
+        self.assertFalse(events.iloc[1].is_true_alarm)
+        self.assertEqual(events.iloc[1].alarm_hour, hours[2])
+
     def test_feature_clock_prefix_invariant(self):
         d = frame()
         baseline = calendar_market_features(d)
