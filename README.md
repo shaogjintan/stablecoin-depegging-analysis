@@ -75,6 +75,42 @@ Matched uncertainty uses paired coin-month AP bootstrap and 24h-chained onset
 event-cluster recall bootstrap, conditional on the fitted models and thresholds.
 h1 and optional sensitivity/smoothing/OR claims are not validated by this run.
 
+## Corrected LR/RF comparison (separate run)
+
+Historical LR/RF, coefficient, importance and ex-post operating-point scripts
+remain legacy. Use this dedicated path for comparable h6/h24 2021-2025 results:
+
+```powershell
+python -m unittest modelling.checks.test_xgb_repair modelling.checks.test_lr_rf_repair -v
+python -m modelling.corrected_lr_rf --frozen-xgb <V3-DIRECTORY> --out-dir <NEW-BENCHMARK-DIRECTORY> --benchmark
+python -m modelling.corrected_lr_rf --frozen-xgb <V3-DIRECTORY> --out-dir <NEW-RUN-DIRECTORY>
+python -m modelling.verify_lr_rf_run --run-dir <NEW-RUN-DIRECTORY>
+python -m modelling.lr_rf_presentation --run-dir <VERIFIED-RUN-DIRECTORY>
+```
+
+The runner reconstructs corrected data/folds and requires exact frozen V3
+partition equality before fitting. It does not modify V3, generate SHAP or
+overwrite historical reports. L1 LR selects C from .001/.01/.1/1 by mean
+calendar-year AP entirely inside inner-training (ties smaller C); unusable
+years are recorded and no usable CV is a blocking error. Each CV/final fit
+fits its own median imputer, 1/99-percentile clipping and standardization.
+The two existing derived LR features are retained. Convergence warnings fail
+the run. Calibration and test use one inner-training fit without refitting.
+RF uses 500 trees/depth8/leaf50/sqrt/balanced_subsample/seed42, at most four
+threads, training-only median imputation and no scaling. Both baselines use
+the same partitions and exact calibration search, never test-selected cutoffs.
+Fold-specific constant priors need not give pooled AP equal to pooled prevalence.
+
+The run persists all scoring/CV models, partition keys/features, prediction
+scores, parameters/preprocessing, warnings, timings and source/input hashes.
+The independent verifier checks reloaded scores, train-only statistics, CV
+selection, all 120 scored cells (60 ML plus 60 baseline), exact V3 alignment,
+and independent AP/alarm/target/cost calculations. LR standardized coefficients
+and RF normalized impurity importances come from those exact scoring fits,
+not separate full-training refits; neither establishes causal forecasting value.
+Conditional matched intervals use the existing frozen-XGB resampling protocol.
+All corrected-data provenance/live-availability limitations above still apply.
+
 ## Table of contents
 
 1. [Research question & design](#1-research-question--design)
