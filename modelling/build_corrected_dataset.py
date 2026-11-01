@@ -8,6 +8,7 @@ from pathlib import Path
 import pandas as pd
 from data_processing.config import ACTIVE_MASTER_PATH, ACTIVE_EPISODES_PATH
 from modelling.corrected_data import prepare_corrected
+from data_processing.splits import load_master
 
 
 def checksum(path):
@@ -15,6 +16,11 @@ def checksum(path):
 
 
 def main():
+    if ACTIVE_MASTER_PATH.exists():
+        master, episodes = load_master()
+        print(f"Using existing corrected_v1 inputs: {len(master)} rows, {len(episodes)} episodes. "
+              "No files overwritten.")
+        return
     source = Path("data/processed/master.parquet")
     raw = pd.read_parquet(source)
     if "bar_start" in raw.columns or "observable_at_risk" in raw.columns:

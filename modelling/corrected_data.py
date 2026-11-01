@@ -114,11 +114,14 @@ def corrected_folds(master, episodes, horizon, tier):
     folds = []
     for f in expanding_window_folds(sample, episodes):
         out = {"year": f["year"], "horizon": horizon, "tier": tier, "features": features}
+        if "dataset_version" in master:
+            out["dataset_version"] = master.dataset_version.iloc[0]
         for part in ("train", "inner_train", "inner_val", "test"):
             d = f[part].sort_values(["coin", "hour"]).reset_index(drop=True)
             out[f"X_{part}"] = d[features].astype(float)
             out[f"y_{part}"] = d[f"label_h{horizon}"].astype(int)
-            out[f"{part}_meta"] = d[META_COLS].copy()
+            meta_columns = META_COLS + (["dataset_version"] if "dataset_version" in d else [])
+            out[f"{part}_meta"] = d[meta_columns].copy()
         assert out["inner_train_meta"].hour.max() < out["inner_val_meta"].hour.min()
         assert out["inner_val_meta"].hour.max() < out["test_meta"].hour.min()
         folds.append(out)

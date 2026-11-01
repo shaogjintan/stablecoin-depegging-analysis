@@ -111,7 +111,7 @@ OUTLIER_REVIEW_THRESHOLD = 50_000_000
 # Leakage control
 # ---------------------------------------------------------------------------
 EMBARGO_HOURS = 24  # drop first 24h after each split boundary (feature lookback)
-PURGE_HOURS = 24    # drop last 24h before each split boundary (label look-ahead)
+PURGE_HOURS = max(FORECAST_HORIZONS_HOURS) + DEPEG_MIN_DURATION_HOURS - 1
 # Expanding-window CV (see splits.py): for each year Y in this range, train on
 # everything before Y and test on Y. Replaces the old single
 # 2018-22 / 2023 / 2024-25 train/val/test split.

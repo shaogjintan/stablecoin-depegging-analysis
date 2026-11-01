@@ -80,18 +80,7 @@ def evaluate_configuration(model_name: str, tier: int, horizon: int,
         val["horizon"] = horizon
         val["y_true"] = fold["y_inner_val"].reset_index(drop=True)
         val["y_score"] = val_scores
-        if model_name == "baseline":
-            # The constant score flags every row at its only finite candidate,
-            # which cannot satisfy the budget; +inf is the feasible cutoff.
-            threshold = float("inf")
-            val_stats = {
-                "false_alarms": 0,
-                "coin_months": _observed_coin_months(val),
-                "false_alarms_per_coin_month": 0.0,
-                "episode_recall": 0.0,
-            }
-        else:
-            threshold, val_stats = _choose_threshold(val, episodes, horizon, budget)
+        threshold, val_stats = _choose_threshold(val, episodes, horizon, budget)
 
         test = fold["test_meta"].copy()
         test["hour"] = pd.to_datetime(test["hour"], utc=True)
