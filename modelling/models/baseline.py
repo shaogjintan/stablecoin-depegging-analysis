@@ -3,8 +3,9 @@ Naive baselines for the report table and pipeline smoke tests.
 
 ConstantPriorModel: predicts the training-fold positive rate for every row.
 This is the "constant prior" baseline from the Phase 3/4 plan -- a model that
-learns nothing but the base rate; its pooled OOS PR-AUC equals the positive
-rate and is the floor any real model must beat. It also doubles as the smoke
+learns nothing but the base rate. AP equals prevalence within a single fold;
+pooled AP can differ because the training prior changes across years.
+It also doubles as the smoke
 model for `modelling/train.py` (trivial to fit, NaN-native).
 
 PersistenceModel: the "peg stress persists" benchmark -- score = -peg_deviation

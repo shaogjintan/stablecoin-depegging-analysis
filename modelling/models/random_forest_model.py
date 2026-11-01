@@ -87,4 +87,5 @@ class RFModel(BaseModel):
             "max_features": self.max_features,
             "class_weight": self.class_weight,
             "random_state": self.random_state,
+            "n_jobs": self.n_jobs,
         }
