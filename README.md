@@ -21,6 +21,42 @@ average (~72 per year)**. The centre of the analysis is the **market-only
 
 ## Corrected XGBoost/SHAP protocol (isolated repair)
 
+### Corrected constant-prior and persistence benchmarks
+
+These benchmarks must reuse corrected calendar features, merged-start labels,
+completed-bar clocks, causal eligibility and chronological splits, not the
+legacy benchmark tables. Run from the isolated worktree into an unused directory:
+
+```powershell
+python -m unittest modelling.checks.test_corrected_baselines modelling.checks.test_xgb_repair -v
+python -m modelling.corrected_baselines --out-dir .\BASELINES-NEW-RUN
+python -m modelling.verify_baselines --run-dir .\BASELINES-NEW-RUN --reference ..\CORRECTED-XGB-SHAP-RUN-V3
+```
+
+The driver evaluates h1/h6/h24 over 2021-2025 on own-sample market, matched
+market and market+on-chain eligibility. Constant prior is fitted on each
+configuration's **inner_train labels only**, never validation/test labels or
+the full outer training partition. Within a fold all scores tie, so AP equals
+that fold's evaluation prevalence. Different yearly training priors can rank
+folds differently: **pooled AP need not equal pooled positive prevalence**,
+and neither a universal AP floor nor zero alarms should be assumed.
+
+Persistence uses `min(max(1-price, 0), 0.01)` at completed-bar close. It has
+no on-chain inputs, but its evaluation population still depends on eligibility.
+Matched market and market+on-chain baseline outputs should be identical.
+Both baselines use the exact validation-candidate policy, including the
+constant prior's finite all-row cutoff and infinity. A validation budget does
+not guarantee test-period cost.
+
+The independent verifier reloads predictions, reconstructs tie-aware pooled AP,
+base rate, greedy inclusive-cooldown alarms, targetable/caught episodes, median
+lead and observed partial coin-month exposure. A separate full-scan oracle
+checks **every validation cutoff**. Saved run IDs, source/input hashes, sample
+partitions, threshold candidates and compatibility checks identify the evidence.
+Only completed, verified, protocol-compatible references enter model comparisons.
+Use `--check-only` to repeat verification on an already verified run without
+writing or replacing its evidence.
+
 The historical `reports/`, `results/`, `train.py`, and all LR/RF outputs are
 **legacy experiments**, not corrected evidence. The dedicated corrected driver
 does not overwrite their datasets or artifacts:
