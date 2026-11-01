@@ -39,9 +39,10 @@ def verify(out):
             assert np.isfinite(p[fit["features"]]).all().all()
             truth = np.zeros(len(p), dtype=int)
             for coin, g in p.groupby("coin", sort=False):
-                starts = episodes.loc[episodes.coin.eq(coin), "start"].astype("int64").to_numpy()
+                starts = episodes.loc[episodes.coin.eq(coin), "start"].astype(
+                    "datetime64[ns, UTC]").astype("int64").to_numpy(copy=True)
                 starts.sort()
-                hours = g.hour.astype("int64").to_numpy()
+                hours = g.hour.astype("datetime64[ns, UTC]").astype("int64").to_numpy()
                 left = np.searchsorted(starts, hours, side="right")
                 right = np.searchsorted(starts, hours + fit["horizon"] * 3600_000_000_000, side="right")
                 truth[g.index] = right > left

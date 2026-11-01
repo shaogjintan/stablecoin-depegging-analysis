@@ -244,6 +244,7 @@ def _append_final_results(predictions: pd.DataFrame, yearly_rows: list[dict],
         targetable = int(yr.test_targetable_episodes.sum())
         caught = int(yr.test_episodes_caught.sum())
         summary_rows.append({
+            "dataset_version": str(group.dataset_version.iloc[0]),
             "model": "logreg", "tier": tier, "tag": tag,
             "model_configuration": tag,
             "feature_set": "market" if tier == 1 else "market + on-chain",
@@ -277,6 +278,8 @@ def _append_final_results(predictions: pd.DataFrame, yearly_rows: list[dict],
     ]:
         path = out / filename
         current = pd.read_csv(path) if path.exists() else pd.DataFrame()
+        if not current.empty and "dataset_version" not in current:
+            current["dataset_version"] = "legacy"
         if not current.empty and not additions.empty:
             current = current.loc[~(
                 current.model.eq("logreg") & current.tag.eq(tag)
@@ -357,6 +360,7 @@ def main(argv=None) -> int:
                 p_test = model.predict_proba(imputer.transform(X_test))[:, 1]
                 test_meta = fold["test_meta"].reset_index(drop=True).copy()
                 test_meta["year"] = year
+                test_meta["dataset_version"] = fold["dataset_version"]
                 test_meta["horizon"] = horizon
                 test_meta["tier"] = tier
                 test_meta["split"] = "test"
@@ -372,11 +376,13 @@ def main(argv=None) -> int:
                     events, test_meta, _observed_coin_months(test_meta))
                 if not events.empty:
                     event_frames.append(events.assign(
+                        dataset_version=fold["dataset_version"],
                         test_year=year, model="logreg", tag=args.tag,
                         model_configuration=args.tag, tier=tier,
                     ))
                 test_cls = pooled_metrics(y_test, p_test)
                 yearly_rows.append({
+                    "dataset_version": fold["dataset_version"],
                     "model": "logreg", "tier": tier, "tag": args.tag,
                     "model_configuration": args.tag,
                     "feature_set": "market" if tier == 1 else "market + on-chain",
@@ -414,6 +420,7 @@ def main(argv=None) -> int:
                 stem = f"logreg_t{tier}_h{horizon}_{year}_{args.tag}"
                 joblib.dump(model, model_dir / f"{stem}.joblib")
                 meta = {
+                    "dataset_version": fold["dataset_version"],
                     "model": "logreg", "tier": tier, "horizon": horizon,
                     "test_year": year, "tag": args.tag, "tune": True,
                     "model_params": {"C": chosen["selected_C"], "penalty": "l1"},
@@ -440,6 +447,7 @@ def main(argv=None) -> int:
                 coefs = np.asarray(model.clf_.coef_).ravel()
                 for feature, coef in zip(names, coefs):
                     coefficient_records.append({
+                        "dataset_version": fold["dataset_version"],
                         "tier": tier, "horizon": horizon, "test_year": year,
                         "tag": args.tag, "C": chosen["selected_C"],
                         "penalty": "l1", "feature": feature,

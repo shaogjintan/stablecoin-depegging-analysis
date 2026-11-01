@@ -11,12 +11,11 @@ Folds come from data_processing/splits.py (24h purge, 24h embargo,
 boundary-straddling episodes dropped). This module only selects the sample
 and the feature columns -- it doesn't change master.parquet.
 
-SAMPLE (team convention since PR #11, 2026-10-14)
-The canonical sample is the tier- and horizon-specific eligibility flag from
-master.parquet: rows with complete features for that tier, an above-band price,
-and an observed label_h{h}. Recovery rows may be included if they meet those
-conditions. load_folds() selects the appropriate flag and falls back to the
-legacy at-risk mask (at_risk_mask) on older masters.
+SAMPLE (corrected_v1)
+load_master() loads master_corrected_v1.parquet and the matching corrected
+episode manifest. Eligibility requires complete finite tier features,
+above-band prices, the causal recovery exclusion, and observed horizon labels.
+The target is a new merged episode start; timestamps denote bar closes.
 
 FEATURES
 Only changes, ratios and deviations -- no raw levels. Raw trading volume and
@@ -51,7 +50,7 @@ import numpy as np
 import pandas as pd
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "data_processing"))
-from config import DEPEG_GAP_HOURS, FORECAST_HORIZONS_HOURS  # noqa: E402
+from config import DEPEG_GAP_HOURS, FORECAST_HORIZONS_HOURS, MODELLING_DATA_VERSION  # noqa: E402
 from splits import load_master, expanding_window_folds  # noqa: E402
 
 RECOVERY_HOURS = DEPEG_GAP_HOURS  # 24h
@@ -157,6 +156,7 @@ def load_folds(horizon: int = 24, tier: int = 1,
     out = []
     for f in expanding_window_folds(master, episodes):
         fold = {"year": f["year"], "horizon": horizon, "tier": tier, "features": features}
+        fold["dataset_version"] = MODELLING_DATA_VERSION
         for name in ["train", "test", "inner_train", "inner_val"]:
             fold[f"X_{name}"], fold[f"y_{name}"] = _xy(f[name], features, horizon)
         fold["train_meta"] = f["train"][META_COLS].reset_index(drop=True)

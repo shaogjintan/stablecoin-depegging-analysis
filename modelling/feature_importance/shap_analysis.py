@@ -25,6 +25,7 @@ Usage (from the repo root):
 from __future__ import annotations
 
 import argparse
+import json
 import re
 import sys
 from pathlib import Path
@@ -66,6 +67,14 @@ def collect_shap(model: str, tier: int, horizon: int):
                 f"config first (e.g. --model {model} --horizon {horizon} "
                 f"--tier {tier} --tune)")
         m = joblib.load(artifact)
+        info_path = artifact.with_suffix(".json")
+        info = json.loads(info_path.read_text()) if info_path.exists() else {}
+        if info.get("dataset_version") != fold["dataset_version"]:
+            raise ValueError(
+                f"{artifact} was not fitted on {fold['dataset_version']}. "
+                "Retrain on the active dataset, or use modelling.corrected_xgb "
+                "to generate aligned models, predictions, and SHAP together."
+            )
         X = fold["X_test"].reset_index(drop=True)
         explainer = shap.TreeExplainer(m.clf_)
         sv = np.asarray(explainer.shap_values(X), dtype=float)

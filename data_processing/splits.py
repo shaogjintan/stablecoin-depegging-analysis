@@ -32,15 +32,27 @@ Usage from modelling code (run from the repo root):
 from __future__ import annotations
 
 import pandas as pd
-from config import (
-    PROCESSED_DATA_DIR, EMBARGO_HOURS, PURGE_HOURS, OOS_START_YEAR, OOS_END_YEAR,
-)
+try:
+    from .config import (
+        PROCESSED_DATA_DIR, EMBARGO_HOURS, PURGE_HOURS, OOS_START_YEAR, OOS_END_YEAR,
+        ACTIVE_MASTER_PATH, ACTIVE_EPISODES_PATH,
+    )
+except ImportError:  # Direct script / historical top-level "splits" import.
+    from config import (
+        PROCESSED_DATA_DIR, EMBARGO_HOURS, PURGE_HOURS, OOS_START_YEAR, OOS_END_YEAR,
+        ACTIVE_MASTER_PATH, ACTIVE_EPISODES_PATH,
+    )
 
 
 def load_master() -> tuple[pd.DataFrame, pd.DataFrame]:
-    """Load master.parquet and depeg_episodes.parquet (outputs of step 03)."""
-    master = pd.read_parquet(PROCESSED_DATA_DIR / "master.parquet")
-    episodes = pd.read_parquet(PROCESSED_DATA_DIR / "depeg_episodes.parquet")
+    """Load the versioned corrected master and its matching episode manifest."""
+    if not ACTIVE_MASTER_PATH.exists() or not ACTIVE_EPISODES_PATH.exists():
+        raise FileNotFoundError(
+            "Corrected modelling inputs are missing. Run "
+            "'python -m modelling.build_corrected_dataset' from the repo root."
+        )
+    master = pd.read_parquet(ACTIVE_MASTER_PATH)
+    episodes = pd.read_parquet(ACTIVE_EPISODES_PATH)
     return master, episodes
 
 

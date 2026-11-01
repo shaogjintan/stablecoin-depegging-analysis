@@ -408,3 +408,39 @@ Existing drivers: `plans/ex_post_comparison.py`, `plans/local_curve.py`,
   results, 1 commit ahead of main) and `cleanup/dead-weight-final-deck`
   (dead-weight archive + local drivers + verified results; 5 commits ahead of
   main, pushed to origin). **Both still need PRs into `upstream/main`.**
+
+## Active modelling dataset: corrected_v1
+
+All active modelling loaders and episode readers now use:
+
+- `data/processed/master_corrected_v1.parquet`
+- `data/processed/depeg_episodes_corrected_v1.parquet`
+- `data/processed/corrected_v1_metadata.json` (source/output hashes and counts)
+
+These are rebuilt from the preserved original `master.parquet`:
+
+```bash
+python -m modelling.build_corrected_dataset
+```
+
+The version uses complete hourly calendars, bar-close timestamps, new merged
+episode-start labels, an extra confirmation bar for negative labels, finite
+feature eligibility, and the causal 24-hour recovery exclusion. The corrected
+XGBoost runner loads this saved pair without preparing or shifting it twice.
+Alternative-definition robustness uses the same recovery and confirmation rules.
+
+Existing saved models, predictions, coefficients, and report CSVs remain results
+of their original dataset; changing the inputs does not regenerate them. Rerun
+the desired workflows before using them as corrected results:
+
+```bash
+python modelling/false_alarm_framework.py
+python modelling/train_logreg_yearcv.py
+python modelling/add_event_type.py  # only needed for typed-episode reports
+```
+
+Run fixed-model reporting before LogReg: the fixed-model runner rebuilds the
+shared final tables, while LogReg appends its tagged rows. Dataset-version
+columns distinguish historical rows if only part of the results is rerun.
+For aligned corrected XGBoost SHAP, use
+`python -m modelling.corrected_xgb --out-dir <new-run-directory>`.

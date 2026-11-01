@@ -23,7 +23,9 @@ import pandas as pd
 from sklearn.metrics import average_precision_score
 
 from modelling.alarm_events import build_alarm_events
-from modelling.corrected_data import prepare_corrected, corrected_folds
+from modelling.corrected_data import corrected_folds
+from data_processing.config import ACTIVE_MASTER_PATH
+from data_processing.splits import load_master
 from modelling.false_alarm_framework import _common_sample_fold
 from modelling.models.xgboost_model import XGBModel
 from modelling.prepare_data import MARKET_FEATURES, ONCHAIN_FEATURES
@@ -156,7 +158,7 @@ def paired_uncertainty(pred1, pred2, identities, h):
 def run(out):
     out.mkdir(parents=True, exist_ok=False)
     run_id = datetime.now(timezone.utc).strftime("%Y%m%dT%H%M%SZ") + "-" + uuid.uuid4().hex[:8]
-    source = ROOT / "data" / "processed" / "master.parquet"
+    source = ROOT / ACTIVE_MASTER_PATH
     metadata = {
         "run_id": run_id, "status": "running", "source_commit":
         subprocess.check_output(["git", "-C", str(ROOT), "rev-parse", "HEAD"], text=True).strip(),
@@ -187,8 +189,8 @@ def run(out):
         shutil.copy2(ROOT / rel, source_snapshot / Path(rel).name)
     (out / "source_diff.patch").write_bytes(
         subprocess.check_output(["git", "-C", str(ROOT), "diff", "--binary"]))
-    print("Preparing corrected calendar features, causal eligibility and merged-start labels", flush=True)
-    master, episodes = prepare_corrected(pd.read_parquet(source))
+    print("Loading versioned corrected features, eligibility and episode labels", flush=True)
+    master, episodes = load_master()
     master.to_parquet(out / "corrected_master.parquet", index=False)
     episodes.to_parquet(out / "episodes.parquet", index=False)
     episodes.to_csv(out / "episodes.csv", index=False)

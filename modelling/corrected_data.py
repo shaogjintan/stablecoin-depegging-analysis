@@ -33,7 +33,7 @@ def calendar_market_features(df):
     return pd.concat(frames, ignore_index=True)
 
 
-def causal_risk_mask(df, recovery_hours=24):
+def causal_risk_mask(df, recovery_hours=24, band=.01, min_duration=2):
     """At bar close, exclude below-band and confirmed-dip recovery; no final end."""
     out = pd.Series(False, index=df.index)
     for _, g in df.groupby("coin", sort=False):
@@ -41,10 +41,10 @@ def causal_risk_mask(df, recovery_hours=24):
         confirmed = False
         recovery_start = None
         for row in g.itertuples():
-            below = pd.notna(row.price) and row.price < .99
+            below = pd.notna(row.price) and row.price < 1 - band
             if below:
                 run += 1
-                if run >= 2:
+                if run >= min_duration:
                     confirmed = True
                 out.at[row.Index] = False
                 continue
@@ -52,21 +52,22 @@ def causal_risk_mask(df, recovery_hours=24):
                 recovery_start = row.hour
             run, confirmed = 0, False
             out.at[row.Index] = (
-                pd.notna(row.price) and row.price >= .99
+                pd.notna(row.price) and row.price >= 1 - band
                 and (recovery_start is None or
                      row.hour > recovery_start + pd.Timedelta(hours=recovery_hours))
             )
     return out
 
 
-def episode_labels(df, episodes, horizons=(1, 6, 24)):
+def episode_labels(df, episodes, horizons=(1, 6, 24), band=.01, min_duration=2):
     """New merged starts only; negative windows include onset-confirmation bar."""
     df = df.copy()
     for h in horizons:
         df[f"label_h{h}"] = np.nan
     for coin, g in df.groupby("coin", sort=False):
-        times = g.hour.astype("int64").to_numpy()
-        starts = episodes.loc[episodes.coin.eq(coin), "start"].astype("int64").to_numpy()
+        times = g.hour.astype("datetime64[ns, UTC]").astype("int64").to_numpy()
+        starts = episodes.loc[episodes.coin.eq(coin), "start"].astype(
+            "datetime64[ns, UTC]").astype("int64").to_numpy(copy=True)
         starts.sort()
         missing = g.price.isna().astype(int).to_numpy()
         cumulative = np.r_[0, missing.cumsum()]
@@ -77,11 +78,11 @@ def episode_labels(df, episodes, horizons=(1, 6, 24)):
             positive = right > left
             i = np.arange(len(g))
             # Minimum-duration=2 requires the bar after a putative horizon-end onset.
-            complete = i + h + 1 < len(g)
-            hi = np.minimum(i + h + 2, len(g))
+            complete = i + h + min_duration - 1 < len(g)
+            hi = np.minimum(i + h + min_duration, len(g))
             observed = complete & ((cumulative[hi] - cumulative[i + 1]) == 0)
             labels = np.where(positive, 1., np.where(observed, 0., np.nan))
-            labels[g.price.isna() | g.price.lt(.99)] = np.nan
+            labels[g.price.isna() | g.price.lt(1 - band)] = np.nan
             df.loc[g.index, f"label_h{h}"] = labels
     return df
 

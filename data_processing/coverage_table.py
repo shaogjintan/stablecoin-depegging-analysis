@@ -16,7 +16,7 @@ Outputs (written to reports/):
 """
 
 import pandas as pd
-from config import PROCESSED_DATA_DIR, REPORT_DIR, FIAT_COINS
+from config import PROCESSED_DATA_DIR, REPORT_DIR, FIAT_COINS, ACTIVE_MASTER_PATH
 
 def calculate_coverage(df,source_name,observed_col,restrict_to_common):
     """
@@ -68,7 +68,7 @@ def calculate_coverage(df,source_name,observed_col,restrict_to_common):
 def main():
     # LOAD DATASET 
     master = pd.read_parquet(
-        PROCESSED_DATA_DIR / "master.parquet",
+        ACTIVE_MASTER_PATH,
         columns=["coin", "hour", "common_sample", "trading_volume", "tx_count"],
     )
     master["hour"] = pd.to_datetime(master["hour"], utc=True)

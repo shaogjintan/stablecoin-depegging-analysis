@@ -132,7 +132,8 @@ class RepairTests(unittest.TestCase):
                 if len(hit):
                     target_codes[i] = int(hit.index[0])
             cutoffs, nc, nf, na = exhaustive_counts(
-                ordered.y_score.to_numpy(), ordered.hour.astype("int64").to_numpy(),
+                ordered.y_score.to_numpy(), ordered.hour.astype(
+                    "datetime64[ns, UTC]").astype("int64").to_numpy(),
                 np.array([n, 2*n], dtype=np.int64), target_codes, h*3600_000_000_000)
             for threshold in np.r_[np.unique(d.y_score), np.inf]:
                 _, events = build_alarm_events(d, eps, threshold)

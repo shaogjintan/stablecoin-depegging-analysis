@@ -170,13 +170,13 @@ def _choose_threshold(
     frame["hour"] = pd.to_datetime(frame["hour"], utc=True)
     if frame.duplicated(["coin", "hour"]).any():
         raise ValueError("Duplicate validation coin-hour")
-    times = frame.hour.astype("int64").to_numpy()
+    times = frame.hour.astype("datetime64[ns, UTC]").astype("int64").to_numpy()
     targets = np.full(len(frame), -1, dtype=np.int64)
     ids = {ep: i for i, ep in enumerate(sorted(target_ids))}
     delta = horizon * 3600_000_000_000
     for coin, group in frame.groupby("coin", sort=False):
         eps = episodes.loc[episodes.coin.eq(coin)].sort_values("start")
-        starts = pd.to_datetime(eps.start, utc=True).astype("int64").to_numpy()
+        starts = pd.to_datetime(eps.start, utc=True).astype("datetime64[ns, UTC]").astype("int64").to_numpy()
         positions = np.flatnonzero(frame.coin.eq(coin))
         loc = np.searchsorted(starts, times[positions], side="right")
         for pos, j in zip(positions, loc):

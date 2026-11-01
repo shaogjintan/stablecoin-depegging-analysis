@@ -22,6 +22,7 @@ sys.path.insert(0, str(REPO_ROOT))
 sys.path.insert(0, str(REPO_ROOT / "data_processing"))
 
 from config import FORECAST_HORIZONS_HOURS, PROCESSED_DATA_DIR  # noqa: E402
+from config import ACTIVE_EPISODES_PATH  # versioned modelling inputs
 from modelling.alarm_events import build_alarm_events  # noqa: E402
 from modelling.evaluate import pooled_metrics  # noqa: E402
 from modelling.models import MODEL_REGISTRY, get_model  # noqa: E402
@@ -108,6 +109,7 @@ def evaluate_configuration(model_name: str, tier: int, horizon: int,
             events, test, _observed_coin_months(test)
         )
         event_frames.append(events.assign(
+            dataset_version=fold["dataset_version"],
             test_year=year, model=model_name, tag=FIXED_TAGS[model_name],
             model_configuration=FIXED_TAGS[model_name], tier=tier, horizon=horizon
         ))
@@ -115,6 +117,7 @@ def evaluate_configuration(model_name: str, tier: int, horizon: int,
         cls = pooled_metrics(test["y_true"], test_scores)
         val_cls = pooled_metrics(fold["y_inner_val"], val_scores)
         year_rows.append({
+            "dataset_version": fold["dataset_version"],
             "model": model_name, "tier": tier,
             "tag": FIXED_TAGS[model_name],
             "model_configuration": FIXED_TAGS[model_name],
@@ -307,6 +310,7 @@ def write_tier_comparison(
             paired[f"tier2_{metric}"] - paired[f"tier1_{metric}"]
         )
     paired["common_sample"] = "Tier 2 eligible coin-hours; Tier 1 refit on same rows"
+    paired["dataset_version"] = "corrected_v1"
     paired.sort_values(["model", "horizon_hours"]).to_csv(out_path, index=False)
 
 
@@ -336,7 +340,7 @@ def main(argv=None) -> int:
                 f"{summary_path} is missing; run the full evaluation first"
             )
         summary = pd.read_csv(summary_path)
-        episodes = pd.read_parquet(PROCESSED_DATA_DIR / "depeg_episodes.parquet")
+        episodes = pd.read_parquet(ACTIVE_EPISODES_PATH)
         episodes["start"] = pd.to_datetime(episodes["start"], utc=True)
         common_rows = [
             evaluate_tier1_on_common_sample(
@@ -349,7 +353,7 @@ def main(argv=None) -> int:
         print(f"Saved {out / 'model_comparison_by_tier.csv'}")
         return 0
 
-    episodes = pd.read_parquet(PROCESSED_DATA_DIR / "depeg_episodes.parquet")
+    episodes = pd.read_parquet(ACTIVE_EPISODES_PATH)
     episodes["start"] = pd.to_datetime(episodes["start"], utc=True)
     all_rows, all_events, pooled_scores = [], [], {}
     configs = [(m, t, h) for m in args.models for t in args.tiers
@@ -384,6 +388,7 @@ def main(argv=None) -> int:
     metric_rows = []
     for (model, tier, horizon), scores in pooled_scores.items():
         metric_rows.append({
+            "dataset_version": "corrected_v1",
             "model": model, "tier": tier,
             "tag": FIXED_TAGS[model],
             "model_configuration": FIXED_TAGS[model],
@@ -427,6 +432,9 @@ def main(argv=None) -> int:
     yearly.sort_values(keys + ["test_year"]).to_csv(out / "model_comparison_by_year.csv", index=False)
     events.to_csv(out / "model_alarm_events.csv", index=False)
     (out / "run_metadata.txt").write_text(
+        "Dataset: corrected_v1; master_corrected_v1.parquet and "
+        "depeg_episodes_corrected_v1.parquet; bar-close timestamps, "
+        "new merged episode targets, causal recovery exclusion.\n"
         "Expanding-window evaluation; standard downward depeg definition: price "
         "below $0.99 for at least 2 consecutive hours; episodes merged using "
         "the configured 24-hour gap. Each test year is scored by a model fit "

@@ -224,6 +224,7 @@ def main(argv=None) -> int:
             "inner_val": (fold["inner_val_meta"], y_val, p_val),
         }.items():
             d = meta.copy()
+            d["dataset_version"] = fold["dataset_version"]
             d["year"] = year
             d["horizon"] = args.horizon
             d["split"] = part_name
@@ -241,6 +242,7 @@ def main(argv=None) -> int:
         artifact = model_dir / f"{args.model}_t{args.tier}_h{args.horizon}_{year}"
         joblib.dump(model, artifact.with_suffix(".joblib"))
         run_info = {
+            "dataset_version": fold["dataset_version"],
             "model": args.model, "tier": args.tier, "horizon": args.horizon,
             "year": year, "tag": tag,
             "params": model.get_params(),

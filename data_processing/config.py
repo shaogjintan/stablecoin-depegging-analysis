@@ -14,6 +14,11 @@ SNAP_EVENT_FILE = RAW_DATA_DIR / "snap_erc20" / "event_data.csv"
 DUNE_ONCHAIN_ZIP = Path("dune_onchain.zip")  # per-coin Dune exports (repo root)
 DUNE_ONCHAIN_DIR = RAW_DATA_DIR / "dune_onchain"
 PROCESSED_DATA_DIR = Path("data/processed")
+# Versioned inputs for modelling; the original pipeline outputs are preserved.
+MODELLING_DATA_VERSION = "corrected_v1"
+ACTIVE_MASTER_PATH = PROCESSED_DATA_DIR / "master_corrected_v1.parquet"
+ACTIVE_EPISODES_PATH = PROCESSED_DATA_DIR / "depeg_episodes_corrected_v1.parquet"
+ACTIVE_TYPED_EPISODES_PATH = PROCESSED_DATA_DIR / "depeg_episodes_corrected_v1_typed.parquet"
 REPORT_DIR = Path("reports")
 
 for d in [PROCESSED_DATA_DIR, REPORT_DIR]:
