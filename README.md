@@ -38,6 +38,20 @@ learning rate .05, training-only neg/pos class weight, seed 42, at most 4 thread
 Each scoring fit uses only `inner_train`; its disjoint `inner_val` selects the
 threshold, and the same saved fit scores test. No test outcome selects settings.
 
+For the scoped corrected 1-hour backtest (2021–2025), use a separate fresh output
+directory and explicitly omit SHAP:
+
+```powershell
+python -m modelling.corrected_xgb --out-dir .\corrected-xgb-h1-NEW-RUN --horizon 1 --no-shap
+python -m modelling.verify_corrected_run --run-dir .\corrected-xgb-h1-NEW-RUN
+```
+
+This runs 15 scoring fits across the three configurations and records SHAP as
+not requested; verification writes `figures\corrected_metrics_h1.png`. The h1
+labels use only new merged episode starts strictly after the completed decision
+bar and no more than one hour later; negatives require the full one-hour window
+plus the confirmation bar to be observed. Do not substitute legacy h1 results.
+
 Every distinct validation score and +infinity is evaluated exactly. The objective
 is highest validation **episode recall** within grouped false alarms / observed
 coin-months ≤1; ties prefer fewer false alarms, then the higher threshold.

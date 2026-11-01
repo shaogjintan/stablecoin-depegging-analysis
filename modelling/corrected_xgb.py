@@ -1,9 +1,12 @@
 """Corrected fixed-round XGB run. From repo root:
 
 python -m modelling.corrected_xgb --out-dir <new immutable directory>
+python -m modelling.corrected_xgb --out-dir <new directory> --horizon 1 --no-shap
 python -m modelling.corrected_xgb --shap-only --out-dir <completed directory>
 
-Legacy reports/results remain untouched. All clocks denote bar closes.
+Legacy reports/results remain untouched. Default scoring remains h6/h24 with
+SHAP; selected horizons and SHAP omission are recorded in the run manifest.
+All clocks denote bar closes.
 """
 from __future__ import annotations
 
@@ -153,23 +156,38 @@ def paired_uncertainty(pred1, pred2, identities, h):
                 targetable_episodes=len(delta), targetable_event_clusters=len(event_groups))
 
 
-def run(out):
+def run(out, horizons=(6, 24), include_shap=True):
+    horizons = tuple(dict.fromkeys(int(h) for h in horizons))
+    if not horizons or any(h not in (1, 6, 24) for h in horizons):
+        raise ValueError("horizons must contain one or more of 1, 6, and 24")
     out.mkdir(parents=True, exist_ok=False)
     run_id = datetime.now(timezone.utc).strftime("%Y%m%dT%H%M%SZ") + "-" + uuid.uuid4().hex[:8]
     source = ROOT / "data" / "processed" / "master.parquet"
+    source_files = [
+        ROOT / "modelling" / name for name in (
+            "corrected_data.py", "corrected_xgb.py", "verify_corrected_run.py",
+            "rolling_threshold.py", "exact_threshold.py", "alarm_events.py",
+            "false_alarm_framework.py", "prepare_data.py", "models/xgboost_model.py",
+        )
+    ] + [
+        ROOT / "data_processing" / name
+        for name in ("config.py", "merge_and_label.py", "splits.py")
+    ]
     metadata = {
         "run_id": run_id, "status": "running", "source_commit":
         subprocess.check_output(["git", "-C", str(ROOT), "rev-parse", "HEAD"], text=True).strip(),
         "source_master_sha256": sha256(source), "params": PARAMS,
+        "horizons": list(horizons), "configs": ["market_original", "market_matched", "market_onchain"],
+        "expected_scoring_fits": len(horizons) * 3 * 5,
+        "shap_requested": bool(include_shap),
+        "omitted_analyses": [] if include_shap else ["SHAP: not requested"],
         "clock": "hour=source bar_start+1h; first-below-bar close onset; lead=start_close-origin_close",
         "target": "new merged 2h dip episode starts in (origin_close, origin_close+h]",
         "risk": "observed above-band close, >24h after recovery anchor of last online-confirmed 2h dip",
         "threshold": "all distinct validation scores and +inf; max episode recall within FA/observed coin-month<=1, then fewer FA, then higher threshold",
         "packages": {p: importlib.metadata.version(p) for p in
                      ("numpy", "pandas", "scikit-learn", "xgboost", "shap", "numba", "joblib")},
-        "source_code_sha256": {str(p.relative_to(ROOT)): sha256(p) for p in
-                              [ROOT / "modelling" / n for n in
-                               ("corrected_data.py", "corrected_xgb.py", "rolling_threshold.py", "exact_threshold.py", "alarm_events.py")]},
+        "source_code_sha256": {str(p.relative_to(ROOT)): sha256(p) for p in source_files},
         "limitations": [
             "Original source gaps/forward filling and original venue flags cannot be recovered; no zeros fabricated.",
             "End-of-bar idealized availability; actual exchange/Dune publication delays are not known.",
@@ -177,9 +195,11 @@ def run(out):
             "Negative labels require h+1 future bars; observed-label sample is an offline evaluation filter only.",
             "Observed coin-months count partial months, not equivalent full exposure months.",
             "Matched intervals condition on fits/thresholds and are exploratory, not a retrained model significance test.",
-            "No h1, LR/RF repairs, optional smoothing/OR/sensitivity or live deployment validation.",
+            "LR/RF repairs, optional smoothing/OR/sensitivity and live deployment validation are outside this run.",
         ],
     }
+    if not include_shap:
+        metadata["limitations"].append("SHAP was not requested and no SHAP artifacts were generated.")
     save_json(out / "run.json", metadata)
     source_snapshot = out / "source"
     source_snapshot.mkdir()
@@ -193,7 +213,7 @@ def run(out):
     episodes.to_parquet(out / "episodes.parquet", index=False)
     episodes.to_csv(out / "episodes.csv", index=False)
     year_rows, summary, identity_rows, pooled = [], [], [], {}
-    for h in (6, 24):
+    for h in horizons:
         f1, f2 = corrected_folds(master, episodes, h, 1), corrected_folds(master, episodes, h, 2)
         configs = {"market_original": f1, "market_matched": [_common_sample_fold(a, b) for a, b in zip(f1, f2)],
                    "market_onchain": f2}
@@ -234,12 +254,13 @@ def run(out):
     identities.to_csv(out / "caught_identities.csv", index=False)
     print("Computing matched conditional block-bootstrap uncertainty", flush=True)
     uncertainty = [paired_uncertainty(pooled[("market_matched", h)], pooled[("market_onchain", h)],
-                                     identities, h) for h in (6, 24)]
+                                     identities, h) for h in horizons]
     pd.DataFrame(uncertainty).to_csv(out / "matched_uncertainty.csv", index=False)
     metadata["status"] = "scoring_complete"
     metadata["corrected_master_sha256"] = sha256(out / "corrected_master.parquet")
     save_json(out / "run.json", metadata)
-    run_shap(out)
+    if include_shap:
+        run_shap(out)
     metadata["status"] = "complete"
     save_json(out / "run.json", metadata)
     print(summary.to_string(index=False), flush=True)
@@ -330,11 +351,18 @@ def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--out-dir", required=True, type=Path)
     parser.add_argument("--shap-only", action="store_true")
+    parser.add_argument("--horizon", action="append", type=int, choices=(1, 6, 24),
+                        dest="horizons", help="horizon to run; repeat to select multiple (default: 6 and 24)")
+    parser.add_argument("--no-shap", action="store_true",
+                        help="skip SHAP generation for this scoring run")
     args = parser.parse_args()
     if args.shap_only:
+        if args.horizons or args.no_shap:
+            parser.error("--shap-only cannot be combined with --horizon or --no-shap")
         run_shap(args.out_dir.resolve())
     else:
-        run(args.out_dir.resolve())
+        run(args.out_dir.resolve(), horizons=args.horizons or (6, 24),
+            include_shap=not args.no_shap)
 
 
 if __name__ == "__main__":
