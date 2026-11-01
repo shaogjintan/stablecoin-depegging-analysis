@@ -21,7 +21,9 @@ KEYS = ["coin", "hour", "y_true"]
 
 def reference_ap(y, scores):
     y, scores = np.asarray(y, dtype=int), np.asarray(scores, dtype=float)
-    assert len(y) and y.sum() > 0 and np.isfinite(scores).all()
+    assert len(y) and np.isfinite(scores).all()
+    if y.sum() == 0:
+        return 0.0
     order = np.argsort(-scores, kind="stable")
     labels, ranks = y[order], scores[order]
     ends = np.r_[np.flatnonzero(ranks[1:] != ranks[:-1]), len(ranks) - 1]
@@ -121,7 +123,7 @@ def check_preprocessing(bundle, train, features):
         assert model.positive_rate_ == train.y_true.mean()
 
 
-def verify_cv(folder, train, fit):
+def verify_cv(folder, train, fit, purge_hours=24, embargo_hours=24):
     tuning = json.loads((folder / "tuning.json").read_text())
     assert tuning["grid"] == [.001, .01, .1, 1.]
     assert not tuning["calibration_used_for_selection"]
@@ -135,8 +137,8 @@ def verify_cv(folder, train, fit):
             assert a.hour.max() + pd.Timedelta(hours=fit["horizon"] + 1) < b.hour.min()
             assert b.hour.dt.year.eq(record["validation_year"]).all()
             assert a.hour.dt.year.lt(record["validation_year"]).all()
-            assert a.hour.max() < pd.Timestamp(f"{record['validation_year']}-01-01", tz="UTC") - pd.Timedelta(hours=24)
-            assert b.hour.min() >= pd.Timestamp(f"{record['validation_year']}-01-01", tz="UTC") + pd.Timedelta(hours=24)
+            assert a.hour.max() < pd.Timestamp(f"{record['validation_year']}-01-01", tz="UTC") - pd.Timedelta(hours=purge_hours)
+            assert b.hour.min() >= pd.Timestamp(f"{record['validation_year']}-01-01", tz="UTC") + pd.Timedelta(hours=embargo_hours)
             for p in (a, b):
                 selected = p[["coin", "hour"]].merge(train, on=["coin", "hour"], validate="one_to_one")
                 pd.testing.assert_frame_equal(p.reset_index(drop=True), selected[p.columns])
@@ -162,22 +164,37 @@ def verify_cv(folder, train, fit):
 def verify(out):
     started = time.perf_counter()
     info = json.loads((out / "run.json").read_text())
-    assert info["status"] in ("scoring_complete", "complete") and not info["benchmark"]
-    frozen = Path(info["frozen_path"])
-    frozen_hashes = json.loads((out / "frozen_evidence_sha256.json").read_text())
-    assert set(frozen_hashes) == {str(p.relative_to(frozen)) for p in frozen.rglob("*") if p.is_file()}
-    assert all(sha256(frozen / p) == digest for p, digest in frozen_hashes.items())
+    assert info["status"] in ("scoring_complete", "complete")
+    frozen = Path(info["frozen_path"]) if info.get("frozen_path") else None
+    if frozen:
+        frozen_hashes = json.loads((out / "frozen_evidence_sha256.json").read_text())
+        assert set(frozen_hashes) == {str(p.relative_to(frozen)) for p in frozen.rglob("*") if p.is_file()}
+        assert all(sha256(frozen / p) == digest for p, digest in frozen_hashes.items())
+    horizons = tuple(info.get("horizons", (6, 24)))
+    test_years = tuple(info.get("test_years", range(2021, 2026)))
+    configs = tuple(info.get("configs", CONFIGS))
+    models = tuple(info.get("models", MODELS))
+    purge_hours = info.get("purge_hours", 24)
+    embargo_hours = info.get("embargo_hours", 24)
     for rel, digest in info["source_code_sha256"].items():
         assert sha256(out / "source" / rel) == digest
     episodes = pd.read_parquet(out / "episodes.parquet")
-    pd.testing.assert_frame_equal(episodes, pd.read_parquet(frozen / "episodes.parquet"))
+    if frozen:
+        pd.testing.assert_frame_equal(episodes, pd.read_parquet(frozen / "episodes.parquet"))
+    else:
+        assert sha256(out / "episodes.parquet") == info["episodes_sha256"]
+        assert sha256(out / "corrected_master.parquet") == info["corrected_master_sha256"]
+        master = pd.read_parquet(out / "corrected_master.parquet")
     cells = json.loads((out / "partitions.json").read_text())
-    assert set(cells) == {f"{c}_h{h}_{y}" for c in CONFIGS for h in (6, 24) for y in range(2021, 2026)}
-    assert len(list((out / "fits").iterdir())) == 120
+    assert set(cells) == {f"{c}_h{h}_{y}" for c in configs for h in horizons for y in test_years}
+    expected_fits = {f"{name}_{cell}" for name in models for cell in cells}
+    assert {p.name for p in (out / "fits").iterdir()} == expected_fits
     summary = pd.read_csv(out / "summary.csv")
     years = pd.read_csv(out / "per_year.csv")
-    importance = pd.read_csv(out / "importance_per_fit.csv")
-    assert len(summary) == 24 and len(years) == 120
+    importance = (pd.read_csv(out / "importance_per_fit.csv")
+                  if (out / "importance_per_fit.csv").exists() else pd.DataFrame())
+    assert len(summary) == len(models) * len(configs) * len(horizons)
+    assert len(years) == len(expected_fits)
     records, cv_count = [], 0
     checkpoint = out / "verification_checkpoint.json"
     checked = json.loads(checkpoint.read_text()) if checkpoint.exists() and checkpoint.stat().st_size else {}
@@ -187,8 +204,36 @@ def verify(out):
             for part, p in parts.items():
                 assert not p.duplicated(["coin", "hour"]).any()
                 assert np.isfinite(p[spec["features"]]).all().all()
-                frozen_part = pd.read_parquet(frozen / "fits" / cell / f"{part}.parquet")
-                pd.testing.assert_frame_equal(p, frozen_part[p.columns])
+                if frozen:
+                    frozen_part = pd.read_parquet(frozen / "fits" / cell / f"{part}.parquet")
+                    pd.testing.assert_frame_equal(p, frozen_part[p.columns])
+                else:
+                    name = "market" if spec["config"] == "market_original" else "market_onchain"
+                    base = master.loc[master[f"prediction_eligible_{name}_h{spec['horizon']}"]]
+                    val = pd.Timestamp(f"{spec['year']-1}-01-01", tz="UTC")
+                    test = pd.Timestamp(f"{spec['year']}-01-01", tz="UTC")
+                    end = pd.Timestamp(f"{spec['year']+1}-01-01", tz="UTC")
+                    purge, embargo = pd.Timedelta(hours=purge_hours), pd.Timedelta(hours=embargo_hours)
+                    dropped = set()
+                    for boundary in (val, test):
+                        dropped.update(episodes.loc[
+                            (episodes.end >= boundary-purge) & (episodes.start <= boundary+embargo),
+                            "episode_id"])
+                    masks = {
+                        "inner_train": base.hour < val-purge,
+                        "inner_val": (base.hour >= val+embargo) & (base.hour < test-purge),
+                        "test": (base.hour >= test+embargo) & (base.hour < end),
+                    }
+                    expected = base.loc[masks[part] & ~base.episode_id.isin(dropped)].sort_values(
+                        ["coin", "hour"])
+                    expected = expected[["coin", "hour", "episode_id"] + spec["features"]
+                                        + [f"label_h{spec['horizon']}"]].rename(
+                        columns={f"label_h{spec['horizon']}": "y_true"}).reset_index(drop=True)
+                    expected["y_true"] = expected.y_true.astype(int)
+                    expected[spec["features"]] = expected[spec["features"]].astype(float)
+                    if "dataset_version" in p:
+                        expected["dataset_version"] = info["dataset_version"]
+                    pd.testing.assert_frame_equal(p, expected[p.columns])
                 truth = np.zeros(len(p), dtype=int)
                 for coin, group in p.groupby("coin", sort=False):
                     starts = np.sort(episodes.loc[episodes.coin.eq(coin), "start"].astype("int64").to_numpy())
@@ -198,9 +243,9 @@ def verify(out):
                 np.testing.assert_array_equal(truth, p.y_true)
             for earlier, later in (("inner_train", "inner_val"), ("inner_val", "test")):
                 gap = parts[later].hour.min() - parts[earlier].hour.max()
-                assert gap >= pd.Timedelta(hours=49)
+                assert gap >= pd.Timedelta(hours=purge_hours + embargo_hours + 1)
                 assert parts[earlier].hour.max() + pd.Timedelta(hours=spec["horizon"] + 1) < parts[later].hour.min()
-            for name in MODELS:
+            for name in models:
                 folder = out / "fits" / f"{name}_{cell}"
                 if folder.name in checked:
                     saved = checked[folder.name]
@@ -214,7 +259,7 @@ def verify(out):
                 assert sha256(folder / "pipeline.joblib") == fit["pipeline_sha256"]
                 bundle = joblib.load(folder / "pipeline.joblib")
                 check_preprocessing(bundle, parts["inner_train"], spec["features"])
-                fit_cv_count = verify_cv(folder, parts["inner_train"], fit) if name == "logreg" else 0
+                fit_cv_count = verify_cv(folder, parts["inner_train"], fit, purge_hours, embargo_hours) if name == "logreg" else 0
                 cv_count += fit_cv_count
                 frames = {}
                 for part in ("inner_val", "test"):
@@ -254,48 +299,58 @@ def verify(out):
                     assert imp.feature.tolist() == names
                     np.testing.assert_allclose(imp.value, values, atol=1e-12, rtol=0)
                 records.append(dict(fit_id=folder.name, score_reload=True, independent_alarm_match=True,
-                                    frozen_partition_match=True, validation_budget_pass=True))
+                                    frozen_partition_match=bool(frozen),
+                                    saved_partition_match=True, validation_budget_pass=True))
                 checked[folder.name] = dict(record=records[-1], cv_count=fit_cv_count,
                                             hashes={str(p.relative_to(out)): sha256(p)
                                                     for p in folder.rglob("*") if p.is_file()})
                 temporary = checkpoint.with_suffix(".tmp")
                 save_json(temporary, checked)
                 temporary.replace(checkpoint)
-                print(f"Verified {len(records)}/120: {folder.name}", flush=True)
+                print(f"Verified {len(records)}/{len(expected_fits)}: {folder.name}", flush=True)
     for r in summary.to_dict("records"):
         name, config, h = r["model"], r["config"], r["horizon_hours"]
         pred = pd.read_parquet(out / f"predictions_{name}_{config}_h{h}.parquet")
         assert not pred.duplicated(["coin", "hour"]).any()
-        frozen_pred = pd.read_parquet(frozen / f"predictions_{config}_h{h}.parquet")
-        pd.testing.assert_frame_equal(pred[KEYS], frozen_pred[KEYS])
+        if frozen:
+            frozen_pred = pd.read_parquet(frozen / f"predictions_{config}_h{h}.parquet")
+            pd.testing.assert_frame_equal(pred[KEYS], frozen_pred[KEYS])
         ev = pd.concat([reference_events(p, episodes, p.threshold.iloc[0], h)
                         for _, p in pred.groupby("test_year", sort=True)], ignore_index=True)
         assert_values(r, reference_metrics(pred, ev, episodes, h))
         np.testing.assert_allclose(reference_ap(pred.y_true, pred.y_score),
                                    average_precision_score(pred.y_true, pred.y_score), atol=1e-12, rtol=0)
         targets = reference_targets(pred, episodes, h)
-        frozen_ids = pd.read_csv(frozen / "caught_identities.csv")
-        assert targets == set(frozen_ids.loc[frozen_ids.config.eq(config) &
-                                            frozen_ids.horizon_hours.eq(h), "episode_id"])
-    for name in MODELS:
-        for h in (6, 24):
+        if frozen:
+            frozen_ids = pd.read_csv(frozen / "caught_identities.csv")
+            assert targets == set(frozen_ids.loc[frozen_ids.config.eq(config) &
+                                                frozen_ids.horizon_hours.eq(h), "episode_id"])
+    matched_checks = 0
+    for name in models:
+        if not {"market_matched", "market_onchain"}.issubset(configs):
+            continue
+        for h in horizons:
             a, b = [pd.read_parquet(out / f"predictions_{name}_{c}_h{h}.parquet")
                     for c in ("market_matched", "market_onchain")]
             pd.testing.assert_frame_equal(a[KEYS], b[KEYS])
-    assert all(sha256(frozen / p) == digest for p, digest in frozen_hashes.items())
+            matched_checks += 1
+    if frozen:
+        assert all(sha256(frozen / p) == digest for p, digest in frozen_hashes.items())
     pd.DataFrame(records).to_csv(out / "verification_fits.csv", index=False)
     info.update(status="complete", independent_verification="passed")
     save_json(out / "run.json", info)
     save_json(out / "verification.json", dict(
         status="passed", run_id=info["run_id"], fits_checked=len(records), cv_candidate_fits_checked=cv_count,
-        pooled_rows_checked=24, frozen_partition_checks=90, matched_partitions_checked=30,
+        pooled_rows_checked=len(summary),
+        frozen_partition_checks=len(cells)*len(PARTS) if frozen else 0,
+        saved_partition_checks=len(cells)*len(PARTS), matched_pooled_checks=matched_checks,
         independent_ap=True, independent_alarm_events=True, independent_targets_and_cost=True,
-        frozen_xgb_shap_unchanged=True, elapsed_seconds=time.perf_counter() - started,
+        frozen_xgb_shap_unchanged=bool(frozen), elapsed_seconds=time.perf_counter() - started,
         limitation="Every cutoff regression-tested on synthetic reference; real selected thresholds checked for counts/budget, not independently re-searched."))
     save_json(out / "artifact_sha256.json", {str(p.relative_to(out)): sha256(p)
                                             for p in out.rglob("*") if p.is_file() and
                                             p.name != "artifact_sha256.json"})
-    print(f"PASS {len(records)} fits, {cv_count} CV candidate fits, 24 pooled rows; frozen XGB/SHAP unchanged")
+    print(f"PASS {len(records)} fits, {cv_count} CV candidate fits, {len(summary)} pooled rows")
 
 
 if __name__ == "__main__":

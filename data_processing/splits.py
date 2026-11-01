@@ -11,9 +11,9 @@ For each test year Y from OOS_START_YEAR to OOS_END_YEAR:
 Pooling the test predictions across folds scores every episode from
 OOS_START_YEAR onwards out of sample, while staying strictly chronological.
 
-Leakage control (same rules as the old single 3-way split):
-  - Purge: labels look up to 24h ahead, so the last 24h before each boundary
-    are dropped from the earlier set -- no label peeks across the boundary.
+Leakage control:
+  - Purge: labels look up to 24h ahead plus one confirmation bar, so the last
+    25h before each boundary are dropped from the earlier set.
   - Embargo: features use up to 24h of lookback, so the first 24h after each
     boundary are dropped from the later set -- no feature reaches back across it.
   - Episode-aware: any depeg episode overlapping a boundary window
@@ -35,24 +35,67 @@ import pandas as pd
 try:
     from .config import (
         PROCESSED_DATA_DIR, EMBARGO_HOURS, PURGE_HOURS, OOS_START_YEAR, OOS_END_YEAR,
-        ACTIVE_MASTER_PATH, ACTIVE_EPISODES_PATH,
+        ACTIVE_MASTER_PATH, ACTIVE_EPISODES_PATH, ACTIVE_TYPED_EPISODES_PATH,
+        MODELLING_DATA_VERSION,
     )
 except ImportError:  # Direct script / historical top-level "splits" import.
     from config import (
         PROCESSED_DATA_DIR, EMBARGO_HOURS, PURGE_HOURS, OOS_START_YEAR, OOS_END_YEAR,
-        ACTIVE_MASTER_PATH, ACTIVE_EPISODES_PATH,
+        ACTIVE_MASTER_PATH, ACTIVE_EPISODES_PATH, ACTIVE_TYPED_EPISODES_PATH,
+        MODELLING_DATA_VERSION,
     )
 
 
-def load_master() -> tuple[pd.DataFrame, pd.DataFrame]:
-    """Load the versioned corrected master and its matching episode manifest."""
-    if not ACTIVE_MASTER_PATH.exists() or not ACTIVE_EPISODES_PATH.exists():
+def active_input_paths():
+    """Resolve the committed typed manifest when no untyped manifest exists."""
+    episodes_path = (ACTIVE_EPISODES_PATH if ACTIVE_EPISODES_PATH.exists()
+                     else ACTIVE_TYPED_EPISODES_PATH)
+    if not ACTIVE_MASTER_PATH.exists() or not episodes_path.exists():
         raise FileNotFoundError(
             "Corrected modelling inputs are missing. Run "
             "'python -m modelling.build_corrected_dataset' from the repo root."
         )
-    master = pd.read_parquet(ACTIVE_MASTER_PATH)
-    episodes = pd.read_parquet(ACTIVE_EPISODES_PATH)
+    return ACTIVE_MASTER_PATH, episodes_path
+
+
+def load_master() -> tuple[pd.DataFrame, pd.DataFrame]:
+    """Load the versioned corrected master and its matching episode manifest."""
+    master_path, episodes_path = active_input_paths()
+    master = pd.read_parquet(master_path)
+    episodes = pd.read_parquet(episodes_path)
+    for name, frame in (("master", master), ("episodes", episodes)):
+        if "dataset_version" not in frame or not frame["dataset_version"].eq(
+                MODELLING_DATA_VERSION).all():
+            raise ValueError(f"{name} does not match dataset version {MODELLING_DATA_VERSION}")
+    master_columns = {"coin", "hour", "bar_start", "episode_id", "qualifying_depeg_hour"}
+    episode_columns = {"coin", "start", "end", "episode_id"}
+    for name, frame, columns in (("master", master, master_columns),
+                                 ("episodes", episodes, episode_columns)):
+        missing = columns - set(frame.columns)
+        if missing:
+            raise ValueError(f"{name} is missing columns {sorted(missing)}")
+    for name, frame, columns in (("master", master, ("hour", "bar_start")),
+                                 ("episodes", episodes, ("start", "end"))):
+        for column in columns:
+            dtype = frame[column].dtype
+            if (not isinstance(dtype, pd.DatetimeTZDtype) or str(dtype.tz) != "UTC"
+                    or frame[column].isna().any()):
+                raise ValueError(f"{name}.{column} must contain UTC timestamps without missing values")
+    if master.empty or master.duplicated(["coin", "hour"]).any():
+        raise ValueError("Master must contain unique, nonempty coin-hour rows")
+    if not (master.hour - master.bar_start).eq(pd.Timedelta(hours=1)).all():
+        raise ValueError("Master does not use completed-bar close timestamps")
+    if episodes.episode_id.isna().any() or episodes.episode_id.duplicated().any():
+        raise ValueError("Episode IDs must be present and unique")
+    if (not pd.api.types.is_bool_dtype(master.qualifying_depeg_hour)
+            or master.qualifying_depeg_hour.isna().any()):
+        raise ValueError("qualifying_depeg_hour must contain nonmissing boolean values")
+    bounds = master.loc[master.qualifying_depeg_hour].groupby("episode_id").agg(
+        coin=("coin", "first"), start=("hour", "min"), end=("hour", "max"))
+    bounds["end"] += pd.Timedelta(hours=1)
+    expected = episodes.set_index("episode_id")[["coin", "start", "end"]]
+    if not bounds.sort_index().equals(expected.sort_index()):
+        raise ValueError("Episode manifest IDs, coins or clocks do not match the master")
     return master, episodes
 
 

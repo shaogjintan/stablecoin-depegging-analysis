@@ -21,16 +21,93 @@ average (~72 per year)**. The centre of the analysis is the **market-only
 
 ## Corrected XGBoost/SHAP protocol (isolated repair)
 
+### Supported new runs (portable, corrected_v1)
+
+Run the following from the repository root in PowerShell. New runs use the
+committed `data\processed\master_corrected_v1.parquet` and matching episode
+manifest. When the untyped corrected manifest is absent, the committed
+`depeg_episodes_corrected_v1_typed.parquet` is accepted after validating its
+version, episode IDs, coins and completed-bar clocks. An invalid untyped
+manifest fails validation; it is not silently replaced by the typed file.
+No original master reconstruction, private worktree or frozen V3 folder is
+needed. The dataset builder validates existing inputs without overwriting them.
+
+```powershell
+py -3.12 -m venv .venv
+.\.venv\Scripts\Activate.ps1
+python -m pip install -r requirements-modelling.txt
+python -m pip check
+python -m modelling.build_corrected_dataset
+python -W ignore::DeprecationWarning -m unittest modelling.checks.test_readiness modelling.checks.test_xgb_repair modelling.checks.test_lr_rf_repair modelling.checks.test_corrected_baselines -v
+```
+
+`requirements-modelling.txt` pins the tested numerical/model stack; it is not
+a complete transitive lock. Record `python -m pip freeze` alongside results if
+you need an exact environment record. This installation is for corrected
+modelling, not the network acquisition/notebook tools in `requirements.txt`.
+
+All new outer splits and LR inner calendar CV use a **25-hour purge and
+24-hour embargo**. The extra purge hour prevents the h24 negative-label
+confirmation bar from reaching the next year. Previously frozen 24-hour-purge
+runs remain historical evidence; do not combine them with these new samples.
+This is a leakage-boundary repair, not model tuning. Model settings and scoring
+definitions are unchanged. Rerun before using new numbers in the deck.
+
+Use fresh output directories; none of these commands replaces old evidence:
+
+```powershell
+# Full matrix: 45 XGB + 180 LR/RF/prior/persistence scoring fits.
+python -m modelling.corrected_xgb --out-dir .\runs\XGB-NEW --horizon 1 --horizon 6 --horizon 24
+python -m modelling.verify_corrected_run --run-dir .\runs\XGB-NEW
+python -m modelling.corrected_lr_rf --out-dir .\runs\LR-RF-NEW --horizon 1 --horizon 6 --horizon 24
+python -m modelling.verify_lr_rf_run --run-dir .\runs\LR-RF-NEW
+python -m modelling.lr_rf_presentation --run-dir .\runs\LR-RF-NEW --xgb-run .\runs\XGB-NEW
+
+# Optional dedicated benchmark rerun + independent every-cutoff oracle.
+python -m modelling.corrected_baselines --out-dir .\runs\BASELINES-NEW
+python -m modelling.verify_baselines --run-dir .\runs\BASELINES-NEW
+```
+
+For a small real-data smoke run, append `--years 2021` and select a single
+`--horizon`. LR/RF also accepts `--models` and `--configs` for focused checks.
+Verifiers check the recorded scope, not a hardcoded full-matrix count.
+Partial runs are not full evidence. Presentation export requires identical
+verified XGB/LR-RF horizons, years, inputs and split policy, all three sample
+configurations and all four LR-RF-run models.
+
+XGB SHAP now follows the saved horizons and years, including h1. `--no-shap`
+records an intentional omission. `--shap-only` uses the saved scope, not new
+CLI scope flags. A no-SHAP run cannot be extended with `--shap-only`: its
+manifest and verifier require SHAP artifacts to remain absent. Use a fresh
+SHAP-requested run when SHAP is required.
+`corrected_h1 --out-dir <NEW-DIRECTORY>` is a standalone LR/RF h1 shorthand,
+with independent verification. `--frozen-xgb` and `--parent-run` are strict
+historical-reference modes, not recommended new-run commands.
+
+Each runner saves its own input snapshots, hashes, source snapshots, scope and
+split policy. Failed/interrupted scoring is recorded as incomplete and errors
+are re-raised; LR/RF remains `scoring_complete` until independent verification
+passes. Never treat that state, a traceback or a missing verification file as
+successful verification. Check `verification.json` for `"status": "passed"`.
+
+The commands below and the older result sections describe historical workflows.
+Legacy `train.py`, `train_logreg_yearcv.py`, `alarm_report.py`, `combine_alarms.py`,
+`plans/local_curve.py`, ex-post/smoothing/ensemble and standalone SHAP scripts
+are **not** the supported corrected rerun route. They may use original episode
+clocks or different training populations. Do not feed new corrected predictions
+to them. `evaluate_run` accepts an explicit matching episode snapshot and checks
+dataset versions; versioned current predictions otherwise select active inputs.
+
 ### Corrected constant-prior and persistence benchmarks
 
 These benchmarks must reuse corrected calendar features, merged-start labels,
 completed-bar clocks, causal eligibility and chronological splits, not the
-legacy benchmark tables. Run from the isolated worktree into an unused directory:
+legacy benchmark tables. Run from the repository root into an unused directory:
 
 ```powershell
 python -m unittest modelling.checks.test_corrected_baselines modelling.checks.test_xgb_repair -v
 python -m modelling.corrected_baselines --out-dir .\BASELINES-NEW-RUN
-python -m modelling.verify_baselines --run-dir .\BASELINES-NEW-RUN --reference ..\CORRECTED-XGB-SHAP-RUN-V3
+python -m modelling.verify_baselines --run-dir .\BASELINES-NEW-RUN
 ```
 
 The driver evaluates h1/h6/h24 over 2021-2025 on own-sample market, matched
@@ -57,7 +134,7 @@ Only completed, verified, protocol-compatible references enter model comparisons
 Use `--check-only` to repeat verification on an already verified run without
 writing or replacing its evidence.
 
-The historical `reports/`, `results/`, `train.py`, and all LR/RF outputs are
+The historical `reports/`, `results/`, `train.py`, and older LR/RF outputs are
 **legacy experiments**, not corrected evidence. The dedicated corrected driver
 does not overwrite their datasets or artifacts:
 
@@ -67,7 +144,7 @@ python -m modelling.corrected_xgb --out-dir .\corrected-results-NEW-RUN
 python -m modelling.verify_corrected_run --run-dir .\corrected-results-NEW-RUN
 ```
 
-Run from this worktree's root. The output directory must not exist. This executes
+Run from the repository root. The output directory must not exist. This executes
 h6/h24 market-original, market-matched and market-plus-on-chain folds (2021–2025),
 and T1/T2 SHAP; it never fits LR/RF. XGB fits exactly 300 rounds, depth 3,
 learning rate .05, training-only neg/pos class weight, seed 42, at most 4 threads.
@@ -75,7 +152,7 @@ Each scoring fit uses only `inner_train`; its disjoint `inner_val` selects the
 threshold, and the same saved fit scores test. No test outcome selects settings.
 
 For the scoped corrected 1-hour backtest (2021–2025), use a separate fresh output
-directory and explicitly omit SHAP:
+directory (SHAP may optionally be omitted):
 
 ```powershell
 python -m modelling.corrected_xgb --out-dir .\corrected-xgb-h1-NEW-RUN --horizon 1 --no-shap
@@ -132,14 +209,15 @@ remain legacy. Use this dedicated path for comparable h6/h24 2021-2025 results:
 
 ```powershell
 python -m unittest modelling.checks.test_xgb_repair modelling.checks.test_lr_rf_repair -v
-python -m modelling.corrected_lr_rf --frozen-xgb <V3-DIRECTORY> --out-dir <NEW-BENCHMARK-DIRECTORY> --benchmark
-python -m modelling.corrected_lr_rf --frozen-xgb <V3-DIRECTORY> --out-dir <NEW-RUN-DIRECTORY>
+python -m modelling.corrected_lr_rf --out-dir <NEW-BENCHMARK-DIRECTORY> --benchmark
+python -m modelling.corrected_lr_rf --out-dir <NEW-RUN-DIRECTORY>
 python -m modelling.verify_lr_rf_run --run-dir <NEW-RUN-DIRECTORY>
-python -m modelling.lr_rf_presentation --run-dir <VERIFIED-RUN-DIRECTORY>
+python -m modelling.lr_rf_presentation --run-dir <VERIFIED-RUN-DIRECTORY> --xgb-run <MATCHING-VERIFIED-XGB-DIRECTORY>
 ```
 
-The runner reconstructs corrected data/folds and requires exact frozen V3
-partition equality before fitting. It does not modify V3, generate SHAP or
+The runner reads the committed corrected inputs and constructs the shared
+versioned folds. Optional frozen checks require exact historical compatibility;
+they are not prerequisites for new runs. It does not modify V3, generate SHAP or
 overwrite historical reports. L1 LR selects C from .001/.01/.1/1 by mean
 calendar-year AP entirely inside inner-training (ties smaller C); unusable
 years are recorded and no usable CV is a blocking error. Each CV/final fit
@@ -154,7 +232,8 @@ Fold-specific constant priors need not give pooled AP equal to pooled prevalence
 The run persists all scoring/CV models, partition keys/features, prediction
 scores, parameters/preprocessing, warnings, timings and source/input hashes.
 The independent verifier checks reloaded scores, train-only statistics, CV
-selection, all 120 scored cells (60 ML plus 60 baseline), exact V3 alignment,
+selection, the manifest's scored cells (120 by default: 60 ML plus 60 baseline),
+exact saved-input partition alignment,
 and independent AP/alarm/target/cost calculations. LR standardized coefficients
 and RF normalized impurity importances come from those exact scoring fits,
 not separate full-training refits; neither establishes causal forecasting value.
@@ -292,8 +371,10 @@ where exchange volume + all four on-chain fields are present.)
 
 ## 4. Evaluation protocol
 
-Expanding-window CV, test years 2021–2025, with a 24h purge and 24h embargo at
-every boundary; episodes straddling a boundary are dropped. Thresholds are
+The historical results below used expanding-window CV, test years 2021–2025,
+with a 24h purge and 24h embargo at every boundary. New supported corrected
+runs use the 25h confirmation-aware purge described above. Episodes straddling
+a boundary are dropped. Thresholds are
 **never chosen on test rows** in the real-time protocol.
 
 ```mermaid

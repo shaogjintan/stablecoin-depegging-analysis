@@ -12,6 +12,7 @@ from threadpoolctl import threadpool_limits
 
 from modelling.corrected_data import corrected_folds
 from modelling.corrected_lr_rf import CONFIGS, MODELS, PARTS, ROOT, score_cell, metrics
+from modelling.corrected_lr_rf import run as run_portable
 from modelling.corrected_xgb import sha256, save_json, paired_uncertainty
 from modelling.false_alarm_framework import _common_sample_fold
 from modelling.rolling_threshold import _targetable_episode_ids
@@ -20,7 +21,12 @@ from modelling.verify_lr_rf_run import (
 )
 
 
-def run(out, parent):
+def run(out, parent=None):
+    if parent is None:
+        run_portable(out, horizons=(1,))
+        from modelling.verify_lr_rf_run import verify
+        verify(out)
+        return
     info = json.loads((parent / "run.json").read_text())
     assert info["status"] == "complete", "Wait for the h6/h24 run's independent verification first."
     assert json.loads((parent / "verification.json").read_text())["status"] == "passed"
@@ -129,7 +135,8 @@ def run(out, parent):
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument("--parent-run", required=True, type=Path)
+    parser.add_argument("--parent-run", type=Path,
+                        help="historical exact-reference mode; omit for a portable new run")
     parser.add_argument("--out-dir", required=True, type=Path)
     args = parser.parse_args()
-    run(args.out_dir.resolve(), args.parent_run.resolve())
+    run(args.out_dir.resolve(), args.parent_run.resolve() if args.parent_run else None)

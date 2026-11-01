@@ -137,7 +137,8 @@ def assert_events(actual, path):
     )
 
 
-def check_samples(out, master, episodes):
+def check_samples(out, master, episodes, purge_hours=24, embargo_hours=24,
+                  horizons=(1, 6, 24), years=range(2021, 2026)):
     checked = 0
     for sample in sorted((out / "samples").iterdir()):
         config, horizon, year = sample.name.rsplit("_", 2)
@@ -146,15 +147,16 @@ def check_samples(out, master, episodes):
         base = master.loc[master[f"prediction_eligible_{eligibility}_h{h}"]]
         bval, btest = pd.Timestamp(f"{y-1}-01-01", tz="UTC"), pd.Timestamp(f"{y}-01-01", tz="UTC")
         end = pd.Timestamp(f"{y+1}-01-01", tz="UTC")
-        purge = pd.Timedelta(hours=24)
+        purge = pd.Timedelta(hours=purge_hours)
+        embargo = pd.Timedelta(hours=embargo_hours)
         drop = set()
         for boundary in (bval, btest):
             drop.update(episodes.loc[(episodes.end >= boundary - purge) &
-                                     (episodes.start <= boundary + purge), "episode_id"])
+                                     (episodes.start <= boundary + embargo), "episode_id"])
         masks = {
             "inner_train": base.hour < bval - purge,
-            "inner_val": (base.hour >= bval + purge) & (base.hour < btest - purge),
-            "test": (base.hour >= btest + purge) & (base.hour < end),
+            "inner_val": (base.hour >= bval + embargo) & (base.hour < btest - purge),
+            "test": (base.hour >= btest + embargo) & (base.hour < end),
         }
         parts = {}
         for part, mask in masks.items():
@@ -172,10 +174,11 @@ def check_samples(out, master, episodes):
             assert saved.price.ge(.99).all()
             parts[part] = saved
             checked += 1
-        assert parts["inner_val"].hour.min() - parts["inner_train"].hour.max() >= pd.Timedelta(hours=49)
-        assert parts["test"].hour.min() - parts["inner_val"].hour.max() >= pd.Timedelta(hours=49)
-    for h in (1, 6, 24):
-        for year in range(2021, 2026):
+        gap = pd.Timedelta(hours=purge_hours + embargo_hours + 1)
+        assert parts["inner_val"].hour.min() - parts["inner_train"].hour.max() >= gap
+        assert parts["test"].hour.min() - parts["inner_val"].hour.max() >= gap
+    for h in horizons:
+        for year in years:
             for part in ("inner_train", "inner_val", "test"):
                 a, b = [pd.read_parquet(out / "samples" / f"{c}_h{h}_{year}" / f"{part}.parquet")
                         for c in ("market_matched", "market_onchain")]
@@ -257,9 +260,18 @@ def verify(out, references, check_only=False):
         assert digest(out / "source" / rel) == expected
     master, episodes = pd.read_parquet(out / "corrected_master.parquet"), pd.read_parquet(out / "episodes.parquet")
     assert not master.duplicated(["coin", "hour"]).any()
-    sample_count = check_samples(out, master, episodes)
+    horizons = tuple(info.get("horizons", (1, 6, 24)))
+    test_years = tuple(info.get("test_years", range(2021, 2026)))
+    sample_ids = {f"{c}_h{h}_{y}" for c in ("market_original", "market_matched", "market_onchain")
+                  for h in horizons for y in test_years}
+    assert {p.name for p in (out / "samples").iterdir()} == sample_ids
+    assert {p.name for p in (out / "fits").iterdir()} == {
+        f"{model}_{sample}" for model in ("constant_prior", "persistence") for sample in sample_ids}
+    sample_count = check_samples(out, master, episodes, info.get("purge_hours", 24),
+                                info.get("embargo_hours", 24), horizons, test_years)
     years, summary = pd.read_csv(out / "per_year.csv"), pd.read_csv(out / "summary.csv")
-    assert len(years) == 90 and len(summary) == 18
+    assert len(years) == 6 * len(horizons) * len(test_years)
+    assert len(summary) == 6 * len(horizons)
     records, pooled_records, oracle_rows = [], [], []
     for folder in sorted((out / "fits").iterdir()):
         fit = json.loads((folder / "fit.json").read_text())
@@ -322,7 +334,7 @@ def verify(out, references, check_only=False):
     for r in summary.to_dict("records"):
         tag = f"{r['model']}_{r['config']}_h{r['horizon_hours']}"
         pred = pd.read_parquet(out / f"predictions_{tag}.parquet")
-        parts = [pd.read_parquet(out / "fits" / f"{tag}_{y}" / "test.parquet") for y in range(2021, 2026)]
+        parts = [pd.read_parquet(out / "fits" / f"{tag}_{y}" / "test.parquet") for y in test_years]
         pd.testing.assert_frame_equal(pred, pd.concat(parts, ignore_index=True))
         events, ids = independent_events(pred, episodes, r["horizon_hours"])
         assert_events(events, out / f"alarms_{tag}.csv")
@@ -341,14 +353,14 @@ def verify(out, references, check_only=False):
                                    horizon_hours=r["horizon_hours"], **actual))
     # Same inputs, labels and thresholds must give identical matched/on-chain baseline predictions.
     for name in ("constant_prior", "persistence"):
-        for h in (1, 6, 24):
+        for h in horizons:
             a, b = [pd.read_parquet(out / f"predictions_{name}_{c}_h{h}.parquet")
                     for c in ("market_matched", "market_onchain")]
             pd.testing.assert_frame_equal(a[KEYS + ["y_score", "threshold"]], b[KEYS + ["y_score", "threshold"]])
     comparisons = compatibility(out, references, info, save=not check_only)
     if check_only:
         print(f"PASS READ-ONLY: {len(records)} fits; {sample_count} partitions; "
-              f"{len(oracle_rows)} full-scan candidates; 18 pooled rows; compatibility inspected", flush=True)
+              f"{len(oracle_rows)} full-scan candidates; {len(summary)} pooled rows; compatibility inspected", flush=True)
         return
     pd.DataFrame(records).to_csv(out / "verification_fits.csv", index=False)
     pd.DataFrame(pooled_records).to_csv(out / "verification_pooled.csv", index=False)
@@ -371,7 +383,7 @@ def verify(out, references, check_only=False):
     artifacts = [p for p in out.rglob("*") if p.is_file() and p.name != "artifact_sha256.json"]
     write_json(out / "artifact_sha256.json", {str(p.relative_to(out)): digest(p) for p in artifacts})
     print(f"PASS: {len(records)} fits; {sample_count} partitions; "
-          f"{len(oracle_rows)} full-scan candidates; 18 pooled rows; compatibility inspected", flush=True)
+          f"{len(oracle_rows)} full-scan candidates; {len(summary)} pooled rows; compatibility inspected", flush=True)
 
 
 if __name__ == "__main__":

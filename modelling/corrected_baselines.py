@@ -15,7 +15,9 @@ import pandas as pd
 from sklearn.metrics import average_precision_score
 
 from modelling.alarm_events import build_alarm_events
-from modelling.corrected_data import corrected_folds, prepare_corrected
+from modelling.corrected_data import corrected_folds
+from data_processing.config import MODELLING_DATA_VERSION, PURGE_HOURS, EMBARGO_HOURS
+from data_processing.splits import load_master, active_input_paths
 from modelling.corrected_xgb import sha256, save_json
 from modelling.false_alarm_framework import _common_sample_fold
 from modelling.models.baseline import ConstantPriorModel, PersistenceModel
@@ -48,10 +50,14 @@ def metrics(pred, events, episodes, h):
     )
 
 
-def run(out):
+def _run(out, horizons=(1, 6, 24), years=range(2021, 2026)):
+    if (not horizons or not set(horizons).issubset({1, 6, 24})
+            or not years or not set(years).issubset(range(2021, 2026))):
+        raise ValueError("Invalid horizon or year scope")
+    source, episode_source = active_input_paths()
+    master, episodes = load_master()
     out.mkdir(parents=True, exist_ok=False)
     run_id = datetime.now(timezone.utc).strftime("%Y%m%dT%H%M%SZ") + "-" + uuid.uuid4().hex[:8]
-    source = ROOT / "data" / "processed" / "master.parquet"
     paths = list(PROTOCOL_FILES) + [
         "modelling\\models\\baseline.py", "modelling\\false_alarm_framework.py",
         "modelling\\corrected_baselines.py", "modelling\\verify_baselines.py",
@@ -62,10 +68,12 @@ def run(out):
         source_commit=subprocess.check_output(
             ["git", "-C", str(ROOT), "rev-parse", "HEAD"], text=True).strip(),
         source_master_sha256=sha256(source),
+        source_episodes_sha256=sha256(episode_source), dataset_version=MODELLING_DATA_VERSION,
+        purge_hours=PURGE_HOURS, embargo_hours=EMBARGO_HOURS,
         source_code_sha256={rel: sha256(ROOT / rel) for rel in paths},
         packages={p: importlib.metadata.version(p) for p in
                   ("numpy", "pandas", "scikit-learn", "numba", "pyarrow")},
-        horizons=[1, 6, 24], test_years=list(range(2021, 2026)),
+        horizons=list(horizons), test_years=list(years),
         fit_partition="inner_train", calibration_partition="inner_val",
         prior="mean of config/horizon/year inner_train labels only; no refit",
         persistence="min(max(1-price,0),0.01), price at completed source bar",
@@ -87,8 +95,7 @@ def run(out):
         shutil.copy2(ROOT / rel, target)
     (out / "source_diff.patch").write_bytes(
         subprocess.check_output(["git", "-C", str(ROOT), "diff", "--binary"]))
-    print(f"RUN {run_id}: preparing corrected master", flush=True)
-    master, episodes = prepare_corrected(pd.read_parquet(source))
+    print(f"RUN {run_id}: using committed corrected master", flush=True)
     master.to_parquet(out / "corrected_master.parquet", index=False)
     episodes.to_parquet(out / "episodes.parquet", index=False)
     episodes.to_csv(out / "episodes.csv", index=False)
@@ -96,7 +103,7 @@ def run(out):
     info["episodes_sha256"] = sha256(out / "episodes.parquet")
     save_json(out / "run.json", info)
     rows, summaries, identities, candidates = [], [], [], []
-    for h in (1, 6, 24):
+    for h in horizons:
         f1, f2 = corrected_folds(master, episodes, h, 1), corrected_folds(master, episodes, h, 2)
         configs = {
             "market_original": f1,
@@ -107,6 +114,8 @@ def run(out):
             pooled = {name: [[], []] for name in ("constant_prior", "persistence")}
             for fold in folds:
                 year = int(fold["year"])
+                if year not in years:
+                    continue
                 sample = out / "samples" / f"{config}_h{h}_{year}"
                 sample.mkdir(parents=True, exist_ok=False)
                 parts = {}
@@ -193,7 +202,26 @@ def run(out):
     print(pd.DataFrame(summaries).to_string(index=False), flush=True)
 
 
+def run(out, horizons=(1, 6, 24), years=range(2021, 2026)):
+    if out.exists():
+        raise FileExistsError(f"Use a new output directory: {out}")
+    try:
+        _run(out, horizons, years)
+    except BaseException as error:
+        manifest = out / "run.json"
+        if manifest.exists():
+            info = json.loads(manifest.read_text())
+            info.update(status="incomplete", error=f"{type(error).__name__}: {error}")
+            save_json(manifest, info)
+        raise
+
+
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--out-dir", type=Path, required=True)
-    run(parser.parse_args().out_dir.resolve())
+    parser.add_argument("--horizon", type=int, action="append", choices=(1, 6, 24))
+    parser.add_argument("--years", type=int, nargs="+", choices=range(2021, 2026),
+                        default=list(range(2021, 2026)))
+    args = parser.parse_args()
+    run(args.out_dir.resolve(), tuple(dict.fromkeys(args.horizon or (1, 6, 24))),
+        tuple(dict.fromkeys(args.years)))

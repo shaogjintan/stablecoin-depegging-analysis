@@ -27,8 +27,8 @@ from sklearn.metrics import average_precision_score
 
 from modelling.alarm_events import build_alarm_events
 from modelling.corrected_data import corrected_folds
-from data_processing.config import ACTIVE_MASTER_PATH
-from data_processing.splits import load_master
+from data_processing.config import MODELLING_DATA_VERSION, PURGE_HOURS, EMBARGO_HOURS
+from data_processing.splits import load_master, active_input_paths
 from modelling.false_alarm_framework import _common_sample_fold
 from modelling.models.xgboost_model import XGBModel
 from modelling.prepare_data import MARKET_FEATURES, ONCHAIN_FEATURES
@@ -158,13 +158,16 @@ def paired_uncertainty(pred1, pred2, identities, h):
                 targetable_episodes=len(delta), targetable_event_clusters=len(event_groups))
 
 
-def run(out, horizons=(6, 24), include_shap=True):
+def _run(out, horizons=(6, 24), include_shap=True, years=range(2021, 2026)):
     horizons = tuple(dict.fromkeys(int(h) for h in horizons))
     if not horizons or any(h not in (1, 6, 24) for h in horizons):
         raise ValueError("horizons must contain one or more of 1, 6, and 24")
+    if not years or not set(years).issubset(range(2021, 2026)):
+        raise ValueError("years must be selected from 2021 through 2025")
+    source, episode_source = active_input_paths()
+    master, episodes = load_master()
     out.mkdir(parents=True, exist_ok=False)
     run_id = datetime.now(timezone.utc).strftime("%Y%m%dT%H%M%SZ") + "-" + uuid.uuid4().hex[:8]
-    source = ROOT / ACTIVE_MASTER_PATH
     source_files = [
         ROOT / "modelling" / name for name in (
             "corrected_data.py", "corrected_xgb.py", "verify_corrected_run.py",
@@ -179,8 +182,12 @@ def run(out, horizons=(6, 24), include_shap=True):
         "run_id": run_id, "status": "running", "source_commit":
         subprocess.check_output(["git", "-C", str(ROOT), "rev-parse", "HEAD"], text=True).strip(),
         "source_master_sha256": sha256(source), "params": PARAMS,
+        "dataset_version": MODELLING_DATA_VERSION,
+        "source_episodes_sha256": sha256(episode_source),
+        "purge_hours": PURGE_HOURS, "embargo_hours": EMBARGO_HOURS,
         "horizons": list(horizons), "configs": ["market_original", "market_matched", "market_onchain"],
-        "expected_scoring_fits": len(horizons) * 3 * 5,
+        "test_years": list(years),
+        "expected_scoring_fits": len(horizons) * 3 * len(years),
         "shap_requested": bool(include_shap),
         "omitted_analyses": [] if include_shap else ["SHAP: not requested"],
         "clock": "hour=source bar_start+1h; first-below-bar close onset; lead=start_close-origin_close",
@@ -210,7 +217,6 @@ def run(out, horizons=(6, 24), include_shap=True):
     (out / "source_diff.patch").write_bytes(
         subprocess.check_output(["git", "-C", str(ROOT), "diff", "--binary"]))
     print("Loading versioned corrected features, eligibility and episode labels", flush=True)
-    master, episodes = load_master()
     master.to_parquet(out / "corrected_master.parquet", index=False)
     episodes.to_parquet(out / "episodes.parquet", index=False)
     episodes.to_csv(out / "episodes.csv", index=False)
@@ -222,6 +228,8 @@ def run(out, horizons=(6, 24), include_shap=True):
         for config, folds in configs.items():
             predictions, alarms, target_ids = [], [], set()
             for fold in folds:
+                if fold["year"] not in years:
+                    continue
                 row, pred, events, targets = score_and_save(fold, config, out, run_id, episodes)
                 year_rows.append(row)
                 predictions.append(pred)
@@ -260,6 +268,7 @@ def run(out, horizons=(6, 24), include_shap=True):
     pd.DataFrame(uncertainty).to_csv(out / "matched_uncertainty.csv", index=False)
     metadata["status"] = "scoring_complete"
     metadata["corrected_master_sha256"] = sha256(out / "corrected_master.parquet")
+    metadata["episodes_sha256"] = sha256(out / "episodes.parquet")
     save_json(out / "run.json", metadata)
     if include_shap:
         run_shap(out)
@@ -268,7 +277,34 @@ def run(out, horizons=(6, 24), include_shap=True):
     print(summary.to_string(index=False), flush=True)
 
 
+def run(out, horizons=(6, 24), include_shap=True, years=range(2021, 2026)):
+    if out.exists():
+        raise FileExistsError(f"Use a new output directory: {out}")
+    try:
+        _run(out, horizons, include_shap, years)
+    except BaseException as error:
+        manifest = out / "run.json"
+        if manifest.exists():
+            info = json.loads(manifest.read_text())
+            info.update(status="incomplete", error=f"{type(error).__name__}: {error}")
+            save_json(manifest, info)
+        raise
+
+
 def run_shap(out):
+    info = json.loads((out / "run.json").read_text())
+    if not info.get("shap_requested", True):
+        raise ValueError("Run records SHAP as omitted; use a fresh SHAP-requested scoring run")
+    horizons = tuple(info.get("horizons", (6, 24)))
+    years = tuple(info.get("test_years", range(2021, 2026)))
+    expected = {
+        f"{config}_h{h}_{year}" for h in horizons
+        for config in ("market_original", "market_onchain")
+        for year in years
+    }
+    missing = sorted(f for f in expected if not (out / "fits" / f / "model.joblib").exists())
+    if missing:
+        raise ValueError(f"Missing scoring fits for SHAP: {', '.join(missing)}")
     import matplotlib
     matplotlib.use("Agg")
     import matplotlib.pyplot as plt
@@ -277,11 +313,11 @@ def run_shap(out):
     rows = []
     figures = out / "figures"
     figures.mkdir(exist_ok=True)
-    for h in (6, 24):
+    for h in horizons:
         for config, tier in (("market_original", 1), ("market_onchain", 2)):
             tag = f"xgboost_t{tier}_h{h}"
             parts, features, values, keys, checks = [], None, [], [], []
-            for folder in sorted((out / "fits").glob(f"{config}_h{h}_*")):
+            for folder in sorted(out / "fits" / f"{config}_h{h}_{year}" for year in years):
                 info = json.loads((folder / "fit.json").read_text())
                 model = joblib.load(folder / "model.joblib")
                 assert sha256(folder / "model.joblib") == info["model_sha256"]
@@ -357,14 +393,16 @@ def main():
                         dest="horizons", help="horizon to run; repeat to select multiple (default: 6 and 24)")
     parser.add_argument("--no-shap", action="store_true",
                         help="skip SHAP generation for this scoring run")
+    parser.add_argument("--years", type=int, nargs="+", choices=range(2021, 2026))
     args = parser.parse_args()
     if args.shap_only:
-        if args.horizons or args.no_shap:
-            parser.error("--shap-only cannot be combined with --horizon or --no-shap")
+        if args.horizons or args.no_shap or args.years:
+            parser.error("--shap-only uses the saved scope; do not combine with scoring options")
         run_shap(args.out_dir.resolve())
     else:
         run(args.out_dir.resolve(), horizons=args.horizons or (6, 24),
-            include_shap=not args.no_shap)
+            include_shap=not args.no_shap,
+            years=tuple(dict.fromkeys(args.years or range(2021, 2026))))
 
 
 if __name__ == "__main__":

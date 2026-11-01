@@ -322,7 +322,8 @@ def missed_episodes(alarm_table: pd.DataFrame) -> pd.DataFrame:
 
 
 def evaluate_run(preds: pd.DataFrame, tag: str,
-                 out_dir: str | Path = RESULTS_DIR) -> dict:
+                 out_dir: str | Path = RESULTS_DIR,
+                 episodes: pd.DataFrame | None = None) -> dict:
     """Evaluate pooled OOS predictions: pooled + per-coin + per-episode tables
     and the alarm-curve CSV. `preds` needs year, horizon, coin, hour,
     episode_id, y_true, y_score (the pooled test frame saved by
@@ -332,7 +333,21 @@ def evaluate_run(preds: pd.DataFrame, tag: str,
     if missing:
         raise KeyError(f"predictions frame is missing columns {sorted(missing)}")
 
-    episodes = pd.read_parquet(PROCESSED_DATA_DIR / "depeg_episodes.parquet")
+    if episodes is None:
+        if "dataset_version" in preds:
+            from data_processing.config import MODELLING_DATA_VERSION
+            from data_processing.splits import load_master
+            if not preds.dataset_version.eq(MODELLING_DATA_VERSION).all():
+                raise ValueError("Unknown/mixed prediction dataset version; supply matching episodes explicitly")
+            _, episodes = load_master()
+        else:
+            episodes = pd.read_parquet(PROCESSED_DATA_DIR / "depeg_episodes.parquet")
+    elif "dataset_version" in preds:
+        versions = set(preds.dataset_version.dropna())
+        if ("dataset_version" not in episodes or preds.dataset_version.isna().any()
+                or set(episodes.dataset_version.dropna()) != versions
+                or episodes.dataset_version.isna().any()):
+            raise ValueError("Prediction and episode dataset versions differ")
 
     out_dir = Path(out_dir)
     out_dir.mkdir(parents=True, exist_ok=True)

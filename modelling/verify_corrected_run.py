@@ -22,7 +22,9 @@ def verify(out):
     assert info["status"] == "complete"
     horizons = tuple(info.get("horizons", (6, 24)))
     configs = tuple(info.get("configs", ("market_original", "market_matched", "market_onchain")))
-    expected_fits = len(horizons) * len(configs) * 5
+    years = tuple(info.get("test_years", range(2021, 2026)))
+    expected_fits = len(horizons) * len(configs) * len(years)
+    gap = pd.Timedelta(hours=info.get("purge_hours", 24) + info.get("embargo_hours", 24) + 1)
     assert set(configs) == {"market_original", "market_matched", "market_onchain"}
     assert set(horizons).issubset({1, 6, 24}) and horizons
     assert info.get("expected_scoring_fits", expected_fits) == expected_fits
@@ -30,6 +32,8 @@ def verify(out):
     master = pd.read_parquet(out / "corrected_master.parquet")
     episodes = pd.read_parquet(out / "episodes.parquet")
     assert sha256(out / "corrected_master.parquet") == info["corrected_master_sha256"]
+    if "episodes_sha256" in info:
+        assert sha256(out / "episodes.parquet") == info["episodes_sha256"]
     assert not master.duplicated(["coin", "hour"]).any()
     assert (master.hour - master.bar_start).eq(pd.Timedelta(hours=1)).all()
     summary = pd.read_csv(out / "summary.csv")
@@ -38,7 +42,7 @@ def verify(out):
     assert not summary.duplicated(["config", "horizon_hours"]).any()
     expected_fit_ids = {
         f"{config}_h{h}_{year}"
-        for config in configs for h in horizons for year in range(2021, 2026)
+        for config in configs for h in horizons for year in years
     }
     fit_folders = sorted((out / "fits").iterdir())
     assert {folder.name for folder in fit_folders} == expected_fit_ids
@@ -50,7 +54,7 @@ def verify(out):
         assert fit["run_id"] == info["run_id"]
         assert fit["fit_id"] == folder.name
         assert fit["config"] in configs and fit["horizon"] in horizons
-        assert fit["year"] in range(2021, 2026)
+        assert fit["year"] in years
         assert sha256(folder / "model.joblib") == fit["model_sha256"]
         assert model.clf_.get_booster().num_boosted_rounds() == fit["boosted_rounds"] == 300
         expected_features = (
@@ -83,8 +87,8 @@ def verify(out):
             parts[part] = p
         assert parts["inner_train"].hour.max() < parts["inner_val"].hour.min()
         assert parts["inner_val"].hour.max() < parts["test"].hour.min()
-        assert parts["inner_val"].hour.min() - parts["inner_train"].hour.max() >= pd.Timedelta(hours=49)
-        assert parts["test"].hour.min() - parts["inner_val"].hour.max() >= pd.Timedelta(hours=49)
+        assert parts["inner_val"].hour.min() - parts["inner_train"].hour.max() >= gap
+        assert parts["test"].hour.min() - parts["inner_val"].hour.max() >= gap
         _, val_events = build_alarm_events(parts["inner_val"], episodes, fit["threshold"])
         false, months, rate, _ = _false_alarm_stats(val_events, parts["inner_val"])
         assert false == fit["validation"]["false_alarms"]
@@ -143,7 +147,7 @@ def verify(out):
         assert np.isclose(median_lead, r.median_lead_hours, equal_nan=True)
     identities = pd.read_csv(out / "caught_identities.csv")
     for h in horizons:
-        for year in range(2021, 2026):
+        for year in years:
             folders = [out / "fits" / f"{c}_h{h}_{year}" for c in ("market_matched", "market_onchain")]
             for part in ("inner_train", "inner_val", "test"):
                 a, b = [pd.read_parquet(f / f"{part}.parquet") for f in folders]
@@ -188,7 +192,7 @@ def verify(out):
     for rel, expected in info["source_code_sha256"].items():
         assert sha256(out / "source" / Path(rel).name) == expected
     save_json(out / "verification.json", dict(run_id=info["run_id"], fits_checked=len(records),
-                                             matched_partitions_checked=len(horizons) * 5 * 3,
+                                             matched_partitions_checked=len(horizons) * len(years) * 3,
                                              shap_requested=shap_requested,
                                              shap_configs_checked=len(horizons) * 2 if shap_requested else 0,
                                              independent_metric_regeneration=True, status="passed"))
@@ -197,7 +201,7 @@ def verify(out):
                  and (p.suffix in (".parquet", ".joblib", ".ubj", ".npz", ".csv", ".png")
                       or p.name == "run.json")]
     save_json(out / "artifact_sha256.json", {str(p.relative_to(out)): sha256(p) for p in artifacts})
-    print(f"PASS: {len(records)} fits, {len(horizons) * 5 * 3} matched partitions, "
+    print(f"PASS: {len(records)} fits, {len(horizons) * len(years) * 3} matched partitions, "
           f"SHAP requested={shap_requested}, pooled metrics and alarm events regenerated")
 
 

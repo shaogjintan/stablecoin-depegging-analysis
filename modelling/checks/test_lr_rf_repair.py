@@ -80,6 +80,7 @@ class LRRFTests(unittest.TestCase):
             p.mkdir(parents=True)
             for part, date in (("inner_train", "2019-01-03"), ("inner_val", "2020-01-03"), ("test", "2021-01-03")):
                 frame = pd.DataFrame({"coin": "A", "hour": pd.date_range(date, periods=100, freq="h", tz="UTC"),
+                                      "dataset_version": "synthetic-test",
                                       "episode_id": None, "peg_deviation": rng.normal(0, .001, 100),
                                       "realised_vol_6h": rng.uniform(.001, .01, 100), "y_true": np.arange(100) % 2})
                 frame.to_parquet(p / f"{part}.parquet", index=False)
@@ -94,6 +95,8 @@ class LRRFTests(unittest.TestCase):
                 X = pd.read_parquet(p / f"{part}.parquet")[spec["features"]]
                 scores = bundle["model"].predict_proba(bundle["imputer"].transform(X))[:, 1]
                 np.testing.assert_array_equal(scores, pd.read_parquet(folder / f"{part}.parquet").y_score)
+                self.assertTrue(pd.read_parquet(folder / f"{part}.parquet").dataset_version.eq(
+                    "synthetic-test").all())
 
     def test_independent_threshold_alarm_oracle(self):
         rng = np.random.default_rng(42)

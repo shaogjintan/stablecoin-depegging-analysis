@@ -21,7 +21,9 @@ from sklearn.metrics import average_precision_score
 from threadpoolctl import threadpool_limits
 
 from modelling.alarm_events import build_alarm_events
-from modelling.corrected_data import prepare_corrected, corrected_folds
+from modelling.corrected_data import corrected_folds
+from data_processing.config import MODELLING_DATA_VERSION, PURGE_HOURS, EMBARGO_HOURS
+from data_processing.splits import load_master, active_input_paths
 from modelling.corrected_xgb import sha256, save_json, paired_uncertainty
 from modelling.false_alarm_framework import _common_sample_fold, RANDOM_FOREST_FIXED_PARAMS
 from modelling.models import get_model
@@ -89,21 +91,24 @@ def tune_lr(train, features, episodes, folder, h):
     return selected
 
 
-def prepare_partitions(out, frozen):
-    original = ROOT / "data" / "processed" / "master.parquet"
-    master, episodes = prepare_corrected(pd.read_parquet(original))
-    pd.testing.assert_frame_equal(master, pd.read_parquet(frozen / "corrected_master.parquet"), check_exact=True)
-    episodes = episodes.reset_index(drop=True)
-    pd.testing.assert_frame_equal(episodes, pd.read_parquet(frozen / "episodes.parquet"), check_exact=True)
+def prepare_partitions(out, frozen=None, horizons=(6, 24), years=range(2021, 2026),
+                       configs=CONFIGS):
+    master, episodes = load_master()
+    if frozen is not None:
+        pd.testing.assert_frame_equal(master, pd.read_parquet(frozen / "corrected_master.parquet"), check_exact=True)
+        pd.testing.assert_frame_equal(episodes, pd.read_parquet(frozen / "episodes.parquet"), check_exact=True)
+    master.to_parquet(out / "corrected_master.parquet", index=False)
     episodes.to_parquet(out / "episodes.parquet", index=False)
     cells = {}
-    for h in (6, 24):
+    for h in horizons:
         a, b = corrected_folds(master, episodes, h, 1), corrected_folds(master, episodes, h, 2)
         configurations = dict(market_original=a, market_onchain=b,
                               market_matched=[_common_sample_fold(x, y) for x, y in zip(a, b)])
-        for config in CONFIGS:
+        for config in configs:
             for fold in configurations[config]:
                 year = int(fold["year"])
+                if year not in years:
+                    continue
                 cell = f"{config}_h{h}_{year}"
                 d = out / "partitions" / cell
                 d.mkdir(parents=True)
@@ -111,8 +116,9 @@ def prepare_partitions(out, frozen):
                 for part in PARTS:
                     p = pd.concat([fold[f"{part}_meta"], fold[f"X_{part}"],
                                    fold[f"y_{part}"].rename("y_true")], axis=1)
-                    reference = pd.read_parquet(frozen / "fits" / cell / f"{part}.parquet")
-                    pd.testing.assert_frame_equal(p, reference[p.columns], check_exact=True)
+                    if frozen is not None:
+                        reference = pd.read_parquet(frozen / "fits" / cell / f"{part}.parquet")
+                        pd.testing.assert_frame_equal(p, reference[p.columns], check_exact=True)
                     p.to_parquet(d / f"{part}.parquet", index=False)
                 cells[cell] = dict(config=config, horizon=h, year=year, features=features)
     save_json(out / "partitions.json", cells)
@@ -159,7 +165,10 @@ def score_cell(out, cell, spec, name, episodes, run_id):
         X = parts[part][features]
         if imputer is not None:
             X = imputer.transform(X)
-        pred = parts[part][["coin", "hour", "episode_id", "y_true"]].copy()
+        columns = ["coin", "hour", "episode_id", "y_true"]
+        if "dataset_version" in parts[part]:
+            columns.append("dataset_version")
+        pred = parts[part][columns].copy()
         pred["y_score"] = model.predict_proba(X)[:, 1]
         assert np.isfinite(pred.y_score).all()
         pred["horizon"], pred["model"], pred["config"] = h, name, spec["config"]
@@ -213,13 +222,14 @@ def score_cell(out, cell, spec, name, episodes, run_id):
     return row
 
 
-def aggregate(out, episodes, run_id):
-    years = pd.read_csv(out / "per_year.csv")
+def aggregate(out, episodes, run_id, horizons=(6, 24), years=range(2021, 2026),
+              models=MODELS, configs=CONFIGS):
+    per_year = pd.read_csv(out / "per_year.csv")
     rows, identities, importance, pooled = [], [], [], {}
-    for name in MODELS:
-        for config in CONFIGS:
-            for h in (6, 24):
-                folders = [out / "fits" / f"{name}_{config}_h{h}_{y}" for y in range(2021, 2026)]
+    for name in models:
+        for config in configs:
+            for h in horizons:
+                folders = [out / "fits" / f"{name}_{config}_h{h}_{y}" for y in years]
                 pred = pd.concat([pd.read_parquet(f / "test.parquet") for f in folders], ignore_index=True)
                 events = pd.concat([pd.read_csv(f / "alarms.csv") for f in folders], ignore_index=True)
                 events["is_true_alarm"] = events.is_true_alarm.astype(bool)
@@ -243,40 +253,62 @@ def aggregate(out, episodes, run_id):
     ids = pd.DataFrame(identities)
     ids.to_csv(out / "caught_identities.csv", index=False)
     uncertainty = []
-    for name in MODELS[:2]:
-        for h in (6, 24):
+    for name in models:
+        if name not in MODELS[:2] or not {"market_matched", "market_onchain"}.issubset(configs):
+            continue
+        for h in horizons:
             r = paired_uncertainty(pooled[name, "market_matched", h], pooled[name, "market_onchain", h],
                                    ids[ids.model.eq(name)], h)
             uncertainty.append(dict(model=name, run_id=run_id, **r))
     pd.DataFrame(uncertainty).to_csv(out / "matched_uncertainty.csv", index=False)
-    pd.concat(importance, ignore_index=True).to_csv(out / "importance_per_fit.csv", index=False)
-    years[years.model.eq("logreg")].to_csv(out / "lr_selected_c.csv", index=False)
+    if importance:
+        pd.concat(importance, ignore_index=True).to_csv(out / "importance_per_fit.csv", index=False)
+    per_year[per_year.model.eq("logreg")].to_csv(out / "lr_selected_c.csv", index=False)
 
 
-def run(out, frozen, benchmark=False):
+def _run(out, frozen=None, benchmark=False, horizons=(6, 24), years=range(2021, 2026),
+        models=MODELS, configs=CONFIGS):
+    horizons, years, models, configs = map(tuple, (horizons, years, models, configs))
+    if (not horizons or not set(horizons).issubset({1, 6, 24})
+            or not years or not set(years).issubset(range(2021, 2026))
+            or not models or not set(models).issubset(MODELS)
+            or not configs or not set(configs).issubset(CONFIGS)):
+        raise ValueError("Invalid horizon, year, model or sample configuration scope")
+    if benchmark:
+        horizons, years, models, configs = (6,), (2021,), MODELS[:2], ("market_original",)
+    source, episode_source = active_input_paths()
+    frozen_info = None
+    if frozen is not None:
+        frozen_info = json.loads((frozen / "run.json").read_text())
+        assert frozen_info["status"] == "complete"
+        assert sha256(source) == frozen_info["source_master_sha256"], "Frozen dataset differs"
+        for rel, expected in frozen_info["source_code_sha256"].items():
+            assert sha256(ROOT / rel) == expected, f"Frozen protocol source differs: {rel}"
     out.mkdir(parents=True, exist_ok=False)
-    frozen_info = json.loads((frozen / "run.json").read_text())
-    assert frozen_info["status"] == "complete"
-    assert sha256(ROOT / "data" / "processed" / "master.parquet") == frozen_info["source_master_sha256"]
-    for rel, expected in frozen_info["source_code_sha256"].items():
-        assert sha256(ROOT / rel) == expected, f"Frozen protocol source differs: {rel}"
     run_id = datetime.now(timezone.utc).strftime("%Y%m%dT%H%M%SZ") + "-" + uuid.uuid4().hex[:8]
     sources = [ROOT / "modelling" / n for n in (
-        "corrected_lr_rf.py", "verify_lr_rf_run.py", "corrected_data.py", "corrected_xgb.py",
+        "corrected_lr_rf.py", "corrected_h1.py", "verify_lr_rf_run.py", "corrected_data.py", "corrected_xgb.py",
         "exact_threshold.py", "rolling_threshold.py", "alarm_events.py", "train_logreg_yearcv.py",
         "false_alarm_framework.py", "prepare_data.py", "models\\base.py", "models\\logreg.py",
         "models\\random_forest_model.py", "models\\baseline.py")]
     sources += [ROOT / "data_processing" / n for n in ("splits.py", "config.py", "merge_and_label.py")]
-    manifest = dict(run_id=run_id, status="running", benchmark=benchmark, frozen_run_id=frozen_info["run_id"],
-                    frozen_path=str(frozen), command=[sys.executable, *sys.argv],
+    manifest = dict(run_id=run_id, status="running", benchmark=benchmark,
+                    frozen_run_id=frozen_info["run_id"] if frozen_info else None,
+                    frozen_path=str(frozen) if frozen else None, command=[sys.executable, *sys.argv],
                     source_commit=subprocess.check_output(["git", "-C", str(ROOT), "rev-parse", "HEAD"],
                                                           text=True).strip(),
-                    source_master_sha256=frozen_info["source_master_sha256"],
+                    source_master_sha256=sha256(source), source_episodes_sha256=sha256(episode_source),
+                    dataset_version=MODELLING_DATA_VERSION,
+                    purge_hours=PURGE_HOURS, embargo_hours=EMBARGO_HOURS,
+                    horizons=list(horizons), test_years=list(years), models=list(models),
+                    configs=list(configs), expected_scoring_fits=len(horizons)*len(years)*len(models)*len(configs),
                     thread_limits=4, rf_params=RF_PARAMS, lr_grid=list(DEFAULT_C_GRID),
                     packages={p: importlib.metadata.version(p) for p in (
                         "numpy", "pandas", "scikit-learn", "joblib", "numba", "threadpoolctl")},
-                    limitations=frozen_info["limitations"][:-1] + [
-                        "No h1, sensitivity, smoothing, ensembles, upstream network rebuild or live validation.",
+                    limitations=[
+                        "No sensitivity, smoothing, ensembles, upstream network rebuild or live validation.",
+                        "Idealized bar-close availability; source publication delays are unknown.",
+                        "Observed partial coin-months are not exposure-normalized months.",
                         "LR coefficients and RF impurity importance are scoring-fit methodology, not causal benefit.",
                         "Fold-specific constant training priors can have pooled AP different from pooled prevalence."],
                     source_code_sha256={str(p.relative_to(ROOT)): sha256(p) for p in sources})
@@ -286,43 +318,60 @@ def run(out, frozen, benchmark=False):
         target.parent.mkdir(parents=True, exist_ok=True)
         shutil.copy2(p, target)
     (out / "source_diff.patch").write_bytes(subprocess.check_output(["git", "-C", str(ROOT), "diff", "--binary"]))
-    frozen_hashes = {str(p.relative_to(frozen)): sha256(p) for p in frozen.rglob("*") if p.is_file()}
-    save_json(out / "frozen_evidence_sha256.json", frozen_hashes)
+    frozen_hashes = ({str(p.relative_to(frozen)): sha256(p) for p in frozen.rglob("*") if p.is_file()}
+                     if frozen else {})
+    if frozen:
+        save_json(out / "frozen_evidence_sha256.json", frozen_hashes)
     started = time.perf_counter()
     with warnings.catch_warnings(record=True) as recorded, threadpool_limits(limits=4):
         warnings.simplefilter("default")
-        episodes, cells = prepare_partitions(out, frozen)
+        episodes, cells = prepare_partitions(out, frozen, horizons, years, configs)
+        manifest["corrected_master_sha256"] = sha256(out / "corrected_master.parquet")
+        manifest["episodes_sha256"] = sha256(out / "episodes.parquet")
+        save_json(out / "run.json", manifest)
         rows = []
         for cell, spec in cells.items():
-            if benchmark and cell != "market_original_h6_2021":
-                continue
-            for name in (MODELS[:2] if benchmark else MODELS):
+            for name in models:
                 rows.append(score_cell(out, cell, spec, name, episodes, run_id))
                 pd.DataFrame(rows).to_csv(out / "per_year.csv", index=False)
-        if not benchmark:
-            aggregate(out, episodes, run_id)
+        aggregate(out, episodes, run_id, horizons, years, models, configs)
     manifest["warnings"] = [dict(category=w.category.__name__, message=str(w.message),
                                  filename=w.filename, lineno=w.lineno) for w in recorded]
     assert all(sha256(frozen / rel) == digest for rel, digest in frozen_hashes.items())
-    manifest.update(status="benchmark_complete" if benchmark else "scoring_complete",
+    manifest.update(status="scoring_complete",
                     elapsed_seconds=time.perf_counter() - started, fits=len(rows))
     save_json(out / "run.json", manifest)
     print(f"Saved {len(rows)} fits; {len(recorded)} recorded warnings; {manifest['elapsed_seconds']:.1f}s", flush=True)
 
 
+def run(out, frozen=None, benchmark=False, horizons=(6, 24), years=range(2021, 2026),
+        models=MODELS, configs=CONFIGS):
+    if out.exists():
+        raise FileExistsError(f"Use a new output directory: {out}")
+    try:
+        _run(out, frozen, benchmark, horizons, years, models, configs)
+    except BaseException as error:
+        manifest = out / "run.json"
+        if manifest.exists():
+            info = json.loads(manifest.read_text())
+            info.update(status="incomplete", error=f"{type(error).__name__}: {error}")
+            save_json(manifest, info)
+        raise
+
+
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--out-dir", required=True, type=Path)
-    parser.add_argument("--frozen-xgb", required=True, type=Path)
+    parser.add_argument("--frozen-xgb", type=Path,
+                        help="optional exact historical reference; not needed for new runs")
     parser.add_argument("--benchmark", action="store_true")
+    parser.add_argument("--horizon", type=int, action="append", choices=(1, 6, 24))
+    parser.add_argument("--years", type=int, nargs="+", choices=range(2021, 2026),
+                        default=list(range(2021, 2026)))
+    parser.add_argument("--models", nargs="+", choices=MODELS, default=list(MODELS))
+    parser.add_argument("--configs", nargs="+", choices=CONFIGS, default=list(CONFIGS))
     args = parser.parse_args()
     out = args.out_dir.resolve()
-    existed = out.exists()
-    try:
-        run(out, args.frozen_xgb.resolve(), args.benchmark)
-    finally:
-        if not existed and (out / "run.json").exists():
-            state = json.loads((out / "run.json").read_text())
-            if state["status"] == "running":
-                state.update(status="incomplete", failure="Execution did not reach scoring completion; see command stderr log.")
-                save_json(out / "run.json", state)
+    run(out, args.frozen_xgb.resolve() if args.frozen_xgb else None, args.benchmark,
+        tuple(dict.fromkeys(args.horizon or (6, 24))), tuple(dict.fromkeys(args.years)),
+        tuple(dict.fromkeys(args.models)), tuple(dict.fromkeys(args.configs)))
