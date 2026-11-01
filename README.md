@@ -19,6 +19,62 @@ average (~72 per year)**. The centre of the analysis is the **market-only
 
 ---
 
+## Corrected XGBoost/SHAP protocol (isolated repair)
+
+The historical `reports/`, `results/`, `train.py`, and all LR/RF outputs are
+**legacy experiments**, not corrected evidence. The dedicated corrected driver
+does not overwrite their datasets or artifacts:
+
+```powershell
+python -m unittest modelling.checks.test_xgb_repair -v
+python -m modelling.corrected_xgb --out-dir .\corrected-results-NEW-RUN
+python -m modelling.verify_corrected_run --run-dir .\corrected-results-NEW-RUN
+```
+
+Run from this worktree's root. The output directory must not exist. This executes
+h6/h24 market-original, market-matched and market-plus-on-chain folds (2021–2025),
+and T1/T2 SHAP; it never fits LR/RF. XGB fits exactly 300 rounds, depth 3,
+learning rate .05, training-only neg/pos class weight, seed 42, at most 4 threads.
+Each scoring fit uses only `inner_train`; its disjoint `inner_val` selects the
+threshold, and the same saved fit scores test. No test outcome selects settings.
+
+Every distinct validation score and +infinity is evaluated exactly. The objective
+is highest validation **episode recall** within grouped false alarms / observed
+coin-months ≤1; ties prefer fewer false alarms, then the higher threshold.
+Grouped alarm cost is non-monotone because the inclusive h-hour cooldown can
+suppress a later false alarm. A Fenwick active-row index accelerates exhaustive
+evaluation without dropping candidates. Observed partial coin-months count as
+months; this is not an exposure-normalized guarantee, nor a test-period budget cap.
+
+Source `hour` denotes the bar start. Corrected operational `hour` is its close
+(`bar_start+1h`), after that bar's price/volume/on-chain aggregates are available.
+Episode onset is the **close of the first below-band bar**, retrospectively
+confirmed by a second consecutive below-band bar. Targets and alarm truth both
+use new merged starts in `(origin_close, origin_close+h]`; lead is onset close
+minus origin close, not time before the underlying within-bar physical move or
+the second-bar confirmation. Negatives require all h+1 future prices (confirmation
+lookahead) observed; label availability filters offline scoring only, never live
+risk eligibility. Risk eligibility uses current above-band price and a >24h
+recovery clock since the recovery anchor of the latest online-confirmed dip.
+It never uses hindsight-known final episode end. Short dips do not reset recovery.
+Calendar-grid lags preserve missing endpoints; volatility uses complete windows.
+Unknown venue history excludes volume-change origins, never becomes fabricated
+zero history. The committed raw source's earlier filling, gaps and publication
+latencies cannot be recovered: this is an idealized end-of-bar backtest, not
+certification of real-time data availability.
+
+Each immutable run records source/code hashes, versions, model/preprocessing,
+partition keys, feature order, actual rounds, validation/test predictions and
+reload checks (absolute tolerance 1e-8). SHAP loads those exact saved fits and test
+features: raw-margin tree-path-dependent TreeExplainer, background represented by
+inner-train tree cover counts, all OOS rows explained. Additivity must hold within
+1e-4 log-odds units; group shares must independently sum within 1e-10. Beeswarms
+use a seed-42 sample of at most 15,000 explained rows; magnitude tables use all rows.
+These are model attributions, not causal benefit or removal of coin identity.
+Matched uncertainty uses paired coin-month AP bootstrap and 24h-chained onset
+event-cluster recall bootstrap, conditional on the fitted models and thresholds.
+h1 and optional sensitivity/smoothing/OR claims are not validated by this run.
+
 ## Table of contents
 
 1. [Research question & design](#1-research-question--design)
