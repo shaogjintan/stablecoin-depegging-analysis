@@ -89,6 +89,8 @@ split policy. Failed/interrupted scoring is recorded as incomplete and errors
 are re-raised; LR/RF remains `scoring_complete` until independent verification
 passes. Never treat that state, a traceback or a missing verification file as
 successful verification. Check `verification.json` for `"status": "passed"`.
+The XGB verifier reads alarm CSV floats with round-trip precision so exact
+score checks are not affected by CSV parser rounding.
 
 The commands below and the older result sections describe historical workflows.
 Legacy `train.py`, `train_logreg_yearcv.py`, `alarm_report.py`, `combine_alarms.py`,

@@ -16,9 +16,18 @@ from modelling.corrected_h1 import run as run_h1
 from modelling.evaluate import evaluate_run
 from modelling.corrected_data import corrected_folds
 from modelling.prepare_data import MARKET_FEATURES
+from modelling.verify_corrected_run import read_alarm_csv
 
 
 class ReadinessTests(unittest.TestCase):
+    def test_alarm_csv_reader_preserves_exact_saved_float_scores(self):
+        values = [0.9447813630104065, 0.9182649254798889, 0.9264349341392517]
+        with TemporaryDirectory() as tmp:
+            path = Path(tmp) / "alarms.csv"
+            pd.DataFrame({"y_score": values, "lead_hours": [1., 6., 24.]}).to_csv(
+                path, index=False)
+            np.testing.assert_array_equal(read_alarm_csv(path).y_score, values)
+
     def test_committed_typed_manifest_is_a_supported_input(self):
         with TemporaryDirectory() as tmp:
             root = Path(tmp)

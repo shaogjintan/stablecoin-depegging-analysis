@@ -17,6 +17,10 @@ from modelling.rolling_threshold import _targetable_episode_ids, _false_alarm_st
 from modelling.prepare_data import MARKET_FEATURES, ONCHAIN_FEATURES
 
 
+def read_alarm_csv(path):
+    return pd.read_csv(path, float_precision="round_trip")
+
+
 def verify(out):
     info = json.loads((out / "run.json").read_text())
     assert info["status"] == "complete"
@@ -96,7 +100,7 @@ def verify(out):
         assert rate <= 1
         assert fit["validation"]["candidate_count"] == parts["inner_val"].y_score.nunique() + 1
         _, regenerated_events = build_alarm_events(parts["test"], episodes, fit["threshold"])
-        saved_events = pd.read_csv(folder / "alarms.csv")
+        saved_events = read_alarm_csv(folder / "alarms.csv")
         for col in ("alarm_hour", "target_episode_start"):
             saved_events[col] = pd.to_datetime(saved_events[col], utc=True)
             regenerated_events[col] = pd.to_datetime(regenerated_events[col], utc=True)
@@ -116,7 +120,7 @@ def verify(out):
                             disjoint_clock=True, validation_budget_pass=True))
     for r in summary.itertuples():
         pred = pd.read_parquet(out / f"predictions_{r.config}_h{r.horizon_hours}.parquet")
-        events = pd.read_csv(out / f"alarms_{r.config}_h{r.horizon_hours}.csv")
+        events = read_alarm_csv(out / f"alarms_{r.config}_h{r.horizon_hours}.csv")
         regenerated_events = pd.concat(
             expected_alarms[(r.config, r.horizon_hours)], ignore_index=True
         )
@@ -159,7 +163,7 @@ def verify(out):
                 identities.config.eq(config) & identities.horizon_hours.eq(h)
             ]
             assert set(saved.episode_id.astype(str)) == targets
-            events = pd.read_csv(out / f"alarms_{config}_h{h}.csv")
+            events = read_alarm_csv(out / f"alarms_{config}_h{h}.csv")
             caught = set(events.target_episode_id.dropna().astype(str)) & targets
             saved_caught = set(saved.loc[saved.caught.astype(bool), "episode_id"].astype(str))
             assert saved_caught == caught
