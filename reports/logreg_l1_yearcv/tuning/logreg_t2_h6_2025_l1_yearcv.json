@@ -1,0 +1,159 @@
+{
+  "model": "logreg",
+  "tier": 2,
+  "horizon": 6,
+  "test_year": 2025,
+  "tag": "l1_yearcv",
+  "tune": true,
+  "model_params": {
+    "C": 0.1,
+    "penalty": "l1"
+  },
+  "selection_metric": "mean_average_precision_across_eligible_calendar_years",
+  "validation_years": [
+    2019,
+    2020,
+    2021,
+    2022,
+    2023,
+    2024
+  ],
+  "skipped_years": [
+    {
+      "validation_year": 2018,
+      "train_rows": 0,
+      "validation_rows": 1652,
+      "validation_positives": 53,
+      "training_positives": 0,
+      "reason": "training_years_do_not_contain_both_classes"
+    }
+  ],
+  "candidate_scores": [
+    {
+      "C": 0.001,
+      "mean_calendar_year_average_precision": 0.07475771316866923,
+      "per_year_scores": [
+        {
+          "validation_year": 2019,
+          "average_precision": 0.003972281017135898
+        },
+        {
+          "validation_year": 2020,
+          "average_precision": 0.005416936981876808
+        },
+        {
+          "validation_year": 2021,
+          "average_precision": 0.009214109358967888
+        },
+        {
+          "validation_year": 2022,
+          "average_precision": 0.006121222391206963
+        },
+        {
+          "validation_year": 2023,
+          "average_precision": 0.28057184134631813
+        },
+        {
+          "validation_year": 2024,
+          "average_precision": 0.14324988791650978
+        }
+      ]
+    },
+    {
+      "C": 0.01,
+      "mean_calendar_year_average_precision": 0.11397977449505085,
+      "per_year_scores": [
+        {
+          "validation_year": 2019,
+          "average_precision": 0.1340455519423549
+        },
+        {
+          "validation_year": 2020,
+          "average_precision": 0.0034229693497627705
+        },
+        {
+          "validation_year": 2021,
+          "average_precision": 0.009453720792973946
+        },
+        {
+          "validation_year": 2022,
+          "average_precision": 0.0057304250160598175
+        },
+        {
+          "validation_year": 2023,
+          "average_precision": 0.289090260964467
+        },
+        {
+          "validation_year": 2024,
+          "average_precision": 0.24213571890468671
+        }
+      ]
+    },
+    {
+      "C": 0.1,
+      "mean_calendar_year_average_precision": 0.12726854416846894,
+      "per_year_scores": [
+        {
+          "validation_year": 2019,
+          "average_precision": 0.12869974718490762
+        },
+        {
+          "validation_year": 2020,
+          "average_precision": 0.0034942301877352792
+        },
+        {
+          "validation_year": 2021,
+          "average_precision": 0.00912659020038055
+        },
+        {
+          "validation_year": 2022,
+          "average_precision": 0.005657054983624085
+        },
+        {
+          "validation_year": 2023,
+          "average_precision": 0.2582748235473357
+        },
+        {
+          "validation_year": 2024,
+          "average_precision": 0.3583588189068304
+        }
+      ]
+    },
+    {
+      "C": 1.0,
+      "mean_calendar_year_average_precision": 0.11832104513362907,
+      "per_year_scores": [
+        {
+          "validation_year": 2019,
+          "average_precision": 0.0678663334575306
+        },
+        {
+          "validation_year": 2020,
+          "average_precision": 0.0036771233541550608
+        },
+        {
+          "validation_year": 2021,
+          "average_precision": 0.009010658848145869
+        },
+        {
+          "validation_year": 2022,
+          "average_precision": 0.005640830904420201
+        },
+        {
+          "validation_year": 2023,
+          "average_precision": 0.2529046670071045
+        },
+        {
+          "validation_year": 2024,
+          "average_precision": 0.3708266572304182
+        }
+      ]
+    }
+  ],
+  "threshold": 0.9729608405311941,
+  "false_alarm_budget_per_coin_month": 1.0,
+  "outer_train_rows": 247073,
+  "outer_train_positives": 469,
+  "test_rows": 24177,
+  "test_positives": 5
+}

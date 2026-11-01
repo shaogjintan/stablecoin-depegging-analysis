@@ -1,3 +1,4 @@
+import inspect
 import numpy as np
 import pandas as pd
 from sklearn.linear_model import LogisticRegression
@@ -40,14 +41,24 @@ class LogRegModel(BaseModel):
         X = X.clip(self.lo_, self.hi_, axis=1)
 
         self.scaler_ = StandardScaler().fit(X)
-        self.clf_ = LogisticRegression(
-            C=self.C,
-            penalty=self.penalty,
-            solver="liblinear",
-            class_weight=self.class_weight,
-            max_iter=2000,
-            random_state=42,
-        )
+        # scikit-learn 1.8 deprecated `penalty` in favor of `l1_ratio`.
+        # Translate the existing public penalty parameter so saved configs and
+        # older scikit-learn releases continue to work without warnings.
+        lr_kwargs = {
+            "C": self.C,
+            "solver": "liblinear",
+            "class_weight": self.class_weight,
+            "max_iter": 2000,
+            "random_state": 42,
+        }
+        penalty_default = inspect.signature(LogisticRegression).parameters[
+            "penalty"
+        ].default
+        if penalty_default == "deprecated":
+            lr_kwargs["l1_ratio"] = 1.0 if self.penalty == "l1" else 0.0
+        else:
+            lr_kwargs["penalty"] = self.penalty
+        self.clf_ = LogisticRegression(**lr_kwargs)
         self.clf_.fit(self.scaler_.transform(X), np.asarray(y_train))
         return self
 
