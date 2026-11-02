@@ -21,6 +21,22 @@ data/
 # Modelling scratch (predictions, model artifacts; final tables/figures -> reports/)
 results/
 
+# Experiment artifacts stay local; retain summaries, manifests and figures.
+/runs/*/fits/
+/runs/*/excluded_partial/
+/runs/*/source/
+/runs/*/source_diff.patch
+/runs/*/runner_source.py
+/runs/*/*.parquet
+/runs/*/*.npz
+
+# Older corrected XGB run stored under reports rather than runs.
+/reports/xgb_corrected_shap_v1/fits/
+/reports/xgb_corrected_shap_v1/source/
+/reports/xgb_corrected_shap_v1/source_diff.patch
+/reports/xgb_corrected_shap_v1/*.parquet
+/reports/xgb_corrected_shap_v1/*.npz
+
 # OS / editor
 .DS_Store
 Thumbs.db

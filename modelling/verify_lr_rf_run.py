@@ -254,6 +254,8 @@ def verify(out):
                     cv_count += saved["cv_count"]
                     continue
                 fit = json.loads((folder / "fit.json").read_text())
+                assert fit.get("threshold_policy", "exact_max_recall") == info.get(
+                    "threshold_policy", "exact_max_recall")
                 assert fit["run_id"] == info["run_id"] and not fit["refit_after_calibration"]
                 assert fit["fit_partition"] == "inner_train" and fit["calibration_partition"] == "inner_val"
                 assert sha256(folder / "pipeline.joblib") == fit["pipeline_sha256"]

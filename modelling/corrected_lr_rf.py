@@ -140,7 +140,7 @@ def metrics(pred, events, targets):
                 median_lead_hours=float(events.loc[events.is_true_alarm, "lead_hours"].median()))
 
 
-def score_cell(out, cell, spec, name, episodes, run_id):
+def score_cell(out, cell, spec, name, episodes, run_id, threshold_policy="exact_max_recall"):
     start = time.perf_counter()
     folder = out / "fits" / f"{name}_{cell}"
     folder.mkdir(parents=True, exist_ok=False)
@@ -174,7 +174,8 @@ def score_cell(out, cell, spec, name, episodes, run_id):
         pred["horizon"], pred["model"], pred["config"] = h, name, spec["config"]
         pred["run_id"], pred["fit_id"], pred["test_year"] = run_id, folder.name, spec["year"]
         frames[part] = pred
-    threshold, val_stats = _choose_threshold(frames["inner_val"], episodes, h, 1.)
+    threshold, val_stats = _choose_threshold(
+        frames["inner_val"], episodes, h, 1., policy=threshold_policy)
     for part, pred in frames.items():
         pred["threshold"] = threshold
         pred.to_parquet(folder / f"{part}.parquet", index=False)
@@ -206,7 +207,8 @@ def score_cell(out, cell, spec, name, episodes, run_id):
         fit_partition="inner_train", calibration_partition="inner_val", refit_after_calibration=False,
         params=model.get_params(), estimator_params=model.clf_.get_params() if name in MODELS[:2] else {},
         preprocessing=preprocess, pipeline_sha256=sha256(folder / "pipeline.joblib"),
-        threshold=threshold, validation=val_stats, elapsed_seconds=time.perf_counter() - start,
+        threshold=threshold, threshold_policy=threshold_policy,
+        validation=val_stats, elapsed_seconds=time.perf_counter() - start,
         partition_paths={p: str(Path("partitions") / cell / f"{p}.parquet") for p in PARTS}))
     row = dict(model=name, config=spec["config"], horizon_hours=h, test_year=spec["year"],
                run_id=run_id, threshold=threshold, **metrics(pred, events, targets),
@@ -267,7 +269,9 @@ def aggregate(out, episodes, run_id, horizons=(6, 24), years=range(2021, 2026),
 
 
 def _run(out, frozen=None, benchmark=False, horizons=(6, 24), years=range(2021, 2026),
-        models=MODELS, configs=CONFIGS):
+        models=MODELS, configs=CONFIGS, threshold_policy="exact_max_recall"):
+    if threshold_policy not in ("exact_max_recall", "exhaustive_lowest"):
+        raise ValueError(f"Unknown threshold policy: {threshold_policy}")
     horizons, years, models, configs = map(tuple, (horizons, years, models, configs))
     if (not horizons or not set(horizons).issubset({1, 6, 24})
             or not years or not set(years).issubset(range(2021, 2026))
@@ -286,13 +290,14 @@ def _run(out, frozen=None, benchmark=False, horizons=(6, 24), years=range(2021, 
             assert sha256(ROOT / rel) == expected, f"Frozen protocol source differs: {rel}"
     out.mkdir(parents=True, exist_ok=False)
     run_id = datetime.now(timezone.utc).strftime("%Y%m%dT%H%M%SZ") + "-" + uuid.uuid4().hex[:8]
-    sources = [ROOT / "modelling" / n for n in (
+    sources = [ROOT / "modelling" / n.replace("\\", "/") for n in (
         "corrected_lr_rf.py", "corrected_h1.py", "verify_lr_rf_run.py", "corrected_data.py", "corrected_xgb.py",
         "exact_threshold.py", "rolling_threshold.py", "alarm_events.py", "train_logreg_yearcv.py",
         "false_alarm_framework.py", "prepare_data.py", "models\\base.py", "models\\logreg.py",
         "models\\random_forest_model.py", "models\\baseline.py")]
     sources += [ROOT / "data_processing" / n for n in ("splits.py", "config.py", "merge_and_label.py")]
     manifest = dict(run_id=run_id, status="running", benchmark=benchmark,
+                    threshold_policy=threshold_policy,
                     frozen_run_id=frozen_info["run_id"] if frozen_info else None,
                     frozen_path=str(frozen) if frozen else None, command=[sys.executable, *sys.argv],
                     source_commit=subprocess.check_output(["git", "-C", str(ROOT), "rev-parse", "HEAD"],
@@ -332,7 +337,7 @@ def _run(out, frozen=None, benchmark=False, horizons=(6, 24), years=range(2021, 
         rows = []
         for cell, spec in cells.items():
             for name in models:
-                rows.append(score_cell(out, cell, spec, name, episodes, run_id))
+                rows.append(score_cell(out, cell, spec, name, episodes, run_id, threshold_policy))
                 pd.DataFrame(rows).to_csv(out / "per_year.csv", index=False)
         aggregate(out, episodes, run_id, horizons, years, models, configs)
     manifest["warnings"] = [dict(category=w.category.__name__, message=str(w.message),
@@ -345,11 +350,11 @@ def _run(out, frozen=None, benchmark=False, horizons=(6, 24), years=range(2021, 
 
 
 def run(out, frozen=None, benchmark=False, horizons=(6, 24), years=range(2021, 2026),
-        models=MODELS, configs=CONFIGS):
+        models=MODELS, configs=CONFIGS, threshold_policy="exact_max_recall"):
     if out.exists():
         raise FileExistsError(f"Use a new output directory: {out}")
     try:
-        _run(out, frozen, benchmark, horizons, years, models, configs)
+        _run(out, frozen, benchmark, horizons, years, models, configs, threshold_policy)
     except BaseException as error:
         manifest = out / "run.json"
         if manifest.exists():
@@ -370,8 +375,12 @@ if __name__ == "__main__":
                         default=list(range(2021, 2026)))
     parser.add_argument("--models", nargs="+", choices=MODELS, default=list(MODELS))
     parser.add_argument("--configs", nargs="+", choices=CONFIGS, default=list(CONFIGS))
+    parser.add_argument("--threshold-policy",
+                        choices=("exact_max_recall", "exhaustive_lowest"),
+                        default="exact_max_recall")
     args = parser.parse_args()
     out = args.out_dir.resolve()
     run(out, args.frozen_xgb.resolve() if args.frozen_xgb else None, args.benchmark,
         tuple(dict.fromkeys(args.horizon or (6, 24))), tuple(dict.fromkeys(args.years)),
-        tuple(dict.fromkeys(args.models)), tuple(dict.fromkeys(args.configs)))
+        tuple(dict.fromkeys(args.models)), tuple(dict.fromkeys(args.configs)),
+        args.threshold_policy)

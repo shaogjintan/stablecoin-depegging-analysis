@@ -1,0 +1,41 @@
+{
+  "dataset_version": "corrected_v1",
+  "source": "data/processed/master.parquet",
+  "source_sha256": "b026cddd1ffc0b8e38947fc4a34663099261a9973e8579310c524cc324b38be1",
+  "master": "data/processed/master_corrected_v1.parquet",
+  "master_sha256": "450865153d17b95627daeb48d8f64baf7d0f403b3c9b57d564e2a9aeaf284a37",
+  "episodes": "data/processed/depeg_episodes_corrected_v1.parquet",
+  "episodes_sha256": "dcf23bf6662556d5432e6b1afa7127a5376c7154ec0403cf50a5d6f6131e9bdf",
+  "preparation_sha256": "06be9dd8fe92478b71628a6c0f8a4999c729eab31a2805b04321917ba8f49079",
+  "rows": 345361,
+  "episodes_defined": 79,
+  "target": "new merged episode starts in (origin, origin+h]",
+  "clock": "bar close = source bar start + 1 hour",
+  "recovery": "exclude through 24 hours after recovery anchor of confirmed two-hour dip",
+  "counts": {
+    "tier1_h1": {
+      "eligible_rows": 291141,
+      "positive_hours": 52
+    },
+    "tier1_h6": {
+      "eligible_rows": 290659,
+      "positive_hours": 310
+    },
+    "tier1_h24": {
+      "eligible_rows": 289039,
+      "positive_hours": 1249
+    },
+    "tier2_h1": {
+      "eligible_rows": 267919,
+      "positive_hours": 51
+    },
+    "tier2_h6": {
+      "eligible_rows": 267486,
+      "positive_hours": 299
+    },
+    "tier2_h24": {
+      "eligible_rows": 266037,
+      "positive_hours": 1196
+    }
+  }
+}

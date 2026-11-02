@@ -191,6 +191,9 @@ class RepairTests(unittest.TestCase):
                     expected.append((len(caught), -false, threshold))
             actual, _ = _choose_threshold(d, eps, h, budget)
             self.assertEqual(actual, max(expected)[2])
+            lowest, stats = _choose_threshold(d, eps, h, budget, policy="exhaustive_lowest")
+            self.assertEqual(lowest, min(row[2] for row in expected))
+            self.assertLessEqual(stats["false_alarms_per_coin_month"], budget)
 
     def test_nonmonotone_counterexample(self):
         hours = pd.date_range("2020-01-01", periods=12, freq="h", tz="UTC")

@@ -1,0 +1,37 @@
+{
+  "source_runs": [
+    {
+      "path": "runs/REFIT-LOWEST-NEW",
+      "run_id": "f2c840d7-2ff9-4552-84fe-cbc4c616ea5d"
+    },
+    {
+      "path": "runs/LR-REFIT-LOWEST-NEW",
+      "run_id": "ac334862-a86f-4a75-9fea-5180ef51e6af"
+    }
+  ],
+  "input_sha256": {
+    "data/processed/master_corrected_v1.parquet": "450865153d17b95627daeb48d8f64baf7d0f403b3c9b57d564e2a9aeaf284a37",
+    "data/processed/depeg_episodes_corrected_v1.parquet": "dcf23bf6662556d5432e6b1afa7127a5376c7154ec0403cf50a5d6f6131e9bdf"
+  },
+  "targetability": "any frozen prediction origin in [episode start - h, episode start); no reference-label filter",
+  "check": "fixed alarm outcome-definition sensitivity",
+  "reference_band": 0.01,
+  "reference_duration": 2,
+  "bands": [
+    0.005,
+    0.01,
+    0.02
+  ],
+  "durations": [
+    1,
+    2,
+    3,
+    4
+  ],
+  "horizons": [
+    6,
+    24
+  ],
+  "frozen": "prediction hours, models, thresholds, alarm timestamps; standard-definition risk set",
+  "ranking": "highest episode recall; ties retained; not an overall performance ranking"
+}
