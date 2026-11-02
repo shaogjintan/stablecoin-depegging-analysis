@@ -33,6 +33,24 @@ def require_run(path):
     return info
 
 
+def calibration_audit_rows(run, models):
+    rows = []
+    for h in [6, 24]:
+        for year in range(2021, 2026):
+            for config in ["market_matched", "market_onchain"]:
+                for model in models:
+                    folder = run / "fits" / f"{model}_{config}_h{h}_{year}"
+                    spec = json.loads((folder / "fit.json").read_text())
+                    stats = spec["validation"]
+                    rows.append(dict(model=model, config=config, horizon_hours=h, test_year=year,
+                                     calibration_year=year-1, threshold=spec["threshold"],
+                                     calibration_coin_months=stats["coin_months"],
+                                     calibration_false_alarms=stats["false_alarms"],
+                                     calibration_budget=stats["coin_months"],
+                                     final_train_rows=spec["final_train_rows"]))
+    return rows
+
+
 def shap_values(run, horizons):
     """Aggregate exact absolute raw-margin SHAP over every held-out test row."""
     import shap
@@ -126,20 +144,7 @@ def main():
     info = require_run(run)
     summaries = pd.read_csv(run / "summary.csv")
     episodes = pd.read_parquet(run / "episodes.parquet")
-    audit = []
-    for h in [6, 24]:
-        for year in range(2021, 2026):
-            for config in ["market_matched", "market_onchain"]:
-                for model in ["random_forest", "xgboost"]:
-                    folder = run / "fits" / f"{model}_{config}_h{h}_{year}"
-                    spec = json.loads((folder / "fit.json").read_text())
-                    stats = spec["validation"]
-                    audit.append(dict(model=model, config=config, horizon_hours=h, test_year=year,
-                                      calibration_year=year-1, threshold=spec["threshold"],
-                                      calibration_coin_months=stats["coin_months"],
-                                      calibration_false_alarms=stats["false_alarms"],
-                                      calibration_budget=stats["coin_months"],
-                                      final_train_rows=spec["final_train_rows"]))
+    audit = calibration_audit_rows(run, ["random_forest", "xgboost"])
     lr_ready, lr_status = False, "missing"
     if (args.lr_run / "run.json").exists():
         lr_info = json.loads((args.lr_run / "run.json").read_text())
@@ -149,6 +154,7 @@ def main():
             if lr_info["input_sha256"] != info["input_sha256"]:
                 raise ValueError("LogReg uses different dataset inputs")
             summaries = pd.concat([summaries, pd.read_csv(args.lr_run / "summary.csv")], ignore_index=True)
+            audit.extend(calibration_audit_rows(args.lr_run, ["logreg"]))
             lr_ready = True
     shap = (pd.read_csv(run / "shap_summary.csv") if args.reuse_shap
             else shap_values(run, [6, 24]))
