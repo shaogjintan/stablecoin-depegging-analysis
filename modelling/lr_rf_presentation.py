@@ -21,6 +21,8 @@ def export(out, xgb_run=None):
     xinfo = json.loads((frozen / "run.json").read_text())
     xverified = json.loads((frozen / "verification.json").read_text())
     assert xinfo["status"] == "complete" and xverified["status"] == "passed"
+    assert info.get("threshold_policy", "max_validation_recall") == xinfo.get(
+        "threshold_policy", "max_validation_recall"), "Cannot combine different threshold policies"
     for field in ("source_master_sha256", "dataset_version", "purge_hours", "embargo_hours"):
         assert info.get(field) == xinfo.get(field), f"Cannot combine runs: {field} differs"
     assert info.get("source_episodes_sha256") == xinfo.get("source_episodes_sha256")

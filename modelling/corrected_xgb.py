@@ -49,7 +49,7 @@ def save_json(path, value):
     path.write_text(json.dumps(value, indent=2, default=str), encoding="utf-8")
 
 
-def score_and_save(fold, config, out, run_id, episodes):
+def score_and_save(fold, config, out, run_id, episodes, threshold_policy="max_validation_recall"):
     year, h = int(fold["year"]), int(fold["horizon"])
     fit_id = f"{config}_h{h}_{year}"
     folder = out / "fits" / fit_id
@@ -75,7 +75,7 @@ def score_and_save(fold, config, out, run_id, episodes):
         persisted.to_parquet(folder / f"{part}.parquet", index=False)
         frames[part] = frame
     val, test = frames["inner_val"], frames["test"]
-    threshold, vs = _choose_threshold(val, episodes, h, 1.)
+    threshold, vs = _choose_threshold(val, episodes, h, 1., policy=threshold_policy)
     _, events = build_alarm_events(test, episodes, threshold)
     targets = _targetable_episode_ids(test, episodes, h)
     caught = set(events.target_episode_id.dropna().astype(str)) & targets
@@ -89,6 +89,7 @@ def score_and_save(fold, config, out, run_id, episodes):
         "fit_partition": "inner_train", "calibration_partition": "inner_val",
         "params": PARAMS, "scale_pos_weight_used": model.scale_pos_weight_used_,
         "boosted_rounds": 300, "early_stopping": False, "threshold": threshold,
+        "threshold_policy": threshold_policy,
         "validation": vs, "train_rows": len(train), "train_positive_hours": int(train.y_true.sum()),
         "train_last_origin": str(train.hour.max()), "validation_first_origin": str(val.hour.min()),
         "validation_last_origin": str(val.hour.max()), "test_first_origin": str(test.hour.min()),
@@ -158,7 +159,8 @@ def paired_uncertainty(pred1, pred2, identities, h):
                 targetable_episodes=len(delta), targetable_event_clusters=len(event_groups))
 
 
-def _run(out, horizons=(6, 24), include_shap=True, years=range(2021, 2026)):
+def _run(out, horizons=(6, 24), include_shap=True, years=range(2021, 2026),
+         threshold_policy="max_validation_recall"):
     horizons = tuple(dict.fromkeys(int(h) for h in horizons))
     if not horizons or any(h not in (1, 6, 24) for h in horizons):
         raise ValueError("horizons must contain one or more of 1, 6, and 24")
@@ -171,7 +173,7 @@ def _run(out, horizons=(6, 24), include_shap=True, years=range(2021, 2026)):
     source_files = [
         ROOT / "modelling" / name for name in (
             "corrected_data.py", "corrected_xgb.py", "verify_corrected_run.py",
-            "rolling_threshold.py", "exact_threshold.py", "alarm_events.py",
+            "rolling_threshold.py", "exact_threshold.py", "alarm_events.py", "recalibrate_thresholds.py",
             "false_alarm_framework.py", "prepare_data.py", "models/xgboost_model.py",
         )
     ] + [
@@ -193,7 +195,8 @@ def _run(out, horizons=(6, 24), include_shap=True, years=range(2021, 2026)):
         "clock": "hour=source bar_start+1h; first-below-bar close onset; lead=start_close-origin_close",
         "target": "new merged 2h dip episode starts in (origin_close, origin_close+h]",
         "risk": "observed above-band close, >24h after recovery anchor of last online-confirmed 2h dip",
-        "threshold": "all distinct validation scores and +inf; max episode recall within FA/observed coin-month<=1, then fewer FA, then higher threshold",
+        "threshold_policy": threshold_policy,
+        "threshold": "all distinct validation scores and +inf; explicit policy within average FA/observed coin-month<=1",
         "packages": {p: importlib.metadata.version(p) for p in
                      ("numpy", "pandas", "scikit-learn", "xgboost", "shap", "numba", "joblib")},
         "source_code_sha256": {str(p.relative_to(ROOT)): sha256(p) for p in source_files},
@@ -230,7 +233,8 @@ def _run(out, horizons=(6, 24), include_shap=True, years=range(2021, 2026)):
             for fold in folds:
                 if fold["year"] not in years:
                     continue
-                row, pred, events, targets = score_and_save(fold, config, out, run_id, episodes)
+                row, pred, events, targets = score_and_save(
+                    fold, config, out, run_id, episodes, threshold_policy)
                 year_rows.append(row)
                 predictions.append(pred)
                 alarms.append(events)
@@ -277,11 +281,12 @@ def _run(out, horizons=(6, 24), include_shap=True, years=range(2021, 2026)):
     print(summary.to_string(index=False), flush=True)
 
 
-def run(out, horizons=(6, 24), include_shap=True, years=range(2021, 2026)):
+def run(out, horizons=(6, 24), include_shap=True, years=range(2021, 2026),
+        threshold_policy="max_validation_recall"):
     if out.exists():
         raise FileExistsError(f"Use a new output directory: {out}")
     try:
-        _run(out, horizons, include_shap, years)
+        _run(out, horizons, include_shap, years, threshold_policy)
     except BaseException as error:
         manifest = out / "run.json"
         if manifest.exists():
@@ -291,14 +296,14 @@ def run(out, horizons=(6, 24), include_shap=True, years=range(2021, 2026)):
         raise
 
 
-def run_shap(out):
+def run_shap(out, fit_prefix=""):
     info = json.loads((out / "run.json").read_text())
     if not info.get("shap_requested", True):
         raise ValueError("Run records SHAP as omitted; use a fresh SHAP-requested scoring run")
     horizons = tuple(info.get("horizons", (6, 24)))
     years = tuple(info.get("test_years", range(2021, 2026)))
     expected = {
-        f"{config}_h{h}_{year}" for h in horizons
+        f"{fit_prefix}{config}_h{h}_{year}" for h in horizons
         for config in ("market_original", "market_onchain")
         for year in years
     }
@@ -317,7 +322,7 @@ def run_shap(out):
         for config, tier in (("market_original", 1), ("market_onchain", 2)):
             tag = f"xgboost_t{tier}_h{h}"
             parts, features, values, keys, checks = [], None, [], [], []
-            for folder in sorted(out / "fits" / f"{config}_h{h}_{year}" for year in years):
+            for folder in sorted(out / "fits" / f"{fit_prefix}{config}_h{h}_{year}" for year in years):
                 info = json.loads((folder / "fit.json").read_text())
                 model = joblib.load(folder / "model.joblib")
                 assert sha256(folder / "model.joblib") == info["model_sha256"]
@@ -394,15 +399,17 @@ def main():
     parser.add_argument("--no-shap", action="store_true",
                         help="skip SHAP generation for this scoring run")
     parser.add_argument("--years", type=int, nargs="+", choices=range(2021, 2026))
+    parser.add_argument("--threshold-policy", choices=("lowest_feasible", "max_validation_recall"))
     args = parser.parse_args()
     if args.shap_only:
-        if args.horizons or args.no_shap or args.years:
+        if args.horizons or args.no_shap or args.years or args.threshold_policy:
             parser.error("--shap-only uses the saved scope; do not combine with scoring options")
         run_shap(args.out_dir.resolve())
     else:
         run(args.out_dir.resolve(), horizons=args.horizons or (6, 24),
             include_shap=not args.no_shap,
-            years=tuple(dict.fromkeys(args.years or range(2021, 2026))))
+            years=tuple(dict.fromkeys(args.years or range(2021, 2026))),
+            threshold_policy=args.threshold_policy or "max_validation_recall")
 
 
 if __name__ == "__main__":

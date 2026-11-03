@@ -153,7 +153,16 @@ class ReadinessTests(unittest.TestCase):
         with patch("modelling.corrected_h1.run_portable") as scoring, \
                 patch("modelling.verify_lr_rf_run.verify") as verifying:
             run_h1(out)
-        scoring.assert_called_once_with(out, horizons=(1,))
+        scoring.assert_called_once_with(out, horizons=(1,),
+                                        threshold_policy="max_validation_recall")
+        verifying.assert_called_once_with(out)
+
+    def test_h1_forwards_explicit_threshold_policy(self):
+        out = Path("unused-h1-policy-test-output")
+        with patch("modelling.corrected_h1.run_portable") as scoring, \
+                patch("modelling.verify_lr_rf_run.verify") as verifying:
+            run_h1(out, threshold_policy="lowest_feasible")
+        scoring.assert_called_once_with(out, horizons=(1,), threshold_policy="lowest_feasible")
         verifying.assert_called_once_with(out)
 
     def test_legacy_evaluator_rejects_unknown_or_mixed_version(self):

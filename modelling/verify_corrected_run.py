@@ -98,6 +98,11 @@ def verify(out):
         assert false == fit["validation"]["false_alarms"]
         assert months == fit["validation"]["coin_months"]
         assert rate <= 1
+        if "threshold_policy" in fit:
+            from modelling.recalibrate_thresholds import oracle_choice
+            cutoff, _, _, _ = oracle_choice(parts["inner_val"], episodes,
+                                            fit["horizon"], 1., fit["threshold_policy"])
+            assert cutoff == fit["threshold"], "Independent policy selection mismatch"
         assert fit["validation"]["candidate_count"] == parts["inner_val"].y_score.nunique() + 1
         _, regenerated_events = build_alarm_events(parts["test"], episodes, fit["threshold"])
         saved_events = read_alarm_csv(folder / "alarms.csv")

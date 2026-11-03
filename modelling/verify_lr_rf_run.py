@@ -14,6 +14,7 @@ from threadpoolctl import threadpool_limits
 
 from modelling.corrected_xgb import sha256, save_json
 from modelling.corrected_lr_rf import CONFIGS, MODELS, PARTS, RF_PARAMS
+from modelling.rolling_threshold import normalize_policy
 
 HOUR = 3600_000_000_000
 KEYS = ["coin", "hour", "y_true"]
@@ -254,8 +255,8 @@ def verify(out):
                     cv_count += saved["cv_count"]
                     continue
                 fit = json.loads((folder / "fit.json").read_text())
-                assert fit.get("threshold_policy", "exact_max_recall") == info.get(
-                    "threshold_policy", "exact_max_recall")
+                assert normalize_policy(fit.get("threshold_policy", "max_validation_recall")) == normalize_policy(
+                    info.get("threshold_policy", "max_validation_recall"))
                 assert fit["run_id"] == info["run_id"] and not fit["refit_after_calibration"]
                 assert fit["fit_partition"] == "inner_train" and fit["calibration_partition"] == "inner_val"
                 assert sha256(folder / "pipeline.joblib") == fit["pipeline_sha256"]
@@ -280,6 +281,11 @@ def verify(out):
                 assert val_metrics["false_alarms"] == fit["validation"]["false_alarms"]
                 assert val_metrics["observed_coin_months"] == fit["validation"]["coin_months"]
                 assert val_metrics["false_alarms_per_coin_month"] <= 1
+                if "threshold_policy" in fit:
+                    from modelling.recalibrate_thresholds import oracle_choice
+                    cutoff, _, _, _ = oracle_choice(frames["inner_val"], episodes, h,
+                                                    1., fit["threshold_policy"])
+                    assert cutoff == fit["threshold"], "Independent policy selection mismatch"
                 assert fit["validation"]["candidate_count"] == frames["inner_val"].y_score.nunique() + 1
                 assert_values({"episode_recall": fit["validation"]["episode_recall"]},
                               {"episode_recall": val_metrics["episode_recall"]

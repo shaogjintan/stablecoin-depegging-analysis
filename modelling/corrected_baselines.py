@@ -27,6 +27,7 @@ ROOT = Path(__file__).resolve().parents[1]
 PROTOCOL_FILES = (
     "modelling\\corrected_data.py", "modelling\\rolling_threshold.py",
     "modelling\\exact_threshold.py", "modelling\\alarm_events.py",
+    "modelling\\recalibrate_thresholds.py",
     "modelling\\prepare_data.py", "data_processing\\splits.py",
     "data_processing\\merge_and_label.py", "data_processing\\config.py",
 )
@@ -50,7 +51,8 @@ def metrics(pred, events, episodes, h):
     )
 
 
-def _run(out, horizons=(1, 6, 24), years=range(2021, 2026)):
+def _run(out, horizons=(1, 6, 24), years=range(2021, 2026),
+         threshold_policy="max_validation_recall"):
     if (not horizons or not set(horizons).issubset({1, 6, 24})
             or not years or not set(years).issubset(range(2021, 2026))):
         raise ValueError("Invalid horizon or year scope")
@@ -78,7 +80,8 @@ def _run(out, horizons=(1, 6, 24), years=range(2021, 2026)):
         prior="mean of config/horizon/year inner_train labels only; no refit",
         persistence="min(max(1-price,0),0.01), price at completed source bar",
         clock="origin and onset = source bar start + 1 hour",
-        threshold="all distinct validation scores and +inf; max targetable recall at FA/observed coin-month <=1; ties fewer FA then higher cutoff",
+        threshold_policy=threshold_policy,
+        threshold="all distinct validation scores and +inf; explicit policy at average FA/observed coin-month <=1",
         limitations=[
             "Conditional corrected backtest, not upstream source certification.",
             "Unknown exchange/on-chain publication delays; idealized completed-bar availability.",
@@ -140,7 +143,8 @@ def _run(out, horizons=(1, 6, 24), years=range(2021, 2026)):
                         frame["test_year"] = year
                         scores[part] = frame
                     val, test = scores["inner_val"], scores["test"]
-                    threshold, validation = _choose_threshold(val, episodes, h, 1.)
+                    threshold, validation = _choose_threshold(val, episodes, h, 1.,
+                                                              policy=threshold_policy)
                     for frame in scores.values():
                         frame["threshold"] = threshold
                     _, events = build_alarm_events(test, episodes, threshold)
@@ -155,6 +159,7 @@ def _run(out, horizons=(1, 6, 24), years=range(2021, 2026)):
                         fit_partition="inner_train", calibration_partition="inner_val",
                         train_rows=len(parts["inner_train"]), train_positive_hours=int(parts["inner_train"].y_true.sum()),
                         model_params=model.get_params(), threshold=threshold, validation=validation,
+                        threshold_policy=threshold_policy,
                     )
                     save_json(folder / "fit.json", fit)
                     result = dict(run_id=run_id, fit_id=fit_id, model=name, config=config,
@@ -202,11 +207,12 @@ def _run(out, horizons=(1, 6, 24), years=range(2021, 2026)):
     print(pd.DataFrame(summaries).to_string(index=False), flush=True)
 
 
-def run(out, horizons=(1, 6, 24), years=range(2021, 2026)):
+def run(out, horizons=(1, 6, 24), years=range(2021, 2026),
+        threshold_policy="max_validation_recall"):
     if out.exists():
         raise FileExistsError(f"Use a new output directory: {out}")
     try:
-        _run(out, horizons, years)
+        _run(out, horizons, years, threshold_policy)
     except BaseException as error:
         manifest = out / "run.json"
         if manifest.exists():
@@ -220,8 +226,10 @@ if __name__ == "__main__":
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--out-dir", type=Path, required=True)
     parser.add_argument("--horizon", type=int, action="append", choices=(1, 6, 24))
+    parser.add_argument("--threshold-policy", choices=("lowest_feasible", "max_validation_recall"),
+                        default="max_validation_recall")
     parser.add_argument("--years", type=int, nargs="+", choices=range(2021, 2026),
                         default=list(range(2021, 2026)))
     args = parser.parse_args()
     run(args.out_dir.resolve(), tuple(dict.fromkeys(args.horizon or (1, 6, 24))),
-        tuple(dict.fromkeys(args.years)))
+        tuple(dict.fromkeys(args.years)), args.threshold_policy)

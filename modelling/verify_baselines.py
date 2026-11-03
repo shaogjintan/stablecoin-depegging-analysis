@@ -10,6 +10,8 @@ import numpy as np
 import pandas as pd
 from numba import njit
 
+from modelling.rolling_threshold import normalize_policy
+
 HOUR = 3600_000_000_000
 KEYS = ["coin", "hour", "y_true"]
 EVENT_KEYS = ["coin", "alarm_hour", "target_episode_id", "lead_hours", "is_true_alarm"]
@@ -193,6 +195,8 @@ def compatibility(out, references, info, save=True):
                                        compatibility="verified baseline").to_dict("records"))
     for reference in references:
         other = json.loads((reference / "run.json").read_text())
+        assert info.get("threshold_policy", "max_validation_recall") == other.get(
+            "threshold_policy", "max_validation_recall"), "Cannot compare different threshold policies"
         hashes = other["source_code_sha256"]
         protocol = {k: v for k, v in info["source_code_sha256"].items()
                     if k in hashes and k not in (
@@ -302,7 +306,11 @@ def verify(out, references, check_only=False):
                                       fit["horizon"] * HOUR, len(eps))
         exposure = len(set(zip(val.coin, val.hour.dt.strftime("%Y-%m"))))
         eligible = np.flatnonzero(counts[:, 1] <= exposure)
-        best = max(eligible, key=lambda i: (counts[i, 0], -counts[i, 1], cutoffs[i]))
+        policy = normalize_policy(fit.get("threshold_policy", "max_validation_recall"))
+        if policy not in ("lowest_feasible", "max_validation_recall"):
+            raise ValueError(f"Unknown threshold policy: {policy}")
+        best = (min(eligible, key=lambda i: cutoffs[i]) if policy == "lowest_feasible"
+                else max(eligible, key=lambda i: (counts[i, 0], -counts[i, 1], cutoffs[i])))
         assert cutoffs[best] == fit["threshold"]
         assert len(cutoffs) == fit["validation"]["candidate_count"]
         ve, vt = independent_events(val, episodes, fit["horizon"])

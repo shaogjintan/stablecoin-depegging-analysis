@@ -28,7 +28,8 @@ from modelling.corrected_xgb import sha256, save_json, paired_uncertainty
 from modelling.false_alarm_framework import _common_sample_fold, RANDOM_FOREST_FIXED_PARAMS
 from modelling.models import get_model
 from modelling.models.base import MedianImputer
-from modelling.rolling_threshold import _choose_threshold, _targetable_episode_ids, _false_alarm_stats
+from modelling.rolling_threshold import (_choose_threshold, _targetable_episode_ids, _false_alarm_stats,
+                                         normalize_policy)
 from modelling.train_logreg_yearcv import DEFAULT_C_GRID, _calendar_cv_folds, _fit_model
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -140,7 +141,7 @@ def metrics(pred, events, targets):
                 median_lead_hours=float(events.loc[events.is_true_alarm, "lead_hours"].median()))
 
 
-def score_cell(out, cell, spec, name, episodes, run_id, threshold_policy="exact_max_recall"):
+def score_cell(out, cell, spec, name, episodes, run_id, threshold_policy="max_validation_recall"):
     start = time.perf_counter()
     folder = out / "fits" / f"{name}_{cell}"
     folder.mkdir(parents=True, exist_ok=False)
@@ -174,8 +175,8 @@ def score_cell(out, cell, spec, name, episodes, run_id, threshold_policy="exact_
         pred["horizon"], pred["model"], pred["config"] = h, name, spec["config"]
         pred["run_id"], pred["fit_id"], pred["test_year"] = run_id, folder.name, spec["year"]
         frames[part] = pred
-    threshold, val_stats = _choose_threshold(
-        frames["inner_val"], episodes, h, 1., policy=threshold_policy)
+    threshold, val_stats = _choose_threshold(frames["inner_val"], episodes, h, 1.,
+                                            policy=threshold_policy)
     for part, pred in frames.items():
         pred["threshold"] = threshold
         pred.to_parquet(folder / f"{part}.parquet", index=False)
@@ -269,9 +270,8 @@ def aggregate(out, episodes, run_id, horizons=(6, 24), years=range(2021, 2026),
 
 
 def _run(out, frozen=None, benchmark=False, horizons=(6, 24), years=range(2021, 2026),
-        models=MODELS, configs=CONFIGS, threshold_policy="exact_max_recall"):
-    if threshold_policy not in ("exact_max_recall", "exhaustive_lowest"):
-        raise ValueError(f"Unknown threshold policy: {threshold_policy}")
+        models=MODELS, configs=CONFIGS, threshold_policy="max_validation_recall"):
+    threshold_policy = normalize_policy(threshold_policy)
     horizons, years, models, configs = map(tuple, (horizons, years, models, configs))
     if (not horizons or not set(horizons).issubset({1, 6, 24})
             or not years or not set(years).issubset(range(2021, 2026))
@@ -293,11 +293,11 @@ def _run(out, frozen=None, benchmark=False, horizons=(6, 24), years=range(2021, 
     sources = [ROOT / "modelling" / n.replace("\\", "/") for n in (
         "corrected_lr_rf.py", "corrected_h1.py", "verify_lr_rf_run.py", "corrected_data.py", "corrected_xgb.py",
         "exact_threshold.py", "rolling_threshold.py", "alarm_events.py", "train_logreg_yearcv.py",
+        "recalibrate_thresholds.py",
         "false_alarm_framework.py", "prepare_data.py", "models\\base.py", "models\\logreg.py",
         "models\\random_forest_model.py", "models\\baseline.py")]
     sources += [ROOT / "data_processing" / n for n in ("splits.py", "config.py", "merge_and_label.py")]
     manifest = dict(run_id=run_id, status="running", benchmark=benchmark,
-                    threshold_policy=threshold_policy,
                     frozen_run_id=frozen_info["run_id"] if frozen_info else None,
                     frozen_path=str(frozen) if frozen else None, command=[sys.executable, *sys.argv],
                     source_commit=subprocess.check_output(["git", "-C", str(ROOT), "rev-parse", "HEAD"],
@@ -307,6 +307,7 @@ def _run(out, frozen=None, benchmark=False, horizons=(6, 24), years=range(2021, 
                     purge_hours=PURGE_HOURS, embargo_hours=EMBARGO_HOURS,
                     horizons=list(horizons), test_years=list(years), models=list(models),
                     configs=list(configs), expected_scoring_fits=len(horizons)*len(years)*len(models)*len(configs),
+                    threshold_policy=threshold_policy,
                     thread_limits=4, rf_params=RF_PARAMS, lr_grid=list(DEFAULT_C_GRID),
                     packages={p: importlib.metadata.version(p) for p in (
                         "numpy", "pandas", "scikit-learn", "joblib", "numba", "threadpoolctl")},
@@ -350,7 +351,7 @@ def _run(out, frozen=None, benchmark=False, horizons=(6, 24), years=range(2021, 
 
 
 def run(out, frozen=None, benchmark=False, horizons=(6, 24), years=range(2021, 2026),
-        models=MODELS, configs=CONFIGS, threshold_policy="exact_max_recall"):
+        models=MODELS, configs=CONFIGS, threshold_policy="max_validation_recall"):
     if out.exists():
         raise FileExistsError(f"Use a new output directory: {out}")
     try:
@@ -375,12 +376,10 @@ if __name__ == "__main__":
                         default=list(range(2021, 2026)))
     parser.add_argument("--models", nargs="+", choices=MODELS, default=list(MODELS))
     parser.add_argument("--configs", nargs="+", choices=CONFIGS, default=list(CONFIGS))
-    parser.add_argument("--threshold-policy",
-                        choices=("exact_max_recall", "exhaustive_lowest"),
-                        default="exact_max_recall")
+    parser.add_argument("--threshold-policy", choices=("lowest_feasible", "max_validation_recall", "exhaustive_lowest", "exact_max_recall"),
+                        default="max_validation_recall")
     args = parser.parse_args()
     out = args.out_dir.resolve()
     run(out, args.frozen_xgb.resolve() if args.frozen_xgb else None, args.benchmark,
         tuple(dict.fromkeys(args.horizon or (6, 24))), tuple(dict.fromkeys(args.years)),
-        tuple(dict.fromkeys(args.models)), tuple(dict.fromkeys(args.configs)),
-        args.threshold_policy)
+        tuple(dict.fromkeys(args.models)), tuple(dict.fromkeys(args.configs)), args.threshold_policy)

@@ -23,6 +23,78 @@ average (~72 per year)**. The centre of the analysis is the **market-only
 
 ### Supported new runs (portable, corrected_v1)
 
+#### Threshold-policy sensitivity without retraining
+
+The presentation's primary threshold policy is `lowest_feasible`: evaluate all
+distinct held-out validation scores plus the no-alarm option, then choose the
+lowest cutoff satisfying **total grouped validation FA / observed eligible
+coin-months <= 1**. This is a pooled average, not a strict individual monthly cap,
+not necessarily 72 allowed alarms, and not a test-period guarantee. Cooldown makes
+grouped costs non-monotone, so binary search must not be used.
+
+The previous `max_validation_recall` policy remains the sensitivity comparator:
+maximize validation episode recall, then fewer FA, then higher cutoff. Existing
+runner defaults remain unchanged for backwards compatibility. For fresh primary
+runs explicitly append `--threshold-policy lowest_feasible` to corrected XGB,
+LR/RF, baseline or portable h1 commands. Policy is recorded in new fit metadata;
+historical runs lacking it use the previous maximum-recall interpretation.
+
+To reuse the complete verified XGB and LR/RF saved-score runs, without fitting:
+
+```powershell
+python -m modelling.recalibrate_thresholds --source-run .\runs\XGB-VERIFIED --source-run .\runs\LR-RF-VERIFIED --out-dir .\runs\LOWEST-NEW
+```
+
+This command requires all 225 cells and verified complete source runs. It records
+source hashes, independently checks all candidate cutoffs, regenerates test
+alarms/metrics and matched uncertainty, and writes separate primary and sensitivity
+yearly tables. Source models, scores and manifests are not modified; existing
+output directories are rejected. Only `status=complete` plus a passed
+`verification.json` is usable evidence. Missing inputs or failed checks raise an
+error and mark the derived run failed. No source fetching, training, LR tuning or
+SHAP regeneration is involved. AP, SHAP, coefficients and feature importance do
+not change when only the threshold rule changes.
+
+Report the policy comparison as retrospective sensitivity after viewing test
+results, not as an untouched confirmatory experiment. Choose the primary policy
+from the agreed methodology, not whichever produces better test results.
+
+#### Professor-style final refit (primary protocol)
+
+For test year Y: the practice model (fit before Y-1) picks the lowest-feasible
+cutoff on year Y-1 (the recalibration run above); then the model is **retrained on
+all eligible hours before Y** (the `train` partition, 25h purge) and its year-Y
+scores are compared with that copied cutoff. Cutoffs are never reselected.
+XGB/RF use the same fixed parameters (XGB `scale_pos_weight` recomputed); LR
+reruns its calendar-CV C selection on the final training set. Persistence has no
+parameters (scores unchanged); the constant prior is carried over unrefit.
+
+```powershell
+python -m modelling.refit_final --xgb-source .\runs\XGB-VERIFIED --lr-rf-source .\runs\LR-RF-VERIFIED --cutoff-source .\runs\LOWEST-NEW --out-dir .\runs\REFIT-NEW
+python -m modelling.verify_refit_run --run-dir .\runs\REFIT-NEW
+```
+
+Add `--resume` to continue an interrupted run (finished cells are kept). The
+runner checks the rebuilt practice partitions equal the source run exactly and that
+final training rows contain practice train+validation but no test rows. Caveat:
+the cutoff was chosen on practice-model scores and is applied to a different model.
+AP, SHAP, LR coefficients and RF importance change under this protocol.
+
+#### Alternative episode definitions (saved final alarms; no retraining)
+
+```powershell
+python -m modelling.robustness_refit_alarms --source-run .\runs\REFIT-VERIFIED --out-dir .\runs\ROBUSTNESS-NEW
+```
+
+Uses the corrected master and fixed eligible test origins/alarms from the verified
+final refit run (2021–2025, matched market and market+on-chain, h=6/24).
+Re-scores the 0.5%/1%/2% × 1/2/3/4-hour episode grid without changing scores,
+validation cutoffs, alarm grouping or sample eligibility. The 1%/2h reference
+must exactly match pooled catches, targetability, false alarms and exposure
+before any reports are written. A new output directory receives all results,
+reference checks, LR/tier comparisons, provenance and a slide-ready summary.
+The original `modelling.robustness_check` old-pipeline runner is unchanged.
+
 Run the following from the repository root in PowerShell. New runs use the
 committed `data\processed\master_corrected_v1.parquet` and matching episode
 manifest. When the untyped corrected manifest is absent, the committed
@@ -57,14 +129,14 @@ Use fresh output directories; none of these commands replaces old evidence:
 
 ```powershell
 # Full matrix: 45 XGB + 180 LR/RF/prior/persistence scoring fits.
-python -m modelling.corrected_xgb --out-dir .\runs\XGB-NEW --horizon 1 --horizon 6 --horizon 24
+python -m modelling.corrected_xgb --out-dir .\runs\XGB-NEW --horizon 1 --horizon 6 --horizon 24 --threshold-policy lowest_feasible
 python -m modelling.verify_corrected_run --run-dir .\runs\XGB-NEW
-python -m modelling.corrected_lr_rf --out-dir .\runs\LR-RF-NEW --horizon 1 --horizon 6 --horizon 24
+python -m modelling.corrected_lr_rf --out-dir .\runs\LR-RF-NEW --horizon 1 --horizon 6 --horizon 24 --threshold-policy lowest_feasible
 python -m modelling.verify_lr_rf_run --run-dir .\runs\LR-RF-NEW
 python -m modelling.lr_rf_presentation --run-dir .\runs\LR-RF-NEW --xgb-run .\runs\XGB-NEW
 
 # Optional dedicated benchmark rerun + independent every-cutoff oracle.
-python -m modelling.corrected_baselines --out-dir .\runs\BASELINES-NEW
+python -m modelling.corrected_baselines --out-dir .\runs\BASELINES-NEW --threshold-policy lowest_feasible
 python -m modelling.verify_baselines --run-dir .\runs\BASELINES-NEW
 ```
 
@@ -108,7 +180,7 @@ legacy benchmark tables. Run from the repository root into an unused directory:
 
 ```powershell
 python -m unittest modelling.checks.test_corrected_baselines modelling.checks.test_xgb_repair -v
-python -m modelling.corrected_baselines --out-dir .\BASELINES-NEW-RUN
+python -m modelling.corrected_baselines --out-dir .\BASELINES-NEW-RUN --threshold-policy lowest_feasible
 python -m modelling.verify_baselines --run-dir .\BASELINES-NEW-RUN
 ```
 
@@ -142,7 +214,7 @@ does not overwrite their datasets or artifacts:
 
 ```powershell
 python -m unittest modelling.checks.test_xgb_repair -v
-python -m modelling.corrected_xgb --out-dir .\corrected-results-NEW-RUN
+python -m modelling.corrected_xgb --out-dir .\corrected-results-NEW-RUN --threshold-policy lowest_feasible
 python -m modelling.verify_corrected_run --run-dir .\corrected-results-NEW-RUN
 ```
 
@@ -157,7 +229,7 @@ For the scoped corrected 1-hour backtest (2021–2025), use a separate fresh out
 directory (SHAP may optionally be omitted):
 
 ```powershell
-python -m modelling.corrected_xgb --out-dir .\corrected-xgb-h1-NEW-RUN --horizon 1 --no-shap
+python -m modelling.corrected_xgb --out-dir .\corrected-xgb-h1-NEW-RUN --horizon 1 --no-shap --threshold-policy lowest_feasible
 python -m modelling.verify_corrected_run --run-dir .\corrected-xgb-h1-NEW-RUN
 ```
 
@@ -167,9 +239,11 @@ labels use only new merged episode starts strictly after the completed decision
 bar and no more than one hour later; negatives require the full one-hour window
 plus the confirmation bar to be observed. Do not substitute legacy h1 results.
 
-Every distinct validation score and +infinity is evaluated exactly. The objective
-is highest validation **episode recall** within grouped false alarms / observed
-coin-months ≤1; ties prefer fewer false alarms, then the higher threshold.
+Every distinct validation score and +infinity is evaluated exactly. The default
+and historical sensitivity objective is highest validation **episode recall**
+within grouped false alarms / observed coin-months ≤1; ties prefer fewer false
+alarms, then the higher threshold. The explicit `lowest_feasible` primary policy
+instead selects the smallest feasible cutoff, as described above.
 Grouped alarm cost is non-monotone because the inclusive h-hour cooldown can
 suppress a later false alarm. A Fenwick active-row index accelerates exhaustive
 evaluation without dropping candidates. Observed partial coin-months count as
@@ -211,8 +285,8 @@ remain legacy. Use this dedicated path for comparable h6/h24 2021-2025 results:
 
 ```powershell
 python -m unittest modelling.checks.test_xgb_repair modelling.checks.test_lr_rf_repair -v
-python -m modelling.corrected_lr_rf --out-dir <NEW-BENCHMARK-DIRECTORY> --benchmark
-python -m modelling.corrected_lr_rf --out-dir <NEW-RUN-DIRECTORY>
+python -m modelling.corrected_lr_rf --out-dir <NEW-BENCHMARK-DIRECTORY> --benchmark --threshold-policy lowest_feasible
+python -m modelling.corrected_lr_rf --out-dir <NEW-RUN-DIRECTORY> --threshold-policy lowest_feasible
 python -m modelling.verify_lr_rf_run --run-dir <NEW-RUN-DIRECTORY>
 python -m modelling.lr_rf_presentation --run-dir <VERIFIED-RUN-DIRECTORY> --xgb-run <MATCHING-VERIFIED-XGB-DIRECTORY>
 ```
