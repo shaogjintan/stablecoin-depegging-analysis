@@ -84,9 +84,12 @@ class LRRFTests(unittest.TestCase):
                                       "episode_id": None, "peg_deviation": rng.normal(0, .001, 100),
                                       "realised_vol_6h": rng.uniform(.001, .01, 100), "y_true": np.arange(100) % 2})
                 frame.to_parquet(p / f"{part}.parquet", index=False)
-            score_cell(out, cell, spec, "random_forest", eps, "test")
+            score_cell(out, cell, spec, "random_forest", eps, "test",
+                       threshold_policy="lowest_feasible")
             folder = out / "fits" / f"random_forest_{cell}"
             fit = json.loads((folder / "fit.json").read_text())
+            self.assertEqual(fit["threshold_policy"], "lowest_feasible")
+            self.assertEqual(fit["validation"]["threshold_policy"], "lowest_feasible")
             for k, v in RF_PARAMS.items():
                 self.assertEqual(fit["params"][k], v)
             self.assertFalse(fit["refit_after_calibration"])

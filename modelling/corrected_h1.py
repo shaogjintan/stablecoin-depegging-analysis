@@ -21,12 +21,14 @@ from modelling.verify_lr_rf_run import (
 )
 
 
-def run(out, parent=None):
+def run(out, parent=None, threshold_policy="max_validation_recall"):
     if parent is None:
-        run_portable(out, horizons=(1,))
+        run_portable(out, horizons=(1,), threshold_policy=threshold_policy)
         from modelling.verify_lr_rf_run import verify
         verify(out)
         return
+    if threshold_policy != "max_validation_recall":
+        raise ValueError("Historical parent extension requires max_validation_recall")
     info = json.loads((parent / "run.json").read_text())
     assert info["status"] == "complete", "Wait for the h6/h24 run's independent verification first."
     assert json.loads((parent / "verification.json").read_text())["status"] == "passed"
@@ -138,5 +140,8 @@ if __name__ == "__main__":
     parser.add_argument("--parent-run", type=Path,
                         help="historical exact-reference mode; omit for a portable new run")
     parser.add_argument("--out-dir", required=True, type=Path)
+    parser.add_argument("--threshold-policy", choices=("lowest_feasible", "max_validation_recall"),
+                        default="max_validation_recall")
     args = parser.parse_args()
-    run(args.out_dir.resolve(), args.parent_run.resolve() if args.parent_run else None)
+    run(args.out_dir.resolve(), args.parent_run.resolve() if args.parent_run else None,
+        args.threshold_policy)

@@ -120,21 +120,32 @@ def _false_alarm_stats(
     else:
         max_false_by_month = 0
     return false_count, n_coin_months, rate, max_false_by_month
+POLICY_ALIASES = {"exact_max_recall": "max_validation_recall",
+                  "exhaustive_lowest": "lowest_feasible"}
+
+
+def normalize_policy(policy: str) -> str:
+    """Map legacy policy names to canonical names; reject unknown policies."""
+    policy = POLICY_ALIASES.get(policy, policy)
+    if policy not in ("max_validation_recall", "lowest_feasible"):
+        raise ValueError(f"Unknown threshold policy: {policy}")
+    return policy
+
+
 def _choose_threshold(
     validation: pd.DataFrame,
     episodes: pd.DataFrame,
     horizon: int,
     budget: float,
-    policy: str = "exact_max_recall",
+    policy: str = "max_validation_recall",
 ) -> tuple[float, dict]:
-    """Select an exact validation cutoff under a grouped false-alarm budget.
+    """Choose an explicit policy under the average validation FA/exposure budget.
 
-    Evaluate every distinct score and +inf. exhaustive_lowest selects the
-    lowest feasible cutoff; exact_max_recall maximizes recall, then favors
-    fewer false alarms and higher cutoffs. Never use test labels.
+    lowest_feasible selects the smallest feasible distinct score (or +inf).
+    max_validation_recall maximizes catches, then fewer FA, then higher cutoff.
+    Cooldown counts are NOT monotone. Never use test labels.
     """
-    if policy not in ("exact_max_recall", "exhaustive_lowest"):
-        raise ValueError(f"Unknown threshold policy: {policy}")
+    policy = normalize_policy(policy)
     scores = validation["y_score"].to_numpy(dtype=float)
     if not len(scores):
         raise ValueError("Validation fold has no scored rows")
@@ -192,10 +203,8 @@ def _choose_threshold(
     cutoffs = np.r_[cutoffs, np.inf]
     caught, false = np.r_[caught, 0], np.r_[false, 0]
     feasible = np.flatnonzero(false <= budget * n_validation_coin_months)
-    if policy == "exhaustive_lowest":
-        idx = min(feasible, key=lambda i: cutoffs[i])
-    else:
-        idx = max(feasible, key=lambda i: (caught[i], -false[i], cutoffs[i]))
+    idx = (min(feasible, key=lambda i: cutoffs[i]) if policy == "lowest_feasible"
+           else max(feasible, key=lambda i: (caught[i], -false[i], cutoffs[i])))
     best = evaluate(float(cutoffs[idx]))
     assert best["episodes_warned"] == caught[idx] and best["false_alarms"] == false[idx]
     best["candidate_count"] = len(cutoffs)
