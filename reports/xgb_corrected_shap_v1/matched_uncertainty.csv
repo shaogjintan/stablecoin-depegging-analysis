@@ -1,0 +1,3 @@
+horizon_hours,comparison,average_precision_difference,ap_ci_low,ap_ci_high,ap_bootstrap,episode_recall_difference,recall_ci_low,recall_ci_high,recall_bootstrap,targetable_episodes,targetable_event_clusters
+6,onchain minus matched market,0.00036044005143430306,-0.0031905451174025472,0.011238704562852326,500 paired observed coin-month resamples; conditional saved fits,0.0,0.0,0.0,5000 paired 24h-chained onset-event cluster resamples; conditional saved fits,33,22
+24,onchain minus matched market,0.0007549916443295394,-0.001152237019894987,0.0035475083711416573,500 paired observed coin-month resamples; conditional saved fits,0.0,-0.08823529411764706,0.08108108108108109,5000 paired 24h-chained onset-event cluster resamples; conditional saved fits,34,23

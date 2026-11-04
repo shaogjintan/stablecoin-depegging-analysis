@@ -1,0 +1,15 @@
+{
+  "dataset_version": "corrected_v1",
+  "master": "data/processed/master_corrected_v1.parquet",
+  "fit_partition": "inner_train",
+  "parameters": {
+    "n_estimators": 500,
+    "max_depth": 8,
+    "min_samples_leaf": 50,
+    "max_features": "sqrt",
+    "class_weight": "balanced_subsample",
+    "random_state": 42
+  },
+  "importance": "mean normalized impurity importance across five test-year fits",
+  "reporting_metric": "sklearn average_precision_score"
+}

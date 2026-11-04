@@ -1,0 +1,6 @@
+fit_id,explained_rows,max_additivity_error,tolerance,expected_margin,background
+market_original_h1_2021,50703,1.0032206773757935e-05,0.0001,-0.023990657180547714,implicit tree-path inner_train cover counts; no test background
+market_original_h1_2022,42669,1.33514404296875e-05,0.0001,-0.007668852806091309,implicit tree-path inner_train cover counts; no test background
+market_original_h1_2023,40819,9.670446161180735e-06,0.0001,0.0007430766127072275,implicit tree-path inner_train cover counts; no test background
+market_original_h1_2024,35913,1.0721385478973389e-05,0.0001,-0.0018836259841918945,implicit tree-path inner_train cover counts; no test background
+market_original_h1_2025,32972,9.638490155339241e-06,0.0001,-0.0030183170456439257,implicit tree-path inner_train cover counts; no test background

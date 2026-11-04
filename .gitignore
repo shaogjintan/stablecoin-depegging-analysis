@@ -23,6 +23,7 @@ results/
 
 # Experiment artifacts stay local; retain summaries, manifests and figures.
 /runs/*/fits/
+/runs/*/partitions/
 /runs/*/excluded_partial/
 /runs/*/source/
 /runs/*/source_diff.patch
