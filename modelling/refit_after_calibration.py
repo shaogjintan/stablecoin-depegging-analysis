@@ -1,6 +1,6 @@
 """Select a cutoff with a practice model, then refit before the outer test.
 
-python -m modelling.refit_after_calibration --out-dir runs/REFIT-LOWEST-NEW
+python -m modelling.refit_after_calibration --out-dir artifacts/runs/primary/REFIT-LOWEST-NEW
 
 Uses corrected folds, matched tiers, and the existing purge/embargo rules.
 Previous runs are never reused as final-model scores or overwritten.
@@ -20,9 +20,9 @@ from data_processing.config import MODELLING_DATA_VERSION, PURGE_HOURS, EMBARGO_
 from data_processing.splits import load_master, active_input_paths
 from modelling.alarm_events import build_alarm_events
 from modelling.corrected_data import corrected_folds
-from modelling.corrected_lr_rf import RF_PARAMS, fit_lr, metrics, tune_lr
+from modelling.lr_training import RF_PARAMS, fit_lr, metrics, tune_lr
 from modelling.corrected_xgb import PARAMS, sha256, save_json
-from modelling.false_alarm_framework import _common_sample_fold
+from modelling.matched_sample import _common_sample_fold
 from modelling.models import get_model
 from modelling.models.base import MedianImputer
 from modelling.rolling_threshold import _choose_threshold, _targetable_episode_ids

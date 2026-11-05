@@ -1,0 +1,18 @@
+{
+  "maintained_tests_passed": 21,
+  "pip_check": "passed",
+  "compileall": "passed",
+  "missing_local_imports": [],
+  "tracked_or_staged_moved_files_checked": 442,
+  "missing_retained_files": [],
+  "authoritative_existing_csv_json": "unchanged",
+  "corrected_snapshot_rebuild": "matching values and dtypes after index=False normalisation",
+  "detection_counts": "match all final summaries",
+  "robustness_rebuild": "all three CSV tables byte-identical",
+  "saved_model_report_generation": "passed",
+  "dune_csv_vs_zip": "all six byte-identical; both retained",
+  "permanent_deletions_during_cleanup": 0,
+  "final_run_verification": "passed: 90 model/config/horizon/year cells across four final refit runs; saved metrics and alarms, not full score replay",
+  "presentation_rebuild": "all six CSV tables match exactly by parsed values",
+  "model_retraining": "no primary models retrained; benchmark-only reproduction in temporary output"
+}

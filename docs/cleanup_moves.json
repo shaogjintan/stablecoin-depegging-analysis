@@ -1,0 +1,506 @@
+[
+  {
+    "from": "archive/midterm_presentation_folder (sasi)",
+    "to": "archive/history/midterm_presentation_folder (sasi)"
+  },
+  {
+    "from": "archive/workstream-1-literature-replication",
+    "to": "archive/history/workstream-1-literature-replication"
+  },
+  {
+    "from": "archive/legacy_modelling",
+    "to": "archive/history/legacy_modelling"
+  },
+  {
+    "from": "archive/legacy_figures",
+    "to": "archive/history/legacy_figures"
+  },
+  {
+    "from": "plans/ex_post_comparison.py",
+    "to": "archive/history/analysis/ex_post_comparison.py"
+  },
+  {
+    "from": "plans/prof_changes_summary.md",
+    "to": "archive/history/planning/prof_changes_summary.md"
+  },
+  {
+    "from": "plans/coverage_table.py",
+    "to": "modelling/reporting/coverage_table.py"
+  },
+  {
+    "from": "plans/agent_md_section7_update.md",
+    "to": "archive/history/planning/agent_md_section7_update.md"
+  },
+  {
+    "from": "plans/2026-10-13-recall-first-early-warning.md",
+    "to": "archive/history/planning/2026-10-13-recall-first-early-warning.md"
+  },
+  {
+    "from": "plans/local_final_numbers.md",
+    "to": "archive/history/planning/local_final_numbers.md"
+  },
+  {
+    "from": "plans/final_presentation_structure.md",
+    "to": "archive/history/planning/final_presentation_structure.md"
+  },
+  {
+    "from": "plans/final_deck_changes.md",
+    "to": "archive/history/planning/final_deck_changes.md"
+  },
+  {
+    "from": "plans/local_curve.py",
+    "to": "archive/history/analysis/local_curve.py"
+  },
+  {
+    "from": "plans/event_types.py",
+    "to": "modelling/reporting/event_types.py"
+  },
+  {
+    "from": "plans/2026-10-13-sasi-phase3-roadmap.md",
+    "to": "archive/history/planning/2026-10-13-sasi-phase3-roadmap.md"
+  },
+  {
+    "from": "plans",
+    "to": "delete/empty_directories/plans"
+  },
+  {
+    "from": "modelling/add_event_type.py",
+    "to": "modelling/reporting/event_annotations.py"
+  },
+  {
+    "from": "reports/final_results",
+    "to": "archive/history/reports/final_results"
+  },
+  {
+    "from": "reports/rf_importance",
+    "to": "archive/history/reports/rf_importance"
+  },
+  {
+    "from": "reports/lr_corrected",
+    "to": "archive/history/reports/lr_corrected"
+  },
+  {
+    "from": "reports/logreg_l1_yearcv",
+    "to": "archive/history/reports/logreg_l1_yearcv"
+  },
+  {
+    "from": "reports/logreg_tuning",
+    "to": "archive/history/reports/logreg_tuning"
+  },
+  {
+    "from": "reports/xgb_corrected_shap_v1",
+    "to": "archive/history/reports/xgb_corrected_shap_v1"
+  },
+  {
+    "from": "reports/xgb_threshold_search",
+    "to": "archive/history/reports/xgb_threshold_search"
+  },
+  {
+    "from": "reports/rolling_thresholds",
+    "to": "archive/history/reports/rolling_thresholds"
+  },
+  {
+    "from": "reports/alarm_tables",
+    "to": "archive/history/reports/alarm_tables"
+  },
+  {
+    "from": "reports/figures",
+    "to": "archive/history/reports/figures"
+  },
+  {
+    "from": "reports/presentation_consolidated",
+    "to": "reports/final/presentation"
+  },
+  {
+    "from": "reports/robustness/REFIT-CONCLUSIONS-CORRECTED",
+    "to": "reports/final/robustness"
+  },
+  {
+    "from": "reports/robustness/xgb_d3_lr005_300_t2_h24_robustness.csv",
+    "to": "archive/history/reports/robustness/xgb_d3_lr005_300_t2_h24_robustness.csv"
+  },
+  {
+    "from": "reports/robustness/xgboost_xgb_d3_lr005_300_t2_h24_depeg_robustness_recall_heatmap.svg",
+    "to": "archive/history/reports/robustness/xgboost_xgb_d3_lr005_300_t2_h24_depeg_robustness_recall_heatmap.svg"
+  },
+  {
+    "from": "reports/robustness/xgboost_xgb_d3_lr005_300_t2_h24_depeg_robustness_false_alarms_per_coin_month_heatmap.svg",
+    "to": "archive/history/reports/robustness/xgboost_xgb_d3_lr005_300_t2_h24_depeg_robustness_false_alarms_per_coin_month_heatmap.svg"
+  },
+  {
+    "from": "reports/robustness",
+    "to": "delete/empty_directories/robustness"
+  },
+  {
+    "from": "reports/recall_operating_points.csv",
+    "to": "archive/history/reports/recall_operating_points.csv"
+  },
+  {
+    "from": "reports/local_budget_per_year.csv",
+    "to": "archive/history/reports/local_budget_per_year.csv"
+  },
+  {
+    "from": "reports/logreg_matched_tier_eval.csv",
+    "to": "archive/history/reports/logreg_matched_tier_eval.csv"
+  },
+  {
+    "from": "reports/ex_post_comparison.csv",
+    "to": "archive/history/reports/ex_post_comparison.csv"
+  },
+  {
+    "from": "reports/local_budget_curve_t2_h24.png",
+    "to": "archive/history/reports/local_budget_curve_t2_h24.png"
+  },
+  {
+    "from": "reports/modelling_comparison.csv",
+    "to": "archive/history/reports/modelling_comparison.csv"
+  },
+  {
+    "from": "reports/combination_results.csv",
+    "to": "archive/history/reports/combination_results.csv"
+  },
+  {
+    "from": "reports/coverage_table.csv",
+    "to": "archive/history/reports/coverage_before_regeneration/coverage_table.csv"
+  },
+  {
+    "from": "reports/local_budget_curve_t1_h24.png",
+    "to": "archive/history/reports/local_budget_curve_t1_h24.png"
+  },
+  {
+    "from": "reports/logreg_coef_slide_h24_t2.csv",
+    "to": "archive/history/reports/logreg_coef_slide_h24_t2.csv"
+  },
+  {
+    "from": "reports/ex_post_vs_real_time_h24.png",
+    "to": "archive/history/reports/ex_post_vs_real_time_h24.png"
+  },
+  {
+    "from": "reports/logreg_coefficients.csv",
+    "to": "archive/history/reports/logreg_coefficients.csv"
+  },
+  {
+    "from": "reports/market_coverage_table.csv",
+    "to": "archive/history/reports/coverage_before_regeneration/market_coverage_table.csv"
+  },
+  {
+    "from": "reports/annual_calibration.csv",
+    "to": "archive/history/reports/annual_calibration.csv"
+  },
+  {
+    "from": "reports/logreg_operating_point.csv",
+    "to": "archive/history/reports/logreg_operating_point.csv"
+  },
+  {
+    "from": "reports/logreg_tuning_summary.csv",
+    "to": "archive/history/reports/logreg_tuning_summary.csv"
+  },
+  {
+    "from": "reports/onchain_coverage_table.csv",
+    "to": "archive/history/reports/coverage_before_regeneration/onchain_coverage_table.csv"
+  },
+  {
+    "from": "reports/ex_post_comparison_per_year.csv",
+    "to": "archive/history/reports/ex_post_comparison_per_year.csv"
+  },
+  {
+    "from": "reports/local_budget_curve.csv",
+    "to": "archive/history/reports/local_budget_curve.csv"
+  },
+  {
+    "from": "reports/event_tables",
+    "to": "archive/history/reports/event_tables"
+  },
+  {
+    "from": "runs/REFIT-LOWEST-NEW",
+    "to": "artifacts/runs/primary/REFIT-LOWEST-NEW"
+  },
+  {
+    "from": "runs/LR-REFIT-LOWEST-NEW",
+    "to": "artifacts/runs/primary/LR-REFIT-LOWEST-NEW"
+  },
+  {
+    "from": "runs/REFIT-LOWEST-H1",
+    "to": "artifacts/runs/supplementary/REFIT-LOWEST-H1"
+  },
+  {
+    "from": "runs/LR-REFIT-LOWEST-H1",
+    "to": "artifacts/runs/supplementary/LR-REFIT-LOWEST-H1"
+  },
+  {
+    "from": "runs/EXHAUSTIVE-LOWEST-NEW",
+    "to": "artifacts/runs/sensitivity/EXHAUSTIVE-LOWEST-NEW"
+  },
+  {
+    "from": "runs/XGB-NEW",
+    "to": "artifacts/runs/sensitivity/XGB-NEW"
+  },
+  {
+    "from": "runs/LR-EXHAUSTIVE-LOWEST",
+    "to": "archive/history/runs/LR-EXHAUSTIVE-LOWEST"
+  },
+  {
+    "from": "runs",
+    "to": "delete/empty_directories/runs"
+  },
+  {
+    "from": "modelling/train.py",
+    "to": "archive/history/modelling/train.py"
+  },
+  {
+    "from": "modelling/alarm_report.py",
+    "to": "archive/history/modelling/alarm_report.py"
+  },
+  {
+    "from": "modelling/annual_calibration.py",
+    "to": "archive/history/modelling/annual_calibration.py"
+  },
+  {
+    "from": "modelling/episode_summary.py",
+    "to": "archive/history/modelling/episode_summary.py"
+  },
+  {
+    "from": "modelling/compare_runs.py",
+    "to": "archive/history/modelling/compare_runs.py"
+  },
+  {
+    "from": "modelling/combine_alarms.py",
+    "to": "archive/history/modelling/combine_alarms.py"
+  },
+  {
+    "from": "modelling/compare_xgb_early_stopping.py",
+    "to": "archive/history/modelling/compare_xgb_early_stopping.py"
+  },
+  {
+    "from": "modelling/plot_metric_sensitivity.py",
+    "to": "archive/history/modelling/plot_metric_sensitivity.py"
+  },
+  {
+    "from": "modelling/matched_tier_eval.py",
+    "to": "archive/history/modelling/matched_tier_eval.py"
+  },
+  {
+    "from": "modelling/logreg_coefficients.py",
+    "to": "archive/history/modelling/logreg_coefficients.py"
+  },
+  {
+    "from": "modelling/logreg_operating_point.py",
+    "to": "archive/history/modelling/logreg_operating_point.py"
+  },
+  {
+    "from": "modelling/logreg_slide_tables.py",
+    "to": "archive/history/modelling/logreg_slide_tables.py"
+  },
+  {
+    "from": "modelling/lr_rf_presentation.py",
+    "to": "archive/history/modelling/lr_rf_presentation.py"
+  },
+  {
+    "from": "modelling/corrected_h1.py",
+    "to": "archive/history/modelling/corrected_h1.py"
+  },
+  {
+    "from": "modelling/corrected_baselines.py",
+    "to": "archive/history/modelling/corrected_baselines.py"
+  },
+  {
+    "from": "modelling/recalibrate_thresholds.py",
+    "to": "archive/history/modelling/recalibrate_thresholds.py"
+  },
+  {
+    "from": "modelling/refit_final.py",
+    "to": "archive/history/modelling/refit_final.py"
+  },
+  {
+    "from": "modelling/robustness_extensions.py",
+    "to": "archive/history/modelling/robustness_extensions.py"
+  },
+  {
+    "from": "modelling/robustness_conclusion.py",
+    "to": "archive/history/modelling/robustness_conclusion.py"
+  },
+  {
+    "from": "modelling/corrected_lr_rf.py",
+    "to": "archive/history/modelling/corrected_lr_rf.py"
+  },
+  {
+    "from": "modelling/train_logreg_yearcv.py",
+    "to": "archive/history/modelling/train_logreg_yearcv.py"
+  },
+  {
+    "from": "modelling/false_alarm_framework.py",
+    "to": "archive/history/modelling/false_alarm_framework.py"
+  },
+  {
+    "from": "modelling/consolidate_slide_values.py",
+    "to": "archive/history/modelling/consolidate_slide_values.py"
+  },
+  {
+    "from": "modelling/robustness_check.py",
+    "to": "archive/history/modelling/robustness_check.py"
+  },
+  {
+    "from": "modelling/feature_importance",
+    "to": "archive/history/modelling/feature_importance"
+  },
+  {
+    "from": "modelling/verify_baselines.py",
+    "to": "archive/history/modelling/verify_baselines.py"
+  },
+  {
+    "from": "modelling/verify_lr_rf_run.py",
+    "to": "archive/history/modelling/verify_lr_rf_run.py"
+  },
+  {
+    "from": "modelling/verify_corrected_run.py",
+    "to": "archive/history/modelling/verify_corrected_run.py"
+  },
+  {
+    "from": "modelling/verify_refit_run.py",
+    "to": "archive/history/modelling/verify_refit_run.py"
+  },
+  {
+    "from": "modelling/robustness_refit_alarms.py",
+    "to": "archive/history/modelling/robustness_refit_alarms.py"
+  },
+  {
+    "from": "modelling/checks",
+    "to": "tests"
+  },
+  {
+    "from": "tests/test_corrected_baselines.py",
+    "to": "archive/history/tests/test_corrected_baselines.py"
+  },
+  {
+    "from": "tests/test_lr_rf_repair.py",
+    "to": "archive/history/tests/test_lr_rf_repair.py"
+  },
+  {
+    "from": "tests/test_readiness.py",
+    "to": "archive/history/tests/test_readiness.py"
+  },
+  {
+    "from": "tests/test_refit_final.py",
+    "to": "archive/history/tests/test_refit_final.py"
+  },
+  {
+    "from": "tests/test_robustness_refit_alarms.py",
+    "to": "archive/history/tests/test_robustness_refit_alarms.py"
+  },
+  {
+    "from": "tests/test_threshold_policy.py",
+    "to": "archive/history/tests/test_threshold_policy.py"
+  },
+  {
+    "from": "data/processed/master.parquet",
+    "to": "data/snapshots/master_original.parquet"
+  },
+  {
+    "from": "data/processed/hourly_stablecoin.parquet",
+    "to": "data/snapshots/hourly_stablecoin.parquet"
+  },
+  {
+    "from": "data/processed/hourly_stablecoin_market_features.parquet",
+    "to": "data/interim/hourly_stablecoin_market_features.parquet"
+  },
+  {
+    "from": "data/processed/hourly_stablecoin_onchain_features.parquet",
+    "to": "data/interim/hourly_stablecoin_onchain_features.parquet"
+  },
+  {
+    "from": "data/processed/test_h24_fiat.parquet",
+    "to": "archive/history/data/test_h24_fiat.parquet"
+  },
+  {
+    "from": "data/processed/cv_folds_summary.csv",
+    "to": "archive/history/data/cv_folds_summary.csv"
+  },
+  {
+    "from": "data/processed/depeg_episodes.parquet",
+    "to": "archive/history/data/depeg_episodes.parquet"
+  },
+  {
+    "from": "data/processed/train_h1_fiat.parquet",
+    "to": "archive/history/data/train_h1_fiat.parquet"
+  },
+  {
+    "from": "data/processed/train_h6_fiat.parquet",
+    "to": "archive/history/data/train_h6_fiat.parquet"
+  },
+  {
+    "from": "data/processed/market_coverage_table.csv",
+    "to": "archive/history/data/market_coverage_table.csv"
+  },
+  {
+    "from": "data/processed/master.csv",
+    "to": "delete/data/processed/master.csv"
+  },
+  {
+    "from": "data/processed/test_h1_fiat.parquet",
+    "to": "archive/history/data/test_h1_fiat.parquet"
+  },
+  {
+    "from": "data/processed/test_h6_fiat.parquet",
+    "to": "archive/history/data/test_h6_fiat.parquet"
+  },
+  {
+    "from": "data/processed/train_h24_fiat.parquet",
+    "to": "archive/history/data/train_h24_fiat.parquet"
+  },
+  {
+    "from": "data/processed/depeg_episodes.csv",
+    "to": "delete/data/processed/depeg_episodes.csv"
+  },
+  {
+    "from": "data/processed/onchain_coverage_table.csv",
+    "to": "archive/history/data/onchain_coverage_table.csv"
+  },
+  {
+    "from": "results",
+    "to": "archive/history/results"
+  },
+  {
+    "from": "README.md",
+    "to": "archive/history/documentation/README.md"
+  },
+  {
+    "from": "agent.md",
+    "to": "archive/history/documentation/agent.md"
+  },
+  {
+    "from": "requirements.txt",
+    "to": "archive/history/documentation/requirements.txt"
+  },
+  {
+    "from": "requirements-modelling.txt",
+    "to": "archive/history/documentation/requirements-modelling.txt"
+  },
+  {
+    "from": "data_processing/coverage_table.py",
+    "to": "archive/history/data_processing/coverage_table.py"
+  },
+  {
+    "from": "modelling/checks/test_corrected_baselines.py",
+    "to": "archive/history/tests/test_corrected_baselines.py"
+  },
+  {
+    "from": "modelling/checks/test_lr_rf_repair.py",
+    "to": "archive/history/tests/test_lr_rf_repair.py"
+  },
+  {
+    "from": "modelling/checks/test_readiness.py",
+    "to": "archive/history/tests/test_readiness.py"
+  },
+  {
+    "from": "modelling/checks/test_refit_final.py",
+    "to": "archive/history/tests/test_refit_final.py"
+  },
+  {
+    "from": "modelling/checks/test_robustness_refit_alarms.py",
+    "to": "archive/history/tests/test_robustness_refit_alarms.py"
+  },
+  {
+    "from": "modelling/checks/test_threshold_policy.py",
+    "to": "archive/history/tests/test_threshold_policy.py"
+  }
+]

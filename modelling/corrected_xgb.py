@@ -29,7 +29,7 @@ from modelling.alarm_events import build_alarm_events
 from modelling.corrected_data import corrected_folds
 from data_processing.config import MODELLING_DATA_VERSION, PURGE_HOURS, EMBARGO_HOURS
 from data_processing.splits import load_master, active_input_paths
-from modelling.false_alarm_framework import _common_sample_fold
+from modelling.matched_sample import _common_sample_fold
 from modelling.models.xgboost_model import XGBModel
 from modelling.prepare_data import MARKET_FEATURES, ONCHAIN_FEATURES
 from modelling.rolling_threshold import (
@@ -172,9 +172,9 @@ def _run(out, horizons=(6, 24), include_shap=True, years=range(2021, 2026),
     run_id = datetime.now(timezone.utc).strftime("%Y%m%dT%H%M%SZ") + "-" + uuid.uuid4().hex[:8]
     source_files = [
         ROOT / "modelling" / name for name in (
-            "corrected_data.py", "corrected_xgb.py", "verify_corrected_run.py",
-            "rolling_threshold.py", "exact_threshold.py", "alarm_events.py", "recalibrate_thresholds.py",
-            "false_alarm_framework.py", "prepare_data.py", "models/xgboost_model.py",
+            "corrected_data.py", "corrected_xgb.py", "verify_release.py",
+            "rolling_threshold.py", "exact_threshold.py", "alarm_events.py", "matched_sample.py",
+            "reference_checks.py", "prepare_data.py", "models/xgboost_model.py",
         )
     ] + [
         ROOT / "data_processing" / name

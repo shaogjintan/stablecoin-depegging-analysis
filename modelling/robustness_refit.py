@@ -12,7 +12,7 @@ import pandas as pd
 
 from data_processing.splits import load_master, active_input_paths
 from modelling.corrected_xgb import sha256, save_json
-from modelling.robustness_check import make_episodes
+from modelling.episode_definitions import make_episodes
 
 
 def targetable_ids(pred, episodes, h):

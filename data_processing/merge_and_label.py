@@ -30,6 +30,8 @@ Definitions (thresholds and horizons are configured in config.py):
 Train/test splitting lives in splits.py; model-ready reporting is in
 modelling/reporting/partition_report.py.
 """
+from pathlib import Path
+
 import numpy as np
 import pandas as pd
 from config import (
@@ -245,10 +247,10 @@ def flag_prediction_eligibility(df: pd.DataFrame) -> pd.DataFrame:
     return df
 
 def main():
-    price = pd.read_parquet(PROCESSED_DATA_DIR / "hourly_stablecoin.parquet")
+    price = pd.read_parquet(Path("data/snapshots/hourly_stablecoin.parquet"))
     price = price.rename(columns={"timestamp": "hour"})
-    onchain = pd.read_parquet(PROCESSED_DATA_DIR / "hourly_stablecoin_onchain_features.parquet")
-    market = pd.read_parquet(PROCESSED_DATA_DIR / "hourly_stablecoin_market_features.parquet")
+    onchain = pd.read_parquet(Path("data/interim/hourly_stablecoin_onchain_features.parquet"))
+    market = pd.read_parquet(Path("data/interim/hourly_stablecoin_market_features.parquet"))
 
     merged = merge_sources(price, onchain, market)
     merged = flag_episodes(merged)
@@ -277,7 +279,7 @@ def main():
     print("\nFEATURE SAMPLE COVERAGE")
     print(coverage.round(2).to_string())
 
-    merged.to_parquet(PROCESSED_DATA_DIR / "master.parquet", index=False)
+    merged.to_parquet(Path("data/snapshots/master_original.parquet"), index=False)
     merged.to_csv(PROCESSED_DATA_DIR / "master.csv", index=False)
     episodes.to_parquet(PROCESSED_DATA_DIR / "depeg_episodes.parquet", index=False)
     episodes.to_csv(PROCESSED_DATA_DIR / "depeg_episodes.csv", index=False)

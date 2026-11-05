@@ -16,7 +16,9 @@ ENV/
 .env
 
 # Data (large/regenerable — keep raw & processed data out of git)
-data/
+data/*
+!data/README.md
+!data/manifest.json
 
 # Modelling scratch (predictions, model artifacts; final tables/figures -> reports/)
 results/
@@ -49,3 +51,36 @@ build/
 dist/
 *.egg-info/
 Untitled.ipynb
+
+# Relocated artifacts: keep large evidence local, retain tables and manifests.
+/artifacts/runs/**/fits/
+/artifacts/runs/**/partitions/
+/artifacts/runs/**/excluded_partial/
+/artifacts/runs/**/source/
+/artifacts/runs/**/source_diff.patch
+/artifacts/runs/**/runner_source.py
+/artifacts/runs/**/*.parquet
+/artifacts/runs/**/*.npz
+/archive/history/**/fits/
+/archive/history/**/partitions/
+/archive/history/**/source/
+/archive/history/**/source_diff.patch
+/archive/history/**/*.parquet
+/archive/history/**/*.npz
+/archive/history/results/
+/archive/history/outputs/
+/delete/
+!data/README.md
+!data/manifest.json
+
+# Preserve previously committed canonical inputs and their original rebuild source.
+!data/processed/
+data/processed/*
+!data/processed/master_corrected_v1.parquet
+!data/processed/depeg_episodes_corrected_v1.parquet
+!data/processed/depeg_episodes_corrected_v1_typed.parquet
+!data/processed/corrected_v1_metadata.json
+!data/snapshots/
+data/snapshots/*
+!data/snapshots/master_original.parquet
+!data/dune_export_comparison.json

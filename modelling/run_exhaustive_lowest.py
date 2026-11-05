@@ -1,6 +1,6 @@
 """Calibrate corrected RF/XGB with exhaustive lowest-feasible thresholds.
 
-python -m modelling.run_exhaustive_lowest --xgb-run runs/XGB-NEW
+python -m modelling.run_exhaustive_lowest --xgb-run artifacts/runs/sensitivity/XGB-NEW
 
 XGB scores are frozen. RF fits the same inner_train rows with the shared
 fixed configuration. Validation only selects cutoffs. The maximum-recall
@@ -18,7 +18,7 @@ import joblib
 import pandas as pd
 from modelling.run_summary import aggregate
 from modelling.alarm_events import build_alarm_events
-from modelling.corrected_lr_rf import RF_PARAMS
+from modelling.lr_training import RF_PARAMS
 from modelling.models import get_model
 from modelling.models.base import MedianImputer
 from modelling.rolling_threshold import _choose_threshold, _targetable_episode_ids, _false_alarm_stats, _observed_coin_months
@@ -35,7 +35,7 @@ def save_json(path, obj):
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--xgb-run", type=Path, required=True)
-    parser.add_argument("--out-dir", type=Path, default=Path("runs/EXHAUSTIVE-LOWEST-NEW"))
+    parser.add_argument("--out-dir", type=Path, default=Path("artifacts/runs/sensitivity/EXHAUSTIVE-LOWEST-NEW"))
     parser.add_argument("--horizon", type=int, action="append", choices=[1, 6, 24])
     parser.add_argument("--configs", nargs="+",
                         choices=["market_original", "market_matched", "market_onchain"],

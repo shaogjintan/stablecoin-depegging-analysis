@@ -21,7 +21,7 @@ def main():
         print(f"Using existing corrected_v1 inputs: {len(master)} rows, {len(episodes)} episodes. "
               "No files overwritten.")
         return
-    source = Path("data/processed/master.parquet")
+    source = Path("data/snapshots/master_original.parquet")
     raw = pd.read_parquet(source)
     if "bar_start" in raw.columns or "observable_at_risk" in raw.columns:
         raise ValueError("Input already looks corrected; refusing to shift clocks twice.")

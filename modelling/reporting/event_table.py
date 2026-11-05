@@ -14,13 +14,13 @@ first episode (not chaining) stops a slow run of dips snowballing into one
 event. An event's year is the year of its first episode.
 
 INPUT
-  data/processed/depeg_episodes.parquet
+  data/processed/depeg_episodes_corrected_v1.parquet
 
-OUTPUT (reports/event_tables/)
+OUTPUT (reports/final/events/)
   episodes.csv  one row per episode with its event_id
   events.csv    one row per event: start, coins, episode IDs
   by_year.csv   number of episodes vs events per year (and per coin)
-  figures/      (skip with --no-plots; prices read from master.parquet)
+  figures/      (skip with --no-plots; prices read from master_corrected_v1.parquet)
     1_timeline.png        every episode per coin, multi-coin events shaded
     2_event_zooms.png     price of each coin around every multi-coin event
     3_onset_gaps.png      hours to nearest other-coin onset (why 48h)
@@ -46,6 +46,7 @@ import numpy as np  # noqa: E402
 import pandas as pd  # noqa: E402
 
 REPO_ROOT = Path(__file__).resolve().parents[2]
+sys.path.insert(0, str(REPO_ROOT))
 sys.path.insert(0, str(REPO_ROOT / "data_processing"))
 
 from config import (  # noqa: E402
@@ -353,7 +354,7 @@ def plot_expanding_window(by_year: pd.DataFrame, path: Path) -> None:
     fig.text(0.012, 0.02,
              "Threshold year: a practice model trained on the earlier years scores it, and the "
              "alarm threshold is set there (false-alarm budget).\nThe final model is then "
-             "trained on all years before the test year. 24h purge/embargo at each "
+             "trained on all years before the test year. 25h purge / 24h embargo at each "
              "boundary; episodes straddling a boundary are dropped.",
              fontsize=8, color=MUTED, ha="left", va="bottom")
     fig.tight_layout(rect=(0, 0.09, 1, 1))
@@ -367,17 +368,19 @@ def main(argv=None) -> int:
     parser.add_argument("--window-hours", type=float, default=48,
                         help="episodes on different coins starting within this many hours "
                              "of an event's first episode join that event (default 48)")
-    parser.add_argument("--out-dir", default=str(REPO_ROOT / "reports/event_tables"))
+    parser.add_argument("--out-dir", default=str(REPO_ROOT / "reports/final/events"))
     parser.add_argument("--no-plots", action="store_true", help="skip the figures")
     args = parser.parse_args(argv)
 
-    episodes = pd.read_parquet(PROCESSED_DATA_DIR / "depeg_episodes.parquet")
+    episodes = pd.read_parquet(PROCESSED_DATA_DIR / "depeg_episodes_corrected_v1.parquet")
     for col in ("start", "end"):
         episodes[col] = pd.to_datetime(episodes[col], utc=True)
-    eps = group_events(episodes, args.window_hours)
+    from modelling.reporting.event_annotations import annotate
+    from modelling.reporting.event_types import classify
+    eps = annotate(group_events(episodes, args.window_hours))
 
     ep_tab = eps[["event_id", "event_start", "year", "episode_id", "coin",
-                  "start", "end", "n_hours", "min_price"]]
+                  "start", "end", "n_hours", "min_price", "historical_context"]]
     ev_tab = (eps.groupby("event_id", sort=False)
               .agg(event_start=("event_start", "first"),
                    last_episode_start=("start", "max"),
@@ -404,6 +407,9 @@ def main(argv=None) -> int:
         frame.to_csv(path, index=False)
         print(f"Saved {name}: {path}")
 
+    types = classify(eps, ev_tab)
+    types.to_csv(out_dir / "types_events.csv", index=False)
+    types.groupby("type").agg(events=("event_id", "size"), episodes=("n_episodes", "sum")).reset_index().to_csv(out_dir / "types_summary.csv", index=False)
     print(f"\n{len(eps)} episodes -> {len(ev_tab)} events "
           f"(window {args.window_hours:g}h)\n")
     print(by_year.to_string(index=False))
@@ -414,7 +420,7 @@ def main(argv=None) -> int:
     if not args.no_plots:
         fig_dir = out_dir / "figures"
         fig_dir.mkdir(exist_ok=True)
-        prices = pd.read_parquet(PROCESSED_DATA_DIR / "master.parquet",
+        prices = pd.read_parquet(PROCESSED_DATA_DIR / "master_corrected_v1.parquet",
                                  columns=["coin", "hour", "price"])
         prices["hour"] = pd.to_datetime(prices["hour"], utc=True)
         plot_timeline(eps, ev_tab, fig_dir / "1_timeline.png")

@@ -1,4 +1,4 @@
-# Slide content: alternative depeg definitions
+L# Slide content: alternative depeg definitions
 
 Use the corrected results in `reports/robustness/REFIT-CONCLUSIONS-CORRECTED/`.
 The earlier `REFIT-CONCLUSIONS/` tables have a superseded recall denominator.

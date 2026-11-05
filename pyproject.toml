@@ -1,0 +1,16 @@
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "stablecoin-depegging-analysis"
+version = "0.1.0"
+description = "Reproducible episode-level stablecoin depeg early-warning research"
+requires-python = ">=3.12,<3.13"
+dependencies = ["numpy", "pandas", "scipy", "scikit-learn", "xgboost", "shap", "numba", "pyarrow", "joblib", "threadpoolctl", "matplotlib"]
+
+[project.optional-dependencies]
+acquisition = ["requests", "python-dotenv"]
+
+[tool.setuptools.packages.find]
+include = ["modelling*", "data_processing*"]

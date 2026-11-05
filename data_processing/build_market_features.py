@@ -21,11 +21,13 @@ pooled tree model would learn that missingness pattern as a coin identifier
 rather than a market signal, so trades_pct_change_1h and taker_buy_ratio are
 not built. 
 """
+from pathlib import Path
+
 import numpy as np
 import pandas as pd
 from config import PROCESSED_DATA_DIR
 
-OUT_PATH = PROCESSED_DATA_DIR / "hourly_stablecoin_market_features.parquet"
+OUT_PATH = Path("data/interim/hourly_stablecoin_market_features.parquet")
 
 
 def build_price_features(df: pd.DataFrame) -> pd.DataFrame:
@@ -93,7 +95,7 @@ def main():
     # 01 already inner-joins price and volume, so every row already has both
     # -- no separate left join needed here, unlike an earlier draft of this
     # script that assumed price and volume came from different tables.
-    df = pd.read_parquet(PROCESSED_DATA_DIR / "hourly_stablecoin.parquet")
+    df = pd.read_parquet(Path("data/snapshots/hourly_stablecoin.parquet"))
 
     price_feats = build_price_features(df)
     exch_feats = build_exchange_features(df)

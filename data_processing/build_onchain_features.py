@@ -41,8 +41,8 @@ import numpy as np
 import pandas as pd
 from config import DUNE_ONCHAIN_ZIP, DUNE_ONCHAIN_DIR, PROCESSED_DATA_DIR, FIAT_COINS
 
-OUT_PATH = PROCESSED_DATA_DIR / "hourly_stablecoin_onchain_features.parquet"
-MASTER_PATH = PROCESSED_DATA_DIR / "master.parquet"
+OUT_PATH = Path("data/interim/hourly_stablecoin_onchain_features.parquet")
+MASTER_PATH = Path("data/snapshots/master_original.parquet")
 
 EXPECTED_COLUMNS = ["hour", "tx_count", "tx_volume", "active_senders", "active_receivers"]
 
