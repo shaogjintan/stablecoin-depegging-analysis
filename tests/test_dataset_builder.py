@@ -3,7 +3,7 @@ import unittest
 import pandas as pd
 from data_processing.config import ACTIVE_MASTER_PATH, ACTIVE_EPISODES_PATH
 from data_processing.splits import resolve_recorded_input
-from modelling.build_corrected_dataset import assert_rebuild_matches
+from data_processing.build_dataset import assert_rebuild_matches
 from modelling.corrected_data import prepare_corrected
 
 

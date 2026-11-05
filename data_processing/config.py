@@ -1,5 +1,4 @@
-"""
-Configuration for the stablecoin depeg-forecasting data pipeline.
+"""Configuration for the stablecoin depeg-forecasting data pipeline.
 """
 
 from pathlib import Path
@@ -8,6 +7,14 @@ from pathlib import Path
 # Paths
 # ---------------------------------------------------------------------------
 RAW_DATA_DIR = Path("data/raw")
+INTERIM_DATA_DIR = Path("data/interim")
+HOURLY_MARKET_PATH = INTERIM_DATA_DIR / "hourly_stablecoin.parquet"
+MARKET_FEATURES_PATH = (
+    INTERIM_DATA_DIR / "hourly_stablecoin_market_features.parquet"
+)
+ONCHAIN_FEATURES_PATH = (
+    INTERIM_DATA_DIR / "hourly_stablecoin_onchain_features.parquet"
+)
 SNAP_TXN_DIR = RAW_DATA_DIR / "snap_erc20" / "transfers"
 SNAP_PRICE_DIR = RAW_DATA_DIR / "snap_erc20" / "prices"
 SNAP_EVENT_FILE = RAW_DATA_DIR / "snap_erc20" / "event_data.csv"
@@ -18,11 +25,11 @@ PROCESSED_DATA_DIR = Path("data/processed")
 MODELLING_DATA_VERSION = "corrected_v1"
 ACTIVE_MASTER_PATH = PROCESSED_DATA_DIR / "master.parquet"
 ACTIVE_EPISODES_PATH = PROCESSED_DATA_DIR / "depeg_episodes.parquet"
-ACTIVE_TYPED_EPISODES_PATH = PROCESSED_DATA_DIR / "depeg_episodes_w_event_type.parquet"
+ACTIVE_TYPED_EPISODES_PATH = (
+    PROCESSED_DATA_DIR / "depeg_episodes_w_event_type.parquet"
+)
+DATASET_METADATA_PATH = PROCESSED_DATA_DIR / "dataset_metadata.json"
 REPORT_DIR = Path("reports")
-
-for d in [PROCESSED_DATA_DIR, REPORT_DIR]:
-    d.mkdir(parents=True, exist_ok=True)
 
 # ---------------------------------------------------------------------------
 # Universe
@@ -40,7 +47,8 @@ DEFILLAMA_FIAT_COIN_SPECS = {
     # hourly move ~10%, single-hour swings $0.75-$1.25 vs <1% from Sep 2018).
     # Starts after that; still includes the Oct 2018 depeg (low $0.944)
     "USDT": {"id": "coingecko:tether", "start": "2018-09-01"},
-    # first price 2018-10-04 16:00 (launched late Sep 2018), hourly from 2018-10-05
+    # first price 2018-10-04 16:00 (launched late Sep 2018), hourly from
+    # 2018-10-05
     "USDC": {"id": "coingecko:usd-coin", "start": "2018-10-05"},
     # multi-collateral DAI launch; trades ~$0.97-0.98 until mid-Jan 2020
     "DAI": {"id": "coingecko:dai", "start": "2019-11-18"},
@@ -53,17 +61,18 @@ DEFILLAMA_FIAT_COIN_SPECS = {
     # hourly from 2019-09-21; minting halted Feb 2023, Paxos support through
     # Feb 2024, on-chain transfers fall ~80% in Mar 2024 and price turns
     # erratic ($0.73-$2.40, 20-47% of hours < $0.99) from Jun 2024
-    "BUSD": {"id": "coingecko:binance-usd", "start": "2019-09-21", "end": "2024-02-29 23:00"},
+    "BUSD": {
+        "id": "coingecko:binance-usd",
+        "start": "2019-09-21",
+        "end": "2024-02-29 23:00",
+    },
 }
 
-# Single-exchange hourly OHLCV, used only for market features (returns, high-low
-# spread, volume, taker-buy share) -- NOT for price/labels, which stay on the
-# DefiLlama series above. USDT and DAI have no liquid USDT-quoted pair (they'd be
-# pricing the coin against itself / against another stablecoin with its own
-# wobble), so they're quoted in USD on Bitfinex; the other four are quoted in
-# USDT on Binance, which has far deeper liquidity than any direct USD pair for
-# them. Caveat: a USDT-quoted coin's "return" and "volume" are relative to USDT,
-# so they wobble a little if USDT itself is depegging at the same time.
+# Exchange OHLCV supplies volume and venue provenance. Reference prices,
+# price-based features and labels use the DefiLlama series above.
+# USDT and DAI use USD quotes on Bitfinex to avoid self/stablecoin quotes;
+# the other four use USDT quotes on Binance. USDT-quoted volume is measured
+# in that trading pair's base units, not independent USD notional.
 EXCHANGE_OHLCV_SPECS = {
     "USDT": [{"venue": "bitfinex", "symbol": "tUSTUSD", "quote": "USD",
               "start": "2018-11-19"}],
@@ -83,7 +92,8 @@ EXCHANGE_OHLCV_SPECS = {
 }
 
 BINANCE_KLINE_COLS = [
-    "open_time", "open", "high", "low", "close", "volume", "close_time", "ignore",
+    "open_time", "open", "high", "low", "close", "volume",
+    "close_time", "ignore",
 ]
 
 # ---------------------------------------------------------------------------
@@ -110,7 +120,8 @@ OUTLIER_REVIEW_THRESHOLD = 50_000_000
 # ---------------------------------------------------------------------------
 # Leakage control
 # ---------------------------------------------------------------------------
-EMBARGO_HOURS = 24  # drop first 24h after each split boundary (feature lookback)
+# Drop the first 24h after each split boundary for feature lookback.
+EMBARGO_HOURS = 24
 PURGE_HOURS = max(FORECAST_HORIZONS_HOURS) + DEPEG_MIN_DURATION_HOURS - 1
 # Expanding-window CV (see splits.py): for each year Y in this range, train on
 # everything before Y and test on Y. Replaces the old single

@@ -1,5 +1,4 @@
-"""
-Build hourly on-chain features from Dune Analytics exports.
+"""Build hourly on-chain features from Dune Analytics exports.
 
 Extracts the per-coin CSV for each coin in config.FIAT_COINS from
 config.DUNE_ONCHAIN_ZIP into config.DUNE_ONCHAIN_DIR (data/raw/dune_onchain),
@@ -14,7 +13,7 @@ EXPECTED CSV SCHEMA (per file):
     matched case-insensitively against config.FIAT_COINS (so "usdt.csv" ->
     "USDT").
 
-TIER 2 CHANGE FEATURES (added 2026-10-13, see plans/2026-10-13-sasi-phase3-roadmap.md)
+TIER 2 CHANGE FEATURES
 Raw on-chain levels (tx_count, ...) differ by orders of magnitude between
 coins and identify the coin, so they are NOT usable as Tier 2 model features.
 This script therefore also builds 1h/6h/24h log1p-difference change features:
@@ -39,22 +38,33 @@ from pathlib import Path, PurePosixPath
 
 import numpy as np
 import pandas as pd
-from config import DUNE_ONCHAIN_ZIP, DUNE_ONCHAIN_DIR, PROCESSED_DATA_DIR, FIAT_COINS
+from data_processing.config import (
+    DUNE_ONCHAIN_DIR,
+    DUNE_ONCHAIN_ZIP,
+    FIAT_COINS,
+    ONCHAIN_FEATURES_PATH,
+)
 
-OUT_PATH = Path("data/interim/hourly_stablecoin_onchain_features.parquet")
+OUT_PATH = ONCHAIN_FEATURES_PATH
 
-EXPECTED_COLUMNS = ["hour", "tx_count", "tx_volume", "active_senders", "active_receivers"]
+EXPECTED_COLUMNS = [
+    "hour", "tx_count", "tx_volume", "active_senders", "active_receivers"
+]
 
-OPTIONAL_COLUMNS = ["total_volume_usd", "whale_tx_count", "median_transfer_usd", "transfer_gini"]
+OPTIONAL_COLUMNS = [
+    "total_volume_usd", "whale_tx_count", "median_transfer_usd", "transfer_gini"
+]
 
 CHANGE_METRICS = ["tx_count", "tx_volume", "active_senders", "active_receivers"]
 CHANGE_LAGS = [1, 6, 24]
-CHANGE_COLUMNS = [f"{m}_logdiff_{k}h" for m in CHANGE_METRICS for k in CHANGE_LAGS]
+CHANGE_COLUMNS = [
+    f"{metric}_logdiff_{lag}h"
+    for metric in CHANGE_METRICS for lag in CHANGE_LAGS
+]
 
 
 def extract_fiat_csvs() -> dict[str, Path]:
-    """Extract each fiat coin's CSV from the Dune zip into DUNE_ONCHAIN_DIR.
-    Returns {coin: extracted_path}."""
+    """Extract fiat-coin CSVs and return their paths keyed by coin."""
     if not DUNE_ONCHAIN_ZIP.exists():
         raise FileNotFoundError(
             f"{DUNE_ONCHAIN_ZIP} not found -- run from the repo root, where "
@@ -80,8 +90,9 @@ def extract_fiat_csvs() -> dict[str, Path]:
 
     return extracted
 
+
 def build_change_features(df: pd.DataFrame) -> pd.DataFrame:
-    """Add the 12 log1p-difference change features ({metric}_logdiff_{1h,6h,24h}).
+    """Add the twelve on-chain log1p-difference change features.
 
     Computed per coin on the coin's full hourly grid (calendar hours), so each
     lag spans a true 1h/6h/24h window even when the coin's series has gaps or
@@ -100,7 +111,8 @@ def build_change_features(df: pd.DataFrame) -> pd.DataFrame:
         g = g[~g.index.duplicated(keep="first")]
         grid = pd.date_range(g.index.min(), g.index.max(), freq="h", tz="UTC")
         g = g.reindex(grid)
-        g["coin"] = coin  # grid rows the export never covered still belong to this coin
+        # Unobserved grid rows still belong to this coin.
+        g["coin"] = coin
         log1p = np.log1p(g[metrics].astype(float))
         for m in metrics:
             for k in CHANGE_LAGS:
@@ -111,13 +123,18 @@ def build_change_features(df: pd.DataFrame) -> pd.DataFrame:
     orig = list(df.columns)
     return out[orig + [c for c in CHANGE_COLUMNS if c in out.columns]]
 
+
 def load_coin_csv(coin: str, path: Path) -> pd.DataFrame | None:
+    """Load one export, normalise UTC hours, and validate required columns."""
     df = pd.read_csv(path)
     df = df.rename(columns={"total_volume": "tx_volume"})
     df["coin"] = coin
     missing_cols = [c for c in EXPECTED_COLUMNS if c not in df.columns]
     if missing_cols:
-        print(f"WARNING: {path.name} is missing expected columns {missing_cols} -- skipping this file.")
+        print(
+            f"WARNING: {path.name} is missing expected columns "
+            f"{missing_cols} -- skipping this file."
+        )
         return None
 
     # "2018-01-22 08:00:00.000 UTC" -> tz-aware UTC timestamp. Strip the
@@ -125,7 +142,9 @@ def load_coin_csv(coin: str, path: Path) -> pd.DataFrame | None:
     # literal "UTC" suffix with tz_localize), then localize explicitly,
     # tz-AWARE, matching hourly_stablecoin.parquet's `hour` column
     hour_str = df["hour"].astype(str).str.replace(" UTC", "", regex=False)
-    df["hour"] = pd.to_datetime(hour_str, format="%Y-%m-%d %H:%M:%S.%f").dt.tz_localize("UTC")
+    df["hour"] = pd.to_datetime(
+        hour_str, format="%Y-%m-%d %H:%M:%S.%f"
+    ).dt.tz_localize("UTC")
 
     present_optional = [c for c in OPTIONAL_COLUMNS if c in df.columns]
     df = df[["coin", "hour", "tx_count", "tx_volume", "active_senders",
@@ -139,7 +158,10 @@ def load_coin_csv(coin: str, path: Path) -> pd.DataFrame | None:
 def main():
     extracted = extract_fiat_csvs()
     if not extracted:
-        raise RuntimeError(f"No CSVs in {DUNE_ONCHAIN_ZIP} matched a coin in config.FIAT_COINS.")
+        raise RuntimeError(
+            f"No CSVs in {DUNE_ONCHAIN_ZIP} matched a coin in "
+            "config.FIAT_COINS."
+        )
 
     frames = []
     for coin, path in sorted(extracted.items()):
@@ -148,22 +170,29 @@ def main():
             frames.append(df)
 
     if not frames:
-        raise RuntimeError(f"None of the extracted CSVs in {DUNE_ONCHAIN_DIR} were usable.")
+        raise RuntimeError(
+            f"None of the extracted CSVs in {DUNE_ONCHAIN_DIR} were usable."
+        )
 
     hourly = pd.concat(frames, ignore_index=True, sort=False)
     hourly = hourly.sort_values(["coin", "hour"]).reset_index(drop=True)
     hourly = build_change_features(hourly)
 
+    OUT_PATH.parent.mkdir(parents=True, exist_ok=True)
     hourly.to_parquet(OUT_PATH, index=False)
 
     matched_coins = set(hourly["coin"])
     missing_coins = sorted(set(FIAT_COINS) - matched_coins)
     print(f"\nBuilt {len(hourly):,} coin-hour rows -> {OUT_PATH}")
     print(f"Change columns added: {CHANGE_COLUMNS}")
-    print(f"Coins WITH on-chain data ({len(matched_coins)}/{len(FIAT_COINS)}): {sorted(matched_coins)}")
+    print(
+        f"Coins WITH on-chain data "
+        f"({len(matched_coins)}/{len(FIAT_COINS)}): {sorted(matched_coins)}"
+    )
     if missing_coins:
         print(f"Coins WITHOUT on-chain data yet (will show as NaN on-chain "
-              f"features throughout 04/05, price-only): {missing_coins}")
+              "features in the canonical dataset, price-only): "
+              f"{missing_coins}")
     print(f"\n{hourly.groupby('coin')['hour'].agg(['min', 'max', 'count'])}")
 
 

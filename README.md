@@ -20,7 +20,7 @@ python3.12 -m venv .venv
 source .venv/bin/activate
 python -m pip install -r requirements.lock
 python -m pip check
-python -m modelling.build_corrected_dataset
+python -m data_processing.build_dataset
 python -W ignore::DeprecationWarning -m unittest discover -s tests -v
 python -W ignore::DeprecationWarning -m modelling.verify_release
 python -m scripts.reproduce

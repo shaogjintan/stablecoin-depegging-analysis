@@ -510,5 +510,22 @@
   {
     "from": "data/dune_export_comparison.json",
     "to": "delete/data/dune_export_comparison.json"
+  },
+  {
+    "from": "data_processing/PROPOSAL_PHASE_2_NOTES.md",
+    "to": "archive/history/planning/PROPOSAL_PHASE_2_NOTES.md"
+  },
+  {
+    "from": "data_processing/PROPOSAL_UPDATES_WEEK_7.md",
+    "to": "archive/history/planning/PROPOSAL_UPDATES_WEEK_7.md"
+  },
+  {
+    "from": "data_processing/verify_embargo_and_episodes.py",
+    "to": "archive/history/data_processing/verify_embargo_and_episodes.py"
+  },
+  {
+    "from": "modelling/build_corrected_dataset.py",
+    "to": "data_processing/build_dataset.py",
+    "note": "Original module retained as a compatibility wrapper."
   }
 ]

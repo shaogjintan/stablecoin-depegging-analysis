@@ -33,3 +33,7 @@ Implemented with no permanent deletions. docs/cleanup_moves.json records the mai
 ## Canonical dataset follow-up
 
 The old original master and old episode manifest are now quarantined under delete/. The maintained build no longer depends on them. The canonical corrected pair is data/processed/master.parquet and depeg_episodes.parquet. Both build entry points merge source/interim inputs and apply corrections in memory. Existing frozen bytes are preserved. Historical input filenames resolve through a hash-checked alias map. Direct rebuilding was verified against the retained pair: all other columns and all episode data match exactly; rolling volatility differs by less than 1e-9. See reproduction.md for current commands and comparison scope.
+
+## Processing consistency follow-up
+
+The shared builder now lives at data_processing/build_dataset.py; the original modelling command remains a compatibility wrapper. Imports are package-qualified, paths are centralised in config, and writers create their output directories. Configuration imports do not create directories. Acquisition creates its optional HTTP session lazily. Processing modules use 80-column, four-space formatting with grouped imports and refreshed docstrings; .style.yapf records the Google-based convention. All 29 maintained tests pass. A fresh build matches the frozen canonical pair within its documented tolerance, and both canonical file hashes are unchanged.

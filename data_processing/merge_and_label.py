@@ -16,34 +16,61 @@ if __package__ in (None, ""):
 import numpy as np
 import pandas as pd
 from data_processing.config import (
-    PROCESSED_DATA_DIR, DEPEG_BAND, DEPEG_MIN_DURATION_HOURS, DEPEG_GAP_HOURS,
-    FORECAST_HORIZONS_HOURS, FIAT_COINS,
+    DEPEG_BAND, DEPEG_MIN_DURATION_HOURS, DEPEG_GAP_HOURS,
+    FORECAST_HORIZONS_HOURS,
 )
 
 
 def build_full_hourly_grid(pv: pd.DataFrame) -> pd.DataFrame:
+    """Return a complete hourly grid within each coin's observed range."""
     frames = []
     for coin in sorted(pv["coin"].unique()):
         p = pv[pv["coin"] == coin]
-        grid = pd.DataFrame({"hour": pd.date_range(p["hour"].min(), p["hour"].max(), freq="h", tz="UTC")})
+        grid = pd.DataFrame({
+            "hour": pd.date_range(
+                p["hour"].min(), p["hour"].max(), freq="h", tz="UTC"
+            )
+        })
         grid["coin"] = coin
         frames.append(grid)
     return pd.concat(frames, ignore_index=True)
 
 
-def merge_sources(pv: pd.DataFrame, onchain: pd.DataFrame, market: pd.DataFrame) -> pd.DataFrame:
+def merge_sources(
+    pv: pd.DataFrame, onchain: pd.DataFrame, market: pd.DataFrame
+) -> pd.DataFrame:
+    """Merge source tables onto unique coin-hour keys, preserving missingness.
+
+    Args:
+        pv: Acquired reference prices and exchange volume.
+        onchain: Hourly on-chain levels and changes.
+        market: Derived market features, including trading_volume.
+
+    Returns:
+        A complete coin-hour grid with the three sources joined by key.
+    """
     keys = ["coin", "hour"]
-    for name, source in [("price/volume", pv), ("on-chain", onchain), ("market", market)]:
+    for name, source in [
+        ("price/volume", pv), ("on-chain", onchain), ("market", market)
+    ]:
         duplicates = source.duplicated(keys, keep=False)
         if duplicates.any():
-            examples = source.loc[duplicates, keys].drop_duplicates().head(5).to_dict("records")
-            raise ValueError(f"{name} data has duplicate coin-hour keys; examples: {examples}")
+            examples = (
+                source.loc[duplicates, keys].drop_duplicates()
+                .head(5).to_dict("records")
+            )
+            raise ValueError(
+                f"{name} data has duplicate coin-hour keys; "
+                f"examples: {examples}"
+            )
 
     grid = build_full_hourly_grid(pv)
-    pv = pv.drop(columns=["volume"]) # there exists trading volume column already in market features, so drop this one to avoid duplicate column name
+    # Market features already contain trading_volume.
+    pv = pv.drop(columns=["volume"])
     # drop raw trade count and taker-buy volume: Bitfinex (USDT/DAI) reports
     # neither, so they're 100% NaN for those coins and a pooled tree model
-    # would learn the missingness as a coin identifier (see 02a docstring)
+    # would learn the missingness as a coin identifier (see
+    # build_market_features.py)
     merged = grid.merge(pv, on=keys, how="left", validate="one_to_one")
     merged = merged.merge(onchain, on=keys, how="left", validate="one_to_one")
     merged = merged.merge(market, on=keys, how="left", validate="one_to_one")
@@ -52,6 +79,7 @@ def merge_sources(pv: pd.DataFrame, onchain: pd.DataFrame, market: pd.DataFrame)
 
 
 def flag_episodes(df: pd.DataFrame) -> pd.DataFrame:
+    """Flag qualifying dips and merge them under the recovery rule."""
     df = df.copy()
     # Use the raw price threshold shared with prediction eligibility. Exactly
     # $0.99 is on-band; only lower prices count as downward depegs.
@@ -60,7 +88,9 @@ def flag_episodes(df: pd.DataFrame) -> pd.DataFrame:
     df["episode_id"] = pd.array([None] * len(df), dtype="object")
     df["qualifying_depeg_hour"] = False
     df["qualifying_dip_start"] = False
-    df["episode_end_hour"] = pd.Series(pd.NaT, index=df.index, dtype=df["hour"].dtype)
+    df["episode_end_hour"] = pd.Series(
+        pd.NaT, index=df.index, dtype=df["hour"].dtype
+    )
     for coin, g in df.groupby("coin"):
         idx = g.index
         outside = g["outside_band"].fillna(False).to_numpy()
@@ -82,7 +112,9 @@ def flag_episodes(df: pd.DataFrame) -> pd.DataFrame:
             run_length = run_end - run_start + 1
             if run_length >= DEPEG_MIN_DURATION_HOURS:
                 runs.append((run_start, run_end))
-                df.loc[idx[run_start:run_end + 1], "qualifying_depeg_hour"] = True
+                df.loc[
+                    idx[run_start:run_end + 1], "qualifying_depeg_hour"
+                ] = True
                 df.loc[idx[run_start], "qualifying_dip_start"] = True
 
         # Cluster qualifying runs when the next run starts within the recovery
@@ -100,14 +132,18 @@ def flag_episodes(df: pd.DataFrame) -> pd.DataFrame:
                     continue
             clusters.append((run_start, run_end, run_end))
 
-        for episode_num, (episode_start, last_out, _) in enumerate(clusters, start=1):
+        for episode_num, (episode_start, last_out, _) in enumerate(
+            clusters, start=1
+        ):
             # The first above-band hour is last_out + 1; include 24 hours
             # from that anchor, making the next independent onset eligible
             # only after the recovery window has elapsed.
             episode_end = min(last_out + DEPEG_GAP_HOURS + 1, len(outside) - 1)
-            df.loc[idx[episode_start:episode_end + 1], "episode_id"] = f"{coin}_{episode_num}"
-            # The manifest's end marks the first hour after the final
-            # qualifying dip, when recovery begins (not the recovery-window end).
+            df.loc[
+                idx[episode_start:episode_end + 1], "episode_id"
+            ] = f"{coin}_{episode_num}"
+            # The manifest ends at recovery onset, one hour after the
+            # final qualifying dip; it does not include the recovery window.
             df.loc[idx[last_out], "episode_end_hour"] = (
                 g.iloc[last_out]["hour"] + pd.Timedelta(hours=1)
             )
@@ -120,7 +156,9 @@ def build_episode_table(df: pd.DataFrame) -> pd.DataFrame:
     eps = (
         df[df["qualifying_depeg_hour"]]
         .groupby(["coin", "episode_id"])
-        .agg(start=("hour", "min"), end=("episode_end_hour", "max"), n_hours=("qualifying_depeg_hour", "sum"),
+        .agg(
+            start=("hour", "min"), end=("episode_end_hour", "max"),
+            n_hours=("qualifying_depeg_hour", "sum"),
              min_price=("price", "min"), max_price=("price", "max"))
         .reset_index()
         .sort_values("start")
@@ -164,7 +202,10 @@ def build_labels(df: pd.DataFrame) -> pd.DataFrame:
                     continue
                 # A known qualifying-dip onset (including a bridged dip) makes
                 # this positive even if a later price in the window is missing.
-                hit = np.any((starts_arr > t) & (starts_arr <= window_end)) if len(starts_arr) else False
+                hit = (
+                    np.any((starts_arr > t) & (starts_arr <= window_end))
+                    if len(starts_arr) else False
+                )
                 if hit:
                     labels[i] = 1.0
                     continue
@@ -183,6 +224,7 @@ def build_labels(df: pd.DataFrame) -> pd.DataFrame:
         df.loc[df["price"].isna(), col] = np.nan
 
     return df
+
 
 def flag_feature_samples(
     df: pd.DataFrame,
@@ -224,12 +266,15 @@ def flag_prediction_eligibility(df: pd.DataFrame) -> pd.DataFrame:
             raise ValueError(f"Missing label column: {label_col}")
         for model in feature_samples:
             eligible_col = f"prediction_eligible_{model}_h{h}"
-            df[eligible_col] = df[f"prediction_eligible_{model}"] & df[label_col].notna()
+            df[eligible_col] = (
+                df[f"prediction_eligible_{model}"] & df[label_col].notna()
+            )
     return df
 
+
 def main():
-    """Build corrected canonical outputs directly; never persist a legacy master."""
-    from modelling.build_corrected_dataset import main as build_main
+    """Build corrected outputs directly without persisting a legacy master."""
+    from data_processing.build_dataset import main as build_main
     build_main()
 
 

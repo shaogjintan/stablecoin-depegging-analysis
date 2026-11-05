@@ -1,5 +1,5 @@
 {
-  "maintained_tests_passed": 21,
+  "maintained_tests_passed": 29,
   "pip_check": "passed",
   "compileall": "passed",
   "missing_local_imports": [],
@@ -14,5 +14,13 @@
   "permanent_deletions_during_cleanup": 0,
   "final_run_verification": "passed: 90 model/config/horizon/year cells across four final refit runs; saved metrics and alarms, not full score replay",
   "presentation_rebuild": "all six CSV tables match exactly by parsed values",
-  "model_retraining": "no primary models retrained; benchmark-only reproduction in temporary output"
+  "model_retraining": "no primary models retrained; benchmark-only reproduction in temporary output",
+  "data_processing_consistency": {
+    "package_imports": "passed without network or directory creation",
+    "fresh_output_build": "passed",
+    "canonical_hashes": "unchanged",
+    "statistical_helper_asts": "unchanged apart from docstrings",
+    "formatting": "four spaces, grouped imports, 80-column limit; Google-based .style.yapf configuration",
+    "compatibility_entry_point": "modelling.build_corrected_dataset delegates to data_processing.build_dataset"
+  }
 }

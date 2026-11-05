@@ -7,7 +7,7 @@ Run commands from the repository root using CPython 3.12. `requirements.lock` re
 Both entry points use the same direct build path:
 
 ```sh
-python -m modelling.build_corrected_dataset
+python -m data_processing.build_dataset
 python -m data_processing.merge_and_label
 ```
 
@@ -16,6 +16,22 @@ They validate the existing canonical `data/processed/master.parquet` and `depeg_
 Add `--rebuild` to rebuild and compare with existing files without replacing them; use `--rebuild --out-dir <fresh-directory>` to write a new pair. Incomplete pairs fail explicitly. Already-corrected input is rejected to prevent shifting clocks twice. The build preserves labels, episode definitions and sample populations. Source-block layout can change rolling standard deviations by up to 1e-9 in absolute value near zero; the comparison checks those two columns with that tolerance and requires every other column to match exactly. Existing frozen canonical bytes and their model results remain unchanged. A freshly rebuilt file may have a different checksum and should not be silently substituted for frozen model evidence.
 
 Historical manifest filenames resolve to the canonical pair through an explicit alias map; hashes still have to match. Original manifests are not edited. See data/manifest.json and data/processed/dataset_metadata.json for the current files and direct source provenance.
+
+## Processing commands and maintenance
+
+Use package entry points from the repository root:
+
+```sh
+python -m data_processing.build_market_features
+python -m data_processing.build_onchain_features
+python -m data_processing.build_dataset --rebuild
+```
+
+The first two commands regenerate interim feature tables, so normal verification uses the retained tables instead. Acquisition is separate: `python -m data_processing.fetch_stablecoin_data` requires the optional acquisition dependencies and makes network requests. It is never invoked by the model reproduction command.
+
+`modelling.build_corrected_dataset` remains a compatibility wrapper for the new builder. Output paths are defined in data_processing/config.py; imports do not create directories or start HTTP sessions. Writers create their own output directories. Statistical correction functions remain in modelling/corrected_data.py to preserve the existing model contract.
+
+The root `.style.yapf` records Google-based formatting with four-space indentation and an 80-column limit. Processing modules use grouped imports and public-function docstrings. Preserve statistical definitions when formatting or moving code.
 
 ## Saved evidence verification
 

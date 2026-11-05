@@ -1,33 +1,29 @@
-"""
-Build hourly MARKET features: returns, peg deviation, volatility and volume signals.
+"""Build hourly market returns, peg deviation, volatility and volume signals.
 
 All rolling/pct-change features look backward only (no look-ahead). Volume-
-change features are additionally masked across a venue switch (see 01's
+change features are masked across a venue switch (using the acquired
 `venue_switch` / `hours_since_venue_start` columns): a raw jump in exchange
 volume right after a source switch reflects a change in data source, not a
 change in the coin's actual trading activity, so those hours are set to NaN
 rather than left in as a spurious signal.
 
-OUTPUT: data/processed/hourly_market_features_fiat.parquet
+OUTPUT: data/interim/hourly_stablecoin_market_features.parquet
   coin, hour, peg_deviation, peg_deviation_bps, return_1h, log_return_1h,
   return_6h, log_return_6h, return_24h, log_return_24h,
   realised_vol_6h, realised_vol_24h, trading_volume,
-  volume_pct_change_1h, volume_pct_change_6h, volume_pct_change_24h,
-  venue_switch
+  volume_pct_change_1h, volume_pct_change_6h, volume_pct_change_24h
 
 No trade-count or taker-buy features: Bitfinex (the source for USDT and DAI)
 doesn't report either, so they'd be NaN for 100% of those two coins' rows. A
 pooled tree model would learn that missingness pattern as a coin identifier
 rather than a market signal, so trades_pct_change_1h and taker_buy_ratio are
-not built. 
+not built.
 """
-from pathlib import Path
-
 import numpy as np
 import pandas as pd
-from config import PROCESSED_DATA_DIR
+from data_processing.config import HOURLY_MARKET_PATH, MARKET_FEATURES_PATH
 
-OUT_PATH = Path("data/interim/hourly_stablecoin_market_features.parquet")
+OUT_PATH = MARKET_FEATURES_PATH
 
 
 def build_price_features(df: pd.DataFrame) -> pd.DataFrame:
@@ -48,11 +44,16 @@ def build_price_features(df: pd.DataFrame) -> pd.DataFrame:
     # incomplete window (e.g. right after a coin's start) stays NaN rather
     # than a noisy estimate from a handful of hours
     ret_by_coin = df.groupby("coin")["return_1h"]
-    df["realised_vol_6h"] = ret_by_coin.transform(lambda s: s.rolling(6, min_periods=6).std())
-    df["realised_vol_24h"] = ret_by_coin.transform(lambda s: s.rolling(24, min_periods=24).std())
+    df["realised_vol_6h"] = ret_by_coin.transform(
+        lambda s: s.rolling(6, min_periods=6).std()
+    )
+    df["realised_vol_24h"] = ret_by_coin.transform(
+        lambda s: s.rolling(24, min_periods=24).std()
+    )
 
     return df[["coin", "hour", "peg_deviation", "peg_deviation_bps",
-               "return_1h", "log_return_1h", "return_6h", "log_return_6h", "return_24h", "log_return_24h",
+               "return_1h", "log_return_1h", "return_6h", "log_return_6h",
+               "return_24h", "log_return_24h",
                "realised_vol_6h", "realised_vol_24h"]]
 
 
@@ -64,7 +65,7 @@ def build_exchange_features(df: pd.DataFrame) -> pd.DataFrame:
     the change spike to +-inf; those get replaced with NaN.
 
     Every change is additionally masked for the hours right after a venue
-    switch (hours_since_venue_start < window + 1), since 01's inner join can
+    switch (hours_since_venue_start < window + 1), since acquisition can
     splice from one exchange to another mid-series (e.g. PAX, TUSD, USDC),
     and a pct_change computed across that boundary compares two different
     venues' volume levels rather than a real change in trading activity.
@@ -76,9 +77,15 @@ def build_exchange_features(df: pd.DataFrame) -> pd.DataFrame:
     pct_6h = vol_by_coin.pct_change(6).replace([np.inf, -np.inf], np.nan)
     pct_24h = vol_by_coin.pct_change(24).replace([np.inf, -np.inf], np.nan)
 
-    df["volume_pct_change_1h"] = pct_1h.where(df["hours_since_venue_start"] >= 2)
-    df["volume_pct_change_6h"] = pct_6h.where(df["hours_since_venue_start"] >= 7)
-    df["volume_pct_change_24h"] = pct_24h.where(df["hours_since_venue_start"] >= 25)
+    df["volume_pct_change_1h"] = pct_1h.where(
+        df["hours_since_venue_start"] >= 2
+    )
+    df["volume_pct_change_6h"] = pct_6h.where(
+        df["hours_since_venue_start"] >= 7
+    )
+    df["volume_pct_change_24h"] = pct_24h.where(
+        df["hours_since_venue_start"] >= 25
+    )
 
     # taker_buy_ratio and trades_pct_change_1h were removed here: Bitfinex
     # (USDT/DAI) reports neither, so both were 100% NaN for those coins and a
@@ -87,15 +94,14 @@ def build_exchange_features(df: pd.DataFrame) -> pd.DataFrame:
 
     df = df.rename(columns={"volume": "trading_volume"})
     return df[["coin", "hour", "trading_volume",
-               "volume_pct_change_1h", "volume_pct_change_6h", "volume_pct_change_24h",
+               "volume_pct_change_1h", "volume_pct_change_6h",
+               "volume_pct_change_24h",
                "venue"]]
 
 
 def main():
-    # 01 already inner-joins price and volume, so every row already has both
-    # -- no separate left join needed here, unlike an earlier draft of this
-    # script that assumed price and volume came from different tables.
-    df = pd.read_parquet(Path("data/interim/hourly_stablecoin.parquet"))
+    # The acquired table keeps price-only hours with missing exchange volume.
+    df = pd.read_parquet(HOURLY_MARKET_PATH)
 
     price_feats = build_price_features(df)
     exch_feats = build_exchange_features(df)
@@ -104,13 +110,18 @@ def main():
     merged = merged.sort_values(["coin", "hour"]).reset_index(drop=True)
     merged = merged.drop(columns=["venue"])
 
+    OUT_PATH.parent.mkdir(parents=True, exist_ok=True)
     merged.to_parquet(OUT_PATH, index=False)
 
     print(f"Built {len(merged):,} coin-hour rows -> {OUT_PATH}")
     cov = merged.groupby("coin").agg(
         rows=("hour", "size"),
-        realised_vol_24h_coverage=("realised_vol_24h", lambda s: s.notna().mean()),
-        volume_pct_change_24h_coverage=("volume_pct_change_24h", lambda s: s.notna().mean()),
+        realised_vol_24h_coverage=(
+            "realised_vol_24h", lambda s: s.notna().mean()
+        ),
+        volume_pct_change_24h_coverage=(
+            "volume_pct_change_24h", lambda s: s.notna().mean()
+        ),
     )
     print(cov.round(3).to_string())
 
