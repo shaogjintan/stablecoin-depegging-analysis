@@ -1,5 +1,5 @@
 {
-  "episodes": "data/processed/depeg_episodes_corrected_v1.parquet",
+  "episodes": "data/processed/depeg_episodes.parquet",
   "sha256": "dcf23bf6662556d5432e6b1afa7127a5376c7154ec0403cf50a5d6f6131e9bdf",
   "window_hours": 48,
   "grouping": "first-onset anchor; at most one episode per coin in each event",

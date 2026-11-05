@@ -502,5 +502,13 @@
   {
     "from": "modelling/checks/test_threshold_policy.py",
     "to": "archive/history/tests/test_threshold_policy.py"
+  },
+  {
+    "from": "data/snapshots/hourly_stablecoin.parquet",
+    "to": "data/interim/hourly_stablecoin.parquet"
+  },
+  {
+    "from": "data/dune_export_comparison.json",
+    "to": "delete/data/dune_export_comparison.json"
   }
 ]

@@ -4,7 +4,18 @@ Run commands from the repository root using CPython 3.12. `requirements.lock` re
 
 ## Frozen input validation
 
-`python -m modelling.build_corrected_dataset` validates the existing corrected inputs. If absent, the builder uses data/snapshots/master_original.parquet. It must not apply bar-close correction twice. See data/manifest.json for checksums and docs/cleanup_moves.json for relocations. Frozen metadata retains its original source paths.
+Both entry points use the same direct build path:
+
+```sh
+python -m modelling.build_corrected_dataset
+python -m data_processing.merge_and_label
+```
+
+They validate the existing canonical `data/processed/master.parquet` and `depeg_episodes.parquet`. If missing, they merge the acquired hourly snapshot and two interim feature tables, then apply corrected features/labels entirely in memory and write only the corrected canonical pair plus metadata. No original master or legacy episode file is needed or produced.
+
+Add `--rebuild` to rebuild and compare with existing files without replacing them; use `--rebuild --out-dir <fresh-directory>` to write a new pair. Incomplete pairs fail explicitly. Already-corrected input is rejected to prevent shifting clocks twice. The build preserves labels, episode definitions and sample populations. Source-block layout can change rolling standard deviations by up to 1e-9 in absolute value near zero; the comparison checks those two columns with that tolerance and requires every other column to match exactly. Existing frozen canonical bytes and their model results remain unchanged. A freshly rebuilt file may have a different checksum and should not be silently substituted for frozen model evidence.
+
+Historical manifest filenames resolve to the canonical pair through an explicit alias map; hashes still have to match. Original manifests are not edited. See data/manifest.json and data/processed/dataset_metadata.json for the current files and direct source provenance.
 
 ## Saved evidence verification
 

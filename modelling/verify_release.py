@@ -9,6 +9,7 @@ import joblib
 import numpy as np
 import pandas as pd
 from modelling.corrected_xgb import sha256
+from data_processing.splits import resolve_recorded_input
 from modelling.reference_checks import reference_events, reference_metrics, reference_ap, check_preprocessing
 from modelling.rolling_threshold import _choose_threshold
 RUNS = [Path('artifacts/runs') / kind / name for kind, name in [('primary', 'REFIT-LOWEST-NEW'), ('primary', 'LR-REFIT-LOWEST-NEW'), ('supplementary', 'REFIT-LOWEST-H1'), ('supplementary', 'LR-REFIT-LOWEST-H1')]]
@@ -18,7 +19,7 @@ def verify(run, check_scores=False):
     if info.get('status') != 'complete' or not info.get('refit_after_calibration'):
         raise ValueError(f'Unsupported/incomplete refit: {run}')
     for path, digest in info['input_sha256'].items():
-        if sha256(Path(path)) != digest:
+        if sha256(resolve_recorded_input(path)) != digest:
             raise ValueError(f'Input changed: {path}')
     eps = pd.read_parquet(run / 'episodes.parquet')
     yearly = pd.read_csv(run / 'by_year.csv', float_precision='round_trip')

@@ -42,7 +42,6 @@ import pandas as pd
 from config import DUNE_ONCHAIN_ZIP, DUNE_ONCHAIN_DIR, PROCESSED_DATA_DIR, FIAT_COINS
 
 OUT_PATH = Path("data/interim/hourly_stablecoin_onchain_features.parquet")
-MASTER_PATH = Path("data/snapshots/master_original.parquet")
 
 EXPECTED_COLUMNS = ["hour", "tx_count", "tx_volume", "active_senders", "active_receivers"]
 
@@ -168,63 +167,7 @@ def main():
     print(f"\n{hourly.groupby('coin')['hour'].agg(['min', 'max', 'count'])}")
 
 
-def update_master() -> int:
-    """Patch data/processed/master.parquet in place with the 12 change columns.
-
-    The normal rebuild path (01 -> 02a/02b -> 03) needs the gitignored
-    intermediates, which are not present locally, and rerunning 01 is
-    forbidden (1,200+ HTTP requests). master.parquet's on-chain columns are
-    already on the full hourly grid, so we compute the change columns directly
-    from master and append them (32 -> 44 columns).
-
-    Safety rails before overwriting:
-      - row count must be unchanged (345,367);
-      - every pre-existing column must be value-identical;
-      - the 32-column version is backed up to master_backup_32col.parquet.
-    """
-    if not MASTER_PATH.exists():
-        raise FileNotFoundError(f"{MASTER_PATH} not found -- run from the repo root.")
-
-    master = pd.read_parquet(MASTER_PATH)
-    n_before = len(master)
-    cols_before = list(master.columns)
-    before = master.copy(deep=True)
-
-    missing = [c for c in CHANGE_METRICS if c not in master.columns]
-    if missing:
-        raise RuntimeError(f"{MASTER_PATH.name} is missing on-chain columns {missing}")
-
-    changed = build_change_features(master[["coin", "hour"] + CHANGE_METRICS])
-    changed = changed.drop(columns=CHANGE_METRICS)  # raw levels already in master
-    merged = master.merge(changed, on=["coin", "hour"], how="left", validate="one_to_one")
-
-    assert len(merged) == n_before, f"row count changed: {n_before:,} -> {len(merged):,}"
-    pd.testing.assert_frame_equal(merged[cols_before], before)
-
-    backup_path = MASTER_PATH.with_name("master_backup_32col.parquet")
-    before.to_parquet(backup_path, index=False)
-    merged.to_parquet(MASTER_PATH, index=False)
-
-    print(f"Patched {MASTER_PATH} in place: {len(cols_before)} -> {len(merged.columns)} "
-          f"columns, {n_before:,} rows unchanged.")
-    print(f"Backup of the {len(cols_before)}-column version: {backup_path}")
-    print("\nNaN share of the new change columns (whole master):")
-    print(merged[CHANGE_COLUMNS].isna().mean().round(4).to_string())
-    return 0
-
-
 if __name__ == "__main__":
     import argparse
-
-    parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument(
-        "--update-master",
-        action="store_true",
-        help="Patch data/processed/master.parquet in place with the 12 log1p-diff "
-             "change features (32 -> 44 columns). Use this when the gitignored "
-             "intermediates are missing; 01/02a/03 are untouched.",
-    )
-    args = parser.parse_args()
-    if args.update_master:
-        raise SystemExit(update_master())
+    argparse.ArgumentParser(description=__doc__).parse_args()
     main()

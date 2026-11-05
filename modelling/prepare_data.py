@@ -12,7 +12,7 @@ boundary-straddling episodes dropped). This module only selects the sample
 and the feature columns -- it doesn't change master.parquet.
 
 SAMPLE (corrected_v1)
-load_master() loads master_corrected_v1.parquet and the matching corrected
+load_master() loads master.parquet and the matching corrected
 episode manifest. Eligibility requires complete finite tier features,
 above-band prices, the causal recovery exclusion, and observed horizon labels.
 The target is a new merged episode start; timestamps denote bar closes.

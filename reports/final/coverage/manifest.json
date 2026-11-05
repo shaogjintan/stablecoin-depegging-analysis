@@ -1,5 +1,5 @@
 {
-  "source": "data/processed/master_corrected_v1.parquet",
+  "source": "data/processed/master.parquet",
   "sha256": "450865153d17b95627daeb48d8f64baf7d0f403b3c9b57d564e2a9aeaf284a37",
   "note": "Source completeness, not model-feature eligibility. All definitions use the same full-span denominator."
 }

@@ -1,4 +1,4 @@
-"""Versioned XGB risk set; never overwrites the committed legacy master."""
+"""Corrected completed-bar features, merged-onset targets and causal risk sets."""
 from __future__ import annotations
 
 import numpy as np
@@ -88,6 +88,8 @@ def episode_labels(df, episodes, horizons=(1, 6, 24), band=.01, min_duration=2):
 
 
 def prepare_corrected(master):
+    if "bar_start" in master or "observable_at_risk" in master:
+        raise ValueError("Input is already corrected; refusing to shift bar clocks twice")
     master = calendar_market_features(master)
     master = flag_episodes(master)
     episodes = build_episode_table(master)

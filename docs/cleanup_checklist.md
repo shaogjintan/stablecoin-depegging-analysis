@@ -29,3 +29,7 @@ Implemented with no permanent deletions. docs/cleanup_moves.json records the mai
 - The default final-run verifier checks hashes, saved alarms and metrics; full model-score replay requires --check-model-scores. It does not rerun LR C selection. Threshold selection uses the maintained exhaustive engine, with independent synthetic oracle tests.
 - New LR/RF interpretation figures cover both primary horizons; XGB figures reuse existing final SHAP rankings rather than recomputing SHAP.
 - Six independent LR/calendar-CV/preprocessing/threshold tests were migrated to the maintained suite; protocol-specific tests and original verifiers are preserved in archive/history/; further portability/hardening checks can be migrated deliberately.
+
+## Canonical dataset follow-up
+
+The old original master and old episode manifest are now quarantined under delete/. The maintained build no longer depends on them. The canonical corrected pair is data/processed/master.parquet and depeg_episodes.parquet. Both build entry points merge source/interim inputs and apply corrections in memory. Existing frozen bytes are preserved. Historical input filenames resolve through a hash-checked alias map. Direct rebuilding was verified against the retained pair: all other columns and all episode data match exactly; rolling volatility differs by less than 1e-9. See reproduction.md for current commands and comparison scope.

@@ -76,11 +76,7 @@ Untitled.ipynb
 # Preserve previously committed canonical inputs and their original rebuild source.
 !data/processed/
 data/processed/*
-!data/processed/master_corrected_v1.parquet
-!data/processed/depeg_episodes_corrected_v1.parquet
-!data/processed/depeg_episodes_corrected_v1_typed.parquet
-!data/processed/corrected_v1_metadata.json
-!data/snapshots/
-data/snapshots/*
-!data/snapshots/master_original.parquet
-!data/dune_export_comparison.json
+!data/processed/master.parquet
+!data/processed/depeg_episodes.parquet
+!data/processed/depeg_episodes_w_event_type.parquet
+!data/processed/dataset_metadata.json

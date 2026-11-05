@@ -2,7 +2,7 @@
   "dataset_version": "corrected_v1",
   "files": [
     {
-      "path": "data/processed/master_corrected_v1.parquet",
+      "path": "data/processed/master.parquet",
       "bytes": 73545833,
       "sha256": "450865153d17b95627daeb48d8f64baf7d0f403b3c9b57d564e2a9aeaf284a37",
       "rows": 345361,
@@ -69,7 +69,7 @@
       ]
     },
     {
-      "path": "data/processed/depeg_episodes_corrected_v1_typed.parquet",
+      "path": "data/processed/depeg_episodes_w_event_type.parquet",
       "bytes": 9320,
       "sha256": "cdcfd2b852027ec561f601556da564e5b2dd923efbac7421b4879c660846d930",
       "rows": 79,
@@ -86,7 +86,7 @@
       ]
     },
     {
-      "path": "data/processed/depeg_episodes_corrected_v1.parquet",
+      "path": "data/processed/depeg_episodes.parquet",
       "bytes": 8436,
       "sha256": "dcf23bf6662556d5432e6b1afa7127a5376c7154ec0403cf50a5d6f6131e9bdf",
       "rows": 79,
@@ -102,12 +102,12 @@
       ]
     },
     {
-      "path": "data/processed/corrected_v1_metadata.json",
-      "bytes": 1339,
-      "sha256": "177f977a00ff0f5da2e599d979c281fb9047b2d98e224a7a4751c9ca9a13dbdb"
+      "path": "data/processed/dataset_metadata.json",
+      "bytes": 2360,
+      "sha256": "e17273df97163e74855d6edd0c758037180fb063e97d0319cb4c446e42cc413d"
     },
     {
-      "path": "data/snapshots/hourly_stablecoin.parquet",
+      "path": "data/interim/hourly_stablecoin.parquet",
       "bytes": 8313553,
       "sha256": "e8b151a360e386443389d9abe45a6b2c1467c3c9a3c6da449fe495fba09a95bf",
       "rows": 344729,
@@ -119,69 +119,6 @@
         "venue",
         "venue_switch",
         "hours_since_venue_start"
-      ]
-    },
-    {
-      "path": "data/snapshots/master_original.parquet",
-      "bytes": 72136966,
-      "sha256": "b026cddd1ffc0b8e38947fc4a34663099261a9973e8579310c524cc324b38be1",
-      "rows": 345361,
-      "columns": [
-        "hour",
-        "coin",
-        "price",
-        "venue",
-        "venue_switch",
-        "hours_since_venue_start",
-        "tx_count",
-        "tx_volume",
-        "active_senders",
-        "active_receivers",
-        "tx_count_logdiff_1h",
-        "tx_count_logdiff_6h",
-        "tx_count_logdiff_24h",
-        "tx_volume_logdiff_1h",
-        "tx_volume_logdiff_6h",
-        "tx_volume_logdiff_24h",
-        "active_senders_logdiff_1h",
-        "active_senders_logdiff_6h",
-        "active_senders_logdiff_24h",
-        "active_receivers_logdiff_1h",
-        "active_receivers_logdiff_6h",
-        "active_receivers_logdiff_24h",
-        "peg_deviation",
-        "peg_deviation_bps",
-        "return_1h",
-        "log_return_1h",
-        "return_6h",
-        "log_return_6h",
-        "return_24h",
-        "log_return_24h",
-        "realised_vol_6h",
-        "realised_vol_24h",
-        "trading_volume",
-        "volume_pct_change_1h",
-        "volume_pct_change_6h",
-        "volume_pct_change_24h",
-        "outside_band",
-        "episode_id",
-        "qualifying_depeg_hour",
-        "qualifying_dip_start",
-        "episode_end_hour",
-        "in_episode",
-        "label_h1",
-        "label_h6",
-        "label_h24",
-        "market_sample",
-        "common_sample",
-        "prediction_eligible_market",
-        "prediction_eligible_market_onchain",
-        "prediction_eligible_market_h1",
-        "prediction_eligible_market_onchain_h1",
-        "prediction_eligible_market_h6",
-        "prediction_eligible_market_onchain_h6",
-        "prediction_eligible_market_h24",
-        "prediction_eligible_market_onchain_h24"
       ]
     },
     {
@@ -269,5 +206,43 @@
       "bytes": 12767633,
       "sha256": "3fa6e8adce1972d567650a59655bee38adb6a8d2e00c0158fb11dc0b49170781"
     }
-  ]
+  ],
+  "dune_export_verification": {
+    "archive": "dune_onchain.zip",
+    "archive_sha256": "3fa6e8adce1972d567650a59655bee38adb6a8d2e00c0158fb11dc0b49170781",
+    "method": "Byte-for-byte comparison of each extracted CSV with its ZIP member",
+    "all_match": true,
+    "files": [
+      {
+        "csv": "data/raw/dune_onchain/busd.csv",
+        "zip_member": "dune_onchain/busd.csv",
+        "byte_identical": true
+      },
+      {
+        "csv": "data/raw/dune_onchain/dai.csv",
+        "zip_member": "dune_onchain/dai.csv",
+        "byte_identical": true
+      },
+      {
+        "csv": "data/raw/dune_onchain/pax.csv",
+        "zip_member": "dune_onchain/pax.csv",
+        "byte_identical": true
+      },
+      {
+        "csv": "data/raw/dune_onchain/tusd.csv",
+        "zip_member": "dune_onchain/tusd.csv",
+        "byte_identical": true
+      },
+      {
+        "csv": "data/raw/dune_onchain/usdc.csv",
+        "zip_member": "dune_onchain/usdc.csv",
+        "byte_identical": true
+      },
+      {
+        "csv": "data/raw/dune_onchain/usdt.csv",
+        "zip_member": "dune_onchain/usdt.csv",
+        "byte_identical": true
+      }
+    ]
+  }
 }

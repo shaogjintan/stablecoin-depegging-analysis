@@ -14,13 +14,13 @@ first episode (not chaining) stops a slow run of dips snowballing into one
 event. An event's year is the year of its first episode.
 
 INPUT
-  data/processed/depeg_episodes_corrected_v1.parquet
+  data/processed/depeg_episodes.parquet
 
 OUTPUT (reports/final/events/)
   episodes.csv  one row per episode with its event_id
   events.csv    one row per event: start, coins, episode IDs
   by_year.csv   number of episodes vs events per year (and per coin)
-  figures/      (skip with --no-plots; prices read from master_corrected_v1.parquet)
+  figures/      (skip with --no-plots; prices read from master.parquet)
     1_timeline.png        every episode per coin, multi-coin events shaded
     2_event_zooms.png     price of each coin around every multi-coin event
     3_onset_gaps.png      hours to nearest other-coin onset (why 48h)
@@ -372,7 +372,7 @@ def main(argv=None) -> int:
     parser.add_argument("--no-plots", action="store_true", help="skip the figures")
     args = parser.parse_args(argv)
 
-    episodes = pd.read_parquet(PROCESSED_DATA_DIR / "depeg_episodes_corrected_v1.parquet")
+    episodes = pd.read_parquet(PROCESSED_DATA_DIR / "depeg_episodes.parquet")
     for col in ("start", "end"):
         episodes[col] = pd.to_datetime(episodes[col], utc=True)
     from modelling.reporting.event_annotations import annotate
@@ -420,7 +420,7 @@ def main(argv=None) -> int:
     if not args.no_plots:
         fig_dir = out_dir / "figures"
         fig_dir.mkdir(exist_ok=True)
-        prices = pd.read_parquet(PROCESSED_DATA_DIR / "master_corrected_v1.parquet",
+        prices = pd.read_parquet(PROCESSED_DATA_DIR / "master.parquet",
                                  columns=["coin", "hour", "price"])
         prices["hour"] = pd.to_datetime(prices["hour"], utc=True)
         plot_timeline(eps, ev_tab, fig_dir / "1_timeline.png")

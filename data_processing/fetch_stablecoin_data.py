@@ -22,7 +22,7 @@ PROCESSED_DATA_DIR.mkdir(parents=True, exist_ok=True)
 
 DEFAULT_END = END_DATE if END_DATE else dt.datetime.now().strftime("%Y-%m-%d")
 
-OUT_PATH = Path("data/snapshots/hourly_stablecoin.parquet")
+OUT_PATH = Path("data/interim/hourly_stablecoin.parquet")
 
 SESSION = requests.Session()
 SESSION.headers.update({

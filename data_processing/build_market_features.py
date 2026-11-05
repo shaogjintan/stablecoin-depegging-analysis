@@ -95,7 +95,7 @@ def main():
     # 01 already inner-joins price and volume, so every row already has both
     # -- no separate left join needed here, unlike an earlier draft of this
     # script that assumed price and volume came from different tables.
-    df = pd.read_parquet(Path("data/snapshots/hourly_stablecoin.parquet"))
+    df = pd.read_parquet(Path("data/interim/hourly_stablecoin.parquet"))
 
     price_feats = build_price_features(df)
     exch_feats = build_exchange_features(df)

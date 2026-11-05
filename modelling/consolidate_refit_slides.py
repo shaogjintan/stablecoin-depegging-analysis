@@ -17,6 +17,7 @@ import pandas as pd
 from sklearn.metrics import average_precision_score
 
 from modelling.alarm_events import build_alarm_events
+from data_processing.splits import canonical_input_hashes
 from modelling.reporting.formatting import table, nfmt
 from modelling.corrected_xgb import sha256, save_json
 from modelling.models import get_model
@@ -151,7 +152,7 @@ def main():
         lr_status = lr_info.get("status", "unknown")
         if lr_status == "complete":
             require_run(args.lr_run)
-            if lr_info["input_sha256"] != info["input_sha256"]:
+            if canonical_input_hashes(lr_info["input_sha256"]) != canonical_input_hashes(info["input_sha256"]):
                 raise ValueError("LogReg uses different dataset inputs")
             summaries = pd.concat([summaries, pd.read_csv(args.lr_run / "summary.csv")], ignore_index=True)
             audit.extend(calibration_audit_rows(args.lr_run, ["logreg"]))

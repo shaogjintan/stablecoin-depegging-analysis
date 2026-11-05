@@ -10,7 +10,7 @@ from pathlib import Path
 import numpy as np
 import pandas as pd
 
-from data_processing.splits import load_master, active_input_paths
+from data_processing.splits import load_master, active_input_paths, canonical_input_hashes
 from modelling.corrected_xgb import sha256, save_json
 from modelling.episode_definitions import make_episodes
 
@@ -91,7 +91,7 @@ def main():
     for run in args.run_dir:
         info = json.loads((run / "run.json").read_text())
         if (info.get("status") != "complete" or not info.get("refit_after_calibration")
-                or info.get("policy") != "exhaustive_lowest" or info.get("input_sha256") != hashes):
+                or info.get("policy") != "exhaustive_lowest" or canonical_input_hashes(info.get("input_sha256", {})) != hashes):
             raise ValueError(f"Incompatible or incomplete refit run: {run}")
         manifests.append(dict(path=str(run), run_id=info["run_id"]))
         summary = pd.read_csv(run / "summary.csv")

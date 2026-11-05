@@ -47,15 +47,28 @@ except ImportError:  # Direct script / historical top-level "splits" import.
 
 
 def active_input_paths():
-    """Resolve the committed typed manifest when no untyped manifest exists."""
-    episodes_path = (ACTIVE_EPISODES_PATH if ACTIVE_EPISODES_PATH.exists()
-                     else ACTIVE_TYPED_EPISODES_PATH)
-    if not ACTIVE_MASTER_PATH.exists() or not episodes_path.exists():
+    """Return the single canonical corrected pair; annotations are reporting data."""
+    if not ACTIVE_MASTER_PATH.exists() or not ACTIVE_EPISODES_PATH.exists():
         raise FileNotFoundError(
-            "Corrected modelling inputs are missing. Run "
-            "'python -m modelling.build_corrected_dataset' from the repo root."
-        )
-    return ACTIVE_MASTER_PATH, episodes_path
+            "Canonical modelling inputs are missing. Run "
+            "'python -m modelling.build_corrected_dataset' from the repo root.")
+    return ACTIVE_MASTER_PATH, ACTIVE_EPISODES_PATH
+
+
+def resolve_recorded_input(path):
+    """Resolve old frozen-manifest names without editing historical evidence."""
+    from pathlib import Path
+    path = Path(path)
+    aliases = {
+        "master_corrected_v1.parquet": ACTIVE_MASTER_PATH,
+        "depeg_episodes_corrected_v1.parquet": ACTIVE_EPISODES_PATH,
+        "depeg_episodes_corrected_v1_typed.parquet": ACTIVE_TYPED_EPISODES_PATH,
+    }
+    return aliases.get(path.name, path)
+
+
+def canonical_input_hashes(hashes):
+    return {str(resolve_recorded_input(path)): digest for path, digest in hashes.items()}
 
 
 def load_master() -> tuple[pd.DataFrame, pd.DataFrame]:

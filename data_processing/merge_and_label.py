@@ -1,40 +1,21 @@
-"""Merge hourly sources, identify depeg episodes, and build forecast labels.
+"""Merge source tables and write the canonical corrected dataset directly.
 
-Definitions (thresholds and horizons are configured in config.py):
-  - One observation is one coin-hour. A downward depeg hour has price below
-    1 - DEPEG_BAND; above-peg prices do not count as depegs.
-  - An episode begins with at least DEPEG_MIN_DURATION_HOURS consecutive
-    below-band hours. Its recovery window starts at the first above-band hour
-    after the last qualifying dip and lasts DEPEG_GAP_HOURS hours. A qualifying
-    dip beginning during recovery joins the episode and restarts the clock.
-    Short dips do not reset it. Recovery hours, including missing-price hours,
-    are assigned the episode ID but are not counted in n_hours. n_hours counts
-    only hours in qualifying dips, excluding short dips within recovery. The
-    episode table's end is one hour after the final qualifying below-band hour,
-    marking the start of recovery.
-  - At any above-band hour t with a known price, including during recovery,
-    label_h{h} is 1 if a qualifying below-band dip run starts anywhere in
-    (t, t+h], even when that run is bridged into an existing episode or the
-    price recovers before t+h. It is 0 if no run starts and the outcome window
-    is observed. A known onset makes the label 1 even if a later price is
-    missing. Without a known onset, a missing future price makes it NaN.
-    Below-band hours, missing current
-    prices, and horizons past the coin's final observation have NaN labels.
-  - prediction_eligible_market and prediction_eligible_common mark
-    forecast origins with a known above-band price and complete features for
-    the corresponding feature set. Recovery rows can be eligible; below-band
-    rows cannot. Their horizon-specific variants additionally require the
-    target label to be observed, for training/evaluation sample selection.
-    Live prediction eligibility should not depend on future label availability.
-
-Train/test splitting lives in splits.py; model-ready reporting is in
-modelling/reporting/partition_report.py.
+Run ``python -m data_processing.merge_and_label`` to validate existing outputs,
+or add ``--rebuild`` to reconstruct from the hourly snapshot and interim feature
+tables. Use ``--out-dir`` for a fresh output pair. The shared builder applies
+completed-bar clocks, merged-onset labels and causal eligibility in memory;
+no legacy master or episode file is written. Episode helpers below are reused
+by the corrected-data preparation function.
 """
 from pathlib import Path
+import sys
+
+if __package__ in (None, ""):
+    sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 
 import numpy as np
 import pandas as pd
-from config import (
+from data_processing.config import (
     PROCESSED_DATA_DIR, DEPEG_BAND, DEPEG_MIN_DURATION_HOURS, DEPEG_GAP_HOURS,
     FORECAST_HORIZONS_HOURS, FIAT_COINS,
 )
@@ -247,46 +228,10 @@ def flag_prediction_eligibility(df: pd.DataFrame) -> pd.DataFrame:
     return df
 
 def main():
-    price = pd.read_parquet(Path("data/snapshots/hourly_stablecoin.parquet"))
-    price = price.rename(columns={"timestamp": "hour"})
-    onchain = pd.read_parquet(Path("data/interim/hourly_stablecoin_onchain_features.parquet"))
-    market = pd.read_parquet(Path("data/interim/hourly_stablecoin_market_features.parquet"))
+    """Build corrected canonical outputs directly; never persist a legacy master."""
+    from modelling.build_corrected_dataset import main as build_main
+    build_main()
 
-    merged = merge_sources(price, onchain, market)
-    merged = flag_episodes(merged)
-    episodes = build_episode_table(merged)
-    merged = build_labels(merged)
-    # Match the model's Tier 1 inputs in modelling/prepare_data.py. The
-    # derived peg_stress feature is a deterministic transform of peg_deviation.
-    market_features = [
-        "peg_deviation", "log_return_1h", "log_return_6h", "log_return_24h",
-        "realised_vol_6h", "realised_vol_24h", "volume_pct_change_1h",
-        "volume_pct_change_6h", "volume_pct_change_24h",
-    ]
-    onchain_metrics = ["tx_count","tx_volume","active_senders","active_receivers"]
-    onchain_lags = [1, 6, 24]
-    onchain_features = [f"{metric}_logdiff_{lag}h" for metric in onchain_metrics for lag in onchain_lags]
-
-    merged = flag_feature_samples(merged, market_features, onchain_features)
-    merged = flag_prediction_eligibility(merged)
-    coverage = merged.groupby("coin").agg(
-        total_hours=("hour", "size"),
-        market_hours=("market_sample", "sum"),
-        common_hours=("common_sample", "sum"),
-    )
-    coverage["market_retained_pct"] = 100 * coverage["market_hours"] / coverage["total_hours"]
-    coverage["common_retained_pct"] = 100 * coverage["common_hours"] / coverage["total_hours"]
-    print("\nFEATURE SAMPLE COVERAGE")
-    print(coverage.round(2).to_string())
-
-    merged.to_parquet(Path("data/snapshots/master_original.parquet"), index=False)
-    merged.to_csv(PROCESSED_DATA_DIR / "master.csv", index=False)
-    episodes.to_parquet(PROCESSED_DATA_DIR / "depeg_episodes.parquet", index=False)
-    episodes.to_csv(PROCESSED_DATA_DIR / "depeg_episodes.csv", index=False)
-
-    print(f"Master dataset: {len(merged):,} coin-hour rows")
-    print(f"Depeg episodes found: {len(episodes)}")
-    print(episodes)
 
 if __name__ == "__main__":
     main()
