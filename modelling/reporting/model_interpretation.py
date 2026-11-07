@@ -1,4 +1,7 @@
-"""Export coefficients and importance from saved final pipelines; no training."""
+"""Export saved-model interpretation tables and figures.
+
+Export coefficients and importance from saved final pipelines; no training.
+"""
 import argparse
 import json
 from pathlib import Path
@@ -12,6 +15,7 @@ from modelling.utils.io import sha256
 RUNS = [Path('artifacts/runs/primary/REFIT-LOWEST-NEW'), Path('artifacts/runs/primary/LR-REFIT-LOWEST-NEW')]
 
 def main():
+    """Export saved-model interpretation tables and figures."""
     p = argparse.ArgumentParser(description=__doc__)
     p.add_argument('--out-dir', type=Path, default=Path('reports/model_interpretation'))
     args = p.parse_args()

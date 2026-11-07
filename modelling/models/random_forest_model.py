@@ -15,6 +15,7 @@ from .base import BaseModel
 
 
 class RFModel(BaseModel):
+    """Fit a random forest using the supplied estimator configuration."""
     name = "random_forest"
     needs_imputation = True
     supports_early_stopping = False
@@ -23,6 +24,7 @@ class RFModel(BaseModel):
                  min_samples_leaf: int = 20, max_features="sqrt",
                  class_weight="balanced_subsample", random_state: int = 42,
                  n_jobs: int = -1) -> None:
+        """Store random-forest settings and initialize the unfitted state."""
         self.n_estimators = n_estimators
         self.max_depth = max_depth
         self.min_samples_leaf = min_samples_leaf
@@ -35,6 +37,7 @@ class RFModel(BaseModel):
 
     def fit(self, X_train, y_train, X_val=None, y_val=None) -> "RFModel":
         # X_val / y_val are accepted for the contract but unused: no early stopping.
+        """Fit a random forest on the supplied training features and labels."""
         clf = RandomForestClassifier(
             n_estimators=self.n_estimators,
             max_depth=self.max_depth,
@@ -50,6 +53,7 @@ class RFModel(BaseModel):
         return self
 
     def predict_proba(self, X) -> np.ndarray:
+        """Return negative- and positive-class scores for the supplied rows."""
         if self.clf_ is None:
             raise RuntimeError("RFModel.fit must be called before predict_proba")
         proba = self.clf_.predict_proba(X)
@@ -62,11 +66,13 @@ class RFModel(BaseModel):
 
     @property
     def feature_importances_(self) -> np.ndarray:
+        """Return impurity-based feature importances from the fitted forest."""
         if self.clf_ is None:
             raise RuntimeError("RFModel.fit must be called first")
         return self.clf_.feature_importances_
 
     def get_params(self) -> dict:
+        """Return estimator settings and fitted metadata for run recording."""
         return {
             "name": self.name,
             "n_estimators": self.n_estimators,

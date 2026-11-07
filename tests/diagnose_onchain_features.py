@@ -1,5 +1,4 @@
-"""
-Tier 2 on-chain change-feature checks (run from the repo root):
+"""Tier 2 on-chain change-feature checks (run from the repo root):.
 
     python -m tests.diagnose_onchain_features
 
@@ -77,6 +76,7 @@ def coin_probe(master: pd.DataFrame, features: list[str], label: str,
 
 
 def main() -> int:
+    """Run coin-identity probes and on-chain feature hygiene diagnostics."""
     master, episodes = load_master()
     at_risk = at_risk_mask(master, episodes, horizon=24)
     m = master.loc[at_risk].reset_index(drop=True)

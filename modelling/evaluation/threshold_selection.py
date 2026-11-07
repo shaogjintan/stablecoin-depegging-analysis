@@ -1,4 +1,7 @@
-"""Select calibration cutoffs under an observed coin-month false-alarm budget."""
+"""Select calibration cutoffs under a coin-month false-alarm budget.
+
+Select calibration cutoffs under an observed coin-month false-alarm budget.
+"""
 from __future__ import annotations
 import numpy as np
 import pandas as pd
@@ -25,7 +28,9 @@ def _choose_threshold(
     budget: float,
     policy: str = "max_validation_recall",
 ) -> tuple[float, dict]:
-    """Choose an explicit policy under the average validation FA/exposure budget.
+    """Select a calibration cutoff under the requested alarm-budget policy.
+
+    Choose an explicit policy under the average validation FA/exposure budget.
 
     lowest_feasible selects the smallest feasible distinct score (or +inf).
     max_validation_recall maximizes catches, then fewer FA, then higher cutoff.
@@ -46,6 +51,7 @@ def _choose_threshold(
     target_ids = _targetable_episode_ids(validation, episodes, horizon)
     n_validation_coin_months = _observed_coin_months(validation)
     def evaluate(threshold: float) -> dict:
+        """Calculate calibration alarm outcomes for one candidate cutoff."""
         _, events = build_alarm_events(validation, episodes, float(threshold))
         false_count, coin_months, rate, max_false_by_month = _false_alarm_stats(
             events, validation, n_validation_coin_months

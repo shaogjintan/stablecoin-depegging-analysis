@@ -17,6 +17,7 @@ from .base import BaseModel
 
 
 class XGBModel(BaseModel):
+    """Fit XGBoost with training-derived weights and optional validation."""
     name = "xgboost"
     needs_imputation = False
     supports_early_stopping = True
@@ -25,6 +26,7 @@ class XGBModel(BaseModel):
                  min_child_weight: float = 1, scale_pos_weight="auto",
                  n_estimators: int = 1000, early_stopping_rounds: int = 100,
                  random_state: int = 42, n_jobs: int = -1) -> None:
+        """Store XGBoost settings and initialize the unfitted state."""
         self.learning_rate = learning_rate
         self.max_depth = max_depth
         self.min_child_weight = min_child_weight
@@ -39,6 +41,7 @@ class XGBModel(BaseModel):
         self.best_score_: float | None = None
 
     def fit(self, X_train, y_train, X_val=None, y_val=None) -> "XGBModel":
+        """Fit XGBoost, optionally using a supplied validation set."""
         y = np.asarray(y_train, dtype=int)
         n_pos = int(y.sum())
         if self.scale_pos_weight == "auto":
@@ -70,11 +73,13 @@ class XGBModel(BaseModel):
         return self
 
     def predict_proba(self, X) -> np.ndarray:
+        """Return negative- and positive-class scores for the supplied rows."""
         if self.clf_ is None:
             raise RuntimeError("XGBModel.fit must be called before predict_proba")
         return self.clf_.predict_proba(X)
 
     def get_params(self) -> dict:
+        """Return estimator settings and fitted metadata for run recording."""
         return {
             "name": self.name,
             "learning_rate": self.learning_rate,

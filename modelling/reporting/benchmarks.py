@@ -17,6 +17,7 @@ from modelling.evaluation.threshold_selection import (
 )
 
 def benchmarks(run, episodes):
+    """Fit and pool constant-prior and persistence benchmark results."""
     rows = []
     for h in [6, 24]:
         for name in ["baseline", "persistence"]:
@@ -53,6 +54,7 @@ def benchmarks(run, episodes):
 
 
 def main():
+    """Fit and export benchmarks using a completed run's saved partitions."""
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument('--run-dir', type=Path,
                         default=Path('artifacts/runs/primary/REFIT-LOWEST-NEW'))

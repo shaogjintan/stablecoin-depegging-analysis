@@ -19,16 +19,22 @@ import pandas as pd
 
 
 class MedianImputer:
-    """Column-wise median imputation; medians are fitted on the training set only."""
+    """Impute missing values using training-fitted column medians.
+
+    Column-wise median imputation; medians are fitted on the training set only.
+    """
 
     def __init__(self) -> None:
+        """Initialize the unfitted median-imputation state."""
         self.medians_: pd.Series | None = None
 
     def fit(self, X: pd.DataFrame) -> "MedianImputer":
+        """Learn one median per input column from the training data."""
         self.medians_ = X.median(axis=0)
         return self
 
     def transform(self, X: pd.DataFrame) -> pd.DataFrame:
+        """Fill missing input values using previously learned column medians."""
         if self.medians_ is None:
             raise RuntimeError("MedianImputer.fit must be called before transform")
         X = X.copy()
@@ -42,7 +48,10 @@ class MedianImputer:
 
 
 class BaseModel(ABC):
-    """The shared model contract. Subclass and register in models/__init__.py."""
+    """Define the shared estimator interface for model implementations.
+
+    The shared model contract. Subclass and register in models/__init__.py.
+    """
 
     name: str = "base"
     needs_imputation: bool = True

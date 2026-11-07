@@ -1,6 +1,7 @@
 """Outcome-definition sensitivity for completed matched refit runs.
 
-Freeze prediction hours, models, cutoffs and alarm times; vary episode definitions.
+Freeze prediction hours, models, cutoffs and alarm times; vary episode
+definitions.
 This is not a retraining experiment under alternative labels or eligibility.
 """
 import argparse
@@ -20,6 +21,7 @@ from modelling.evaluation.targetability import targetable_ids
 
 
 def evaluate(pred, alarms, episodes, h):
+    """Evaluate frozen alarms against the supplied episode definition."""
     targets = targetable_ids(pred, episodes, h)
     caught, leads, true_count = set(), [], 0
     for coin, group in alarms.groupby("coin", sort=False):
@@ -48,6 +50,7 @@ def evaluate(pred, alarms, episodes, h):
 
 
 def main():
+    """Evaluate frozen alarms against alternative depeg outcome definitions."""
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--run-dir", type=Path, action="append", required=True)
     parser.add_argument("--out-dir", type=Path, default=Path("reports/robustness/alt_definitions"))

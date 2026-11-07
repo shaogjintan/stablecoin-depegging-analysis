@@ -2,9 +2,9 @@
 
 Run from the repository root, using a threshold chosen on validation data:
 
-    python -m modelling.evaluation.alarm_events \
-        --predictions results/predictions/xgboost_t2_h24_recall_tuned_pooled_test.parquet \
-        --threshold 0.25
+    python -m modelling.evaluation.alarm_events         --predictions \
+    results/predictions/xgboost_t2_h24_recall_tuned_pooled_test.parquet \
+    --threshold 0.25
 
 The first flagged hour for a coin starts an alarm. Further flagged hours for
 that coin through the next h hours (inclusive) are ignored. An alarm is true
@@ -157,6 +157,7 @@ def summarize_alarm_events(
 
 
 def main(argv=None) -> int:
+    """Export grouped alarms and summaries for supplied prediction scores."""
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--predictions", required=True,
                         help="one pooled OOS test predictions parquet file")

@@ -19,7 +19,8 @@ Leakage control:
     [boundary - purge, boundary + embargo] is dropped from every fold set.
 
 Rows are returned unfiltered, including unlabelled rows.
-data_processing/sample_preparation.py applies tier- and horizon-specific eligibility.
+data_processing/sample_preparation.py applies tier- and horizon-specific
+eligibility.
 
 Usage from modelling code (run from the repo root):
     import sys; sys.path.insert(0, "data_processing")
@@ -66,6 +67,7 @@ def resolve_recorded_input(path):
 
 
 def canonical_input_hashes(hashes):
+    """Map historical input hash keys to their canonical dataset paths."""
     return {
         str(resolve_recorded_input(path)): digest
         for path, digest in hashes.items()
@@ -128,6 +130,7 @@ def load_master() -> tuple[pd.DataFrame, pd.DataFrame]:
 
 
 def _year_start(year: int) -> pd.Timestamp:
+    """Return midnight UTC at the start of the requested calendar year."""
     return pd.Timestamp(f"{year}-01-01", tz="UTC")
 
 
@@ -147,8 +150,11 @@ def _straddling_episodes(
 def expanding_window_folds(master: pd.DataFrame, episodes: pd.DataFrame,
                            start_year: int = OOS_START_YEAR,
                            end_year: int = OOS_END_YEAR) -> list[dict]:
-    """Return one dict per test year Y with keys
-    year, train, test, inner_train, inner_val, dropped_episodes."""
+    """Return calendar-year train, calibration, and test partitions.
+
+    Each fold contains year, train, test, inner_train, inner_val, and
+    dropped_episodes entries.
+    """
     purge = pd.Timedelta(hours=PURGE_HOURS)
     embargo = pd.Timedelta(hours=EMBARGO_HOURS)
     hour = master["hour"]

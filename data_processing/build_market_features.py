@@ -27,8 +27,11 @@ OUT_PATH = MARKET_FEATURES_PATH
 
 
 def build_price_features(df: pd.DataFrame) -> pd.DataFrame:
-    """Returns, peg deviation, and realised volatility from the DefiLlama
-    reference price. Grouped by coin so nothing crosses a coin boundary."""
+    """Build price returns, peg deviation, and realised volatility.
+
+    Use the DefiLlama reference price and group by coin so calculations never
+    cross coin boundaries.
+    """
     df = df.sort_values(["coin", "hour"]).copy()
     g = df.groupby("coin")["price"]
 
@@ -101,6 +104,7 @@ def build_exchange_features(df: pd.DataFrame) -> pd.DataFrame:
 
 def main():
     # The acquired table keeps price-only hours with missing exchange volume.
+    """Build and write market feature tables from retained hourly data."""
     df = pd.read_parquet(HOURLY_MARKET_PATH)
 
     price_feats = build_price_features(df)

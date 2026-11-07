@@ -1,10 +1,14 @@
-"""Exhaustive distinct-score policy accelerated by a Fenwick active-row index."""
+"""Count alarm outcomes at every distinct calibration score.
+
+Exhaustive distinct-score policy accelerated by a Fenwick active-row index.
+"""
 import numpy as np
 from numba import njit
 
 
 @njit
 def _prefix(tree, pos):
+    """Return the active-index count before the supplied Fenwick position."""
     total = 0
     while pos:
         total += tree[pos]
@@ -14,6 +18,7 @@ def _prefix(tree, pos):
 
 @njit
 def _kth(tree, k):
+    """Locate the zero-based row for a one-based rank in the Fenwick index."""
     pos = 0
     bit = 1
     while bit * 2 < len(tree):
@@ -29,6 +34,7 @@ def _kth(tree, k):
 
 @njit
 def _add(tree, index, delta):
+    """Apply a row-count change to the Fenwick active-row index."""
     pos = index + 1
     while pos < len(tree):
         tree[pos] += delta
@@ -37,7 +43,10 @@ def _add(tree, index, delta):
 
 @njit
 def exhaustive_counts(scores, times, coin_ends, targets, horizon_ns):
-    """All thresholds; recompute only displaced cooldown alarms until convergence."""
+    """Count outcomes by incrementally updating cooldown alarm sequences.
+
+    All thresholds; recompute only displaced cooldown alarms until convergence.
+    """
     n = len(scores)
     order = np.argsort(scores)[::-1]
     active = np.zeros(n + 1, np.int64)

@@ -1,6 +1,7 @@
 """Select a cutoff with a practice model, then refit before the outer test.
 
-python -m modelling.training.train_models --out-dir artifacts/runs/primary/ALL-MODELS-REPRODUCED
+python -m modelling.training.train_models --out-dir \
+artifacts/runs/primary/ALL-MODELS-REPRODUCED
 
 Uses corrected folds, matched tiers, and the existing purge/embargo rules.
 Previous runs are never reused as final-model scores or overwritten.
@@ -32,6 +33,7 @@ from modelling.evaluation.run_summary import aggregate
 
 
 def fit(name, X, y, C=None):
+    """Fit the selected model and its training-derived preprocessing."""
     if name == "logreg":
         return fit_lr(X, y, C)
     params = XGBOOST_FIXED_PARAMS if name == "xgboost" else RANDOM_FOREST_FIXED_PARAMS if name == "random_forest" else {}
@@ -42,11 +44,13 @@ def fit(name, X, y, C=None):
 
 
 def predict(bundle, X):
+    """Predict positive-class scores using a fitted model and its imputer."""
     model, imputer = bundle
     return model.predict_proba(imputer.transform(X) if imputer is not None else X)[:, 1]
 
 
 def frame(fold, part):
+    """Build a partition's prediction metadata and horizon-specific labels."""
     result = fold[f"{part}_meta"].copy()
     result["y_true"] = fold[f"y_{part}"]
     result["horizon"] = fold["horizon"]
@@ -54,6 +58,7 @@ def frame(fold, part):
 
 
 def main():
+    """Run practice fitting, calibration, final refitting, and scoring."""
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--out-dir", type=Path, required=True)
     parser.add_argument("--models", nargs="+", default=["random_forest", "xgboost", "logreg"],

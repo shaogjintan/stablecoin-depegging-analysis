@@ -1,5 +1,6 @@
-"""
-Group depeg episodes into market-wide events (definition only, no model output).
+"""Group depeg episodes into descriptive market-wide events.
+
+Event grouping does not use model output or change training labels.
 
 Several coin-episodes can be one market shock (SVB in March 2023 hit USDC,
 DAI, PAX and TUSD), so counting episodes overstates how much independent
@@ -19,13 +20,15 @@ INPUT
 OUTPUT (reports/depeg_events/)
   episode_event_mapping.csv  one row per episode with its event_id
   grouped_depeg_events.csv    one row per event: start, coins, episode IDs
-  depeg_events_by_year.csv   number of episodes vs events per year (and per coin)
+  depeg_events_by_year.csv   number of episodes vs events per year (and per
+  coin)
   figures/      (skip with --no-plots; prices read from master.parquet)
     timeline.png        every episode per coin, multi-coin events shaded
     event_zooms.png     price of each coin around every multi-coin event
     onset_gaps.png      hours to nearest other-coin onset (why 48h)
     episodes_vs_events.png  per-year episode vs event counts
-  ../depeg_episodes/coin_year_heatmap.png   episodes per coin per year, with totals
+  ../depeg_episodes/coin_year_heatmap.png   episodes per coin per year, with
+  totals
 
 Usage (from the repo root):
     python -m modelling.reporting.event_table
@@ -71,7 +74,10 @@ plt.rcParams.update({
 
 
 def group_events(episodes: pd.DataFrame, window_hours: float) -> pd.DataFrame:
-    """Add event_id / event_start to each episode (anchored on the first episode)."""
+    """Assign event IDs using first-onset anchored episode groups.
+
+    Add event_id / event_start to each episode (anchored on the first episode).
+    """
     eps = episodes.sort_values(["start", "coin"]).reset_index(drop=True).copy()
     window = pd.Timedelta(hours=window_hours)
     event_ids, event_starts = [], []
@@ -94,7 +100,11 @@ def group_events(episodes: pd.DataFrame, window_hours: float) -> pd.DataFrame:
 
 
 def plot_timeline(eps: pd.DataFrame, ev_tab: pd.DataFrame, path: Path) -> None:
-    """One lane per coin, one dot per episode; multi-coin events shaded and numbered."""
+    """Plot coin-specific episodes and highlight multi-coin events.
+
+    One lane per coin, one dot per episode; multi-coin events shaded and
+    numbered.
+    """
     fig, ax = plt.subplots(figsize=(13, 3.8))
     lanes = {c: i for i, c in enumerate(FIAT_COINS[::-1])}
     multi = ev_tab.loc[ev_tab["n_episodes"] > 1].reset_index(drop=True)
@@ -129,8 +139,11 @@ def plot_event_zooms(eps: pd.DataFrame, ev_tab: pd.DataFrame, prices: pd.DataFra
                      window_hours: float, path: Path) -> None:
     """Small multiples: price of every coin around each multi-coin event.
 
-    Member coins are drawn in colour; non-member coins in light grey for context.
-    Shaded spans are each member's episode; the dashed box is the grouping window."""
+    Member coins are drawn in colour; non-member coins in light grey for
+    context.
+    Shaded spans are each member's episode; the dashed box is the grouping
+    window.
+    """
     multi = ev_tab.loc[ev_tab["n_episodes"] > 1].reset_index(drop=True)
     ncol = 4
     nrow = math.ceil(len(multi) / ncol)
@@ -205,6 +218,7 @@ def plot_onset_gaps(eps: pd.DataFrame, window_hours: float, path: Path) -> None:
 
 
 def plot_episodes_vs_events(by_year: pd.DataFrame, path: Path) -> None:
+    """Plot yearly counts of individual episodes and grouped events."""
     yrs = by_year.loc[by_year["year"] != "total"]
     x = np.arange(len(yrs))
     w = 0.38
@@ -226,7 +240,10 @@ def plot_episodes_vs_events(by_year: pd.DataFrame, path: Path) -> None:
 
 
 def plot_coin_year_heatmap(by_year: pd.DataFrame, test_start: int, path: Path) -> None:
-    """Episodes per coin per year (one-hue blue ramp), totals as plain columns."""
+    """Plot episode counts by coin and year, including totals.
+
+    Episodes per coin per year (one-hue blue ramp), totals as plain columns.
+    """
     yrs = by_year.loc[by_year["year"] != "total"].copy()
     coins = [c for c in ["USDT", "USDC", "BUSD", "DAI", "TUSD", "PAX"]
              if f"episodes_{c}" in yrs.columns]
@@ -296,6 +313,7 @@ def plot_coin_year_heatmap(by_year: pd.DataFrame, test_start: int, path: Path) -
 
 
 def main(argv=None) -> int:
+    """Export grouped events, episode mappings, annotations, and figures."""
     parser = argparse.ArgumentParser(description=__doc__,
                                      formatter_class=argparse.RawDescriptionHelpFormatter)
     parser.add_argument("--window-hours", type=float, default=48,

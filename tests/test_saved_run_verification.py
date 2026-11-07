@@ -9,7 +9,9 @@ from modelling.validation.verify_model_results import (
 
 
 class SavedRunVerificationTests(unittest.TestCase):
+    """Check result identities and independent metric comparisons."""
     def test_each_headline_metric_detects_changed_results(self):
+        """Check each headline metric detects altered saved results."""
         actual = dict(median_lead_hours=4., episode_recall=.5, false_alarms=3,
                       false_alarms_per_coin_month=.75, average_precision=.2,
                       episodes_caught=2, targetable_episodes=4, alarm_events=5)
@@ -21,6 +23,7 @@ class SavedRunVerificationTests(unittest.TestCase):
                     check_metrics(actual, altered, 'altered')
 
     def test_result_identity_must_be_present_and_unique(self):
+        """Check result lookup rejects missing and duplicate cells."""
         frame = pd.DataFrame({'model': ['logreg'], 'average_precision': [.2]})
         self.assertEqual(unique_cell(frame, model='logreg').average_precision, .2)
         with self.assertRaisesRegex(ValueError, 'Missing/duplicate'):
@@ -29,6 +32,7 @@ class SavedRunVerificationTests(unittest.TestCase):
             unique_cell(pd.concat([frame, frame]), model='logreg')
 
     def test_each_fit_identity_field_is_checked(self):
+        """Check mismatches in every fit-identity field are rejected."""
         info = dict(run_id='expected', policy='exhaustive_lowest')
         spec = dict(run_id='expected', model='logreg', config='market_matched',
                     horizon=6, year=2024, refit_after_calibration=True,
@@ -40,6 +44,7 @@ class SavedRunVerificationTests(unittest.TestCase):
                                    'logreg', 'market_matched', 6, 2024)
 
     def test_pooling_uses_counts_exposure_and_individual_lead_times(self):
+        """Check pooling uses summed counts and individual alarm lead times."""
         parts = []
         for y, scores, caught, targets, false, months, leads in [
             ([1, 0], [.9, .8], 1, 1, 1, 1, [1.]),

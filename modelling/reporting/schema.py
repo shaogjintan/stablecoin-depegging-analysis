@@ -12,7 +12,10 @@ SUPPORTING_COUNTS = [
 
 
 def write_comparison(frame, output, identifiers):
-    """Write five headline metrics and counts; preserve other fields separately."""
+    """Write aligned headline metrics and separate diagnostic fields.
+
+    Write five headline metrics and counts; preserve other fields separately.
+    """
     missing = set(identifiers + HEADLINE_METRICS) - set(frame.columns)
     if missing:
         raise ValueError(f'Missing comparison columns: {sorted(missing)}')

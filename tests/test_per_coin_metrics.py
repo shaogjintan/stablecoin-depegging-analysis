@@ -9,7 +9,9 @@ from modelling.evaluation.threshold_selection import _targetable_episode_ids
 
 
 class CoinMetricsTests(unittest.TestCase):
+    """Check per-coin denominators and undefined metrics."""
     def test_vectorised_targets_match_core_rule_at_boundaries(self):
+        """Check vectorized targetability matches the core endpoint rules."""
         hours = pd.date_range("2021-01-01", periods=12, freq="h", tz="UTC")
         predictions = pd.DataFrame({
             "coin": "A", "hour": hours, "y_true": 1,
@@ -25,6 +27,7 @@ class CoinMetricsTests(unittest.TestCase):
             )
 
     def test_metrics_use_episode_counts_and_observed_months(self):
+        """Check per-coin episode and observed-month denominators."""
         hours = pd.to_datetime([
             "2021-01-31 23:00Z", "2021-02-01 00:00Z",
             "2021-02-01 01:00Z",
@@ -50,6 +53,7 @@ class CoinMetricsTests(unittest.TestCase):
         self.assertEqual(result["median_lead_hours"], .5)
 
     def test_no_targets_or_positive_hours_are_reported_as_undefined(self):
+        """Check absent targets or positives produce undefined recall or AP."""
         pred = pd.DataFrame({
             "coin": ["A"],
             "hour": pd.to_datetime(["2021-01-01T00:00Z"]),

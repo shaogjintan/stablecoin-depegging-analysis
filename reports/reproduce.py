@@ -5,6 +5,7 @@ import subprocess
 import sys
 
 def main():
+    """Run saved-evidence report exporters from the repository root."""
     root = Path(__file__).resolve().parents[1]
     env = dict(os.environ, MPLCONFIGDIR=str(Path('/private/tmp/stablecoin-matplotlib')))
     for module, args in [('data_processing.build_dataset', []), ('modelling.reporting.model_results', []), ('modelling.reporting.calibration_audit', []), ('modelling.reporting.by_coin', []), ('modelling.reporting.event_table', []), ('modelling.reporting.detection_by_type', []), ('modelling.reporting.coverage_table', []), ('modelling.reporting.model_interpretation', [])]:

@@ -53,7 +53,10 @@ def check_metrics(actual, saved, context):
 
 
 def pooled_metric_values(parts):
-    """Pool scores and true-alarm lead times; sum exposure and episode counts."""
+    """Pool counts, exposure, scores, and individual true-alarm lead times.
+
+    Pool scores and true-alarm lead times; sum exposure and episode counts.
+    """
     pred = pd.concat([pred for pred, _, _ in parts], ignore_index=True)
     counts = {
         key: sum(result[key] for _, result, _ in parts)
@@ -122,6 +125,7 @@ def check_split_boundaries(partitions, episodes, year,
 
 
 def verify(run, check_scores=False):
+    """Audit one saved run's identities, splits, alarms, and metrics."""
     info = json.loads((run / 'run.json').read_text())
     if (info.get('status') != 'complete' or not info.get('refit_after_calibration')
             or info.get('policy') != 'exhaustive_lowest'):
@@ -195,6 +199,7 @@ def verify(run, check_scores=False):
     return dict(path=str(run), run_id=info['run_id'], manifest_sha256=sha256(run / 'run.json'), status='passed', cells=len(rows), checks=['input/pipeline hashes', 'four-partition calendar bounds, 25h purge, 24h embargo, episode exclusions and subset relationships', 'validation threshold and budget', 'independent greedy alarms', 'independent tie-aware AP', 'all five yearly and pooled headline metrics', 'fit identities and unique result cells'], model_score_replay=check_scores, limitations=['Threshold candidate selection reuses the maintained engine; its independent oracle is covered by tests.', 'LR C selection is not rerun.', 'Split checks verify saved-row boundaries and exclusions; they do not reconstruct the complete eligible-row population.'])
 
 def main():
+    """Audit saved runs and write verification results as JSON."""
     p = argparse.ArgumentParser(description=__doc__)
     p.add_argument('--run-dir', type=Path, action='append')
     p.add_argument('--check-model-scores', action='store_true')

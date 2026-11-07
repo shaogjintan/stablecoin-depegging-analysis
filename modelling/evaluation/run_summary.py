@@ -5,6 +5,7 @@ from sklearn.metrics import average_precision_score
 
 
 def aggregate(rows, events, scores):
+    """Pool yearly counts, prediction AP, alarms, and conditional lead times."""
     yearly = pd.DataFrame(rows)
     keys = ["model", "config", "horizon_hours", "policy"]
     summary = yearly.groupby(keys, as_index=False).agg(

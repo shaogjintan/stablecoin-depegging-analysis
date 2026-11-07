@@ -1,10 +1,15 @@
-"""Independent calculations of alarm outcomes, metrics, and preprocessing expectations."""
+"""Provide independent alarm, metric, and preprocessing checks.
+
+Independent calculations of alarm outcomes, metrics, and preprocessing
+expectations.
+"""
 import numpy as np
 import pandas as pd
 from modelling.training.parameters import RANDOM_FOREST_FIXED_PARAMS
 HOUR = 3600_000_000_000
 
 def reference_ap(y, scores):
+    """Calculate tie-aware average precision independently of scikit-learn."""
     y, scores = np.asarray(y, dtype=int), np.asarray(scores, dtype=float)
     assert len(y) and np.isfinite(scores).all()
     if y.sum() == 0:
@@ -17,6 +22,7 @@ def reference_ap(y, scores):
     return float(np.sum(gained * positive / (ends + 1)) / labels.sum())
 
 def reference_events(pred, episodes, cutoff, h):
+    """Reconstruct greedy cooldown alarms and their matched future episodes."""
     rows = []
     cooldown = h * HOUR
     for coin, g in pred.groupby("coin", sort=True):
@@ -39,6 +45,7 @@ def reference_events(pred, episodes, cutoff, h):
                                       "target_episode_id", "lead_hours"])
 
 def reference_targets(pred, episodes, h):
+    """Find episodes with an eligible origin in their warning window."""
     targets = set()
     for coin, g in pred.groupby("coin", sort=False):
         times = np.sort(g.hour.astype("int64").to_numpy())
@@ -50,6 +57,7 @@ def reference_targets(pred, episodes, h):
     return targets
 
 def reference_metrics(pred, events, episodes, h):
+    """Independently calculate grouped-alarm metrics and supporting counts."""
     targets = reference_targets(pred, episodes, h)
     caught = set(events.target_episode_id.dropna()) & targets
     true = events.is_true_alarm.astype(bool)
@@ -69,10 +77,12 @@ def reference_metrics(pred, events, episodes, h):
                 median_lead_hours=float(events.lead_hours.median()))
 
 def assert_values(actual, expected):
+    """Compare expected numerical parameter values with strict tolerance."""
     for k, v in expected.items():
         np.testing.assert_allclose(actual[k], v, atol=1e-12, rtol=0, equal_nan=True, err_msg=k)
 
 def check_preprocessing(bundle, train, features):
+    """Check fitted preprocessing and model settings against training data."""
     model, imputer = bundle["model"], bundle["imputer"]
     X = train[features]
     if imputer is not None:

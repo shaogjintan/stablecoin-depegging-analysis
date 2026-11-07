@@ -1,9 +1,10 @@
-"""
-Prepare model-ready data for each expanding-window CV fold.
+"""Prepare model-ready data for each expanding-window CV fold.
 
 For a horizon h and feature tier, each fold returns X / y for:
-  train, test               -> fit on train, predict test (pool test across folds)
-  inner_train, inner_val    -> nested tuning (hyperparameters, threshold) inside the fold
+  train, test               -> fit on train, predict test (pool test across
+  folds)
+  inner_train, inner_val    -> nested tuning (hyperparameters, threshold) inside
+  the fold
 plus `test_meta` (coin, hour, episode_id) so pooled OOS predictions can be
 traced back to coins and dates.
 
@@ -67,7 +68,11 @@ RECOVERY_HOURS = DEPEG_GAP_HOURS  # 24h
 
 def recovery_window_mask(df: pd.DataFrame, episodes: pd.DataFrame,
                          recovery_hours: int = RECOVERY_HOURS) -> pd.Series:
-    """True for hours in (episode end, episode end + recovery_hours] of the same coin."""
+    """Mark same-coin rows within the post-episode recovery window.
+
+    True for hours in (episode end, episode end + recovery_hours] of the same
+    coin.
+    """
     mask = pd.Series(False, index=df.index)
     if recovery_hours <= 0:
         return mask
@@ -84,7 +89,8 @@ def at_risk_mask(df: pd.DataFrame, episodes: pd.DataFrame, horizon: int,
 
     Legacy sample. The canonical sample uses tier-specific eligibility flags
     from master.parquet; this mask remains as a fallback for older masters and
-    robustness checks."""
+    robustness checks.
+    """
     return (
         ~df["in_episode"]
         & ~recovery_window_mask(df, episodes, recovery_hours)
@@ -93,11 +99,12 @@ def at_risk_mask(df: pd.DataFrame, episodes: pd.DataFrame, horizon: int,
 
 
 def prediction_eligible_mask(df: pd.DataFrame, horizon: int, tier: int = 1) -> pd.Series | None:
-    """The canonical training/evaluation sample flag (team convention, PR #13),
+    """The canonical training/evaluation sample flag (team convention, PR #13),.
     or None when the column is absent (older master versions).
 
     Tier 1 (market features) -> prediction_eligible_market_h{h};
-    Tier 2 (market + on-chain) -> prediction_eligible_market_onchain_h{h}."""
+    Tier 2 (market + on-chain) -> prediction_eligible_market_onchain_h{h}.
+    """
     model = "market" if tier == 1 else "market_onchain"
     col = f"prediction_eligible_{model}_h{horizon}"
     if col in df.columns:
@@ -110,15 +117,18 @@ def prediction_eligible_mask(df: pd.DataFrame, horizon: int, tier: int = 1) -> p
 
 
 def _xy(part: pd.DataFrame, features: list[str], horizon: int):
+    """Extract a partition's feature matrix and horizon-specific labels."""
     return part[features].astype(float), part[f"label_h{horizon}"].astype(int)
 
 
 def load_folds(horizon: int = 24, tier: int = 1,
                recovery_hours: int = RECOVERY_HOURS) -> list[dict]:
-    """One dict per CV fold with X/y for train, test, inner_train, inner_val,
-    plus coin/hour/episode_id metadata for all four partitions. Test and inner
-    validation metadata retain the `test_meta` and `inner_val_meta` keys used by
-    existing callers."""
+    """Return feature, label, and metadata partitions for each CV fold.
+
+    Each fold contains train, test, inner_train, and inner_val X/y arrays,
+    plus coin/hour/episode_id metadata for all four partitions. Test and
+    calibration metadata retain the test_meta and inner_val_meta keys.
+    """
     if horizon not in FORECAST_HORIZONS_HOURS:
         raise ValueError(f"horizon must be one of {FORECAST_HORIZONS_HOURS}")
     features = TIERS[tier]
@@ -154,6 +164,7 @@ def load_folds(horizon: int = 24, tier: int = 1,
 
 
 def main():
+    """Print a modelling-fold sample summary for the configured horizons."""
     master, episodes = load_master()
     master = master.copy()
     master["peg_stress"] = np.clip(-master["peg_deviation"], 0.0, 0.01)
@@ -183,6 +194,7 @@ if __name__ == "__main__":
 
 
 def corrected_folds(master, episodes, horizon, tier):
+    """Prepare eligible feature, label, and metadata partitions by test year."""
     features = MARKET_FEATURES if tier == 1 else MARKET_FEATURES + ONCHAIN_FEATURES
     name = "market" if tier == 1 else "market_onchain"
     sample = master[master[f"prediction_eligible_{name}_h{horizon}"]]

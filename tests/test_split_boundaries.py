@@ -5,13 +5,16 @@ from modelling.validation.verify_model_results import check_split_boundaries
 
 
 def frame(hours):
+    """Create a UTC origin frame for saved-partition boundary checks."""
     return pd.DataFrame(dict(coin=['A']*len(hours),
                              hour=pd.to_datetime(hours, utc=True),
                              episode_id=[None]*len(hours)))
 
 
 class SplitBoundaryTests(unittest.TestCase):
+    """Check calendar partitions and episode boundary exclusions."""
     def setUp(self):
+        """Create isolated fixtures for the checks in this test case."""
         self.parts = {
             'inner_train': frame(['2021-12-30T22:00Z']),
             'inner_val': frame(['2022-01-02T00:00Z', '2022-12-30T22:00Z']),
@@ -26,9 +29,11 @@ class SplitBoundaryTests(unittest.TestCase):
             end=pd.to_datetime([], utc=True)))
 
     def test_full_training_window_can_include_calibration_and_inner_gap(self):
+        """Check final training may include calibration and its inner gap."""
         check_split_boundaries(self.parts, self.episodes, 2023)
 
     def test_every_partition_rejects_its_boundary_violation(self):
+        """Check every saved partition enforces its calendar boundaries."""
         for name, timestamp in [
             ('inner_train', '2021-12-30T23:00Z'),
             ('inner_val', '2022-01-01T23:00Z'),
@@ -44,6 +49,7 @@ class SplitBoundaryTests(unittest.TestCase):
                     check_split_boundaries(altered, self.episodes, 2023)
 
     def test_episodes_touching_either_exclusion_window_are_removed(self):
+        """Check episodes touching either exclusion window are rejected."""
         for boundary in ['2022-01-01', '2023-01-01']:
             point = pd.Timestamp(boundary, tz='UTC')
             episodes = pd.DataFrame(dict(episode_id=['crossing'],
@@ -55,6 +61,7 @@ class SplitBoundaryTests(unittest.TestCase):
                 check_split_boundaries(altered, episodes, 2023)
 
     def test_duplicate_origins_and_missing_final_training_rows_are_rejected(self):
+        """Check duplicate origins and absent final-training rows fail."""
         altered = {k: v.copy() for k, v in self.parts.items()}
         altered['inner_train'] = pd.concat([altered['inner_train']]*2)
         with self.assertRaisesRegex(ValueError, 'Duplicate'):

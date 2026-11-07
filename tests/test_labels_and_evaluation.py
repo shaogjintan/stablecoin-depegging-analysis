@@ -1,3 +1,4 @@
+"""Check causal labels, completed-bar clocks, alarms, and thresholds."""
 from pathlib import Path
 import unittest
 
@@ -15,6 +16,7 @@ from modelling.evaluation.exact_threshold import exhaustive_counts
 
 
 def frame(n=70):
+    """Create an hourly market and on-chain fixture for label checks."""
     return pd.DataFrame({
         "coin": "A", "hour": pd.date_range("2020-01-01", periods=n, freq="h", tz="UTC"),
         "price": 1., "trading_volume": np.arange(n) + 1.,
@@ -25,7 +27,9 @@ def frame(n=70):
 
 
 class RepairTests(unittest.TestCase):
+    """Check causal labels, feature clocks, alarms, and model persistence."""
     def test_targets_clock_and_causal_prefix(self):
+        """Check onset labels, bar-close clocks, and causal risk prefixes."""
         d = frame()
         d.loc[[2, 3, 10, 11], "price"] = .98
         corrected, eps = prepare_corrected(d)
@@ -45,6 +49,7 @@ class RepairTests(unittest.TestCase):
                          pd.Timedelta(hours=1))
 
     def test_calendar_missing_and_schema(self):
+        """Check calendar gaps and required feature schema handling."""
         d = frame()
         d = d.drop(index=30)
         f = calendar_market_features(d)
@@ -60,6 +65,7 @@ class RepairTests(unittest.TestCase):
         self.assertTrue(c.iloc[-1].prediction_eligible_market)
 
     def test_negative_confirmation_and_censoring(self):
+        """Check negative labels require the full onset-confirmation window."""
         d = frame(10)
         d.loc[8, "price"] = np.nan
         eps = pd.DataFrame(columns=["coin", "start", "episode_id"])
@@ -69,6 +75,7 @@ class RepairTests(unittest.TestCase):
         self.assertTrue(np.isnan(labels.loc[9, "label_h1"]))
 
     def test_h1_strict_start_inclusive_end_and_negative_observation(self):
+        """Check h1 onset-window endpoints and negative-label observation."""
         d = frame(10)
         starts = pd.DataFrame({
             "coin": ["A", "A"],
@@ -88,6 +95,7 @@ class RepairTests(unittest.TestCase):
         self.assertTrue(np.isnan(censored.loc[0, "label_h1"]))
 
     def test_h1_decision_and_onset_use_completed_bar_closes(self):
+        """Check h1 decisions and onsets use completed-bar close timestamps."""
         d = frame(12)
         d.loc[[4, 5], "price"] = .98
         corrected, episodes = prepare_corrected(d)
@@ -97,6 +105,7 @@ class RepairTests(unittest.TestCase):
         self.assertEqual(corrected.loc[3, "label_h1"], 1)
 
     def test_h1_alarm_target_and_cooldown_endpoints_are_inclusive(self):
+        """Check h1 alarm matching and cooldown endpoint conventions."""
         hours = pd.date_range("2020-01-01", periods=3, freq="h", tz="UTC")
         predictions = pd.DataFrame({
             "coin": "A", "hour": hours, "horizon": 1, "y_true": [1, 0, 0],
@@ -113,6 +122,7 @@ class RepairTests(unittest.TestCase):
         self.assertEqual(events.iloc[1].alarm_hour, hours[2])
 
     def test_feature_clock_prefix_invariant(self):
+        """Check later observations cannot change earlier feature values."""
         d = frame()
         baseline = calendar_market_features(d)
         changed = d.copy()
@@ -124,6 +134,7 @@ class RepairTests(unittest.TestCase):
             calendar_market_features(pd.concat([d, d.iloc[[0]]]))
 
     def test_threshold_invalid_inputs(self):
+        """Check invalid scores, budgets, and origins are rejected."""
         hours = pd.date_range("2020-01-01", periods=2, freq="h", tz="UTC")
         p = pd.DataFrame({"coin": "A", "hour": hours, "horizon": 6,
                           "y_true": 0, "y_score": [0.2, np.nan]})
@@ -137,6 +148,7 @@ class RepairTests(unittest.TestCase):
             _choose_threshold(p.iloc[:0], eps, 6, 1)
 
     def test_empty_alarm_pooling_cost_dtype(self):
+        """Check empty alarm frames preserve usable pooling and cost dtypes."""
         hours = pd.date_range("2020-01-01", periods=2, freq="h", tz="UTC")
         p = pd.DataFrame({"coin": "A", "hour": hours, "horizon": 6,
                           "y_true": 0, "y_score": .2})
@@ -150,6 +162,7 @@ class RepairTests(unittest.TestCase):
         self.assertEqual(_false_alarm_stats(pooled, p), (1, 1, 1., 1))
 
     def test_threshold_oracle(self):
+        """Compare exhaustive cutoff selection with a direct counting oracle."""
         rng = np.random.default_rng(42)
         for rep in range(25):
             n, h = 40, 6
@@ -196,6 +209,7 @@ class RepairTests(unittest.TestCase):
             self.assertLessEqual(stats["false_alarms_per_coin_month"], budget)
 
     def test_nonmonotone_counterexample(self):
+        """Check cutoff search handles nonmonotone cooldown alarm costs."""
         hours = pd.date_range("2020-01-01", periods=12, freq="h", tz="UTC")
         p = pd.DataFrame({"coin": "A", "hour": hours[[0, 4, 11]],
                           "horizon": 6, "y_true": [1, 0, 0], "y_score": [.2, .9, .8]})
@@ -206,6 +220,7 @@ class RepairTests(unittest.TestCase):
         self.assertEqual(stats["false_alarms"], 1)
 
     def test_fit_roundtrip(self):
+        """Check XGBoost predictions survive a saved-model round trip."""
         rng = np.random.default_rng(4)
         X = pd.DataFrame(rng.normal(size=(80, 3)), columns=["a", "b", "c"])
         y = (X.a > 0).astype(int)

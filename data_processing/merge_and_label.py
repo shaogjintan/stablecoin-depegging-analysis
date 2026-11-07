@@ -153,6 +153,7 @@ def flag_episodes(df: pd.DataFrame) -> pd.DataFrame:
 
 
 def build_episode_table(df: pd.DataFrame) -> pd.DataFrame:
+    """Summarize flagged depeg episodes and their coin-specific time bounds."""
     eps = (
         df[df["qualifying_depeg_hour"]]
         .groupby(["coin", "episode_id"])
@@ -231,6 +232,7 @@ def flag_feature_samples(
     market_features: list,
     onchain_features: list
 ) -> pd.DataFrame:
+    """Mark feature completeness and horizon-specific sample eligibility."""
     df = df.copy()
     required_features = market_features + onchain_features
     missing = [col for col in required_features if col not in df.columns]

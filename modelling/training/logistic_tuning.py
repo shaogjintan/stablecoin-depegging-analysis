@@ -13,6 +13,7 @@ from modelling.utils.io import save_json
 
 
 def fit_lr(X, y, C):
+    """Fit an L1 logistic pipeline and reject convergence failures."""
     with warnings.catch_warnings():
         warnings.simplefilter("error", ConvergenceWarning)
         imputer = MedianImputer().fit(X)
@@ -21,9 +22,11 @@ def fit_lr(X, y, C):
         return model, imputer
 
 def select_c(candidates):
+    """Select the highest mean-AP candidate, breaking ties by smaller C."""
     return max(candidates, key=lambda r: (r["mean_average_precision"], -r["C"]))["C"]
 
 def tune_lr(train, features, episodes, folder, h):
+    """Select C by training-only calendar CV and save the tuning evidence."""
     X, y = train[features], train.y_true
     folds, skipped = _calendar_cv_folds(X, y, train, episodes)
     save_json(folder / "cv_skipped.json", skipped)

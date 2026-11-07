@@ -8,6 +8,7 @@ from modelling.reporting.model_results import RUNS
 from modelling.utils.io import sha256
 
 def calibration_audit_rows(run, models, horizons=(6, 24)):
+    """Read calibration evidence from saved fit metadata."""
     rows = []
     for h in horizons:
         for year in range(2021, 2026):
@@ -27,6 +28,7 @@ def calibration_audit_rows(run, models, horizons=(6, 24)):
 
 
 def main():
+    """Export calibration evidence from completed saved model fits."""
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument('--out-dir', type=Path,
                         default=Path('reports/validation_checks'))

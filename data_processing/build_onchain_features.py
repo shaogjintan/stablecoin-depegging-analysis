@@ -156,6 +156,7 @@ def load_coin_csv(coin: str, path: Path) -> pd.DataFrame | None:
 
 
 def main():
+    """Build and write on-chain change features from retained source exports."""
     extracted = extract_fiat_csvs()
     if not extracted:
         raise RuntimeError(

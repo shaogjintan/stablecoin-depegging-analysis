@@ -1,5 +1,4 @@
-"""Configuration for the stablecoin depeg-forecasting data pipeline.
-"""
+"""Configuration for the stablecoin depeg-forecasting data pipeline."""
 
 from pathlib import Path
 

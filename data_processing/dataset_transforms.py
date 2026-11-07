@@ -1,10 +1,14 @@
-"""Completed-bar features, onset labels, and causal eligibility transformations."""
+"""Build causal features, onset labels, and prediction eligibility.
+
+Completed-bar features, onset labels, and causal eligibility transformations.
+"""
 import numpy as np
 import pandas as pd
 from data_processing.feature_schema import MARKET_FEATURES, ONCHAIN_FEATURES
 from data_processing.merge_and_label import flag_episodes, build_episode_table
 
 def calendar_market_features(df):
+    """Rebuild market features on each coin's complete hourly calendar."""
     df = df.sort_values(["coin", "hour"]).copy()
     if df.duplicated(["coin", "hour"]).any():
         raise ValueError("Duplicate coin-hour")
@@ -29,7 +33,10 @@ def calendar_market_features(df):
 
 
 def causal_risk_mask(df, recovery_hours=24, band=.01, min_duration=2):
-    """At bar close, exclude below-band and confirmed-dip recovery; no final end."""
+    """Identify causal at-risk prediction rows at bar close.
+
+    At bar close, exclude below-band and confirmed-dip recovery; no final end.
+    """
     out = pd.Series(False, index=df.index)
     for _, g in df.groupby("coin", sort=False):
         run = 0
@@ -55,7 +62,10 @@ def causal_risk_mask(df, recovery_hours=24, band=.01, min_duration=2):
 
 
 def episode_labels(df, episodes, horizons=(1, 6, 24), band=.01, min_duration=2):
-    """New merged starts only; negative windows include onset-confirmation bar."""
+    """Label new merged episode onsets and observed negative windows.
+
+    New merged starts only; negative windows include onset-confirmation bar.
+    """
     df = df.copy()
     for h in horizons:
         df[f"label_h{h}"] = np.nan
@@ -83,6 +93,7 @@ def episode_labels(df, episodes, horizons=(1, 6, 24), band=.01, min_duration=2):
 
 
 def prepare_corrected(master):
+    """Build causal features and labels, then shift clocks to bar close."""
     if "bar_start" in master or "observable_at_risk" in master:
         raise ValueError("Input is already corrected; refusing to shift bar clocks twice")
     master = calendar_market_features(master)

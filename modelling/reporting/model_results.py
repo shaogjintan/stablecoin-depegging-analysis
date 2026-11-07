@@ -73,6 +73,7 @@ def export_results(out, runs=None):
 
 
 def main():
+    """Combine saved model summaries and yearly results into aligned reports."""
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument('--out-dir', type=Path,
                         default=Path('reports/model_results'))

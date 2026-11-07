@@ -1,4 +1,7 @@
-"""Coverage over each coin's full observed master span, with explicit numerators."""
+"""Report source coverage over each coin's observed timestamp span.
+
+Coverage over each coin's full observed master span, with explicit numerators.
+"""
 import argparse
 import json
 from pathlib import Path
@@ -9,6 +12,7 @@ from modelling.utils.io import sha256
 RAW_ONCHAIN = ['tx_count', 'tx_volume', 'active_senders', 'active_receivers']
 
 def coverage(master):
+    """Measure source completeness over each coin's full observed time span."""
     rows = []
     for coin in FIAT_COINS:
         g = master.loc[master.coin.eq(coin)].sort_values('hour')
@@ -32,6 +36,7 @@ def coverage(master):
     return pd.DataFrame(rows)
 
 def main():
+    """Export source-coverage counts, rates, and provenance."""
     p = argparse.ArgumentParser(description=__doc__)
     p.add_argument('--out-dir', type=Path, default=Path('reports/data_coverage'))
     args = p.parse_args()

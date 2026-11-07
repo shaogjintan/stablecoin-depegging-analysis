@@ -2,6 +2,7 @@
 import pandas as pd
 
 def classify(row):
+    """Assign historical context using the episode onset date."""
     s = row["start"]
     coin = row["coin"]
     if pd.Timestamp("2023-03-09", tz="UTC") <= s <= pd.Timestamp("2023-03-14", tz="UTC"):
@@ -24,6 +25,7 @@ def classify(row):
     return "Unclassified (pre-2021 training)"
 
 def annotate(episodes):
+    """Add historical-context annotations to a copy of the episode table."""
     result = episodes.copy()
     result["start"] = pd.to_datetime(result["start"], utc=True)
     result["historical_context"] = result.apply(classify, axis=1)

@@ -1,4 +1,8 @@
-"""Count final-model detections by structural event type using saved eligible origins."""
+"""Report saved-model episode detections by structural event type.
+
+Count final-model detections by structural event type using saved eligible
+origins.
+"""
 import argparse
 import json
 from pathlib import Path
@@ -9,6 +13,7 @@ from modelling.utils.io import sha256
 RUNS = [Path('artifacts/runs') / kind / name for kind, name in [('primary', 'REFIT-LOWEST-NEW'), ('primary', 'LR-REFIT-LOWEST-NEW'), ('supplementary', 'REFIT-LOWEST-H1'), ('supplementary', 'LR-REFIT-LOWEST-H1')]]
 
 def main():
+    """Export model detection counts grouped by structural event type."""
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument('--event-dir', type=Path, default=Path('reports/depeg_events'))
     parser.add_argument('--out-dir', type=Path, default=Path('reports/model_results'))

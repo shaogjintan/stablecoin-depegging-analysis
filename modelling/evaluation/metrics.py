@@ -34,6 +34,7 @@ def _targetable_episode_ids(predictions: pd.DataFrame,
 
 
 def _observed_coin_months(predictions: pd.DataFrame) -> int:
+    """Count distinct observed coin and calendar-month pairs."""
     months = predictions[["coin", "hour"]].copy()
     months["coin_month"] = pd.to_datetime(months["hour"], utc=True).dt.strftime("%Y-%m")
     return int(months[["coin", "coin_month"]].drop_duplicates().shape[0])
@@ -44,6 +45,7 @@ def _false_alarm_stats(
     predictions: pd.DataFrame,
     n_coin_months: int | None = None,
 ) -> tuple[int, int, float, int]:
+    """Count grouped false alarms and summarize their monthly exposure cost."""
     if n_coin_months is None:
         n_coin_months = _observed_coin_months(predictions)
     false_count = (
@@ -63,6 +65,7 @@ def _false_alarm_stats(
 
 
 def metrics(pred, events, targets):
+    """Calculate headline metrics and supporting counts from grouped alarms."""
     caught = set(events.target_episode_id.dropna().astype(str)) & targets
     fa, months, rate, maximum = _false_alarm_stats(events, pred)
     return dict(rows=len(pred), positive_hours=int(pred.y_true.sum()),

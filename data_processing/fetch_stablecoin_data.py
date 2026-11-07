@@ -285,9 +285,12 @@ def fetch_all_coin_prices() -> pd.DataFrame:
 
 
 def fetch_binance_month(symbol: str, month: str) -> pd.DataFrame | None:
-    """A 404 means the pair genuinely didn't trade that month (delisted /
-    not yet listed) -- but data.binance.vision also intermittently 404s or
-    drops the connection on a fine month, so retry before trusting a 404."""
+    """Fetch a Binance monthly archive, retrying transient failures.
+
+    A 404 can mean the pair did not trade that month, but the archive server
+    can also return intermittent 404s or drop valid connections. Retry before
+    treating the monthly archive as unavailable.
+    """
     url = (f"https://data.binance.vision/data/spot/monthly/klines/{symbol}/1h/"
            f"{symbol}-1h-{month}.zip")
     last_status = None
@@ -348,6 +351,7 @@ def fetch_binance_range(symbol: str, start_s: str, end_s: str) -> pd.DataFrame:
     # 2022-09-29 (auto-converting balances to BUSD) and reinstated them
     # around March 2023. Those months genuinely have zero trades, and
     # fill_hourly_volume_gaps (below) fills them with 0 accordingly.
+    """Fetch Binance hourly candles over the requested timestamp range."""
     months = list(pd.period_range(start_s, end_s, freq="M").strftime("%Y-%m"))
     results = {}
     for m in months:
@@ -381,6 +385,7 @@ def fetch_binance_range(symbol: str, start_s: str, end_s: str) -> pd.DataFrame:
 
 
 def fetch_bitfinex_range(symbol: str, start_s: str, end_s: str) -> pd.DataFrame:
+    """Fetch Bitfinex hourly candles over the requested timestamp range."""
     start_ms = int(pd.Timestamp(start_s, tz="UTC").timestamp() * 1000)
     end_ms = int(pd.Timestamp(end_s, tz="UTC").timestamp() * 1000)
     rows = []
@@ -424,7 +429,7 @@ def fetch_bitfinex_range(symbol: str, start_s: str, end_s: str) -> pd.DataFrame:
 def fill_hourly_volume_gaps(
     df: pd.DataFrame, start_s: str, end_s: str
 ) -> pd.DataFrame:
-    """Reindex a single exchange source to a complete hourly grid over its
+    """Reindex a single exchange source to a complete hourly grid over its.
     configured coverage window and fill missing hours with zero volume.
 
     A thinly-traded pair's candle endpoint returns no candle at all for an
