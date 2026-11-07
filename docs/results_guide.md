@@ -16,7 +16,7 @@
 | Final RF importance | reports/model_interpretation/random_forest/rf_importance_by_year.csv |
 | Final XGB SHAP ranking/figures | reports/model_interpretation/ |
 
-The h1 results are supplementary, retained under artifacts/runs/supplementary/. Model interpretation figures and benchmark comparisons cover primary h6/h24. Counts by type also cover h1. Historical annotations must be reviewed as context; date membership is not evidence of causation.
+The h1 results are supplementary, retained under artifacts/h1/. Model interpretation figures and benchmark comparisons cover primary h6/h24. Counts by type also cover h1. Historical annotations must be reviewed as context; date membership is not evidence of causation.
 
 All old final_results/, fixed/tuned figures and non-refit coefficients are archived. Do not combine their values with the current final-model outputs. Frozen JSON manifests may contain old paths; resolve them with docs/cleanup_moves.json rather than editing the original provenance.
 

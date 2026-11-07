@@ -22,14 +22,14 @@ OUT_PATH = MARKET_FEATURES_PATH
 
 
 def calendar_market_features(df):
-    """Calculate canonical market features on a complete per-coin calendar.
+    """Calculate market features on a complete per-coin calendar.
 
     Args:
         df: Rows containing coin, hour, price, trading_volume, and
             hours_since_venue_start. Hours denote source bar starts here.
 
     Returns:
-        A coin/hour-sorted hourly table with canonical peg stress, log
+        A coin/hour-sorted hourly table with peg stress, log
         returns, rolling volatility, and venue-masked volume changes.
         Unrelated columns are preserved; new grid rows remain missing.
 

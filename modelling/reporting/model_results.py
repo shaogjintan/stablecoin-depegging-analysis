@@ -9,15 +9,9 @@ from data_processing.splits import canonical_input_hashes
 from modelling.utils.io import sha256
 from modelling.reporting.schema import HEADLINE_METRICS, write_comparison
 
-RUNS = [
-    Path('artifacts/runs') / group / name
-    for group, name in [
-        ('primary', 'REFIT-LOWEST-NEW'),
-        ('primary', 'LR-REFIT-LOWEST-NEW'),
-        ('supplementary', 'REFIT-LOWEST-H1'),
-        ('supplementary', 'LR-REFIT-LOWEST-H1'),
-    ]
-]
+from modelling.utils.artifacts import FINAL_RUNS
+
+RUNS = FINAL_RUNS
 
 
 def export_results(out, runs=None):

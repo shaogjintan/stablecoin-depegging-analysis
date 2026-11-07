@@ -65,6 +65,11 @@ assert fetch_stablecoin_data.SESSION is None
             self.assertEqual(len(saved), len(frame))
             self.assertFalse(saved.duplicated(["coin", "hour"]).any())
             self.assertIn("volume_pct_change_24h", saved)
+            expected = build_market_features.calendar_market_features(
+                frame.rename(columns={"volume": "trading_volume"})
+            )
+            pd.testing.assert_frame_equal(saved, expected[list(saved)])
+
 
     def test_calendar_lags_preserve_missing_hours(self):
         """Ensure missing hours cannot become adjacent return observations."""

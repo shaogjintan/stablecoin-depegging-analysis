@@ -16,6 +16,13 @@ and the explicitly reported historical diagnostic differences.
 
 manifest.json records current paths, schemas and hashes. Original market API responses are not available. Existing corrected inputs remain byte-identical to the model evidence. Fresh rolling reductions may vary by up to 1e-9 near zero; see docs/reproduction.md for strict comparison scope. Large source snapshots/intermediates remain local artifacts and require separate distribution.
 
+Git rules explicitly allow the retained `interim/hourly_stablecoin.parquet`
+source, alongside the frozen processed inputs. Commit that hourly file to make
+same-input rebuilding available in a clone. Derived interim feature tables,
+extracted raw CSVs, and fitted models remain excluded. The source-data ZIP is
+an optional handoff copy, not a required extra download when the hourly source
+has been included in the repository.
+
 ## Dune acquisition query
 
 The user-supplied [hourly transfer query](../data_processing/dune_hourly_transfers.sql) aggregates Ethereum ERC-20 transfer events into `hour`, `tx_count`, `total_volume`, `active_senders`, and `active_receivers`, matching the on-chain importer schema. `tx_count` counts transfer events, not distinct transaction hashes. `total_volume` is token transfer volume, not USD volume. The importer renames it to `tx_volume`.

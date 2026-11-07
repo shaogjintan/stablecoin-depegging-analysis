@@ -1,0 +1,56 @@
+{
+  "sources": [
+    {
+      "path": "artifacts/runs/primary/REFIT-LOWEST-NEW",
+      "run_id": "f2c840d7-2ff9-4552-84fe-cbc4c616ea5d",
+      "sha256": {
+        "run.json": "c920bd6418c14a81d180870da3c486b1c0bab947e59b193beb1e0f4da3582146",
+        "summary.csv": "9c851915071448feddf5bdbc891047d80f21cb5a129a8a14c26f83ffef8b4e1b",
+        "by_year.csv": "a48ce27b23d8a69090d0a8cca6959f42801905f8db6d1eb02facb94939e8730e"
+      }
+    },
+    {
+      "path": "artifacts/runs/primary/LR-REFIT-LOWEST-NEW",
+      "run_id": "ac334862-a86f-4a75-9fea-5180ef51e6af",
+      "sha256": {
+        "run.json": "1dd8fe7c66dfd56268abf401fd189d09e4ab2d342aa164fac0ff9987ab7b1c05",
+        "summary.csv": "d9705c58a8dae2c0d2a23c9d96a44483352c17c1030101af4b47d604d33884ac",
+        "by_year.csv": "d34525b31beba22880083782c2fa8b12d484ae753bb3710bf26aef2a7a8a15df"
+      }
+    },
+    {
+      "path": "artifacts/runs/supplementary/REFIT-LOWEST-H1",
+      "run_id": "c2cf3957-6d75-4b4d-96f0-916c81df7ead",
+      "sha256": {
+        "run.json": "e22531653f48163a46290ea111368eef310d2afd4ebfbd5a7cf95f0e61714f52",
+        "summary.csv": "afd68679f77310e235e8d05e72f3bfcec012285381a745cda83a9838d4f30fa9",
+        "by_year.csv": "ce06b29fc8f38f05c8f23f72677fdb0ddc68c8cdf96ce3f927556d197750bea3"
+      }
+    },
+    {
+      "path": "artifacts/runs/supplementary/LR-REFIT-LOWEST-H1",
+      "run_id": "d429d3d5-937c-49aa-b3c8-6ead1446fb9d",
+      "sha256": {
+        "run.json": "e140725d4c8fc281dc343ca3e3f4bcfd5abe9f18ff5603e4c7652571d2f3c6e0",
+        "summary.csv": "309928e5a3b50935e636bd8450d75318dfce57b21540ba73f8a157142e99e822",
+        "by_year.csv": "2149cff8e368ee5bfa7db1373dd2b1a1ff88272ebe452430f940d2881643c623"
+      }
+    }
+  ],
+  "primary_horizons": [
+    6,
+    24
+  ],
+  "supplementary_horizons": [
+    1
+  ],
+  "note": "Saved results combined without retraining or changing metrics.",
+  "headline_metrics": [
+    "median_lead_hours",
+    "episode_recall",
+    "false_alarms",
+    "false_alarms_per_coin_month",
+    "average_precision"
+  ],
+  "report_layout": "Identifiers, five headline metrics, supporting counts; remaining fields in adjacent _diagnostics.csv."
+}

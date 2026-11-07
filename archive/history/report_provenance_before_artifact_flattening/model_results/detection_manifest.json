@@ -1,0 +1,25 @@
+{
+  "sources": [
+    {
+      "path": "artifacts/runs/primary/REFIT-LOWEST-NEW",
+      "run_id": "f2c840d7-2ff9-4552-84fe-cbc4c616ea5d",
+      "sha256": "c920bd6418c14a81d180870da3c486b1c0bab947e59b193beb1e0f4da3582146"
+    },
+    {
+      "path": "artifacts/runs/primary/LR-REFIT-LOWEST-NEW",
+      "run_id": "ac334862-a86f-4a75-9fea-5180ef51e6af",
+      "sha256": "1dd8fe7c66dfd56268abf401fd189d09e4ab2d342aa164fac0ff9987ab7b1c05"
+    },
+    {
+      "path": "artifacts/runs/supplementary/REFIT-LOWEST-H1",
+      "run_id": "c2cf3957-6d75-4b4d-96f0-916c81df7ead",
+      "sha256": "e22531653f48163a46290ea111368eef310d2afd4ebfbd5a7cf95f0e61714f52"
+    },
+    {
+      "path": "artifacts/runs/supplementary/LR-REFIT-LOWEST-H1",
+      "run_id": "d429d3d5-937c-49aa-b3c8-6ead1446fb9d",
+      "sha256": "e140725d4c8fc281dc343ca3e3f4bcfd5abe9f18ff5603e4c7652571d2f3c6e0"
+    }
+  ],
+  "targetability": "any eligible origin in [onset-h,onset); counts only"
+}

@@ -5,7 +5,7 @@ Does not retrain or rewrite run evidence. JSON results go outside frozen runs.
 import argparse
 import json
 from pathlib import Path
-from modelling.utils.artifacts import evidence_dir
+from modelling.utils.artifacts import evidence_dir, FINAL_RUNS
 import joblib
 import numpy as np
 import pandas as pd
@@ -14,7 +14,7 @@ from data_processing.splits import resolve_recorded_input
 from data_processing.config import PURGE_HOURS, EMBARGO_HOURS
 from modelling.validation.reference_checks import reference_events, reference_metrics, reference_ap, check_preprocessing
 from modelling.evaluation.threshold_selection import _choose_threshold
-RUNS = [Path('artifacts/runs') / kind / name for kind, name in [('primary', 'REFIT-LOWEST-NEW'), ('primary', 'LR-REFIT-LOWEST-NEW'), ('supplementary', 'REFIT-LOWEST-H1'), ('supplementary', 'LR-REFIT-LOWEST-H1')]]
+RUNS = FINAL_RUNS
 
 
 HEADLINE_METRICS = (

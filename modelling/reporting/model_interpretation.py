@@ -5,7 +5,7 @@ Export coefficients and importance from saved final pipelines; no training.
 import argparse
 import json
 from pathlib import Path
-from modelling.utils.artifacts import evidence_dir
+from modelling.utils.artifacts import evidence_dir, FINAL_RUNS
 import joblib
 import matplotlib
 matplotlib.use('Agg')
@@ -13,7 +13,7 @@ import matplotlib.pyplot as plt
 import pandas as pd
 import numpy as np
 from modelling.utils.io import sha256
-RUNS = [Path('artifacts/runs/primary/REFIT-LOWEST-NEW'), Path('artifacts/runs/primary/LR-REFIT-LOWEST-NEW')]
+RUNS = FINAL_RUNS[:2]
 
 
 def shap_ranking(runs, horizon):

@@ -7,7 +7,7 @@ Implemented with no permanent deletions. docs/cleanup_moves.json records the mai
 - Historical folders, planning documents, earlier reports and alternative runners relocated under archive/history/.
 - Deletion candidates quarantined under delete/, including CSV exports. The superseded robustness results were restored from the earlier temporary backup into delete/.
 - Original dataset source and acquired hourly table moved to snapshots/; feature tables moved to interim/. Corrected input hashes retained.
-- All six retained runs moved to primary/supplementary/sensitivity groups; earlier non-refit LR run archived.
+- Four final runs consolidated under artifacts/; older no-refit runs and their evidence archived under archive/history/artifacts/runs/.
 - Shared LR calendar CV, fitting, matched sample, formatting and alternative-episode helpers extracted before retiring old runners.
 - Historical-context annotations retained separately from structural event types.
 - Corrected event/type/detection and consolidated coverage tables generated.
@@ -25,7 +25,7 @@ Implemented with no permanent deletions. docs/cleanup_moves.json records the mai
 - The environment lock was checked locally; installation on a fresh machine and Windows remains to be verified.
 - Historical annotations still require human report review; they are context, not established causes.
 - CSV exports in delete/ are preserved, not certified equivalent or permanently deleted.
-- Both sensitivity runs are retained with their original verification evidence, but have not been independently reverified by the new final-refit verifier.
+- Both historical no-refit runs are archived with original verification evidence; the final-refit verifier does not audit those older protocols.
 - The default final-run verifier checks hashes, saved alarms and metrics; full model-score replay requires --check-model-scores. It does not rerun LR C selection. Threshold selection uses the maintained exhaustive engine, with independent synthetic oracle tests.
 - New LR/RF interpretation figures cover both primary horizons; XGB figures reuse existing final SHAP rankings rather than recomputing SHAP.
 - Six independent LR/calendar-CV/preprocessing/threshold tests were migrated to the maintained suite; protocol-specific tests and original verifiers are preserved in archive/history/; further portability/hardening checks can be migrated deliberately.

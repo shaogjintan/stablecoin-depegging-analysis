@@ -2,6 +2,16 @@
 import json
 from pathlib import Path
 
+FINAL_RUNS = [
+    Path('artifacts') / horizons / models
+    for horizons, models in [
+        ('h6_and_h24', 'random_forest_xgboost'),
+        ('h6_and_h24', 'logistic_regression'),
+        ('h1', 'random_forest_xgboost'),
+        ('h1', 'logistic_regression'),
+    ]
+]
+
 
 def evidence_dir(run):
     """Locate one evidence directory whose fit metadata all belongs to this run.

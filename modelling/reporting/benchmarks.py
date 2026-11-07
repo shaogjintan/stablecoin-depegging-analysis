@@ -10,7 +10,7 @@ import pandas as pd
 from sklearn.metrics import average_precision_score
 from modelling.reporting.schema import write_comparison
 from modelling.models import get_model
-from modelling.utils.artifacts import evidence_dir
+from modelling.utils.artifacts import evidence_dir, FINAL_RUNS
 from modelling.evaluation.alarm_events import build_alarm_events
 from modelling.evaluation.threshold_selection import (
     _choose_threshold, _targetable_episode_ids, _false_alarm_stats,
@@ -57,7 +57,7 @@ def main():
     """Fit and export benchmarks using a completed run's saved partitions."""
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument('--run-dir', type=Path,
-                        default=Path('artifacts/runs/primary/REFIT-LOWEST-NEW'))
+                        default=FINAL_RUNS[0])
     parser.add_argument('--out-dir', type=Path,
                         default=Path('reports/model_results'))
     args = parser.parse_args()

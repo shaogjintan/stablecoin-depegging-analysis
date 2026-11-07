@@ -1,0 +1,18 @@
+[
+  {
+    "path": "archive/history/artifacts/runs/sensitivity/EXHAUSTIVE-LOWEST-NEW",
+    "role": "sensitivity",
+    "run_id": null,
+    "status": "complete",
+    "manifest_sha256": "5d69b398839ff0341076b40e1e11a1606e7b898a3b162aa206cfd2ef08e21c91",
+    "verification": "not independently reverified during cleanup"
+  },
+  {
+    "path": "archive/history/artifacts/runs/sensitivity/XGB-NEW",
+    "role": "sensitivity",
+    "run_id": "20261102T044322Z-a9b16de8",
+    "status": "complete",
+    "manifest_sha256": "2107fff0b1193911c73a0e264578ccdff8d0c881e6fa242570baed67d92bdb00",
+    "verification": "not independently reverified during cleanup"
+  }
+]

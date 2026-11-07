@@ -929,5 +929,235 @@
     "from": "modelling/reporting/model_interpretation.py",
     "to": "archive/history/modelling/reporting/model_interpretation_before_full_reproduction.py",
     "action": "preserve saved ranking exporter before selected-run and fresh native SHAP support"
+  },
+  {
+    "to": "artifacts/runs/final/h6_and_h24/random_forest_xgboost/by_year.csv",
+    "action": "relocate unchanged final evidence or archive historical experiments",
+    "from": "artifacts/runs/primary/REFIT-LOWEST-NEW/by_year.csv"
+  },
+  {
+    "to": "artifacts/runs/final/h6_and_h24/random_forest_xgboost/summary.csv",
+    "action": "relocate unchanged final evidence or archive historical experiments",
+    "from": "artifacts/runs/primary/REFIT-LOWEST-NEW/summary.csv"
+  },
+  {
+    "to": "artifacts/runs/final/h6_and_h24/random_forest_xgboost/shap_ranking_xgboost_t2_h24.csv",
+    "action": "relocate unchanged final evidence or archive historical experiments",
+    "from": "artifacts/runs/primary/REFIT-LOWEST-NEW/shap_ranking_xgboost_t2_h24.csv"
+  },
+  {
+    "to": "artifacts/runs/final/h6_and_h24/random_forest_xgboost/shap_ranking_xgboost_t2_h6.csv",
+    "action": "relocate unchanged final evidence or archive historical experiments",
+    "from": "artifacts/runs/primary/REFIT-LOWEST-NEW/shap_ranking_xgboost_t2_h6.csv"
+  },
+  {
+    "to": "artifacts/runs/final/h6_and_h24/random_forest_xgboost/alarm_events.csv",
+    "action": "relocate unchanged final evidence or archive historical experiments",
+    "from": "artifacts/runs/primary/REFIT-LOWEST-NEW/alarm_events.csv"
+  },
+  {
+    "to": "artifacts/runs/final/h6_and_h24/random_forest_xgboost/shap_checks_xgboost_t2_h24.csv",
+    "action": "relocate unchanged final evidence or archive historical experiments",
+    "from": "artifacts/runs/primary/REFIT-LOWEST-NEW/shap_checks_xgboost_t2_h24.csv"
+  },
+  {
+    "to": "artifacts/runs/final/h6_and_h24/random_forest_xgboost/run.json",
+    "action": "relocate unchanged final evidence or archive historical experiments",
+    "from": "artifacts/runs/primary/REFIT-LOWEST-NEW/run.json"
+  },
+  {
+    "to": "artifacts/runs/final/h6_and_h24/random_forest_xgboost/shap_summary.csv",
+    "action": "relocate unchanged final evidence or archive historical experiments",
+    "from": "artifacts/runs/primary/REFIT-LOWEST-NEW/shap_summary.csv"
+  },
+  {
+    "to": "artifacts/runs/final/h6_and_h24/random_forest_xgboost/shap_checks_xgboost_t2_h6.csv",
+    "action": "relocate unchanged final evidence or archive historical experiments",
+    "from": "artifacts/runs/primary/REFIT-LOWEST-NEW/shap_checks_xgboost_t2_h6.csv"
+  },
+  {
+    "to": "artifacts/runs/final/h6_and_h24/random_forest_xgboost/source",
+    "action": "relocate unchanged final evidence or archive historical experiments",
+    "from": "artifacts/runs/h6_and_h24/REFIT-LOWEST-NEW/source"
+  },
+  {
+    "to": "artifacts/runs/final/h6_and_h24/random_forest_xgboost/fits",
+    "action": "relocate unchanged final evidence or archive historical experiments",
+    "from": "artifacts/runs/h6_and_h24/REFIT-LOWEST-NEW/fits"
+  },
+  {
+    "to": "artifacts/runs/final/h6_and_h24/random_forest_xgboost/episodes.parquet",
+    "action": "relocate unchanged final evidence or archive historical experiments",
+    "from": "artifacts/runs/h6_and_h24/REFIT-LOWEST-NEW/episodes.parquet"
+  },
+  {
+    "to": "artifacts/runs/final/h6_and_h24/logistic_regression/by_year.csv",
+    "action": "relocate unchanged final evidence or archive historical experiments",
+    "from": "artifacts/runs/primary/LR-REFIT-LOWEST-NEW/by_year.csv"
+  },
+  {
+    "to": "artifacts/runs/final/h6_and_h24/logistic_regression/summary.csv",
+    "action": "relocate unchanged final evidence or archive historical experiments",
+    "from": "artifacts/runs/primary/LR-REFIT-LOWEST-NEW/summary.csv"
+  },
+  {
+    "to": "artifacts/runs/final/h6_and_h24/logistic_regression/alarm_events.csv",
+    "action": "relocate unchanged final evidence or archive historical experiments",
+    "from": "artifacts/runs/primary/LR-REFIT-LOWEST-NEW/alarm_events.csv"
+  },
+  {
+    "to": "artifacts/runs/final/h6_and_h24/logistic_regression/run.json",
+    "action": "relocate unchanged final evidence or archive historical experiments",
+    "from": "artifacts/runs/primary/LR-REFIT-LOWEST-NEW/run.json"
+  },
+  {
+    "to": "artifacts/runs/final/h6_and_h24/logistic_regression/source",
+    "action": "relocate unchanged final evidence or archive historical experiments",
+    "from": "artifacts/runs/h6_and_h24/LR-REFIT-LOWEST-NEW/source"
+  },
+  {
+    "to": "artifacts/runs/final/h6_and_h24/logistic_regression/fits",
+    "action": "relocate unchanged final evidence or archive historical experiments",
+    "from": "artifacts/runs/h6_and_h24/LR-REFIT-LOWEST-NEW/fits"
+  },
+  {
+    "to": "artifacts/runs/final/h6_and_h24/logistic_regression/episodes.parquet",
+    "action": "relocate unchanged final evidence or archive historical experiments",
+    "from": "artifacts/runs/h6_and_h24/LR-REFIT-LOWEST-NEW/episodes.parquet"
+  },
+  {
+    "to": "artifacts/runs/final/h1/random_forest_xgboost/by_year.csv",
+    "action": "relocate unchanged final evidence or archive historical experiments",
+    "from": "artifacts/runs/supplementary/REFIT-LOWEST-H1/by_year.csv"
+  },
+  {
+    "to": "artifacts/runs/final/h1/random_forest_xgboost/summary.csv",
+    "action": "relocate unchanged final evidence or archive historical experiments",
+    "from": "artifacts/runs/supplementary/REFIT-LOWEST-H1/summary.csv"
+  },
+  {
+    "to": "artifacts/runs/final/h1/random_forest_xgboost/alarm_events.csv",
+    "action": "relocate unchanged final evidence or archive historical experiments",
+    "from": "artifacts/runs/supplementary/REFIT-LOWEST-H1/alarm_events.csv"
+  },
+  {
+    "to": "artifacts/runs/final/h1/random_forest_xgboost/run.json",
+    "action": "relocate unchanged final evidence or archive historical experiments",
+    "from": "artifacts/runs/supplementary/REFIT-LOWEST-H1/run.json"
+  },
+  {
+    "to": "artifacts/runs/final/h1/random_forest_xgboost/source",
+    "action": "relocate unchanged final evidence or archive historical experiments",
+    "from": "artifacts/runs/h1/REFIT-LOWEST-H1/source"
+  },
+  {
+    "to": "artifacts/runs/final/h1/random_forest_xgboost/fits",
+    "action": "relocate unchanged final evidence or archive historical experiments",
+    "from": "artifacts/runs/h1/REFIT-LOWEST-H1/fits"
+  },
+  {
+    "to": "artifacts/runs/final/h1/random_forest_xgboost/episodes.parquet",
+    "action": "relocate unchanged final evidence or archive historical experiments",
+    "from": "artifacts/runs/h1/REFIT-LOWEST-H1/episodes.parquet"
+  },
+  {
+    "to": "artifacts/runs/final/h1/logistic_regression/by_year.csv",
+    "action": "relocate unchanged final evidence or archive historical experiments",
+    "from": "artifacts/runs/supplementary/LR-REFIT-LOWEST-H1/by_year.csv"
+  },
+  {
+    "to": "artifacts/runs/final/h1/logistic_regression/summary.csv",
+    "action": "relocate unchanged final evidence or archive historical experiments",
+    "from": "artifacts/runs/supplementary/LR-REFIT-LOWEST-H1/summary.csv"
+  },
+  {
+    "to": "artifacts/runs/final/h1/logistic_regression/alarm_events.csv",
+    "action": "relocate unchanged final evidence or archive historical experiments",
+    "from": "artifacts/runs/supplementary/LR-REFIT-LOWEST-H1/alarm_events.csv"
+  },
+  {
+    "to": "artifacts/runs/final/h1/logistic_regression/run.json",
+    "action": "relocate unchanged final evidence or archive historical experiments",
+    "from": "artifacts/runs/supplementary/LR-REFIT-LOWEST-H1/run.json"
+  },
+  {
+    "to": "artifacts/runs/final/h1/logistic_regression/source",
+    "action": "relocate unchanged final evidence or archive historical experiments",
+    "from": "artifacts/runs/h1/log_reg/source"
+  },
+  {
+    "to": "artifacts/runs/final/h1/logistic_regression/fits",
+    "action": "relocate unchanged final evidence or archive historical experiments",
+    "from": "artifacts/runs/h1/log_reg/fits"
+  },
+  {
+    "to": "artifacts/runs/final/h1/logistic_regression/episodes.parquet",
+    "action": "relocate unchanged final evidence or archive historical experiments",
+    "from": "artifacts/runs/h1/log_reg/episodes.parquet"
+  },
+  {
+    "to": "archive/history/artifacts/runs/sensitivity",
+    "action": "relocate unchanged final evidence or archive historical experiments",
+    "from": "artifacts/runs/sensitivity"
+  },
+  {
+    "to": "archive/history/artifacts/runs/sensitivity_checks",
+    "action": "relocate unchanged final evidence or archive historical experiments",
+    "from": "artifacts/runs/sensitivity_checks"
+  },
+  {
+    "from": "data_processing/build_market_features.py",
+    "to": "archive/history/data_processing/market_features_before_restoring_calendar_writer.py",
+    "action": "preserve reintroduced historical writer before restoring calendar-only generation"
+  },
+  {
+    "from": "artifacts/runs/final/h1",
+    "to": "artifacts/h1",
+    "action": "flatten final run evidence directly under artifacts as requested"
+  },
+  {
+    "from": "artifacts/runs/final/h6_and_h24",
+    "to": "artifacts/h6_and_h24",
+    "action": "flatten final run evidence directly under artifacts as requested"
+  },
+  {
+    "from": "artifacts/runs/README.md",
+    "to": "artifacts/README.md",
+    "action": "flatten final run evidence directly under artifacts as requested"
+  },
+  {
+    "from": "artifacts/runs/index.json",
+    "to": "artifacts/index.json",
+    "action": "flatten final run evidence directly under artifacts as requested"
+  },
+  {
+    "from": "reports/manifest.json",
+    "to": "archive/history/report_provenance_before_artifact_flattening/manifest.json",
+    "action": "preserve original report provenance before updating relocated artifact paths; metrics and audit claims unchanged"
+  },
+  {
+    "from": "reports/verification.json",
+    "to": "archive/history/report_provenance_before_artifact_flattening/verification.json",
+    "action": "preserve original report provenance before updating relocated artifact paths; metrics and audit claims unchanged"
+  },
+  {
+    "from": "reports/model_results/model_comparison_by_coin_manifest.json",
+    "to": "archive/history/report_provenance_before_artifact_flattening/model_results/model_comparison_by_coin_manifest.json",
+    "action": "preserve original report provenance before updating relocated artifact paths; metrics and audit claims unchanged"
+  },
+  {
+    "from": "reports/model_results/detection_manifest.json",
+    "to": "archive/history/report_provenance_before_artifact_flattening/model_results/detection_manifest.json",
+    "action": "preserve original report provenance before updating relocated artifact paths; metrics and audit claims unchanged"
+  },
+  {
+    "from": "reports/model_results/model_comparison_manifest.json",
+    "to": "archive/history/report_provenance_before_artifact_flattening/model_results/model_comparison_manifest.json",
+    "action": "preserve original report provenance before updating relocated artifact paths; metrics and audit claims unchanged"
+  },
+  {
+    "from": "reports/model_interpretation/manifest.json",
+    "to": "archive/history/report_provenance_before_artifact_flattening/model_interpretation/manifest.json",
+    "action": "preserve original report provenance before updating relocated artifact paths; metrics and audit claims unchanged"
   }
 ]

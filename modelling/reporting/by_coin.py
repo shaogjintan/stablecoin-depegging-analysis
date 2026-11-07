@@ -83,7 +83,7 @@ def coin_metrics(predictions, alarms, episodes, horizon):
 def fit_index(root):
     """Locate final fits by provenance rather than historical folder names."""
     index = {}
-    for path in sorted(root.rglob("fit.json")):
+    for path in sorted(root.glob("*/*/fits/*/fit.json")):
         if "source" in path.parts:
             continue
         spec = json.loads(path.read_text())
@@ -99,6 +99,8 @@ def build_report(summary, root):
     index = fit_index(root)
     manifests = []
     for path in root.glob("*/*/run.json"):
+        if "source" in path.relative_to(root).parts:
+            continue
         info = json.loads(path.read_text())
         if (info.get("refit_after_calibration")
                 and info.get("status") == "complete"):
@@ -198,7 +200,7 @@ def main():
     """Write per-coin metrics for the scope of the current final summary."""
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument(
-        "--artifacts", type=Path, default=Path("artifacts/runs")
+        "--artifacts", type=Path, default=Path("artifacts")
     )
     parser.add_argument(
         "--summary", type=Path,

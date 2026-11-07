@@ -6,11 +6,11 @@ origins.
 import argparse
 import json
 from pathlib import Path
-from modelling.utils.artifacts import evidence_dir
+from modelling.utils.artifacts import evidence_dir, FINAL_RUNS
 import pandas as pd
 from modelling.evaluation.targetability import targetable_ids
 from modelling.utils.io import sha256
-RUNS = [Path('artifacts/runs') / kind / name for kind, name in [('primary', 'REFIT-LOWEST-NEW'), ('primary', 'LR-REFIT-LOWEST-NEW'), ('supplementary', 'REFIT-LOWEST-H1'), ('supplementary', 'LR-REFIT-LOWEST-H1')]]
+RUNS = FINAL_RUNS
 
 def main():
     """Export model detection counts grouped by structural event type."""

@@ -16,13 +16,40 @@ The local installed versions match the freeze and pass `pip check`. A clean
 installation from a package index and other operating systems have not been
 tested during this cleanup; no fresh-environment installation is claimed.
 
-A Git clone includes the Dune ZIP and frozen processed pair, but not
-`data/interim/hourly_stablecoin.parquet`. That hourly source must be supplied
-separately for `--full`; verify its checksum against `data/manifest.json`.
+The Dune ZIP and frozen processed pair are tracked. The Git rules now also
+allow `data/interim/hourly_stablecoin.parquet`, the retained 7.9 MiB market
+source needed by `--full`. Include this file in the repository commit before
+distributing a clone; an ignore-rule change does not stage or commit it.
+If a distributed copy omits it, supply the source bundle or use fresh
+acquisition. Verify the retained source checksum against `data/manifest.json`.
 Saved-model verification additionally needs the omitted run evidence described
-in `artifacts/runs/README.md`. There is no published artifact download yet.
+in `artifacts/README.md`. There is no published artifact download yet.
 Reacquiring market data can yield different observations and does not replace
 the missing original source for an exact-input reproduction.
+
+## Rerun with newly downloaded market data
+
+Reviewers can create the hourly Parquet themselves. After the pinned environment
+setup, install the optional HTTP dependency and run acquisition from the repo
+root:
+
+```sh
+python -m pip install requests
+python -m data_processing.fetch_stablecoin_data
+python -m reports.reproduce --full
+```
+
+The acquisition command writes `data/interim/hourly_stablecoin.parquet` from
+DefiLlama prices and exchange volume. It replaces an existing hourly file, so
+use a separate checkout for a fresh-data rerun if retaining the original input.
+The Dune ZIP is still required; the market fetcher does not download on-chain
+exports. Network access and source availability are required for acquisition.
+
+This route reproduces the analysis procedure using the downloaded observations.
+The original source bundle instead supplies the exact retained hourly input.
+External history, API responses and coverage can change; a fresh acquisition is
+not guaranteed to reproduce the original checksum or metrics. The full runner
+records the actual source hashes in its output workspace in either case.
 
 ## Complete local-source reproduction
 
@@ -107,7 +134,7 @@ The root `.style.yapf` records Google-based formatting with four-space indentati
 `python -m reports.reproduce` combines saved h1/h6/h24 model summaries and yearly results, regenerates per-coin results, corrected events, structural types, historical-context annotations, detection counts, coverage, LR coefficients, RF importance and XGB SHAP ranking figures. It does not fit models. XGB SHAP rankings are reused from saved final-model analysis. The model comparison exporter writes to reports/model_results/ and the calibration audit to reports/validation_checks/. Robustness defaults to reports/robustness/alt_definitions/. To compare rebuilds in fresh destinations:
 
 ```sh
-python -m modelling.robustness_checks.alternative_definitions --run-dir artifacts/runs/primary/REFIT-LOWEST-NEW --run-dir artifacts/runs/primary/LR-REFIT-LOWEST-NEW --out-dir /private/tmp/stablecoin-robustness-rebuild
+python -m modelling.robustness_checks.alternative_definitions --run-dir artifacts/h6_and_h24/random_forest_xgboost --run-dir artifacts/h6_and_h24/logistic_regression --out-dir /private/tmp/stablecoin-robustness-rebuild
 ```
 
 The separate `modelling.reporting.benchmarks` exporter fits benchmark models. Optional presentation exporters are archived under archive/history/modelling/reporting/. Use a fresh temporary destination for comparisons; report generation must not replace frozen input/model evidence.
