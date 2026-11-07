@@ -8,4 +8,4 @@ validate-data:
 verify:
 	$(PYTHON) -W ignore::DeprecationWarning -m modelling.verify_release
 reports:
-	$(PYTHON) -m scripts.reproduce
+	$(PYTHON) -m reports.reproduce

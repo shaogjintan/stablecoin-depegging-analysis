@@ -23,7 +23,7 @@ python -m pip check
 python -m data_processing.build_dataset
 python -W ignore::DeprecationWarning -m unittest discover -s tests -v
 python -W ignore::DeprecationWarning -m modelling.verify_release
-python -m scripts.reproduce
+python -m reports.reproduce
 ```
 
 Verification and saved-model report generation require the local run artifacts described in [artifacts/runs/README.md](artifacts/runs/README.md). They are not all stored in Git. No network data acquisition runs as part of these commands.

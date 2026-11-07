@@ -1,7 +1,7 @@
 """
 Tier 2 on-chain change-feature checks (run from the repo root):
 
-    python -m tests.test_tier2_features
+    python -m tests.diagnose_onchain_features
 
 1. Coin-identity probe: a RandomForest predicting `coin` from
    (a) the raw on-chain levels  vs  (b) the 12 log1p-diff change features.

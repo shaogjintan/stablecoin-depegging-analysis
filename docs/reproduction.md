@@ -39,7 +39,7 @@ The root `.style.yapf` records Google-based formatting with four-space indentati
 
 ## Reports from saved models
 
-`python -m scripts.reproduce` combines saved h1/h6/h24 model summaries and yearly results, regenerates per-coin results, corrected events, structural types, historical-context annotations, detection counts, coverage, LR coefficients, RF importance and XGB SHAP ranking figures. It does not fit models. XGB SHAP rankings are reused from saved final-model analysis. The model comparison exporter writes to reports/model_results/ and the calibration audit to reports/validation_checks/. Optional slide support files require --presentation-dir. Robustness defaults to reports/robustness/alt_definitions/. To compare rebuilds in fresh destinations:
+`python -m reports.reproduce` combines saved h1/h6/h24 model summaries and yearly results, regenerates per-coin results, corrected events, structural types, historical-context annotations, detection counts, coverage, LR coefficients, RF importance and XGB SHAP ranking figures. It does not fit models. XGB SHAP rankings are reused from saved final-model analysis. The model comparison exporter writes to reports/model_results/ and the calibration audit to reports/validation_checks/. Optional slide support files require --presentation-dir. Robustness defaults to reports/robustness/alt_definitions/. To compare rebuilds in fresh destinations:
 
 ```sh
 python -m modelling.consolidate_refit_slides --run-dir artifacts/runs/primary/REFIT-LOWEST-NEW --lr-run artifacts/runs/primary/LR-REFIT-LOWEST-NEW --reuse-shap --out-dir /private/tmp/stablecoin-presentation-rebuild --validation-dir /private/tmp/stablecoin-validation-rebuild --presentation-dir /private/tmp/stablecoin-slides-rebuild
