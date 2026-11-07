@@ -2,10 +2,10 @@
 import argparse
 import json
 from pathlib import Path
-from modelling.reporting.paths import evidence_dir
+from modelling.utils.artifacts import evidence_dir
 import pandas as pd
-from modelling.robustness_refit import targetable_ids
-from modelling.corrected_xgb import sha256
+from modelling.evaluation.targetability import targetable_ids
+from modelling.utils.io import sha256
 RUNS = [Path('artifacts/runs') / kind / name for kind, name in [('primary', 'REFIT-LOWEST-NEW'), ('primary', 'LR-REFIT-LOWEST-NEW'), ('supplementary', 'REFIT-LOWEST-H1'), ('supplementary', 'LR-REFIT-LOWEST-H1')]]
 
 def main():
@@ -42,7 +42,7 @@ def main():
                         hit = ids & caught
                         leads = a.loc[truth & a.target_episode_id.astype(str).isin(hit), 'lead_hours']
                         rows.append(dict(model=model, config=config, horizon_hours=h, type=typ, targetable_episodes=len(eligible), caught_episodes=len(hit), missed_episodes=len(eligible - hit), caught_events=g.loc[g.episode_id.astype(str).isin(hit), 'event_id'].nunique(), median_lead_hours=leads.median()))
-    pd.DataFrame(rows).to_csv(out / 'model_compariosn_by_event_type.csv', index=False)
+    pd.DataFrame(rows).to_csv(out / 'model_comparison_by_event_type.csv', index=False)
     (out / 'detection_manifest.json').write_text(json.dumps(dict(sources=sources, targetability='any eligible origin in [onset-h,onset); counts only'), indent=2) + '\n')
     print('Saved detection counts:', len(rows))
 if __name__ == '__main__':

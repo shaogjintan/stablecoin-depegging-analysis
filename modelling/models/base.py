@@ -1,30 +1,14 @@
-"""
-Model contract for DSE4101 modelling (Phase 3).
+"""Shared estimator interface and training-fitted median imputer.
 
-Every model used with `modelling/train.py` must subclass `BaseModel` and
-implement:
+Models implement fit(), predict_proba(), and get_params(). The training runner
+coordinates practice fitting, cutoff calibration, final refitting, and scoring.
+For models requiring imputation, the pipeline fits MedianImputer on each
+training partition and reuses it for that fitted model's predictions.
 
-    fit(X_train, y_train, X_val=None, y_val=None) -> self
-        X_val/y_val are the fold's inner validation set; NaN-native models
-        (XGBoost) may use them for early stopping, others may ignore them.
-
-    predict_proba(X) -> np.ndarray of shape (n, 2)
-        Column 1 = P(label = 1).
-
-and override `get_params()` so the train run log records the configuration.
-
-Imputation: models that cannot handle NaN (logistic, random forest) set
-`needs_imputation = True`; `train.py` then median-imputes each column with
-`MedianImputer`, fitted on the training fold only (never on test/inner_val).
-NaN-native models leave it `False` and receive NaNs as-is.
-
-Tuning: `param_grid` is a list of constructor-kwarg dicts tried by
-`train.py --tune`, selected by inner-val PR-AUC. Models without tuning
-leave `param_grid = [{}]`.
-
-Teammates: implement your model as a subclass in modelling/models/ and
-register it in modelling/models/__init__.py (see Rule 3 in agent.md --
-all data access goes through modelling/prepare_data.py).
+Final RF/XGB settings and the LR C grid live in training/parameters.py.
+Logistic C selection lives in training/logistic_tuning.py. X_val/y_val remain
+optional interface arguments; the maintained final runner does not use them
+for XGBoost early stopping. Preserve class module paths for saved models.
 """
 from __future__ import annotations
 
@@ -62,11 +46,7 @@ class BaseModel(ABC):
 
     name: str = "base"
     needs_imputation: bool = True
-    param_grid: list[dict] = [{}]
-    # True for models whose fit() uses X_val for early stopping (XGBoost).
-    # train.py --tune then follows the nested-CV pattern: candidates fit on
-    # X_inner_train (early stopping on X_inner_val), and the winner is refit
-    # on the full X_train with n_estimators = best_iteration (no eval set).
+    # Capability flag; the final runner does not request early stopping.
     supports_early_stopping: bool = False
 
     def get_params(self) -> dict:

@@ -85,8 +85,10 @@ assert fetch_stablecoin_data.SESSION is None
             self.assertEqual(set(saved.coin), {"USDT"})
             self.assertIn("tx_count_logdiff_1h", saved)
 
-    def test_legacy_builder_reexports_the_current_implementation(self):
-        current = importlib.import_module("data_processing.build_dataset")
-        legacy = importlib.import_module("modelling.build_corrected_dataset")
-        self.assertIs(legacy.main, current.main)
-        self.assertIs(legacy.build_from_sources, current.build_from_sources)
+    def test_merge_and_label_delegates_to_current_builder(self):
+        from unittest.mock import patch
+        merge = importlib.import_module("data_processing.merge_and_label")
+        with patch("data_processing.build_dataset.main", return_value=0) as build:
+            result = merge.main()
+        build.assert_called_once()
+        self.assertIsNone(result)

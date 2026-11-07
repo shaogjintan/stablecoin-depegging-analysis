@@ -1,3 +1,9 @@
+"""Logistic estimator with training-fitted feature transforms and scaling.
+
+The study protocol selects C for L1 regression in training/logistic_tuning.py.
+The public L2 constructor default is retained for existing model compatibility;
+the maintained training pipeline explicitly requests L1.
+"""
 import inspect
 import numpy as np
 import pandas as pd
@@ -9,14 +15,8 @@ from .base import BaseModel
 
 class LogRegModel(BaseModel):
     name = "logreg"
-    needs_imputation = True  # train.py median-imputes using the train fold only
+    needs_imputation = True  # The training pipeline fits a median imputer.
 
-    # --tune tries each combo. Smaller C = stronger shrinkage.
-    param_grid = [
-        {"C": c, "penalty": p}
-        for p in ("l1", "l2")
-        for c in (0.001, 0.01, 0.1, 1.0)
-    ]
 
     def __init__(self, C=0.1, penalty="l2", class_weight="balanced", winsor=0.01):
         self.C = C

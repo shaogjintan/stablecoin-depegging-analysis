@@ -2,19 +2,18 @@
 Naive baselines for the report table and pipeline smoke tests.
 
 ConstantPriorModel: predicts the training-fold positive rate for every row.
-This is the "constant prior" baseline from the Phase 3/4 plan -- a model that
-learns nothing but the training-label base rate. AP equals the evaluation
+This model learns only the training-label base rate. AP equals the evaluation
 positive rate when all evaluation scores are tied (in particular, within a
 fold). Pooled yearly predictions can have different training priors, so pooled
 AP need not equal the pooled positive rate and is not a universal AP floor.
-It also doubles as the smoke model for `modelling/train.py`.
+Benchmark comparisons are exported by modelling.reporting.benchmarks.
 
 PersistenceModel: the "peg stress persists" benchmark -- score = -peg_deviation
 (min(max(1 - price, 0), 0.01)). It ranks completed bars by how stressed the
 peg already is, with no learning and no on-chain inputs. Its evaluation
 sample is still tier-dependent.
-Brier is not meaningful for it (scores live in [0, 0.01]); PR-AUC / ROC-AUC
-rankings are what it contributes to the comparison table.
+Its scores are ranking signals rather than calibrated probabilities;
+average precision measures its ranking performance.
 """
 from __future__ import annotations
 
@@ -26,7 +25,6 @@ from .base import BaseModel
 class ConstantPriorModel(BaseModel):
     name = "baseline"
     needs_imputation = False
-    param_grid = [{}]
 
     def __init__(self) -> None:
         self.positive_rate_: float | None = None
@@ -48,7 +46,6 @@ class ConstantPriorModel(BaseModel):
 class PersistenceModel(BaseModel):
     name = "persistence"
     needs_imputation = False
-    param_grid = [{}]
 
     def fit(self, X_train, y_train, X_val=None, y_val=None) -> "PersistenceModel":
         return self

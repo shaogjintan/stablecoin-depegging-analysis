@@ -1,6 +1,6 @@
 # Repository working instructions
 
-Read README.md and docs/reproduction.md for current entry points. The final runner is modelling.refit_after_calibration, not the historical refit_final implementation.
+Read README.md and docs/reproduction.md for current entry points. The final runner is modelling.training.train_models, not the historical refit_final implementation.
 
 Preserve corrected input hashes, model parameters, saved evidence and statistical definitions. Use 25h purge and 24h embargo. LR keeps practice-selected C for final refit. Do not fetch network data during normal reproduction. Do not mix archived reports with final results.
 

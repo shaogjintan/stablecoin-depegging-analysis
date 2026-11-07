@@ -22,7 +22,7 @@ python -m pip install -r requirements.lock
 python -m pip check
 python -m data_processing.build_dataset
 python -W ignore::DeprecationWarning -m unittest discover -s tests -v
-python -W ignore::DeprecationWarning -m modelling.verify_release
+python -W ignore::DeprecationWarning -m modelling.validation.verify_model_results
 python -m reports.reproduce
 ```
 
@@ -31,13 +31,12 @@ Verification and saved-model report generation require the local run artifacts d
 ## Repository
 
 ```text
-modelling/             maintained final runners, shared model/data helpers
+modelling/             training, evaluation, robustness and reporting packages
 modelling/reporting/   final-model interpretation, events and coverage
-data_processing/      acquisition, feature building, corrected split validation
+data_processing/       acquisition, feature building, sample preparation and splits
 data/                  frozen inputs, source snapshots and intermediates
 tests/                 maintained data/threshold/model checks
-scripts/               report reproduction entry point
-reports/         authoritative report outputs and provenance
+reports/               report outputs, provenance and reproduce.py
 artifacts/runs/        primary, supplementary and sensitivity evidence
 docs/                  methodology, reproduction and relocation records
 archive/history/       earlier experiments and original implementations
@@ -45,3 +44,5 @@ delete/                preserved deletion candidates; not used by the pipeline
 ```
 
 Archived code is historical evidence and is not a supported reproduction route. Original run manifests and source snapshots retain historical paths; [the relocation map](docs/cleanup_moves.json) maps them to current locations. `dune_onchain.zip` and extracted Dune CSVs are both retained.
+
+See [the modelling guide](modelling/README.md) for the pipeline structure and current command entry points.

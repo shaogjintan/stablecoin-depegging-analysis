@@ -559,5 +559,300 @@
   {
     "from": "tests/test_by_coin.py",
     "to": "tests/test_per_coin_metrics.py"
+  },
+  {
+    "from": "modelling/prepare_data.py",
+    "to": "modelling/data/sample_preparation.py"
+  },
+  {
+    "from": "modelling/matched_sample.py",
+    "to": "modelling/data/matched_sample.py"
+  },
+  {
+    "from": "modelling/calendar_cv.py",
+    "to": "modelling/training/calendar_cv.py"
+  },
+  {
+    "from": "modelling/lr_training.py",
+    "to": "modelling/training/logistic_regression.py"
+  },
+  {
+    "from": "modelling/refit_after_calibration.py",
+    "to": "modelling/training/refit_after_calibration.py"
+  },
+  {
+    "from": "modelling/alarm_events.py",
+    "to": "modelling/evaluation/alarm_events.py"
+  },
+  {
+    "from": "modelling/evaluate.py",
+    "to": "modelling/evaluation/metrics.py"
+  },
+  {
+    "from": "modelling/rolling_threshold.py",
+    "to": "modelling/evaluation/threshold_selection.py"
+  },
+  {
+    "from": "modelling/exact_threshold.py",
+    "to": "modelling/evaluation/exact_threshold.py"
+  },
+  {
+    "from": "modelling/run_summary.py",
+    "to": "modelling/evaluation/run_summary.py"
+  },
+  {
+    "from": "modelling/episode_definitions.py",
+    "to": "modelling/sensitivity/episode_definitions.py"
+  },
+  {
+    "from": "modelling/robustness_refit.py",
+    "to": "modelling/sensitivity/alternative_definitions.py"
+  },
+  {
+    "from": "modelling/run_exhaustive_lowest.py",
+    "to": "modelling/sensitivity/no_refit.py"
+  },
+  {
+    "from": "modelling/corrected_xgb.py",
+    "to": "modelling/sensitivity/xgboost_no_refit.py"
+  },
+  {
+    "from": "modelling/verify_release.py",
+    "to": "modelling/validation/verify_saved_runs.py"
+  },
+  {
+    "from": "modelling/reference_checks.py",
+    "to": "modelling/validation/reference_checks.py"
+  },
+  {
+    "from": "modelling/reporting/paths.py",
+    "to": "modelling/utils/artifacts.py"
+  },
+  {
+    "from": "modelling/consolidate_refit_slides.py",
+    "to": "modelling/reporting/slide_support.py"
+  },
+  {
+    "from": "modelling/reporting/lr_coef_slide.py",
+    "to": "archive/history/modelling/reporting/lr_coef_slide.py"
+  },
+  {
+    "from": "modelling/reporting/rf_importance.py",
+    "to": "archive/history/modelling/reporting/rf_importance.py"
+  },
+  {
+    "from": "modelling/verify_release.py",
+    "to": "archive/history/modelling/compatibility/verify_release.py"
+  },
+  {
+    "from": "modelling/run_exhaustive_lowest.py",
+    "to": "archive/history/modelling/compatibility/run_exhaustive_lowest.py"
+  },
+  {
+    "from": "modelling/consolidate_refit_slides.py",
+    "to": "archive/history/modelling/compatibility/consolidate_refit_slides.py"
+  },
+  {
+    "from": "modelling/lr_training.py",
+    "to": "archive/history/modelling/compatibility/lr_training.py"
+  },
+  {
+    "from": "modelling/prepare_data.py",
+    "to": "archive/history/modelling/compatibility/prepare_data.py"
+  },
+  {
+    "from": "modelling/matched_sample.py",
+    "to": "archive/history/modelling/compatibility/matched_sample.py"
+  },
+  {
+    "from": "modelling/calendar_cv.py",
+    "to": "archive/history/modelling/compatibility/calendar_cv.py"
+  },
+  {
+    "from": "modelling/robustness_refit.py",
+    "to": "archive/history/modelling/compatibility/robustness_refit.py"
+  },
+  {
+    "from": "modelling/episode_definitions.py",
+    "to": "archive/history/modelling/compatibility/episode_definitions.py"
+  },
+  {
+    "from": "modelling/run_summary.py",
+    "to": "archive/history/modelling/compatibility/run_summary.py"
+  },
+  {
+    "from": "modelling/exact_threshold.py",
+    "to": "archive/history/modelling/compatibility/exact_threshold.py"
+  },
+  {
+    "from": "modelling/evaluate.py",
+    "to": "archive/history/modelling/compatibility/evaluate.py"
+  },
+  {
+    "from": "modelling/refit_after_calibration.py",
+    "to": "archive/history/modelling/compatibility/refit_after_calibration.py"
+  },
+  {
+    "from": "modelling/corrected_xgb.py",
+    "to": "archive/history/modelling/compatibility/corrected_xgb.py"
+  },
+  {
+    "from": "modelling/alarm_events.py",
+    "to": "archive/history/modelling/compatibility/alarm_events.py"
+  },
+  {
+    "from": "modelling/corrected_data.py",
+    "to": "archive/history/modelling/compatibility/corrected_data.py"
+  },
+  {
+    "from": "modelling/rolling_threshold.py",
+    "to": "archive/history/modelling/compatibility/rolling_threshold.py"
+  },
+  {
+    "from": "modelling/reference_checks.py",
+    "to": "archive/history/modelling/compatibility/reference_checks.py"
+  },
+  {
+    "from": "modelling/reporting/paths.py",
+    "to": "archive/history/modelling/compatibility/reporting/paths.py"
+  },
+  {
+    "from": "modelling/build_corrected_dataset.py",
+    "to": "archive/history/modelling/build_corrected_dataset.py"
+  },
+  {
+    "from": "modelling/corrected_data.py",
+    "to": "data_processing/dataset_transforms.py",
+    "action": "extract shared functions or definitions"
+  },
+  {
+    "from": "modelling/corrected_data.py",
+    "to": "modelling/data/sample_preparation.py",
+    "action": "extract shared functions or definitions"
+  },
+  {
+    "from": "modelling/prepare_data.py",
+    "to": "modelling/data/feature_schema.py",
+    "action": "extract shared functions or definitions"
+  },
+  {
+    "from": "modelling/corrected_xgb.py",
+    "to": "modelling/utils/io.py",
+    "action": "extract shared functions or definitions"
+  },
+  {
+    "from": "modelling/corrected_xgb.py",
+    "to": "modelling/training/parameters.py",
+    "action": "extract shared functions or definitions"
+  },
+  {
+    "from": "modelling/consolidate_refit_slides.py",
+    "to": "modelling/reporting/calibration_audit.py",
+    "action": "extract shared functions or definitions"
+  },
+  {
+    "from": "modelling/consolidate_refit_slides.py",
+    "to": "modelling/reporting/benchmarks.py",
+    "action": "extract shared functions or definitions"
+  },
+  {
+    "from": "modelling/data/feature_schema.py",
+    "to": "data_processing/feature_schema.py"
+  },
+  {
+    "from": "modelling/data/sample_preparation.py",
+    "to": "data_processing/sample_preparation.py"
+  },
+  {
+    "from": "modelling/data/matched_sample.py",
+    "to": "data_processing/matched_sample.py"
+  },
+  {
+    "from": "modelling/data",
+    "to": "archive/history/modelling/data_package"
+  },
+  {
+    "from": "modelling/evaluation/metrics.py:pooled_metrics",
+    "to": "archive/history/modelling/evaluation/metrics_with_brier_and_roc.py",
+    "action": "archive original pooled metric implementation containing Brier score and ROC-AUC"
+  },
+  {
+    "from": "modelling/evaluation/metrics.py",
+    "to": "archive/history/modelling/evaluation/legacy_evaluation.py",
+    "action": "archive unused generic evaluation helpers and self-test; retain four current metric functions unchanged"
+  },
+  {
+    "from": "modelling/reporting/final_models.py",
+    "to": "modelling/reporting/model_interpretation.py"
+  },
+  {
+    "from": "modelling/reporting/slide_support.py",
+    "to": "archive/history/modelling/reporting/slide_support.py"
+  },
+  {
+    "from": "modelling/reporting/formatting.py",
+    "to": "archive/history/modelling/reporting/formatting.py"
+  },
+  {
+    "from": "modelling/reporting/event_table.py:plot_expanding_window",
+    "to": "archive/history/modelling/reporting/expanding_window_plot.py",
+    "action": "archive unused plotting helper"
+  },
+  {
+    "from": "modelling/sensitivity/no_refit.py",
+    "to": "archive/history/modelling/sensitivity/no_refit.py"
+  },
+  {
+    "from": "modelling/sensitivity/xgboost_no_refit.py",
+    "to": "archive/history/modelling/sensitivity/xgboost_no_refit.py"
+  },
+  {
+    "from": "modelling/sensitivity",
+    "to": "modelling/robustness_checks"
+  },
+  {
+    "from": "modelling/sensitivity/alternative_definitions.py:targetable_ids",
+    "to": "modelling/evaluation/targetability.py",
+    "action": "extract shared label-independent targetability helper unchanged"
+  },
+  {
+    "from": "modelling/training/calendar_cv.py:_average_precision",
+    "to": "archive/history/modelling/training/unused_average_precision.py",
+    "action": "archive unused AP wrapper"
+  },
+  {
+    "from": "modelling/training/calendar_cv.py:_fit_model",
+    "to": "modelling/training/logistic_regression.py",
+    "action": "move logistic model fitting unchanged"
+  },
+  {
+    "from": "modelling/training/logistic_regression.py",
+    "to": "modelling/training/logistic_tuning.py"
+  },
+  {
+    "from": "modelling/training/refit_after_calibration.py",
+    "to": "modelling/training/train_models.py"
+  },
+  {
+    "from": "modelling/models/logreg.py:LogRegModel.param_grid",
+    "to": "archive/history/modelling/models/logreg_tuning_grid.py",
+    "action": "archive unused legacy L1/L2 tuning grid; retain estimator methods unchanged"
+  },
+  {
+    "from": "modelling/models/:unused param_grid attributes",
+    "to": "archive/history/modelling/models/legacy_tuning_grids.py",
+    "action": "archive unused base, RF, XGB and benchmark tuning grids; estimator methods unchanged"
+  },
+  {
+    "from": "modelling/validation/verify_saved_runs.py",
+    "to": "modelling/validation/verify_model_results.py"
+  },
+  {
+    "from": "modelling/validation/reference_checks.py",
+    "to": "modelling/validation/independent_calculations.py"
+  },
+  {
+    "from": "modelling/validation/independent_calculations.py",
+    "to": "modelling/validation/reference_checks.py"
   }
 ]

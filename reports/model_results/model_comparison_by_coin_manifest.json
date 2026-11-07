@@ -1,6 +1,6 @@
 {
   "summary": "reports/model_results/model_comparison_summary.csv",
-  "summary_sha256": "266992eb09afe330c26f7f021f91fd228e517f1a14c6ccc9a176d32ffe9597fc",
+  "summary_sha256": "c61d7af56d42de03a9ae04ef83bb3714a777d38d521c4faaed4d2208ed181f0b",
   "rows": 108,
   "sources": [
     {
@@ -730,5 +730,13 @@
     "AP pools each coin's test years; it is not additive.",
     "Recall/AP are blank with no targets/positives respectively.",
     "Observed coin-months include partial months."
-  ]
+  ],
+  "headline_metrics": [
+    "median_lead_hours",
+    "episode_recall",
+    "false_alarms",
+    "false_alarms_per_coin_month",
+    "average_precision"
+  ],
+  "report_layout": "Identifiers, five headline metrics, supporting counts; remaining fields in adjacent _diagnostics.csv."
 }

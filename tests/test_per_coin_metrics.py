@@ -5,7 +5,7 @@ import unittest
 import pandas as pd
 
 from modelling.reporting.by_coin import coin_metrics, targetable_ids
-from modelling.rolling_threshold import _targetable_episode_ids
+from modelling.evaluation.threshold_selection import _targetable_episode_ids
 
 
 class CoinMetricsTests(unittest.TestCase):

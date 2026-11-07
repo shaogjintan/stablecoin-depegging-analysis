@@ -1,6 +1,6 @@
 # Data contract
 
-Exact columns, row counts and file checksums are recorded in data/manifest.json. The maintained feature lists are modelling.prepare_data.MARKET_FEATURES and ONCHAIN_FEATURES; they are the executable source of truth.
+Exact columns, row counts and file checksums are recorded in data/manifest.json. The maintained feature lists are data_processing.feature_schema.MARKET_FEATURES and ONCHAIN_FEATURES; they are the executable source of truth.
 
 - coin: fiat-backed stablecoin identifier, including PAX naming used in the study.
 - hour: corrected completed-bar UTC timestamp.

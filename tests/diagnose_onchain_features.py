@@ -35,8 +35,8 @@ REPO_ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(REPO_ROOT))
 sys.path.insert(0, str(REPO_ROOT / "data_processing"))
 
-from modelling.prepare_data import at_risk_mask, ONCHAIN_FEATURES  # noqa: E402
-from splits import load_master  # noqa: E402
+from data_processing.sample_preparation import at_risk_mask, ONCHAIN_FEATURES  # noqa: E402
+from data_processing.splits import load_master  # noqa: E402
 
 RAW_LEVELS = ["tx_count", "tx_volume", "active_senders", "active_receivers"]
 SPLIT_HOUR = pd.Timestamp("2024-01-01", tz="UTC")
@@ -86,7 +86,9 @@ def main() -> int:
     if missing_chg:
         raise SystemExit(
             f"FAIL: change features missing from master.parquet: {missing_chg}. "
-            "Run: python data_processing/build_onchain_features.py --update-master"
+            "Regenerate interim features with python -m "
+            "data_processing.build_onchain_features, then rebuild the dataset "
+            "into a fresh directory with data_processing.build_dataset."
         )
     if missing_raw:
         raise SystemExit(f"FAIL: raw on-chain columns missing: {missing_raw}")

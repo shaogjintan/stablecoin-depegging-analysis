@@ -6,6 +6,6 @@ test:
 validate-data:
 	$(PYTHON) -m data_processing.build_dataset
 verify:
-	$(PYTHON) -W ignore::DeprecationWarning -m modelling.verify_release
+	$(PYTHON) -W ignore::DeprecationWarning -m modelling.validation.verify_model_results
 reports:
 	$(PYTHON) -m reports.reproduce

@@ -5,11 +5,11 @@ import unittest
 import numpy as np
 import pandas as pd
 from sklearn.metrics import average_precision_score
-from modelling.lr_training import fit_lr, select_c, tune_lr
-from modelling.calendar_cv import _calendar_cv_folds
-from modelling.reference_checks import reference_ap, reference_events, reference_targets, check_preprocessing
-from modelling.alarm_events import build_alarm_events
-from modelling.rolling_threshold import _choose_threshold
+from modelling.training.logistic_tuning import fit_lr, select_c, tune_lr
+from modelling.training.calendar_cv import _calendar_cv_folds
+from modelling.validation.reference_checks import reference_ap, reference_events, reference_targets, check_preprocessing
+from modelling.evaluation.alarm_events import build_alarm_events
+from modelling.evaluation.threshold_selection import _choose_threshold
 
 class SharedTrainingTests(unittest.TestCase):
     def test_ap_ties_and_fold_priors(self):

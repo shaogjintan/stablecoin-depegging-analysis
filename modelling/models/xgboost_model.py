@@ -1,21 +1,12 @@
-"""
-XGBoost model for depeg forecasting (Phase 4, Sasi).
+"""XGBoost estimator with native missing-value handling.
 
-Design:
-- NaN-native: needs_imputation = False. XGBoost handles missing values
-  natively, and the missingness pattern itself can carry signal.
-- tree_method="hist", eval_metric="aucpr" (PR-AUC is the primary metric:
-  positives are 0.02%-0.57% of rows), n_jobs=-1, random_state=42.
-- scale_pos_weight: "auto" = neg/pos of the training fold (computed in
-  fit()); otherwise the given float.
-- Early stopping ONLY on the held-out inner validation set. train.py uses
-  the correct nested pattern: during --tune, candidates fit on X_inner_train
-  with early stopping on X_inner_val; the winning config is then refit on the
-  full X_train with n_estimators = best_iteration (no eval set), so the final
-  model never early-stops on rows it was trained on.
-
-param_grid is the Phase 4.2 light grid (24 combos), selected per fold by
-inner-val PR-AUC via modelling/train.py --tune.
+The maintained runner supplies fixed settings from training/parameters.py:
+300 trees, depth 3, and learning rate 0.05. It supplies no validation set to
+fit(), so both practice and final models use fixed rounds without early
+stopping. The class retains optional validation-based early stopping for
+compatibility with historical callers. Automatic class weighting uses only
+the labels passed to fit(). Reported average precision is calculated by the
+evaluation code; the estimator's aucpr evaluation setting is unchanged.
 """
 from __future__ import annotations
 
@@ -29,14 +20,6 @@ class XGBModel(BaseModel):
     name = "xgboost"
     needs_imputation = False
     supports_early_stopping = True
-    param_grid = [
-        {"learning_rate": lr, "max_depth": d, "min_child_weight": m,
-         "scale_pos_weight": s}
-        for lr in (0.03, 0.1)
-        for d in (3, 5)
-        for m in (1, 5)
-        for s in ("auto", 10, 100, 500)  # 500 added for the recall-first rework
-    ]
 
     def __init__(self, learning_rate: float = 0.1, max_depth: int = 5,
                  min_child_weight: float = 1, scale_pos_weight="auto",

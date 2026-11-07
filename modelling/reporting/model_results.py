@@ -6,7 +6,8 @@ from pathlib import Path
 import pandas as pd
 
 from data_processing.splits import canonical_input_hashes
-from modelling.corrected_xgb import sha256
+from modelling.utils.io import sha256
+from modelling.reporting.schema import HEADLINE_METRICS, write_comparison
 
 RUNS = [
     Path('artifacts/runs') / group / name
@@ -60,9 +61,12 @@ def export_results(out, runs=None):
         outputs[name] = frame.sort_values(keys).reset_index(drop=True)
     out.mkdir(parents=True, exist_ok=True)
     for name, frame in outputs.items():
-        frame.to_csv(out / name, index=False)
+        keys = ['model', 'config', 'horizon_hours', 'policy']
+        if 'test_year' in frame:
+            keys.append('test_year')
+        write_comparison(frame, out / name, keys)
     (out / 'model_comparison_manifest.json').write_text(json.dumps(dict(
-        sources=sources, primary_horizons=[6, 24], supplementary_horizons=[1],
+        sources=sources, headline_metrics=HEADLINE_METRICS, primary_horizons=[6, 24], supplementary_horizons=[1],
         note='Saved results combined without retraining or changing metrics.',
     ), indent=2) + '\n')
     return outputs

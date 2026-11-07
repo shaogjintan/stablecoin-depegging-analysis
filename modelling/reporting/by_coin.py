@@ -9,7 +9,8 @@ import pandas as pd
 from sklearn.metrics import average_precision_score
 
 from data_processing.config import FIAT_COINS
-from modelling.corrected_xgb import sha256
+from modelling.utils.io import sha256
+from modelling.reporting.schema import HEADLINE_METRICS, write_comparison
 
 KEYS = ["model", "config", "horizon_hours", "policy"]
 COUNTS = [
@@ -215,11 +216,11 @@ def main():
     report, sources = build_report(summary, args.artifacts)
     args.out_dir.mkdir(parents=True, exist_ok=True)
     output = args.out_dir / "model_comparison_by_coin.csv"
-    report.to_csv(output, index=False)
+    write_comparison(report, output, KEYS + ["coin"])
     (args.out_dir / "model_comparison_by_coin_manifest.json").write_text(
         json.dumps(dict(
             summary=str(args.summary), summary_sha256=sha256(args.summary),
-            rows=len(report), sources=sources,
+            rows=len(report), sources=sources, headline_metrics=HEADLINE_METRICS,
             notes=[
                 "Saved final predictions and alarms; no retraining.",
                 "Counts reconcile to the overall summary.",

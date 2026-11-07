@@ -4,7 +4,7 @@ import json
 from pathlib import Path
 import pandas as pd
 from data_processing.config import ACTIVE_MASTER_PATH, FIAT_COINS
-from modelling.corrected_xgb import sha256
+from modelling.utils.io import sha256
 
 RAW_ONCHAIN = ['tx_count', 'tx_volume', 'active_senders', 'active_receivers']
 

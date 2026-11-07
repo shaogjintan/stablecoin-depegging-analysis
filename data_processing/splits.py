@@ -19,7 +19,7 @@ Leakage control:
     [boundary - purge, boundary + embargo] is dropped from every fold set.
 
 Rows are returned unfiltered, including unlabelled rows.
-modelling/prepare_data.py applies tier- and horizon-specific eligibility.
+data_processing/sample_preparation.py applies tier- and horizon-specific eligibility.
 
 Usage from modelling code (run from the repo root):
     import sys; sys.path.insert(0, "data_processing")

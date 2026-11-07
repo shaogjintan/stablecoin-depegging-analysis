@@ -1,16 +1,10 @@
-"""
-Follows the BaseModel contract (modelling/models/base.py):
-- needs_imputation = True: scikit-learn's RandomForestClassifier cannot take
-  NaN, so train.py median-imputes every column with `MedianImputer`, fitted on
-  the training fold only (never on inner_val or test).
-- supports_early_stopping = False: forests have no early stopping, so fit()
-  ignores X_val / y_val. During --tune, candidates are fit on X_inner_train and
-  scored on X_inner_val by train.py; the winner is refit on the full X_train.
-- predict_proba returns shape (n, 2) with column 1 = P(label = 1).
-- random_state = 42 in the estimator, per the cross-model tuning standard.
+"""Random forest estimator implementing the shared model interface.
 
-param_grid is a light grid (18 combos, under the 32-combo cap) tuned by
-`train.py --tune --tune-metric recall_at_rate --max-alarm-rate 0.01`. 
+The maintained runner supplies fixed settings from training/parameters.py:
+500 trees, maximum depth 8, and minimum leaf size 50. It fits the pipeline's
+median imputer on the training partition only. Validation arguments are
+accepted by this class but unused. Constructor defaults remain unchanged
+for compatibility; they are not the study's fixed training configuration.
 """
 from __future__ import annotations
 
@@ -24,12 +18,6 @@ class RFModel(BaseModel):
     name = "random_forest"
     needs_imputation = True
     supports_early_stopping = False
-    param_grid = [
-        {"max_depth": d, "min_samples_leaf": leaf, "class_weight": cw}
-        for d in (6, 12, None)
-        for leaf in (5, 20, 50)
-        for cw in (None, "balanced_subsample")
-    ]
 
     def __init__(self, n_estimators: int = 300, max_depth: int | None = 12,
                  min_samples_leaf: int = 20, max_features="sqrt",

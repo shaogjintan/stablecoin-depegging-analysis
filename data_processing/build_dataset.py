@@ -24,8 +24,8 @@ from data_processing.config import (
 )
 from data_processing.merge_and_label import flag_feature_samples, merge_sources
 from data_processing.splits import load_master
-from modelling.corrected_data import prepare_corrected
-from modelling.prepare_data import ONCHAIN_FEATURES
+from data_processing.dataset_transforms import prepare_corrected
+from data_processing.feature_schema import ONCHAIN_FEATURES
 
 SOURCES = [HOURLY_MARKET_PATH, ONCHAIN_FEATURES_PATH, MARKET_FEATURES_PATH]
 SOURCE_MARKET_FEATURES = [
@@ -183,7 +183,10 @@ def metadata(master, episodes, master_path, episodes_path):
         master_sha256=checksum(master_path),
         episodes=str(episodes_path),
         episodes_sha256=checksum(episodes_path),
-        preparation_sha256=checksum(Path("modelling/corrected_data.py")),
+        preparation_source="data_processing/dataset_transforms.py",
+        preparation_sha256=checksum(
+            Path(__file__).with_name("dataset_transforms.py")
+        ),
         rows=len(master),
         episodes_defined=len(episodes),
         counts=counts,
