@@ -90,7 +90,7 @@ def run_full(output, plan, env):
     from modelling.utils.io import sha256
 
     hourly = ROOT / 'data/interim/hourly_stablecoin.parquet'
-    archive = ROOT / 'dune_onchain.zip'
+    archive = ROOT / 'data/raw/dune_onchain.zip'
     for path in (hourly, archive):
         if not path.is_file():
             raise FileNotFoundError(f'Required retained source is missing: {path}')
@@ -98,6 +98,9 @@ def run_full(output, plan, env):
     interim = output / 'data' / 'interim'
     interim.mkdir(parents=True)
     shutil.copy2(hourly, interim / hourly.name)
+    raw = output / "data" / "raw"
+    raw.mkdir(parents=True)
+    shutil.copy2(archive, raw / archive.name)
     state = dict(status='running', sources=[
         dict(path=str(path), sha256=sha256(path)) for path in (hourly, archive)
     ], dataset_root=env['STABLECOIN_DATA_DIR'], completed=[],

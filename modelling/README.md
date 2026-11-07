@@ -36,13 +36,13 @@ python -m modelling.reporting.calibration_audit
 python -m modelling.training.train_models --out-dir artifacts/runs/primary/ALL-MODELS-REPRODUCED --models logreg random_forest xgboost --horizon 6 --horizon 24
 ```
 
-`reporting.benchmarks` fits constant-prior and persistence benchmarks on retained partitions; it is separate from saved-model-only report reproduction. It does not retrain primary RF/XGB/LR models. Obsolete slide support and Markdown formatting are archived under `archive/history/modelling/reporting/`.
+`reporting.benchmarks` fits constant-prior and persistence benchmarks on retained partitions; it is separate from saved-model-only report reproduction. It does not retrain primary RF/XGB/LR models. Obsolete slide support and Markdown formatting are archived under `delete/archive_cleanup/history/modelling_redundant/reporting/`.
 
-`evaluation.threshold_selection` implements the final coin-month budget policy. Unused generic hour-level curves, F1/F-beta threshold selection, and the old standalone evaluation exporter are archived in `archive/history/modelling/evaluation/legacy_evaluation.py`. `evaluation.metrics` contains only the maintained grouped-alarm metrics.
+`evaluation.threshold_selection` implements the final coin-month budget policy. Unused generic hour-level curves, F1/F-beta threshold selection, and the old standalone evaluation exporter are archived in `delete/archive_cleanup/history/modelling_redundant/evaluation/legacy_evaluation.py`. `evaluation.metrics` contains only the maintained grouped-alarm metrics.
 
-Historical launchers and obsolete compatibility shims are retained under `archive/history/modelling/`. Current commands and imports use the folders above. Original run manifests and source snapshots remain unchanged; their older module paths describe the historical runs. Relocations are recorded in `docs/cleanup_moves.json`.
+Historical launchers and obsolete compatibility shims are preserved under `delete/archive_cleanup/history/`; original experiment sources remain with their historical artifacts. Current commands and imports use the folders above. Original run manifests and source snapshots remain unchanged; their older module paths describe the historical runs. Relocations are recorded in `archive/maintenance/cleanup_moves.json`.
 
-Historical RF/XGBoost no-refit runners are archived under `archive/history/modelling/sensitivity/`. Saved no-refit run evidence remains in artifacts; the maintained sensitivity workflow uses alternative outcome definitions only.
+Historical RF/XGBoost no-refit runners are archived under `archive/artifacts/sensitivity/`. Saved no-refit summaries remain in archive/artifacts/sensitivity/; the maintained sensitivity workflow uses alternative outcome definitions only.
 
 Training settings live in `training/parameters.py`: `XGBOOST_FIXED_PARAMS`, `RANDOM_FOREST_FIXED_PARAMS`, and `DEFAULT_C_GRID`. Calendar CV only constructs chronological splits; logistic fitting and C selection live in `training/logistic_tuning.py`. The main runner defaults to RF, XGBoost, and logistic regression across all three horizons (h1/h6/h24). Use `--models` to select a subset.
 

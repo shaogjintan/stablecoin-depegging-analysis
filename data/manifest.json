@@ -202,13 +202,13 @@
       "sha256": "4f7b979f1b282dafaedd0155fce200b77be8a0dfea0cf79c56305828fbbef237"
     },
     {
-      "path": "dune_onchain.zip",
+      "path": "data/raw/dune_onchain.zip",
       "bytes": 12767633,
       "sha256": "3fa6e8adce1972d567650a59655bee38adb6a8d2e00c0158fb11dc0b49170781"
     }
   ],
   "dune_export_verification": {
-    "archive": "dune_onchain.zip",
+    "archive": "data/raw/dune_onchain.zip",
     "archive_sha256": "3fa6e8adce1972d567650a59655bee38adb6a8d2e00c0158fb11dc0b49170781",
     "method": "Byte-for-byte comparison of each extracted CSV with its ZIP member",
     "all_match": true,

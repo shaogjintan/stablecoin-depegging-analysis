@@ -36,7 +36,7 @@
     }
   ],
   "data_manifest": "data/manifest.json",
-  "relocations": "docs/cleanup_moves.json",
+  "relocations": "archive/maintenance/cleanup_moves.json",
   "robustness": "robustness/alt_definitions/",
   "notes": [
     "Original manifests retain historical paths.",

@@ -12,18 +12,20 @@ Only the four final refit runs remain active:
 Each directory now contains run.json, summaries, alarms, fits/, episodes.parquet,
 and its original source snapshot. All relocated files were verified byte-for-byte
 unchanged. Original paths within frozen evidence are retained for provenance;
-docs/cleanup_moves.json records relocations. index.json lists final run identities.
+archive/maintenance/cleanup_moves.json records relocations. index.json lists final run identities.
 
 The older no-refit experiments and evidence are archived under
-archive/history/artifacts/runs/{sensitivity,sensitivity_checks}/. Their historical
-index and original verification status are retained there. They are not used by
+archive/artifacts/sensitivity/. Large superseded evidence is
+quarantined under delete/archive_cleanup/history/artifacts/runs/sensitivity_checks/.
+Their historical index and original verification status are retained. They are not used by
 the maintained final-result exporters or outcome-definition robustness checks.
 
 Large models, prediction Parquets and source snapshots are ignored by Git. A
 clone alone is insufficient for saved-run verification. No public model-artifact
 download has been published. Supply these final run folders separately, or
 retrain from the retained sources using python -m reports.reproduce --full.
-Source-data distribution bundles remain under artifacts/distribution/.
+The retained hourly source is tracked in Git; a separate distribution ZIP is
+not required for full reproduction.
 
 Run CSVs are original per-run outputs used by the exporters.
 reports/model_results/ holds their combined reader-facing tables; fitted

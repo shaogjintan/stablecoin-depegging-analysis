@@ -2,7 +2,7 @@
 
 Exact columns, row counts and file checksums are recorded in data/manifest.json. The maintained feature lists are data_processing.feature_schema.MARKET_FEATURES and ONCHAIN_FEATURES; they are the executable source of truth.
 
-- coin: fiat-backed stablecoin identifier, including PAX naming used in the study.
+- coin: study stablecoin identifier, including DAI and the historical PAX naming.
 - hour: corrected completed-bar UTC timestamp.
 - bar_start: original source bar timestamp, one hour before the corrected hour.
 - price: source price used for depeg definitions.
@@ -15,4 +15,4 @@ Exact columns, row counts and file checksums are recorded in data/manifest.json.
 - historical_context (report output): heuristic date-based context, not a causal label.
 - type (report output): structural event category derived from grouped episode geometry and severity/duration rules.
 
-Raw on-chain levels are used for source-coverage descriptions, not model features. The joint coverage table describes raw source completeness; use the versioned eligibility masks and run partitions for model populations.
+Raw on-chain levels are used for source-coverage descriptions, not model features. Coverage outputs explicitly distinguish observed volume, raw on-chain field completeness, and completeness of current engineered features. None includes the entire causal-risk/label eligibility rule; use the eligibility masks and saved run partitions for model populations.

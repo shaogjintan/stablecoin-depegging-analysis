@@ -4,7 +4,7 @@
 
 Both `python -m data_processing.merge_and_label` and `python -m data_processing.build_dataset` use the same direct route: acquired hourly market snapshot + interim market/on-chain feature tables -> corrected features, episodes and labels in memory -> canonical outputs. No old master is needed or written. Existing outputs are validated without overwriting; add `--rebuild` to compare a reconstruction or `--rebuild --out-dir <fresh>` to create a fresh pair.
 
-`interim/` holds the acquired hourly market table and the market/on-chain feature tables; `raw/dune_onchain/` holds six source CSVs. The root Dune ZIP is retained. All six CSVs match their ZIP members byte-for-byte; see `dune_export_verification` in `manifest.json`. The old original master and old episode manifest are quarantined under delete/, never used by the maintained build.
+`interim/` holds the acquired hourly market table and the market/on-chain feature tables; `raw/dune_onchain/` holds six source CSVs. The Dune ZIP at `data/raw/dune_onchain.zip` is retained. All six CSVs match their ZIP members byte-for-byte; see `dune_export_verification` in `manifest.json`. The old original master and old episode manifest are quarantined under delete/, never used by the maintained build.
 
 The derived interim tables can be rebuilt from retained local sources. The
 market writer now uses the same calendar-based calculation as the final

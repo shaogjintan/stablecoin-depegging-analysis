@@ -32,4 +32,4 @@ AP uses pooled prediction scores. Episode recall uses targetable episodes. Media
 
 h1 is supplementary; h6/h24 are primary. Benchmark coverage remains h6/h24. Event-type detections cover all three horizons. Figures and interpretation exporters currently cover primary h6/h24.
 
-Obsolete slide support, its Markdown formatting helper, and the unused expanding-window plot are archived under `archive/history/modelling/reporting/`. They are excluded from report reproduction.
+Obsolete slide support, its Markdown formatting helper, and the unused expanding-window plot are archived under `delete/archive_cleanup/history/modelling_redundant/reporting/`. They are excluded from report reproduction.

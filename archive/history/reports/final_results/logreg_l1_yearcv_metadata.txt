@@ -1,2 +1,0 @@
-LogReg tag: l1_yearcv
-L1-only; C selected by mean calendar-year cross-validation average precision inside each outer training window. Calendar folds use UTC year boundaries with configured purge, embargo, and episode-boundary exclusions. Validation years without depeg positives are skipped and recorded in reports/logreg_l1_yearcv. Alarm budget: 1 false alarms per observed coin-month.

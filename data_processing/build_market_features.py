@@ -2,7 +2,7 @@
 
 Missing hours remain missing; lags refer to calendar hours. The command-line
 writer uses the same calculation as the dataset builder. Historical formulas
-are preserved under archive/history/data_processing/.
+are preserved under delete/archive_cleanup/history/data_processing/.
 
 Run ``python -m data_processing.build_market_features`` to rebuild
 data/interim/hourly_stablecoin_market_features.parquet from the retained

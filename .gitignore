@@ -65,14 +65,14 @@ Untitled.ipynb
 /artifacts/runs/**/runner_source.py
 /artifacts/runs/**/*.parquet
 /artifacts/runs/**/*.npz
-/archive/history/**/fits/
-/archive/history/**/partitions/
-/archive/history/**/source/
-/archive/history/**/source_diff.patch
-/archive/history/**/*.parquet
-/archive/history/**/*.npz
-/archive/history/results/
-/archive/history/outputs/
+/archive/**/fits/
+/archive/**/partitions/
+/archive/**/source/
+/archive/**/source_diff.patch
+/archive/**/*.parquet
+/archive/**/*.npz
+/archive/results/
+/archive/outputs/
 /delete/
 # Preserve previously committed canonical inputs and their original rebuild source.
 !data/processed/
@@ -95,3 +95,8 @@ data/processed/*
 /artifacts/h6_and_h24/**/fits/
 /artifacts/h6_and_h24/**/source/
 /artifacts/h6_and_h24/**/*.parquet
+
+# Retain the original on-chain export archive; extracted CSVs stay local.
+!data/raw/
+/data/raw/*
+!data/raw/dune_onchain.zip

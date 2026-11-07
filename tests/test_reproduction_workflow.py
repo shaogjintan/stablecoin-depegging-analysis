@@ -46,7 +46,8 @@ class ReproductionWorkflowTests(unittest.TestCase):
             hourly = root / 'data/interim/hourly_stablecoin.parquet'
             hourly.parent.mkdir(parents=True)
             hourly.write_bytes(b'retained source')
-            (root / 'dune_onchain.zip').write_bytes(b'retained archive')
+            (root / 'data/raw').mkdir()
+            (root / 'data/raw/dune_onchain.zip').write_bytes(b'retained archive')
             output = root / 'fresh'
             plan = [('first', []), ('second', []), ('third', [])]
             env = dict(os.environ, STABLECOIN_DATA_DIR=str(output / 'data'))

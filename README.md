@@ -11,7 +11,7 @@ The study covers USDT, USDC, BUSD, DAI, TUSD and PAX. Final results use the corr
 - [Outcome-definition robustness](reports/robustness/alt_definitions/README.md)
 - [Reproduction instructions](docs/reproduction.md)
 - [Methodology and limitations](docs/methodology.md)
-- [Cleanup record and outstanding work](docs/cleanup_checklist.md)
+- [Historical cleanup record](archive/maintenance/cleanup_history.md)
 
 ## Setup and checks
 
@@ -33,12 +33,12 @@ reproduction. Saved fitted-model evidence remains separate:
 
 | Workflow | Additional files needed |
 |---|---|
-| Full reproduction | `data/interim/hourly_stablecoin.parquet` and the root `dune_onchain.zip` |
+| Full reproduction | `data/interim/hourly_stablecoin.parquet` and the `data/raw/dune_onchain.zip` |
 | Verify saved models or regenerate their reports | Retained inputs and saved run evidence described in [artifacts/README.md](artifacts/README.md) |
 
 The hourly Parquet must be included in the repository commit before reviewers
 clone it; changing `.gitignore` alone does not add the file to Git. If your copy
-omits it, use the optional source bundle below or the fresh-data route.
+omits it, obtain the retained file from the project owner or use the fresh-data route.
 There is currently no published download for separately supplied model files.
 Check their paths and SHA-256 hashes against [data/manifest.json](data/manifest.json).
 Installing Python packages does not supply research data or saved models.
@@ -51,12 +51,7 @@ downloaded observations; the values and resulting metrics may differ from the
 reported analysis. Use the supplied hourly source to reproduce the same inputs.
 See the [fresh-data route](docs/reproduction.md#rerun-with-newly-downloaded-market-data).
 
-For optional local handoff, `artifacts/distribution/source_data.zip` contains the hourly
-source, `SOURCE_DATA_SHA256SUMS`, and `SOURCE_DATA_README.md`. Supply the ZIP and
-its companion `source_data.zip.sha256` alongside this repository. Extract into
-the repository root without overwriting existing files, then follow the bundled
-checksum and reproduction instructions. This bundle is generated locally and
-is not included in Git; a public download link has not been published.
+The hourly source is now tracked, so a separate distribution ZIP is unnecessary.
 
 ## Reproduce from retained source data
 
@@ -69,7 +64,7 @@ python -m reports.reproduce --full
 This rebuilds features and the dataset, trains logistic regression, random
 forest and XGBoost for h1/h6/h24 across 2021–2025, verifies the new predictions,
 and generates robustness checks, benchmarks and reports. It requires the
-retained `data/interim/hourly_stablecoin.parquet` and `dune_onchain.zip`, not
+retained `data/interim/hourly_stablecoin.parquet` and `data/raw/dune_onchain.zip`, not
 historical fitted models. It does not download updated data.
 
 All fresh outputs go under `artifacts/reproduction/`, leaving the retained
@@ -97,10 +92,10 @@ tests/                 maintained data/threshold/model checks
 reports/               report outputs, provenance and reproduce.py
 artifacts/  final fitted models, predictions and run manifests
 docs/                  methodology, reproduction and relocation records
-archive/history/       earlier experiments and original implementations
+archive/       earlier experiments and original implementations
 delete/                preserved deletion candidates; not used by the pipeline
 ```
 
-Archived code is historical evidence and is not a supported reproduction route. Original run manifests and source snapshots retain historical paths; [the relocation map](docs/cleanup_moves.json) maps them to current locations. `dune_onchain.zip` and extracted Dune CSVs are both retained.
+Archived code is historical evidence and is not a supported reproduction route. Original run manifests and source snapshots retain historical paths; [the relocation map](archive/maintenance/cleanup_moves.json) maps them to current locations. `data/raw/dune_onchain.zip` and extracted Dune CSVs are both retained.
 
 See [the modelling guide](modelling/README.md) for the pipeline structure and current command entry points.

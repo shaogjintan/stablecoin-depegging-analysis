@@ -1,0 +1,26 @@
+[
+  {
+    "path": "archive/artifacts/sensitivity/random_forest_xgboost_no_refit",
+    "role": "sensitivity",
+    "run_id": null,
+    "status": "complete",
+    "manifest_sha256": "5d69b398839ff0341076b40e1e11a1606e7b898a3b162aa206cfd2ef08e21c91",
+    "verification": "not independently reverified during cleanup"
+  },
+  {
+    "path": "archive/artifacts/sensitivity/xgboost_no_refit",
+    "role": "sensitivity",
+    "run_id": "20261102T044322Z-a9b16de8",
+    "status": "complete",
+    "manifest_sha256": "2107fff0b1193911c73a0e264578ccdff8d0c881e6fa242570baed67d92bdb00",
+    "verification": "not independently reverified during cleanup"
+  },
+  {
+    "path": "archive/artifacts/sensitivity/logistic_regression_no_refit",
+    "role": "historical_no_refit",
+    "run_id": "20261102T062219Z-cd407622",
+    "status": "scoring_complete",
+    "manifest_sha256": "5ed3ee552370004ee033f6e26c307bdb0c8457071e68d08aa5c7af8e172168f3",
+    "verification": "not independently reverified during cleanup"
+  }
+]
