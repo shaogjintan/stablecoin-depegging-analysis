@@ -170,11 +170,11 @@ def main():
     args.validation_dir.mkdir(parents=True, exist_ok=True)
     audit.to_csv(args.validation_dir / "calibration_audit.csv", index=False)
     benchmark.to_csv(out / "benchmark.csv", index=False)
-    summaries.to_csv(out / "model_comparison_summary.csv", index=False)
     yearly = pd.read_csv(run / "by_year.csv")
     if lr_ready:
         yearly = pd.concat([yearly, pd.read_csv(args.lr_run / "by_year.csv")], ignore_index=True)
-    yearly.to_csv(out / "model_comparison_by_year.csv", index=False)
+    from modelling.reporting.model_results import RUNS, export_results
+    export_results(out, [run, *([args.lr_run] if lr_ready else []), *RUNS[2:]])
     if args.presentation_dir is None:
         return
     importance = []

@@ -2,7 +2,7 @@
 
 | Report claim or exhibit | Authoritative output |
 |---|---|
-| Model performance, matched tiers, h6/h24 | reports/model_results/model_comparison_summary.csv |
+| Model performance, matched tiers, h1/h6/h24 | reports/model_results/model_comparison_summary.csv |
 | Test-year performance | reports/model_results/model_comparison_by_year.csv |
 | Validation exposure, cutoff and false alarms | reports/validation_checks/calibration_audit.csv |
 | Constant-prior and persistence comparison | reports/model_results/benchmark.csv |
@@ -25,3 +25,5 @@ All old final_results/, fixed/tuned figures and non-refit coefficients are archi
 `reports/model_results/model_comparison_by_coin.csv` pools saved test years separately for each model, matched sample configuration, forecast horizon and coin. It follows the scope of the current overall summary. Counts sum back to that summary; recall and false-alarm rates use each coin's own denominators. AP pools each coin's predictions across years and cannot be averaged to recover overall AP. Recall is blank for no targetable episodes; AP is blank for no positive hours. Median lead is conditional on true alarms. Coin-months count observed calendar months, including partial exposure.
 
 Regenerate with `python -m modelling.reporting.by_coin`. The adjacent manifest records the source run IDs and hashes of saved fits, predictions, alarms and episode snapshots. No models are retrained.
+
+The combined model comparison summary, yearly table, and per-coin table include h1, h6, and h24. h1 remains supplementary; filter `horizon_hours` to 6 and 24 for the primary analysis. Regenerate summary/yearly tables with `python -m modelling.reporting.model_results`; source hashes are recorded in `model_comparison_manifest.json`.
