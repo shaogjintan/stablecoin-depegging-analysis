@@ -6,9 +6,9 @@ The study covers USDT, USDC, BUSD, DAI, TUSD and PAX. Final results use the corr
 
 ## Review the results
 
-- [Final model comparisons](reports/final/presentation/model_comparison_summary.csv)
-- [Calibration audit](reports/final/presentation/calibration_audit.csv)
-- [Outcome-definition robustness](reports/final/robustness/README.md)
+- [Final model comparisons](reports/model_results/model_comparison_summary.csv)
+- [Calibration audit](reports/validation_checks/calibration_audit.csv)
+- [Outcome-definition robustness](reports/robustness/alt_definitions/README.md)
 - [Reproduction instructions](docs/reproduction.md)
 - [Methodology and limitations](docs/methodology.md)
 - [Cleanup record and outstanding work](docs/cleanup_checklist.md)
@@ -37,7 +37,7 @@ data_processing/      acquisition, feature building, corrected split validation
 data/                  frozen inputs, source snapshots and intermediates
 tests/                 maintained data/threshold/model checks
 scripts/               report reproduction entry point
-reports/final/         authoritative report outputs and provenance
+reports/         authoritative report outputs and provenance
 artifacts/runs/        primary, supplementary and sensitivity evidence
 docs/                  methodology, reproduction and relocation records
 archive/history/       earlier experiments and original implementations

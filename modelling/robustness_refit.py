@@ -6,6 +6,7 @@ This is not a retraining experiment under alternative labels or eligibility.
 import argparse
 import json
 from pathlib import Path
+from modelling.reporting.paths import evidence_dir
 
 import numpy as np
 import pandas as pd
@@ -61,7 +62,7 @@ def evaluate(pred, alarms, episodes, h):
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--run-dir", type=Path, action="append", required=True)
-    parser.add_argument("--out-dir", type=Path, required=True)
+    parser.add_argument("--out-dir", type=Path, default=Path("reports/robustness/alt_definitions"))
     parser.add_argument("--horizons", type=int, nargs="+", default=[6, 24], choices=[1, 6, 24])
     parser.add_argument("--bands", type=float, nargs="+", default=[.005, .01, .02])
     parser.add_argument("--durations", type=int, nargs="+", default=[1, 2, 3, 4])
@@ -104,7 +105,7 @@ def main():
                 raise ValueError(f"Duplicate model/config/horizon: {key}")
             seen.add(key)
             h = int(r.horizon_hours)
-            pred = pd.concat([pd.read_parquet(run / "fits" /
+            pred = pd.concat([pd.read_parquet(evidence_dir(run) / "fits" /
                 f"{r.model}_{r.config}_h{h}_{year}" / "test.parquet")
                 for year in range(2021, 2026)], ignore_index=True)
             keys = set(zip(pred.coin, pred.hour))

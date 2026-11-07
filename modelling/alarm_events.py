@@ -165,7 +165,7 @@ def main(argv=None) -> int:
                         help="one pooled OOS test predictions parquet file")
     parser.add_argument("--threshold", required=True, type=float,
                         help="alarm score threshold, selected using validation data")
-    parser.add_argument("--out-dir", default="reports/alarm_events",
+    parser.add_argument("--out-dir", default="reports/model_results/alarm_events",
                         help="directory for the event list and summary CSVs")
     args = parser.parse_args(argv)
 

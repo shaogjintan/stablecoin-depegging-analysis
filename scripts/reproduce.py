@@ -7,7 +7,7 @@ import sys
 def main():
     root = Path(__file__).resolve().parents[1]
     env = dict(os.environ, MPLCONFIGDIR=str(Path('/private/tmp/stablecoin-matplotlib')))
-    for module, args in [('data_processing.build_dataset', []), ('modelling.reporting.event_table', []), ('modelling.reporting.detection_by_type', []), ('modelling.reporting.coverage_table', []), ('modelling.reporting.final_models', [])]:
+    for module, args in [('data_processing.build_dataset', []), ('modelling.reporting.by_coin', []), ('modelling.reporting.event_table', []), ('modelling.reporting.detection_by_type', []), ('modelling.reporting.coverage_table', []), ('modelling.reporting.final_models', [])]:
         subprocess.run([sys.executable, '-W', 'ignore::DeprecationWarning', '-m', module, *args], cwd=root, env=env, check=True)
 if __name__ == '__main__':
     main()

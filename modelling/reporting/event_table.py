@@ -16,24 +16,26 @@ event. An event's year is the year of its first episode.
 INPUT
   data/processed/depeg_episodes.parquet
 
-OUTPUT (reports/final/events/)
-  episodes.csv  one row per episode with its event_id
-  events.csv    one row per event: start, coins, episode IDs
-  by_year.csv   number of episodes vs events per year (and per coin)
+OUTPUT (reports/depeg_events/)
+  episode_event_mapping.csv  one row per episode with its event_id
+  grouped_depeg_events.csv    one row per event: start, coins, episode IDs
+  depeg_events_by_year.csv   number of episodes vs events per year (and per coin)
   figures/      (skip with --no-plots; prices read from master.parquet)
-    1_timeline.png        every episode per coin, multi-coin events shaded
-    2_event_zooms.png     price of each coin around every multi-coin event
-    3_onset_gaps.png      hours to nearest other-coin onset (why 48h)
-    4_episodes_vs_events.png  per-year episode vs event counts
-    5_coin_year_heatmap.png   episodes per coin per year, with totals
+    timeline.png        every episode per coin, multi-coin events shaded
+    event_zooms.png     price of each coin around every multi-coin event
+    onset_gaps.png      hours to nearest other-coin onset (why 48h)
+    episodes_vs_events.png  per-year episode vs event counts
+  ../depeg_episodes/coin_year_heatmap.png   episodes per coin per year, with totals
 
 Usage (from the repo root):
-    python modelling/reporting/event_table.py
-    python modelling/reporting/event_table.py --window-hours 72
+    python -m modelling.reporting.event_table
+    python -m modelling.reporting.event_table --window-hours 72
 """
 from __future__ import annotations
 
 import argparse
+import json
+from modelling.corrected_xgb import sha256
 import math
 import sys
 from pathlib import Path
@@ -117,7 +119,7 @@ def plot_timeline(eps: pd.DataFrame, ev_tab: pd.DataFrame, path: Path) -> None:
     ax.set_title(f"{len(eps)} depeg episodes form {len(ev_tab)} events; "
                  f"shaded = the {len(multi)} events spanning several coins", loc="left")
     ax.text(0, -0.17, "Dot = one episode (size ~ hours below $0.99). Numbers match "
-            "the panels in 2_event_zooms.png.", transform=ax.transAxes, color=MUTED, fontsize=8)
+            "the panels in event_zooms.png.", transform=ax.transAxes, color=MUTED, fontsize=8)
     fig.tight_layout()
     fig.savefig(path, dpi=180)
     plt.close(fig)
@@ -368,7 +370,9 @@ def main(argv=None) -> int:
     parser.add_argument("--window-hours", type=float, default=48,
                         help="episodes on different coins starting within this many hours "
                              "of an event's first episode join that event (default 48)")
-    parser.add_argument("--out-dir", default=str(REPO_ROOT / "reports/final/events"))
+    parser.add_argument("--out-dir", default=str(REPO_ROOT / "reports/depeg_events"))
+    parser.add_argument("--episode-out-dir", type=Path,
+                        default=REPO_ROOT / "reports/depeg_episodes")
     parser.add_argument("--no-plots", action="store_true", help="skip the figures")
     args = parser.parse_args(argv)
 
@@ -402,14 +406,23 @@ def main(argv=None) -> int:
 
     out_dir = Path(args.out_dir)
     out_dir.mkdir(parents=True, exist_ok=True)
-    for name, frame in {"episodes": ep_tab, "events": ev_tab, "by_year": by_year}.items():
+    for name, frame in {"episode_event_mapping": ep_tab, "grouped_depeg_events": ev_tab,
+                        "depeg_events_by_year": by_year}.items():
         path = out_dir / f"{name}.csv"
         frame.to_csv(path, index=False)
         print(f"Saved {name}: {path}")
 
+    (out_dir / "manifest.json").write_text(json.dumps(dict(
+        episodes=str(PROCESSED_DATA_DIR / "depeg_episodes.parquet"),
+        sha256=sha256(PROCESSED_DATA_DIR / "depeg_episodes.parquet"),
+        window_hours=args.window_hours,
+        grouping="first-onset anchor; at most one episode per coin in each event",
+        historical_context="date-based heuristic, not causal attribution",
+    ), indent=2) + "\n")
+
     types = classify(eps, ev_tab)
-    types.to_csv(out_dir / "types_events.csv", index=False)
-    types.groupby("type").agg(events=("event_id", "size"), episodes=("n_episodes", "sum")).reset_index().to_csv(out_dir / "types_summary.csv", index=False)
+    types.to_csv(out_dir / "event_classification.csv", index=False)
+    types.groupby("type").agg(events=("event_id", "size"), episodes=("n_episodes", "sum")).reset_index().to_csv(out_dir / "event_types_summary.csv", index=False)
     print(f"\n{len(eps)} episodes -> {len(ev_tab)} events "
           f"(window {args.window_hours:g}h)\n")
     print(by_year.to_string(index=False))
@@ -423,12 +436,13 @@ def main(argv=None) -> int:
         prices = pd.read_parquet(PROCESSED_DATA_DIR / "master.parquet",
                                  columns=["coin", "hour", "price"])
         prices["hour"] = pd.to_datetime(prices["hour"], utc=True)
-        plot_timeline(eps, ev_tab, fig_dir / "1_timeline.png")
-        plot_event_zooms(eps, ev_tab, prices, args.window_hours, fig_dir / "2_event_zooms.png")
-        plot_onset_gaps(eps, args.window_hours, fig_dir / "3_onset_gaps.png")
-        plot_episodes_vs_events(by_year, fig_dir / "4_episodes_vs_events.png")
-        plot_coin_year_heatmap(by_year, OOS_START_YEAR, fig_dir / "5_coin_year_heatmap.png")
-        plot_expanding_window(by_year, fig_dir / "6_expanding_window.png")
+        plot_timeline(eps, ev_tab, fig_dir / "timeline.png")
+        plot_event_zooms(eps, ev_tab, prices, args.window_hours, fig_dir / "event_zooms.png")
+        plot_onset_gaps(eps, args.window_hours, fig_dir / "onset_gaps.png")
+        plot_episodes_vs_events(by_year, fig_dir / "episodes_vs_events.png")
+        args.episode_out_dir.mkdir(parents=True, exist_ok=True)
+        plot_coin_year_heatmap(by_year, OOS_START_YEAR,
+                               args.episode_out_dir / "coin_year_heatmap.png")
         print(f"\nSaved figures: {fig_dir}")
     return 0
 

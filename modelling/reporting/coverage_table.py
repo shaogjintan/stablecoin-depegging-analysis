@@ -33,7 +33,7 @@ def coverage(master):
 
 def main():
     p = argparse.ArgumentParser(description=__doc__)
-    p.add_argument('--out-dir', type=Path, default=Path('reports/final/coverage'))
+    p.add_argument('--out-dir', type=Path, default=Path('reports/data_coverage'))
     args = p.parse_args()
     master = pd.read_parquet(ACTIVE_MASTER_PATH)
     master['hour'] = pd.to_datetime(master.hour, utc=True)

@@ -39,10 +39,10 @@ The root `.style.yapf` records Google-based formatting with four-space indentati
 
 ## Reports from saved models
 
-`python -m scripts.reproduce` regenerates corrected events, structural types, historical-context annotations, detection counts, coverage, LR coefficients, RF importance and XGB SHAP ranking figures. It does not fit models. XGB SHAP rankings are reused from saved final-model analysis. Existing authoritative presentation/robustness tables are preserved; to rebuild them use fresh destinations:
+`python -m scripts.reproduce` regenerates corrected events, structural types, historical-context annotations, detection counts, coverage, LR coefficients, RF importance and XGB SHAP ranking figures. It does not fit models. XGB SHAP rankings are reused from saved final-model analysis. The model comparison exporter writes to reports/model_results/ and the calibration audit to reports/validation_checks/. Optional slide support files require --presentation-dir. Robustness defaults to reports/robustness/alt_definitions/. To compare rebuilds in fresh destinations:
 
 ```sh
-python -m modelling.consolidate_refit_slides --run-dir artifacts/runs/primary/REFIT-LOWEST-NEW --lr-run artifacts/runs/primary/LR-REFIT-LOWEST-NEW --reuse-shap --out-dir /private/tmp/stablecoin-presentation-rebuild
+python -m modelling.consolidate_refit_slides --run-dir artifacts/runs/primary/REFIT-LOWEST-NEW --lr-run artifacts/runs/primary/LR-REFIT-LOWEST-NEW --reuse-shap --out-dir /private/tmp/stablecoin-presentation-rebuild --validation-dir /private/tmp/stablecoin-validation-rebuild --presentation-dir /private/tmp/stablecoin-slides-rebuild
 python -m modelling.robustness_refit --run-dir artifacts/runs/primary/REFIT-LOWEST-NEW --run-dir artifacts/runs/primary/LR-REFIT-LOWEST-NEW --out-dir /private/tmp/stablecoin-robustness-rebuild
 ```
 
@@ -62,3 +62,5 @@ Repeat with `--horizon 1` for supplementary runs. Compare regenerated metrics to
 ## Acquisition limitation
 
 The six extracted Dune CSVs and their original ZIP are retained. Original market API response snapshots are unavailable; hourly_stablecoin.parquet preserves the acquired hourly table. A fresh download may differ from historical inputs. Optional acquisition dependencies are declared in pyproject.toml. Normal verification/reproduction never calls the network fetcher.
+
+The event exporter writes grouped events and episode-to-event mappings to `reports/depeg_events/`; the coin/year heatmap goes to `reports/depeg_episodes/` (override with `--episode-out-dir`). Interpretation outputs use `log_reg/`, `random_forest/`, and `xgboost/` subfolders. The removed refit comparison and duplicate presentation RF table are not regenerated. Saved fit directories are resolved by run ID after relocation.

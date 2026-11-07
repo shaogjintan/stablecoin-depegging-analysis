@@ -5,6 +5,7 @@ Does not retrain or rewrite run evidence. JSON results go outside frozen runs.
 import argparse
 import json
 from pathlib import Path
+from modelling.reporting.paths import evidence_dir
 import joblib
 import numpy as np
 import pandas as pd
@@ -21,7 +22,7 @@ def verify(run, check_scores=False):
     for path, digest in info['input_sha256'].items():
         if sha256(resolve_recorded_input(path)) != digest:
             raise ValueError(f'Input changed: {path}')
-    eps = pd.read_parquet(run / 'episodes.parquet')
+    eps = pd.read_parquet(evidence_dir(run) / 'episodes.parquet')
     yearly = pd.read_csv(run / 'by_year.csv', float_precision='round_trip')
     rows = []
     pooled = {}
@@ -29,7 +30,7 @@ def verify(run, check_scores=False):
         for config in info['configs']:
             for h in info['horizons']:
                 for year in info['years']:
-                    folder = run / 'fits' / f'{model}_{config}_h{h}_{year}'
+                    folder = evidence_dir(run) / 'fits' / f'{model}_{config}_h{h}_{year}'
                     spec = json.loads((folder / 'fit.json').read_text())
                     for file, key in [('pipeline.joblib', 'pipeline_sha256'), ('practice_pipeline.joblib', 'practice_sha256')]:
                         if sha256(folder / file) != spec[key]:
@@ -83,7 +84,7 @@ def main():
     p = argparse.ArgumentParser(description=__doc__)
     p.add_argument('--run-dir', type=Path, action='append')
     p.add_argument('--check-model-scores', action='store_true')
-    p.add_argument('--out', type=Path, default=Path('reports/final/verification.json'))
+    p.add_argument('--out', type=Path, default=Path('reports/verification.json'))
     args = p.parse_args()
     results = []
     for run in args.run_dir or RUNS:

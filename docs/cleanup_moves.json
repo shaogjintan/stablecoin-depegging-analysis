@@ -527,5 +527,13 @@
     "from": "modelling/build_corrected_dataset.py",
     "to": "data_processing/build_dataset.py",
     "note": "Original module retained as a compatibility wrapper."
+  },
+  {
+    "from": "reports/final/depeg_events/by_event_type.csv",
+    "to": "reports/final/model_results/by_event_type.csv"
+  },
+  {
+    "from": "reports/final/depeg_events/detection_manifest.json",
+    "to": "reports/final/model_results/detection_manifest.json"
   }
 ]
