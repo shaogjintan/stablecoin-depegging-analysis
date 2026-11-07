@@ -3,7 +3,8 @@
 Run explicitly with ``python -m data_processing.fetch_stablecoin_data``.
 This command makes network requests; normal model reproduction uses the frozen
 hourly table and does not call acquisition. Install optional acquisition
-requirements before running it.
+requirements before running it. Running main replaces the retained hourly
+table; use frozen inputs for verification of the reported model results.
 """
 from __future__ import annotations
 
@@ -21,7 +22,6 @@ from data_processing.config import (
     FIAT_COINS,
     DEFILLAMA_FIAT_COIN_SPECS,
     EXCHANGE_OHLCV_SPECS,
-    BINANCE_KLINE_COLS,
 )
 
 DEFAULT_END = END_DATE if END_DATE else dt.datetime.now().strftime("%Y-%m-%d")
@@ -89,6 +89,8 @@ def fetch_defillama_hourly(
     Bars with no qualifying observation stay missing, then are forward-filled
     for at most 3 hours (forward only, so no later price leaks in).
     """
+    from requests import RequestException
+
     if 60 % sample_minutes != 0:
         raise ValueError("sample_minutes must divide 60")
 
@@ -138,7 +140,7 @@ def fetch_defillama_hourly(
                         f"at ts={cur_ts}"
                     )
                     break
-            except requests.RequestException:
+            except RequestException:
                 time.sleep(2.0 * (attempt + 1))
                 continue
 
@@ -291,6 +293,8 @@ def fetch_binance_month(symbol: str, month: str) -> pd.DataFrame | None:
     can also return intermittent 404s or drop valid connections. Retry before
     treating the monthly archive as unavailable.
     """
+    from requests import RequestException
+
     url = (f"https://data.binance.vision/data/spot/monthly/klines/{symbol}/1h/"
            f"{symbol}-1h-{month}.zip")
     last_status = None
@@ -303,7 +307,7 @@ def fetch_binance_month(symbol: str, month: str) -> pd.DataFrame | None:
                 break
             if r.status_code != 404:
                 r.raise_for_status()
-        except requests.RequestException:
+        except RequestException:
             pass
         time.sleep(2.0 * (attempt + 1))
     else:
@@ -339,19 +343,11 @@ def fetch_binance_month(symbol: str, month: str) -> pd.DataFrame | None:
 
 
 def fetch_binance_range(symbol: str, start_s: str, end_s: str) -> pd.DataFrame:
-    # data.binance.vision intermittently 404s a month that demonstrably exists
-    # (confirmed by re-requesting it seconds later) -- back-to-back retries
-    # inside fetch_binance_month don't reliably clear this, but a second pass
-    # after a longer pause does. So collect misses and retry them once at the
-    # end rather than trusting a 404 immediately.
-    #
-    # NOTE: a run of missing months that survives the retry (e.g. 2022-10
-    # through 2023-02 for USDCUSDT/USDPUSDT/TUSDUSDT) isn't a fetch failure
-    # here -- Binance suspended spot trading on USDC/USDP/TUSD pairs on
-    # 2022-09-29 (auto-converting balances to BUSD) and reinstated them
-    # around March 2023. Those months genuinely have zero trades, and
-    # fill_hourly_volume_gaps (below) fills them with 0 accordingly.
-    """Fetch Binance hourly candles over the requested timestamp range."""
+    """Fetch hourly archives, retrying unavailable months in a second pass.
+
+    An unavailable archive is not proof of zero trading activity. The later
+    fill_hourly_volume_gaps() step applies the historical zero-fill assumption.
+    """
     months = list(pd.period_range(start_s, end_s, freq="M").strftime("%Y-%m"))
     results = {}
     for m in months:
@@ -371,7 +367,7 @@ def fetch_binance_range(symbol: str, start_s: str, end_s: str) -> pd.DataFrame:
         still_missing = [m for m, d in results.items() if d is None]
         if still_missing:
             print(
-                f"  {symbol}: confirmed missing (real gap, not flakiness): "
+                f"  {symbol}: unavailable after retries: "
                 f"{still_missing}", flush=True
             )
 
@@ -386,6 +382,8 @@ def fetch_binance_range(symbol: str, start_s: str, end_s: str) -> pd.DataFrame:
 
 def fetch_bitfinex_range(symbol: str, start_s: str, end_s: str) -> pd.DataFrame:
     """Fetch Bitfinex hourly candles over the requested timestamp range."""
+    from requests import RequestException
+
     start_ms = int(pd.Timestamp(start_s, tz="UTC").timestamp() * 1000)
     end_ms = int(pd.Timestamp(end_s, tz="UTC").timestamp() * 1000)
     rows = []
@@ -403,7 +401,7 @@ def fetch_bitfinex_range(symbol: str, start_s: str, end_s: str) -> pd.DataFrame:
                                  timeout=30)
                 if r.status_code == 200:
                     break
-            except requests.RequestException:
+            except RequestException:
                 pass
             # Bitfinex rate-limits aggressively and may drop connections.
             time.sleep(3.0 * (attempt + 1))
@@ -429,21 +427,13 @@ def fetch_bitfinex_range(symbol: str, start_s: str, end_s: str) -> pd.DataFrame:
 def fill_hourly_volume_gaps(
     df: pd.DataFrame, start_s: str, end_s: str
 ) -> pd.DataFrame:
-    """Reindex a single exchange source to a complete hourly grid over its.
-    configured coverage window and fill missing hours with zero volume.
+    """Reindex exchange volume and apply the historical zero-fill assumption.
 
-    A thinly-traded pair's candle endpoint returns no candle at all for an
-    hour with zero trades -- confirmed by comparing coverage density across
-    coins on the same venue: DAI's Bitfinex book (tDAIUSD) has real candles
-    for only ~68% of its hourly window, vs ~100% for the far more liquid
-    USDT/USD book (tUSTUSD) on the same exchange. The same logic covers a
-    full trading *halt*, not just thin trading -- e.g. Binance suspended
-    USDC/USDP/TUSD spot pairs entirely from 2022-09-29 to ~2023-03, which
-    shows up as ~5 months of missing archives per fetch_binance_range. Either
-    way it's a genuine zero, not a data gap, so it should be filled with 0 --
-    otherwise a join against price treats "no candle" as "no data" and either
-    drops the hour (inner join) or leaves it NaN (left join) when it should
-    read as an actual quiet/halted hour.
+    Missing volume within the configured source window is filled with zero,
+    including unavailable months when other months were downloaded. Missing
+    candles may reflect quiet trading, halts, or unavailable data; this rule
+    cannot distinguish those causes. Empty sources remain empty. Retained
+    hourly inputs preserve the original analysis without reacquisition.
     """
     if df.empty:
         return df
@@ -456,13 +446,13 @@ def fill_hourly_volume_gaps(
 
 
 def main():
-    """Main execution - fetches all data."""
+    """Acquire prices and exchange volume, replacing the hourly output."""
     t0 = time.time()
 
     print("=" * 70)
     print("STABLECOIN DEPEG DATA FETCHER")
     print(f"Study window: {START_DATE} to {END_DATE}")
-    print(f"Coins: {len(FIAT_COINS)} fiat-backed coins")
+    print(f"Coins: {len(FIAT_COINS)} study stablecoins")
     print("=" * 70)
 
     # Fetch price data
@@ -470,7 +460,7 @@ def main():
     print("\nPrice data summary:")
     print(price_df.groupby("coin")["timestamp"].agg(["min", "max", "count"]))
 
-    # Fetch volume data from exchanges (Binance, Bitfinex, Coinbase)
+    # Fetch volume data from the configured Binance and Bitfinex sources.
     print("\nFetching exchange volume data...")
     frames = []
     for coin, sources in EXCHANGE_OHLCV_SPECS.items():
@@ -526,21 +516,13 @@ def main():
         coin_df.insert(0, "coin", coin)
         frames.append(coin_df)
 
-    # NOTE: this final aggregation/save was previously indented *inside* the
-    # loop above, so it ran once per coin (rewriting the parquet from scratch
-    # every time, and making the "no data at all" check below unreachable).
-    # It now runs exactly once, after every coin has been attempted.
     if not frames:
         raise RuntimeError("No exchange OHLCV collected for any coin!")
 
     volume_df = pd.concat(frames, ignore_index=True)
-    # Join price (DefiLlama, the near-complete reference series) with volume
-    # (exchanges). Now that each source's genuinely-zero-trade hours are
-    # filled with 0 rather than missing entirely (see fill_hourly_volume_gaps),
-    # a left join on price is the right choice: any hour still missing
-    # exchange data after that fill is a real "outside this source's tracked
-    # coverage window" case (e.g. after BUSD's Binance pair was delisted),
-    # and should stay NaN rather than being dropped, as an inner join would.
+    # Preserve price-only hours. Within configured exchange windows, missing
+    # volume has already been zero-filled under the historical assumption.
+    # Outside those windows, missing exchange volume remains missing.
     price_for_merge = price_df.rename(columns={"timestamp": "hour"})
     out = pd.merge(
         price_for_merge, volume_df, on=["coin", "hour"],

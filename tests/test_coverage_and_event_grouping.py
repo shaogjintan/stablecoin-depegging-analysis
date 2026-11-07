@@ -2,6 +2,7 @@
 import unittest
 import pandas as pd
 from modelling.reporting.coverage_table import coverage, RAW_ONCHAIN
+from data_processing.feature_schema import MARKET_FEATURES, ONCHAIN_FEATURES
 from modelling.reporting.event_types import classify
 from modelling.reporting.event_annotations import annotate
 from modelling.reporting.event_table import group_events
@@ -12,6 +13,10 @@ class ReportingTests(unittest.TestCase):
     def test_coverage_keeps_missing_edges_in_denominator(self):
         """Check missing edge hours remain in the coverage denominator."""
         d = pd.DataFrame(dict(coin=['USDT'] * 3, hour=pd.date_range('2021-01-01', periods=3, freq='h', tz='UTC'), trading_volume=[None, 1, None], common_sample=[False, True, False], **{c: [None, 2, None] for c in RAW_ONCHAIN}))
+        for column in MARKET_FEATURES + ONCHAIN_FEATURES:
+            d[column] = [None, 0., None]
+        # Stored historical flags must not control current coverage.
+        d["common_sample"] = False
         result = coverage(d)
         self.assertTrue(result.expected_hours.eq(3).all())
         self.assertTrue(result.observed_hours.eq(1).all())

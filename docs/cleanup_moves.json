@@ -854,5 +854,80 @@
   {
     "from": "modelling/validation/independent_calculations.py",
     "to": "modelling/validation/reference_checks.py"
+  },
+  {
+    "from": "data_processing/sample_preparation.py",
+    "to": "archive/history/data_processing/sample_preparation_before_cleanup.py",
+    "action": "preserve original module before removing legacy fallbacks and duplicate fold construction"
+  },
+  {
+    "from": "data_processing/sample_preparation.py:recovery_window_mask/at_risk_mask",
+    "to": "tests/diagnose_onchain_features.py",
+    "action": "move unchanged masks to their sole manual diagnostic caller"
+  },
+  {
+    "from": "data_processing/dataset_transforms.py:calendar_market_features",
+    "to": "data_processing/build_market_features.py:calendar_market_features",
+    "action": "extract authoritative calendar-based calculation unchanged; preserve historical completeness formulas"
+  },
+  {
+    "from": "data_processing/build_market_features.py",
+    "to": "archive/history/data_processing/market_features_before_consolidation.py",
+    "action": "preserve the interim feature builder before documenting shared canonical calculation"
+  },
+  {
+    "from": "data_processing/build_onchain_features.py",
+    "to": "archive/history/data_processing/onchain_features_before_validation.py",
+    "action": "preserve on-chain builder before strict input validation and non-overwriting extraction"
+  },
+  {
+    "from": "data_processing/build_market_features.py",
+    "to": "archive/history/data_processing/market_features_before_retiring_interim.py",
+    "action": "archive historical price/exchange functions before using calendar calculation throughout"
+  },
+  {
+    "from": "data_processing/merge_and_label.py",
+    "to": "archive/history/data_processing/merge_and_label_before_retiring_interim.py",
+    "action": "archive unused historical eligibility helper before removal from maintained module"
+  },
+  {
+    "from": "data_processing/merge_and_label.py:build_labels",
+    "to": "archive/history/data_processing/merge_and_label_before_label_cleanup.py",
+    "action": "archive unused qualifying-dip label helper; retain merged-episode labels in dataset_transforms.episode_labels"
+  },
+  {
+    "from": "data_processing/dataset_transforms.py",
+    "to": "data_processing/dataset_transformation.py",
+    "action": "rename as requested; update maintained imports and new metadata provenance; share configured episode settings"
+  },
+  {
+    "from": "data_processing/matched_sample.py",
+    "to": "archive/history/data_processing/matched_sample_before_validation.py",
+    "action": "preserve population matcher before identity, duplicate-key, row-count and label validation"
+  },
+  {
+    "from": "data_processing/config.py:unused snapshot paths, report path and transfer-filter settings",
+    "to": "archive/history/data_processing/config_before_unused_settings_cleanup.py",
+    "action": "archive seven unreferenced settings; preserve all active configuration values"
+  },
+  {
+    "from": "data_processing/fetch_stablecoin_data.py",
+    "to": "archive/history/data_processing/fetch_stablecoin_data_before_acquisition_cleanup.py",
+    "action": "preserve acquisition source before fixing undefined request exception handlers and clarifying zero-fill assumptions"
+  },
+  {
+    "from": "data_processing/config.py:BINANCE_KLINE_COLS",
+    "to": "archive/history/data_processing/config_before_unused_settings_cleanup.py",
+    "action": "retire unused archive column list; current parser explicitly reads timestamp and volume"
+  },
+  {
+    "from": "reports/reproduce.py",
+    "to": "archive/history/reports/reproduce_before_full_reproduction.py",
+    "action": "preserve report-only runner before adding isolated full local-source reproduction"
+  },
+  {
+    "from": "modelling/reporting/model_interpretation.py",
+    "to": "archive/history/modelling/reporting/model_interpretation_before_full_reproduction.py",
+    "action": "preserve saved ranking exporter before selected-run and fresh native SHAP support"
   }
 ]

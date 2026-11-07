@@ -77,8 +77,9 @@ def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument('--out-dir', type=Path,
                         default=Path('reports/model_results'))
+    parser.add_argument('--run-dir', type=Path, action='append')
     args = parser.parse_args()
-    outputs = export_results(args.out_dir)
+    outputs = export_results(args.out_dir, args.run_dir)
     print({name: len(frame) for name, frame in outputs.items()})
 
 

@@ -1,4 +1,8 @@
-"""Feature columns and tier definitions; raw levels are excluded."""
+"""Define feature tiers and on-chain inputs; tiers exclude raw levels.
+
+The on-chain builder, dataset column order, and coverage report share these
+definitions. Change lags are calendar hours, using a complete hourly grid.
+"""
 
 MARKET_FEATURES = [
     "peg_deviation",
@@ -9,10 +13,15 @@ MARKET_FEATURES = [
 ]
 
 
+# Keep this order stable for dataset columns and saved model inputs.
+ONCHAIN_RAW_METRICS = [
+    "tx_count", "tx_volume", "active_senders", "active_receivers"
+]
+ONCHAIN_CHANGE_LAGS = (1, 6, 24)
 ONCHAIN_FEATURES = [
-    f"{metric}_logdiff_{k}h"
-    for metric in ("tx_count", "tx_volume", "active_senders", "active_receivers")
-    for k in (1, 6, 24)
+    f"{metric}_logdiff_{lag}h"
+    for metric in ONCHAIN_RAW_METRICS
+    for lag in ONCHAIN_CHANGE_LAGS
 ]
 
 

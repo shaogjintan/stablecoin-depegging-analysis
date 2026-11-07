@@ -7,11 +7,11 @@ from modelling.utils.artifacts import evidence_dir
 from modelling.reporting.model_results import RUNS
 from modelling.utils.io import sha256
 
-def calibration_audit_rows(run, models, horizons=(6, 24)):
+def calibration_audit_rows(run, models, horizons=(6, 24), years=None):
     """Read calibration evidence from saved fit metadata."""
     rows = []
     for h in horizons:
-        for year in range(2021, 2026):
+        for year in range(2021, 2026) if years is None else years:
             for config in ["market_matched", "market_onchain"]:
                 for model in models:
                     folder = evidence_dir(run) / "fits" / f"{model}_{config}_h{h}_{year}"
@@ -34,13 +34,19 @@ def main():
                         default=Path('reports/validation_checks'))
     parser.add_argument('--include-h1', action='store_true',
                         help='include supplementary h1 alongside primary h6/h24')
+    parser.add_argument('--run-dir', type=Path, action='append')
     args = parser.parse_args()
     rows, sources = [], []
-    for run in RUNS if args.include_h1 else RUNS[:2]:
+    runs = args.run_dir or (RUNS if args.include_h1 else RUNS[:2])
+    for run in runs:
         info = json.loads((run / 'run.json').read_text())
         if info.get('status') != 'complete' or not info.get('refit_after_calibration'):
             raise ValueError(f'Not a completed final refit: {run}')
-        rows.extend(calibration_audit_rows(run, info['models'], info['horizons']))
+        horizons = [h for h in info['horizons']
+                    if args.include_h1 or h in (6, 24)]
+        rows.extend(calibration_audit_rows(
+            run, info['models'], horizons, info['years']
+        ))
         sources.append(dict(path=str(run), run_id=info['run_id'],
                             sha256=sha256(run / 'run.json')))
     args.out_dir.mkdir(parents=True, exist_ok=True)

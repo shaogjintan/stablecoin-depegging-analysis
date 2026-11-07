@@ -1,12 +1,16 @@
 """Configuration for the stablecoin depeg-forecasting data pipeline."""
 
 from pathlib import Path
+import os
 
 # ---------------------------------------------------------------------------
 # Paths
 # ---------------------------------------------------------------------------
-RAW_DATA_DIR = Path("data/raw")
-INTERIM_DATA_DIR = Path("data/interim")
+# The full reproduction command scopes this root to its output workspace.
+# Without an override, existing commands continue to use retained repo inputs.
+DATA_DIR = Path(os.environ.get("STABLECOIN_DATA_DIR", "data"))
+RAW_DATA_DIR = DATA_DIR / "raw"
+INTERIM_DATA_DIR = DATA_DIR / "interim"
 HOURLY_MARKET_PATH = INTERIM_DATA_DIR / "hourly_stablecoin.parquet"
 MARKET_FEATURES_PATH = (
     INTERIM_DATA_DIR / "hourly_stablecoin_market_features.parquet"
@@ -14,12 +18,9 @@ MARKET_FEATURES_PATH = (
 ONCHAIN_FEATURES_PATH = (
     INTERIM_DATA_DIR / "hourly_stablecoin_onchain_features.parquet"
 )
-SNAP_TXN_DIR = RAW_DATA_DIR / "snap_erc20" / "transfers"
-SNAP_PRICE_DIR = RAW_DATA_DIR / "snap_erc20" / "prices"
-SNAP_EVENT_FILE = RAW_DATA_DIR / "snap_erc20" / "event_data.csv"
 DUNE_ONCHAIN_ZIP = Path("dune_onchain.zip")  # per-coin Dune exports (repo root)
 DUNE_ONCHAIN_DIR = RAW_DATA_DIR / "dune_onchain"
-PROCESSED_DATA_DIR = Path("data/processed")
+PROCESSED_DATA_DIR = DATA_DIR / "processed"
 # Canonical corrected inputs; dataset_version records the statistical protocol.
 MODELLING_DATA_VERSION = "corrected_v1"
 ACTIVE_MASTER_PATH = PROCESSED_DATA_DIR / "master.parquet"
@@ -28,13 +29,12 @@ ACTIVE_TYPED_EPISODES_PATH = (
     PROCESSED_DATA_DIR / "depeg_episodes_w_event_type.parquet"
 )
 DATASET_METADATA_PATH = PROCESSED_DATA_DIR / "dataset_metadata.json"
-REPORT_DIR = Path("reports")
 
 # ---------------------------------------------------------------------------
 # Universe
 # ---------------------------------------------------------------------------
 
-# Fiat-backed coins
+# Study stablecoins; DAI is crypto-collateralised, not fiat-backed.
 FIAT_COINS = ["USDT", "USDC", "BUSD", "DAI", "TUSD", "PAX"]
 
 # Per-coin windows (UTC). No "end" -> END_DATE. Start = first day DefiLlama has
@@ -90,11 +90,6 @@ EXCHANGE_OHLCV_SPECS = {
               "start": "2019-09-01", "end": "2023-12-31 23:00"}],
 }
 
-BINANCE_KLINE_COLS = [
-    "open_time", "open", "high", "low", "close", "volume",
-    "close_time", "ignore",
-]
-
 # ---------------------------------------------------------------------------
 # Study window
 # ---------------------------------------------------------------------------
@@ -106,15 +101,10 @@ END_DATE = "2025-12-31 23:00"  # inclusive
 # ---------------------------------------------------------------------------
 DEPEG_BAND = 0.01
 DEPEG_MIN_DURATION_HOURS = 2
-DEPEG_GAP_HOURS = 24  # Inactivity gap to merge continuous ongoing crash
+# Merge qualifying dips within 24h of recovery onset; also exclude origins
+# through that recovery window in the causal risk mask.
+DEPEG_GAP_HOURS = 24
 FORECAST_HORIZONS_HOURS = [1, 6, 24]
-
-# ---------------------------------------------------------------------------
-# On-chain feature parameters
-# ---------------------------------------------------------------------------
-WHALE_USD_THRESHOLD = 1_000_000
-DROP_SELF_TRANSFERS = True
-OUTLIER_REVIEW_THRESHOLD = 50_000_000
 
 # ---------------------------------------------------------------------------
 # Leakage control
@@ -122,8 +112,7 @@ OUTLIER_REVIEW_THRESHOLD = 50_000_000
 # Drop the first 24h after each split boundary for feature lookback.
 EMBARGO_HOURS = 24
 PURGE_HOURS = max(FORECAST_HORIZONS_HOURS) + DEPEG_MIN_DURATION_HOURS - 1
-# Expanding-window CV (see splits.py): for each year Y in this range, train on
-# everything before Y and test on Y. Replaces the old single
-# 2018-22 / 2023 / 2024-25 train/val/test split.
+# Calendar test years (UTC). splits.py applies purge, embargo, and
+# boundary-episode exclusions; calibration uses the preceding year.
 OOS_START_YEAR = 2021
 OOS_END_YEAR = 2025

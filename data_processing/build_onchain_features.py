@@ -2,7 +2,9 @@
 
 Extracts the per-coin CSV for each coin in config.FIAT_COINS from
 config.DUNE_ONCHAIN_ZIP into config.DUNE_ONCHAIN_DIR (data/raw/dune_onchain),
-then builds features from those extracted files only.
+then builds features from those extracted files only. Identical extracted
+files are reused; conflicts are rejected before extraction. Invalid exports
+raise errors rather than being skipped. Missing observations remain missing.
 
 EXPECTED CSV SCHEMA (per file):
     hour, tx_count, total_volume, active_senders, active_receivers
@@ -24,7 +26,7 @@ Why log1p differences rather than pct_change:
   - defined at zero: pct_change gives +/-inf when the base is 0 or NaN, which
     is common on quiet coins (PAX/TUSD hours with 1-2 txs);
   - comparable scale across coins whose levels differ ~100x;
-  - consistent with prepare_data.py's rule: changes/ratios/deviations only,
+  - consistent with feature_schema.py: changes/ratios/deviations only,
     no raw levels.
 Each coin is reindexed onto its full hourly grid first, so the lag window is
 a true calendar window even when the Dune export has gaps; the diff is NaN
@@ -44,6 +46,11 @@ from data_processing.config import (
     FIAT_COINS,
     ONCHAIN_FEATURES_PATH,
 )
+from data_processing.feature_schema import (
+    ONCHAIN_CHANGE_LAGS as CHANGE_LAGS,
+    ONCHAIN_FEATURES as CHANGE_COLUMNS,
+    ONCHAIN_RAW_METRICS as CHANGE_METRICS,
+)
 
 OUT_PATH = ONCHAIN_FEATURES_PATH
 
@@ -55,40 +62,87 @@ OPTIONAL_COLUMNS = [
     "total_volume_usd", "whale_tx_count", "median_transfer_usd", "transfer_gini"
 ]
 
-CHANGE_METRICS = ["tx_count", "tx_volume", "active_senders", "active_receivers"]
-CHANGE_LAGS = [1, 6, 24]
-CHANGE_COLUMNS = [
-    f"{metric}_logdiff_{lag}h"
-    for metric in CHANGE_METRICS for lag in CHANGE_LAGS
-]
-
-
 def extract_fiat_csvs() -> dict[str, Path]:
-    """Extract fiat-coin CSVs and return their paths keyed by coin."""
+    """Extract missing exports after checking all member and file conflicts.
+
+    Reuse byte-identical extracted files, preserving their contents and
+    modification times. Reject duplicate coin members and conflicting
+    existing exports before writing any missing files. Partial coin coverage
+    remains supported and is reported by main().
+    """
     if not DUNE_ONCHAIN_ZIP.exists():
-        raise FileNotFoundError(
-            f"{DUNE_ONCHAIN_ZIP} not found -- run from the repo root, where "
-            f"dune_onchain.zip lives."
-        )
-
-    DUNE_ONCHAIN_DIR.mkdir(parents=True, exist_ok=True)
-    lower_to_coin = {c.lower(): c for c in FIAT_COINS}
-    extracted = {}
-
-    with zipfile.ZipFile(DUNE_ONCHAIN_ZIP) as zf:
-        for name in zf.namelist():
-            member = PurePosixPath(name)
+        raise FileNotFoundError(f"Dune export archive not found: {DUNE_ONCHAIN_ZIP}")
+    lower_to_coin = {coin.lower(): coin for coin in FIAT_COINS}
+    existing = {}
+    if DUNE_ONCHAIN_DIR.exists():
+        for path in DUNE_ONCHAIN_DIR.iterdir():
+            coin = lower_to_coin.get(path.stem.lower())
+            if not path.is_file() or path.suffix.lower() != ".csv" or coin is None:
+                continue
+            if coin in existing:
+                raise ValueError(f"Multiple existing exports for {coin}")
+            existing[coin] = path
+    planned = {}
+    with zipfile.ZipFile(DUNE_ONCHAIN_ZIP) as source:
+        for info in source.infolist():
+            member = PurePosixPath(info.filename)
+            if info.is_dir() or not member.parts:
+                continue
             if member.parts[0] == "__MACOSX" or member.suffix.lower() != ".csv":
                 continue
             coin = lower_to_coin.get(member.stem.lower())
             if coin is None:
                 continue
-            out = DUNE_ONCHAIN_DIR / member.name
-            out.write_bytes(zf.read(name))
-            extracted[coin] = out
-            print(f"  Extracted {name} -> {out}")
+            if member.is_absolute() or ".." in member.parts:
+                raise ValueError(f"Unsafe archive member: {info.filename}")
+            if coin in planned:
+                raise ValueError(f"Multiple archive exports for {coin}")
+            payload = source.read(info)
+            target = existing.get(coin, DUNE_ONCHAIN_DIR / member.name)
+            if target.exists() and target.read_bytes() != payload:
+                raise ValueError(f"Existing export conflicts with archive: {target}")
+            planned[coin] = (target, payload)
+    if planned:
+        DUNE_ONCHAIN_DIR.mkdir(parents=True, exist_ok=True)
+    for coin, (target, payload) in planned.items():
+        if target.exists():
+            print(f"  Reused verified export: {target}")
+        else:
+            with target.open("xb") as output:
+                output.write(payload)
+            print(f"  Extracted {coin} -> {target}")
+    return {coin: target for coin, (target, _) in planned.items()}
 
-    return extracted
+
+def validate_hourly_inputs(df: pd.DataFrame, source: str) -> None:
+    """Require valid hourly keys and nonnegative observed on-chain levels.
+
+    Missing metric observations remain allowed and are never filled with
+    zeros. Invalid keys, duplicate hours, and malformed observed values raise
+    ValueError rather than silently changing the sample.
+    """
+    required = ["coin", *EXPECTED_COLUMNS]
+    missing = [column for column in required if column not in df]
+    if missing:
+        raise ValueError(f"{source}: missing required columns {missing}")
+    if df.empty:
+        raise ValueError(f"{source}: no on-chain rows")
+    if df[["coin", "hour"]].isna().any().any():
+        raise ValueError(f"{source}: missing coin/hour keys")
+    if not isinstance(df.hour.dtype, pd.DatetimeTZDtype):
+        raise ValueError(f"{source}: timestamps must be timezone-aware UTC")
+    if str(df.hour.dt.tz) != "UTC" or not df.hour.eq(df.hour.dt.floor("h")).all():
+        raise ValueError(f"{source}: timestamps must be aligned to UTC hours")
+    if df.duplicated(["coin", "hour"]).any():
+        raise ValueError(f"{source}: duplicate coin-hour rows")
+    for column in CHANGE_METRICS:
+        values = df[column]
+        if not pd.api.types.is_numeric_dtype(values):
+            raise ValueError(f"{source}: nonnumeric {column}")
+        observed = values.dropna()
+        if not np.isfinite(observed).all() or observed.lt(0).any():
+            raise ValueError(f"{source}: invalid negative/nonfinite {column}")
+
 
 
 def build_change_features(df: pd.DataFrame) -> pd.DataFrame:
@@ -99,16 +153,14 @@ def build_change_features(df: pd.DataFrame) -> pd.DataFrame:
     starts late. The diff is NaN whenever either endpoint is unobserved.
     Returns `df` with its original columns followed by the new change columns.
     """
-    metrics = [c for c in CHANGE_METRICS if c in df.columns]
-    if not metrics or "coin" not in df.columns or "hour" not in df.columns:
-        return df.copy()
+    validate_hourly_inputs(df, "on-chain feature input")
+    metrics = CHANGE_METRICS
 
     frames = []
     for coin, g in df.groupby("coin", sort=False):
         g = g.set_index("hour")
         if not g.index.is_monotonic_increasing:
             g = g.sort_index()
-        g = g[~g.index.duplicated(keep="first")]
         grid = pd.date_range(g.index.min(), g.index.max(), freq="h", tz="UTC")
         g = g.reindex(grid)
         # Unobserved grid rows still belong to this coin.
@@ -124,18 +176,16 @@ def build_change_features(df: pd.DataFrame) -> pd.DataFrame:
     return out[orig + [c for c in CHANGE_COLUMNS if c in out.columns]]
 
 
-def load_coin_csv(coin: str, path: Path) -> pd.DataFrame | None:
+def load_coin_csv(coin: str, path: Path) -> pd.DataFrame:
     """Load one export, normalise UTC hours, and validate required columns."""
     df = pd.read_csv(path)
+    if "total_volume" in df and "tx_volume" in df:
+        raise ValueError(f"{path}: ambiguous volume columns")
     df = df.rename(columns={"total_volume": "tx_volume"})
     df["coin"] = coin
     missing_cols = [c for c in EXPECTED_COLUMNS if c not in df.columns]
     if missing_cols:
-        print(
-            f"WARNING: {path.name} is missing expected columns "
-            f"{missing_cols} -- skipping this file."
-        )
-        return None
+        raise ValueError(f"{path}: missing required columns {missing_cols}")
 
     # "2018-01-22 08:00:00.000 UTC" -> tz-aware UTC timestamp. Strip the
     # trailing " UTC" (pandas' parser is inconsistent about combining a
@@ -146,6 +196,7 @@ def load_coin_csv(coin: str, path: Path) -> pd.DataFrame | None:
         hour_str, format="%Y-%m-%d %H:%M:%S.%f"
     ).dt.tz_localize("UTC")
 
+    validate_hourly_inputs(df, str(path))
     present_optional = [c for c in OPTIONAL_COLUMNS if c in df.columns]
     df = df[["coin", "hour", "tx_count", "tx_volume", "active_senders",
               "active_receivers"] + present_optional]
@@ -166,9 +217,7 @@ def main():
 
     frames = []
     for coin, path in sorted(extracted.items()):
-        df = load_coin_csv(coin, path)
-        if df is not None:
-            frames.append(df)
+        frames.append(load_coin_csv(coin, path))
 
     if not frames:
         raise RuntimeError(

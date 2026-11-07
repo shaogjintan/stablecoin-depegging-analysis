@@ -4,7 +4,7 @@ import pandas as pd
 from data_processing.config import ACTIVE_MASTER_PATH, ACTIVE_EPISODES_PATH
 from data_processing.splits import resolve_recorded_input
 from data_processing.build_dataset import assert_rebuild_matches
-from data_processing.dataset_transforms import prepare_corrected
+from data_processing.dataset_transformation import prepare_corrected
 
 
 class DatasetBuilderTests(unittest.TestCase):
@@ -39,3 +39,26 @@ class DatasetBuilderTests(unittest.TestCase):
         rebuilt = frozen.fillna(0.)
         with self.assertRaises(AssertionError):
             assert_rebuild_matches(rebuilt, frozen)
+
+    def test_historical_diagnostics_cannot_hide_model_feature_changes(self):
+        """Limit historical comparison exceptions to named diagnostics."""
+        from contextlib import redirect_stdout
+        from io import StringIO
+
+        frozen = pd.DataFrame({
+            "market_sample": [True], "common_sample": [True],
+            "return_1h": [0.], "return_6h": [0.], "return_24h": [0.],
+            "log_return_1h": [0.],
+            "realised_vol_6h": [0.], "realised_vol_24h": [0.],
+        })
+        rebuilt = frozen.copy()
+        rebuilt["common_sample"] = False
+        with redirect_stdout(StringIO()):
+            assert_rebuild_matches(
+                rebuilt, frozen, allow_historical_diagnostics=True
+            )
+            rebuilt["log_return_1h"] = .1
+            with self.assertRaises(AssertionError):
+                assert_rebuild_matches(
+                    rebuilt, frozen, allow_historical_diagnostics=True
+                )

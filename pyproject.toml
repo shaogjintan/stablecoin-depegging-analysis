@@ -13,4 +13,4 @@ dependencies = ["numpy", "pandas", "scipy", "scikit-learn", "xgboost", "shap", "
 acquisition = ["requests", "python-dotenv"]
 
 [tool.setuptools.packages.find]
-include = ["modelling*", "data_processing*"]
+include = ["modelling*", "data_processing*", "reports"]

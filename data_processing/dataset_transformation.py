@@ -4,35 +4,22 @@ Completed-bar features, onset labels, and causal eligibility transformations.
 """
 import numpy as np
 import pandas as pd
+from data_processing.build_market_features import calendar_market_features
+from data_processing.config import (
+    DEPEG_BAND,
+    DEPEG_GAP_HOURS,
+    DEPEG_MIN_DURATION_HOURS,
+    FORECAST_HORIZONS_HOURS,
+)
 from data_processing.feature_schema import MARKET_FEATURES, ONCHAIN_FEATURES
 from data_processing.merge_and_label import flag_episodes, build_episode_table
 
-def calendar_market_features(df):
-    """Rebuild market features on each coin's complete hourly calendar."""
-    df = df.sort_values(["coin", "hour"]).copy()
-    if df.duplicated(["coin", "hour"]).any():
-        raise ValueError("Duplicate coin-hour")
-    frames = []
-    for coin, g in df.groupby("coin", sort=False):
-        g = g.set_index("hour").reindex(pd.date_range(g.hour.min(), g.hour.max(), freq="h"))
-        g.index.name = "hour"
-        g["coin"] = coin
-        p, v = g.price, g.trading_volume
-        g["peg_deviation"] = p - 1
-        g["peg_stress"] = np.clip(1 - p, 0, .01)
-        ret = p.pct_change(fill_method=None)
-        for h in (1, 6, 24):
-            g[f"log_return_{h}h"] = np.log(p / p.shift(h))
-            change = v.div(v.shift(h)).sub(1).replace([np.inf, -np.inf], np.nan)
-            # Missing venue provenance is not evidence of an uninterrupted venue.
-            g[f"volume_pct_change_{h}h"] = change.where(g.hours_since_venue_start >= h + 1)
-        for h in (6, 24):
-            g[f"realised_vol_{h}h"] = ret.rolling(h, min_periods=h).std()
-        frames.append(g.reset_index())
-    return pd.concat(frames, ignore_index=True)
 
 
-def causal_risk_mask(df, recovery_hours=24, band=.01, min_duration=2):
+def causal_risk_mask(
+    df, recovery_hours=DEPEG_GAP_HOURS, band=DEPEG_BAND,
+    min_duration=DEPEG_MIN_DURATION_HOURS,
+):
     """Identify causal at-risk prediction rows at bar close.
 
     At bar close, exclude below-band and confirmed-dip recovery; no final end.
@@ -61,7 +48,10 @@ def causal_risk_mask(df, recovery_hours=24, band=.01, min_duration=2):
     return out
 
 
-def episode_labels(df, episodes, horizons=(1, 6, 24), band=.01, min_duration=2):
+def episode_labels(
+    df, episodes, horizons=tuple(FORECAST_HORIZONS_HOURS), band=DEPEG_BAND,
+    min_duration=DEPEG_MIN_DURATION_HOURS,
+):
     """Label new merged episode onsets and observed negative windows.
 
     New merged starts only; negative windows include onset-confirmation bar.
@@ -105,7 +95,7 @@ def prepare_corrected(master):
                            ("market_onchain", MARKET_FEATURES + ONCHAIN_FEATURES)):
         base = master.observable_at_risk & np.isfinite(master[features]).all(axis=1)
         master[f"prediction_eligible_{name}"] = base
-        for h in (1, 6, 24):
+        for h in FORECAST_HORIZONS_HOURS:
             master[f"prediction_eligible_{name}_h{h}"] = base & master[f"label_h{h}"].notna()
     # Source hour denotes bar start; every operational clock is its close.
     master["bar_start"] = master.hour

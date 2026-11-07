@@ -80,3 +80,9 @@ data/processed/*
 !data/processed/depeg_episodes.parquet
 !data/processed/depeg_episodes_w_event_type.parquet
 !data/processed/dataset_metadata.json
+
+# Isolated full reproduction outputs; original evidence remains separate.
+/artifacts/reproduction/
+
+# Source-data release bundle is shared separately from the Git repository.
+/artifacts/distribution/

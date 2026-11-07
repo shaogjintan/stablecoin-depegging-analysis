@@ -1,23 +1,18 @@
-"""Build hourly market returns, peg deviation, volatility and volume signals.
+"""Calculate calendar-based market features for interim and final tables.
 
-All rolling/pct-change features look backward only (no look-ahead). Volume-
-change features are masked across a venue switch (using the acquired
-`venue_switch` / `hours_since_venue_start` columns): a raw jump in exchange
-volume right after a source switch reflects a change in data source, not a
-change in the coin's actual trading activity, so those hours are set to NaN
-rather than left in as a spurious signal.
+Missing hours remain missing; lags refer to calendar hours. The command-line
+writer uses the same calculation as the dataset builder. Historical formulas
+are preserved under archive/history/data_processing/.
 
-OUTPUT: data/interim/hourly_stablecoin_market_features.parquet
-  coin, hour, peg_deviation, peg_deviation_bps, return_1h, log_return_1h,
-  return_6h, log_return_6h, return_24h, log_return_24h,
-  realised_vol_6h, realised_vol_24h, trading_volume,
-  volume_pct_change_1h, volume_pct_change_6h, volume_pct_change_24h
+Run ``python -m data_processing.build_market_features`` to rebuild
+data/interim/hourly_stablecoin_market_features.parquet from the retained
+data/interim/hourly_stablecoin.parquet. This replaces the interim feature
+file with the current calculation; it does not fetch data or train models.
 
-No trade-count or taker-buy features: Bitfinex (the source for USDT and DAI)
-doesn't report either, so they'd be NaN for 100% of those two coins' rows. A
-pooled tree model would learn that missingness pattern as a coin identifier
-rather than a market signal, so trades_pct_change_1h and taker_buy_ratio are
-not built.
+The retained historical interim file can differ in simple-return diagnostics
+and completeness. Verify frozen model evidence using its recorded input
+hashes; a current rebuild need not reproduce historical file bytes. Normal
+report reproduction reads retained inputs without running this writer.
 """
 import numpy as np
 import pandas as pd
@@ -26,93 +21,61 @@ from data_processing.config import HOURLY_MARKET_PATH, MARKET_FEATURES_PATH
 OUT_PATH = MARKET_FEATURES_PATH
 
 
-def build_price_features(df: pd.DataFrame) -> pd.DataFrame:
-    """Build price returns, peg deviation, and realised volatility.
+def calendar_market_features(df):
+    """Calculate canonical market features on a complete per-coin calendar.
 
-    Use the DefiLlama reference price and group by coin so calculations never
-    cross coin boundaries.
+    Args:
+        df: Rows containing coin, hour, price, trading_volume, and
+            hours_since_venue_start. Hours denote source bar starts here.
+
+    Returns:
+        A coin/hour-sorted hourly table with canonical peg stress, log
+        returns, rolling volatility, and venue-masked volume changes.
+        Unrelated columns are preserved; new grid rows remain missing.
+
+    Raises:
+        ValueError: The input contains duplicate coin-hour keys.
     """
     df = df.sort_values(["coin", "hour"]).copy()
-    g = df.groupby("coin")["price"]
-
-    df["peg_deviation"] = df["price"] - 1.0
-    df["peg_deviation_bps"] = df["peg_deviation"] * 1e4
-    df["return_1h"] = g.pct_change()
-    df["return_6h"] = g.pct_change(6)
-    df["return_24h"] = g.pct_change(24)
-    df["log_return_1h"] = np.log(df["price"] / g.shift(1))
-    df["log_return_6h"] = np.log(df["price"] / g.shift(6))
-    df["log_return_24h"] = np.log(df["price"] / g.shift(24))
-    # realized vol = rolling std of 1h returns; min_periods = window so an
-    # incomplete window (e.g. right after a coin's start) stays NaN rather
-    # than a noisy estimate from a handful of hours
-    ret_by_coin = df.groupby("coin")["return_1h"]
-    df["realised_vol_6h"] = ret_by_coin.transform(
-        lambda s: s.rolling(6, min_periods=6).std()
-    )
-    df["realised_vol_24h"] = ret_by_coin.transform(
-        lambda s: s.rolling(24, min_periods=24).std()
-    )
-
-    return df[["coin", "hour", "peg_deviation", "peg_deviation_bps",
-               "return_1h", "log_return_1h", "return_6h", "log_return_6h",
-               "return_24h", "log_return_24h",
-               "realised_vol_6h", "realised_vol_24h"]]
-
-
-def build_exchange_features(df: pd.DataFrame) -> pd.DataFrame:
-    """Volume signals from the exchange data.
-
-    volume_pct_change_1h/6h/24h are plain % changes -- but exchange volume is
-    often near zero for the thinner pairs, so a single quiet hour can make
-    the change spike to +-inf; those get replaced with NaN.
-
-    Every change is additionally masked for the hours right after a venue
-    switch (hours_since_venue_start < window + 1), since acquisition can
-    splice from one exchange to another mid-series (e.g. PAX, TUSD, USDC),
-    and a pct_change computed across that boundary compares two different
-    venues' volume levels rather than a real change in trading activity.
-    """
-    df = df.sort_values(["coin", "hour"]).copy()
-
-    vol_by_coin = df.groupby("coin")["volume"]
-    pct_1h = vol_by_coin.pct_change().replace([np.inf, -np.inf], np.nan)
-    pct_6h = vol_by_coin.pct_change(6).replace([np.inf, -np.inf], np.nan)
-    pct_24h = vol_by_coin.pct_change(24).replace([np.inf, -np.inf], np.nan)
-
-    df["volume_pct_change_1h"] = pct_1h.where(
-        df["hours_since_venue_start"] >= 2
-    )
-    df["volume_pct_change_6h"] = pct_6h.where(
-        df["hours_since_venue_start"] >= 7
-    )
-    df["volume_pct_change_24h"] = pct_24h.where(
-        df["hours_since_venue_start"] >= 25
-    )
-
-    # taker_buy_ratio and trades_pct_change_1h were removed here: Bitfinex
-    # (USDT/DAI) reports neither, so both were 100% NaN for those coins and a
-    # pooled tree model would learn the missingness as a coin identifier.
-    # See module docstring.
-
-    df = df.rename(columns={"volume": "trading_volume"})
-    return df[["coin", "hour", "trading_volume",
-               "volume_pct_change_1h", "volume_pct_change_6h",
-               "volume_pct_change_24h",
-               "venue"]]
+    if df.duplicated(["coin", "hour"]).any():
+        raise ValueError("Duplicate coin-hour")
+    frames = []
+    for coin, g in df.groupby("coin", sort=False):
+        g = g.set_index("hour").reindex(
+            pd.date_range(g.hour.min(), g.hour.max(), freq="h")
+        )
+        g.index.name = "hour"
+        g["coin"] = coin
+        p, v = g.price, g.trading_volume
+        g["peg_deviation"] = p - 1
+        g["peg_deviation_bps"] = g["peg_deviation"] * 1e4
+        g["peg_stress"] = np.clip(1 - p, 0, .01)
+        ret = p.pct_change(fill_method=None)
+        for h in (1, 6, 24):
+            g[f"return_{h}h"] = p.pct_change(h, fill_method=None)
+            g[f"log_return_{h}h"] = np.log(p / p.shift(h))
+            change = v.div(v.shift(h)).sub(1).replace([np.inf, -np.inf], np.nan)
+            # Missing venue provenance is not evidence of an uninterrupted venue.
+            g[f"volume_pct_change_{h}h"] = change.where(
+                g.hours_since_venue_start >= h + 1
+            )
+        for h in (6, 24):
+            g[f"realised_vol_{h}h"] = ret.rolling(h, min_periods=h).std()
+        frames.append(g.reset_index())
+    return pd.concat(frames, ignore_index=True)
 
 
 def main():
-    # The acquired table keeps price-only hours with missing exchange volume.
-    """Build and write market feature tables from retained hourly data."""
+    """Write current calendar features from retained hourly observations."""
     df = pd.read_parquet(HOURLY_MARKET_PATH)
-
-    price_feats = build_price_features(df)
-    exch_feats = build_exchange_features(df)
-
-    merged = price_feats.merge(exch_feats, on=["coin", "hour"], how="left")
-    merged = merged.sort_values(["coin", "hour"]).reset_index(drop=True)
-    merged = merged.drop(columns=["venue"])
+    df = df.rename(columns={"volume": "trading_volume"})
+    features = calendar_market_features(df)
+    columns = ["coin", "hour", "peg_deviation", "peg_deviation_bps",
+               "return_1h", "log_return_1h", "return_6h", "log_return_6h",
+               "return_24h", "log_return_24h", "realised_vol_6h",
+               "realised_vol_24h", "trading_volume", "volume_pct_change_1h",
+               "volume_pct_change_6h", "volume_pct_change_24h", "peg_stress"]
+    merged = features[columns]
 
     OUT_PATH.parent.mkdir(parents=True, exist_ok=True)
     merged.to_parquet(OUT_PATH, index=False)

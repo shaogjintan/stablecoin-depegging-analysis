@@ -17,6 +17,7 @@ from data_processing.config import (
     ACTIVE_MASTER_PATH,
     DATASET_METADATA_PATH,
     HOURLY_MARKET_PATH,
+    FORECAST_HORIZONS_HOURS,
     MARKET_FEATURES_PATH,
     MODELLING_DATA_VERSION,
     ONCHAIN_FEATURES_PATH,
@@ -24,8 +25,8 @@ from data_processing.config import (
 )
 from data_processing.merge_and_label import flag_feature_samples, merge_sources
 from data_processing.splits import load_master
-from data_processing.dataset_transforms import prepare_corrected
-from data_processing.feature_schema import ONCHAIN_FEATURES
+from data_processing.dataset_transformation import prepare_corrected
+from data_processing.feature_schema import ONCHAIN_FEATURES, ONCHAIN_RAW_METRICS
 
 SOURCES = [HOURLY_MARKET_PATH, ONCHAIN_FEATURES_PATH, MARKET_FEATURES_PATH]
 SOURCE_MARKET_FEATURES = [
@@ -47,22 +48,8 @@ MASTER_COLUMNS = [
     "venue",
     "venue_switch",
     "hours_since_venue_start",
-    "tx_count",
-    "tx_volume",
-    "active_senders",
-    "active_receivers",
-    "tx_count_logdiff_1h",
-    "tx_count_logdiff_6h",
-    "tx_count_logdiff_24h",
-    "tx_volume_logdiff_1h",
-    "tx_volume_logdiff_6h",
-    "tx_volume_logdiff_24h",
-    "active_senders_logdiff_1h",
-    "active_senders_logdiff_6h",
-    "active_senders_logdiff_24h",
-    "active_receivers_logdiff_1h",
-    "active_receivers_logdiff_6h",
-    "active_receivers_logdiff_24h",
+    *ONCHAIN_RAW_METRICS,
+    *ONCHAIN_FEATURES,
     "peg_deviation",
     "peg_deviation_bps",
     "return_1h",
@@ -103,7 +90,7 @@ MASTER_COLUMNS = [
 ]
 
 PIPELINE_DESCRIPTION = (
-    "data/interim/ (hourly_stablecoin.parquet + "
+    "configured interim root (hourly_stablecoin.parquet + "
     "hourly_stablecoin_market_features.parquet + "
     "hourly_stablecoin_onchain_features.parquet) -> merge on coin/hour "
     "-> compute calendar-based market features, merged-onset labels and "
@@ -131,11 +118,11 @@ def build_from_sources(sources=SOURCES):
     price, onchain, market = [pd.read_parquet(path) for path in sources]
     price = price.rename(columns={"timestamp": "hour"})
     merged = merge_sources(price, onchain, market)
-    # Source completeness and corrected model eligibility are distinct flags.
-    merged = flag_feature_samples(
-        merged, SOURCE_MARKET_FEATURES, ONCHAIN_FEATURES
-    )
     master, episodes = prepare_corrected(merged)
+    # Completeness describes current features, separately from eligibility.
+    master = flag_feature_samples(
+        master, SOURCE_MARKET_FEATURES, ONCHAIN_FEATURES
+    )
     master["venue_switch"] = pd.to_numeric(master.venue_switch).astype(float)
     master["dataset_version"] = MODELLING_DATA_VERSION
     episodes["dataset_version"] = MODELLING_DATA_VERSION
@@ -148,12 +135,29 @@ def build_from_sources(sources=SOURCES):
     return master, episodes
 
 
-def assert_rebuild_matches(rebuilt, frozen):
-    """Require exact non-volatility data and bound rolling-reduction noise."""
+def assert_rebuild_matches(rebuilt, frozen, *, allow_historical_diagnostics=False):
+    """Compare rebuilds, optionally reporting historical diagnostic changes.
+
+    Args:
+        rebuilt: Current reconstructed master.
+        frozen: Retained master used for the reported model results.
+        allow_historical_diagnostics: Allow only named historical completeness and
+            simple-return diagnostics to differ; print each changed count.
+    """
+    diagnostics = []
+    if allow_historical_diagnostics:
+        diagnostics = ["market_sample", "common_sample", "return_1h",
+                       "return_6h", "return_24h"]
+        for column in diagnostics:
+            same = rebuilt[column].eq(frozen[column]) | (
+                rebuilt[column].isna() & frozen[column].isna()
+            )
+            print(f"Historical diagnostic {column}: "
+                  f"{int((~same).sum())} changed rows")
     volatility = ["realised_vol_6h", "realised_vol_24h"]
     pd.testing.assert_frame_equal(
-        rebuilt.drop(columns=volatility),
-        frozen.drop(columns=volatility),
+        rebuilt.drop(columns=volatility + diagnostics),
+        frozen.drop(columns=volatility + diagnostics),
         check_exact=True,
     )
     pd.testing.assert_frame_equal(
@@ -166,7 +170,7 @@ def metadata(master, episodes, master_path, episodes_path):
     """Describe source hashes, output hashes and model eligibility counts."""
     counts = {}
     for tier, name in [(1, "market"), (2, "market_onchain")]:
-        for horizon in (1, 6, 24):
+        for horizon in FORECAST_HORIZONS_HOURS:
             mask = master[f"prediction_eligible_{name}_h{horizon}"]
             counts[f"tier{tier}_h{horizon}"] = {
                 "eligible_rows": int(mask.sum()),
@@ -183,9 +187,13 @@ def metadata(master, episodes, master_path, episodes_path):
         master_sha256=checksum(master_path),
         episodes=str(episodes_path),
         episodes_sha256=checksum(episodes_path),
-        preparation_source="data_processing/dataset_transforms.py",
+        preparation_source="data_processing/dataset_transformation.py",
         preparation_sha256=checksum(
-            Path(__file__).with_name("dataset_transforms.py")
+            Path(__file__).with_name("dataset_transformation.py")
+        ),
+        market_features_source="data_processing/build_market_features.py",
+        market_features_sha256=checksum(
+            Path(__file__).with_name("build_market_features.py")
         ),
         rows=len(master),
         episodes_defined=len(episodes),
@@ -231,12 +239,14 @@ def main():
     if all(exists):
         # Block layout can perturb rolling reductions near zero. Preserve the
         # frozen model inputs rather than replacing them on that basis.
-        assert_rebuild_matches(master, pd.read_parquet(master_path))
+        assert_rebuild_matches(
+            master, pd.read_parquet(master_path), allow_historical_diagnostics=True
+        )
         pd.testing.assert_frame_equal(
             episodes, pd.read_parquet(episodes_path), check_exact=True
         )
         print(
-            "Direct rebuild matches canonical tables within numerical "
+            "Rebuild model inputs match frozen tables within numerical "
             "tolerance; existing files preserved."
         )
         return

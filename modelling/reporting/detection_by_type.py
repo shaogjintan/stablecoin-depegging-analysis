@@ -17,6 +17,7 @@ def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument('--event-dir', type=Path, default=Path('reports/depeg_events'))
     parser.add_argument('--out-dir', type=Path, default=Path('reports/model_results'))
+    parser.add_argument('--run-dir', type=Path, action='append')
     args = parser.parse_args()
     event_dir, out = args.event_dir, args.out_dir
     out.mkdir(parents=True, exist_ok=True)
@@ -25,7 +26,7 @@ def main():
     eps = eps.merge(types[['event_id', 'type']], on='event_id', validate='many_to_one')
     rows = []
     sources = []
-    for run in RUNS:
+    for run in args.run_dir or RUNS:
         info = json.loads((run / 'run.json').read_text())
         sources.append(dict(path=str(run), run_id=info['run_id'], sha256=sha256(run / 'run.json')))
         episodes = pd.read_parquet(evidence_dir(run) / 'episodes.parquet')

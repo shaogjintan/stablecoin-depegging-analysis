@@ -6,6 +6,14 @@ Both `python -m data_processing.merge_and_label` and `python -m data_processing.
 
 `interim/` holds the acquired hourly market table and the market/on-chain feature tables; `raw/dune_onchain/` holds six source CSVs. The root Dune ZIP is retained. All six CSVs match their ZIP members byte-for-byte; see `dune_export_verification` in `manifest.json`. The old original master and old episode manifest are quarantined under delete/, never used by the maintained build.
 
+The derived interim tables can be rebuilt from retained local sources. The
+market writer now uses the same calendar-based calculation as the final
+dataset builder. Running it replaces the interim market-feature file; the
+current output can differ from the retained historical table. Verify frozen
+model evidence against its recorded hashes, and keep fresh rebuilds separate.
+See [reproduction instructions](../docs/reproduction.md) for both workflows
+and the explicitly reported historical diagnostic differences.
+
 manifest.json records current paths, schemas and hashes. Original market API responses are not available. Existing corrected inputs remain byte-identical to the model evidence. Fresh rolling reductions may vary by up to 1e-9 near zero; see docs/reproduction.md for strict comparison scope. Large source snapshots/intermediates remain local artifacts and require separate distribution.
 
 ## Dune acquisition query

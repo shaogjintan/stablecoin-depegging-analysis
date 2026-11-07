@@ -13,11 +13,9 @@ import sys
 if __package__ in (None, ""):
     sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 
-import numpy as np
 import pandas as pd
 from data_processing.config import (
     DEPEG_BAND, DEPEG_MIN_DURATION_HOURS, DEPEG_GAP_HOURS,
-    FORECAST_HORIZONS_HOURS,
 )
 
 
@@ -67,10 +65,7 @@ def merge_sources(
     grid = build_full_hourly_grid(pv)
     # Market features already contain trading_volume.
     pv = pv.drop(columns=["volume"])
-    # drop raw trade count and taker-buy volume: Bitfinex (USDT/DAI) reports
-    # neither, so they're 100% NaN for those coins and a pooled tree model
-    # would learn the missingness as a coin identifier (see
-    # build_market_features.py)
+    # Only selected feature columns are retained by the dataset builder.
     merged = grid.merge(pv, on=keys, how="left", validate="one_to_one")
     merged = merged.merge(onchain, on=keys, how="left", validate="one_to_one")
     merged = merged.merge(market, on=keys, how="left", validate="one_to_one")
@@ -167,72 +162,17 @@ def build_episode_table(df: pd.DataFrame) -> pd.DataFrame:
     return eps
 
 
-def build_labels(df: pd.DataFrame) -> pd.DataFrame:
-    """Label whether any qualifying dip run starts within each future horizon.
-
-    A dip that starts within the window remains a positive outcome even if its
-    price recovers before the horizon endpoint.
-    """
-    df = df.copy()
-    dip_starts = (
-        df.loc[df["qualifying_dip_start"]]
-        .groupby("coin")["hour"]
-        .apply(list)
-        .to_dict()
-    )
-    max_hour_per_coin = df.groupby("coin")["hour"].max().to_dict()
-
-    for h in FORECAST_HORIZONS_HOURS:
-        col = f"label_h{h}"
-        df[col] = np.nan
-        for coin in FIAT_COINS:
-            if coin not in df["coin"].unique():
-                continue
-            starts_arr = np.array(sorted(dip_starts.get(coin, [])))
-            mask_coin = df["coin"] == coin
-            hours = df.loc[mask_coin, "hour"].to_numpy()
-            prices = df.loc[mask_coin, "price"].to_numpy()
-            last_hour = max_hour_per_coin[coin]
-            labels = np.full(len(hours), np.nan)
-            for i, t in enumerate(hours):
-                window_end = t + pd.Timedelta(hours=h)
-                # right-censored: the lookahead window runs past the last
-                # observed hour, so "no episode found" can't be trusted as a
-                # true negative -- leave it NaN rather than defaulting to 0.
-                if window_end > last_hour:
-                    continue
-                # A known qualifying-dip onset (including a bridged dip) makes
-                # this positive even if a later price in the window is missing.
-                hit = (
-                    np.any((starts_arr > t) & (starts_arr <= window_end))
-                    if len(starts_arr) else False
-                )
-                if hit:
-                    labels[i] = 1.0
-                    continue
-
-                # Without a known onset, any missing future price could hide
-                # a qualifying dip run, including within a recovery window.
-                future_slice = slice(i + 1, i + h + 1)
-                if pd.isna(prices[future_slice]).any():
-                    continue
-                labels[i] = 0.0
-            df.loc[mask_coin, col] = labels
-        # Forecast origins must have an above-threshold observed price.
-        # Recovery rows can be origins; below-threshold rows cannot.
-        df.loc[df["outside_band"], col] = np.nan
-        # no observed price at t -> can't tell if t is above the threshold
-        df.loc[df["price"].isna(), col] = np.nan
-
-    return df
-
-
 def flag_feature_samples(
     df: pd.DataFrame,
     market_features: list,
     onchain_features: list
 ) -> pd.DataFrame:
-    """Mark feature completeness and horizon-specific sample eligibility."""
+    """Mark current calendar-feature completeness for each feature group.
+
+    market_sample and common_sample record nonmissing current features.
+    These flags describe completeness only. Prediction eligibility also
+    requires the causal risk mask and an observed horizon-specific label.
+    """
     df = df.copy()
     required_features = market_features + onchain_features
     missing = [col for col in required_features if col not in df.columns]
@@ -242,35 +182,6 @@ def flag_feature_samples(
     # `common_sample` is the established name for rows complete across both
     # feature groups; keep it as the sole market + on-chain sample column.
     df["common_sample"] = df[required_features].notna().all(axis=1)
-    return df
-
-
-def flag_prediction_eligibility(df: pd.DataFrame) -> pd.DataFrame:
-    """Flag prediction origins separately for market and market+on-chain.
-
-    Base flags depend only on information available at the row's hour.
-    Horizon-specific flags additionally require an observed label, making them
-    convenient for training/evaluation sample selection.
-    """
-    df = df.copy()
-    above_threshold = df["price"].ge(1 - DEPEG_BAND)
-    feature_samples = {
-        "market": "market_sample",
-        "common": "common_sample",
-    }
-    for model, sample_col in feature_samples.items():
-        eligible_col = f"prediction_eligible_{model}"
-        df[eligible_col] = df[sample_col] & above_threshold
-
-    for h in FORECAST_HORIZONS_HOURS:
-        label_col = f"label_h{h}"
-        if label_col not in df.columns:
-            raise ValueError(f"Missing label column: {label_col}")
-        for model in feature_samples:
-            eligible_col = f"prediction_eligible_{model}_h{h}"
-            df[eligible_col] = (
-                df[f"prediction_eligible_{model}"] & df[label_col].notna()
-            )
     return df
 
 

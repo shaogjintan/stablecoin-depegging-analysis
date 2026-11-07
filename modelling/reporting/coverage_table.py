@@ -7,9 +7,11 @@ import json
 from pathlib import Path
 import pandas as pd
 from data_processing.config import ACTIVE_MASTER_PATH, FIAT_COINS
+from data_processing.feature_schema import (
+    MARKET_FEATURES, ONCHAIN_FEATURES,
+    ONCHAIN_RAW_METRICS as RAW_ONCHAIN,
+)
 from modelling.utils.io import sha256
-
-RAW_ONCHAIN = ['tx_count', 'tx_volume', 'active_senders', 'active_receivers']
 
 def coverage(master):
     """Measure source completeness over each coin's full observed time span."""
@@ -25,7 +27,9 @@ def coverage(master):
             'market_volume': g.trading_volume.notna(),
             'onchain_all_raw_fields': g[RAW_ONCHAIN].notna().all(axis=1),
             'joint_volume_and_onchain': g[['trading_volume', *RAW_ONCHAIN]].notna().all(axis=1),
-            'onchain_tx_count_common_sample': g.tx_count.notna() & g.common_sample.fillna(False).astype(bool),
+            'onchain_tx_count_current_complete': g.tx_count.notna() & (
+                g[MARKET_FEATURES + ONCHAIN_FEATURES].notna().all(axis=1)
+            ),
         }
         for name, mask in masks.items():
             observed = int(mask.sum())

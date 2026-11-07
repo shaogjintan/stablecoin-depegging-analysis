@@ -11,21 +11,74 @@ import matplotlib
 matplotlib.use('Agg')
 import matplotlib.pyplot as plt
 import pandas as pd
+import numpy as np
 from modelling.utils.io import sha256
 RUNS = [Path('artifacts/runs/primary/REFIT-LOWEST-NEW'), Path('artifacts/runs/primary/LR-REFIT-LOWEST-NEW')]
+
+
+def shap_ranking(runs, horizon):
+    """Pool absolute raw-margin SHAP over the selected runs' test rows.
+
+    Args:
+        runs: Completed run directories containing final XGBoost fits.
+        horizon: Forecast horizon to interpret for the on-chain tier.
+
+    Returns:
+        A feature ranking and provenance for every contributing partition.
+    """
+    from xgboost import DMatrix
+
+    totals, features, count, sources = None, None, 0, []
+    for run in runs:
+        for folder in sorted((evidence_dir(run) / 'fits').iterdir()):
+            spec = json.loads((folder / 'fit.json').read_text())
+            if (spec['model'] != 'xgboost' or spec['horizon'] != horizon
+                    or spec['config'] != 'market_onchain'):
+                continue
+            current = spec['features']
+            if features is not None and features != current:
+                raise ValueError('Inconsistent XGBoost feature order')
+            features = current
+            path = folder / 'pipeline.joblib'
+            if sha256(path) != spec['pipeline_sha256']:
+                raise ValueError(f'Pipeline changed: {folder}')
+            bundle = joblib.load(path)
+            test_path = folder / 'test.parquet'
+            X = pd.read_parquet(test_path, columns=features)
+            if bundle['imputer'] is not None:
+                X = bundle['imputer'].transform(X)
+            values = bundle['model'].clf_.get_booster().predict(
+                DMatrix(X, nthread=1), pred_contribs=True
+            )[:, :-1]
+            contribution = np.abs(values).sum(axis=0, dtype=np.float64)
+            totals = contribution if totals is None else totals + contribution
+            count += len(X)
+            sources.append(dict(path=str(test_path), sha256=sha256(test_path),
+                                pipeline_sha256=spec['pipeline_sha256']))
+    if not count:
+        raise ValueError(f'No XGBoost test rows for h={horizon}')
+    ranking = pd.DataFrame(dict(feature=features, mean_abs_shap=totals / count))
+    return ranking.sort_values('mean_abs_shap', ascending=False), sources
+
 
 def main():
     """Export saved-model interpretation tables and figures."""
     p = argparse.ArgumentParser(description=__doc__)
     p.add_argument('--out-dir', type=Path, default=Path('reports/model_interpretation'))
+    p.add_argument('--run-dir', type=Path, action='append')
+    p.add_argument('--recompute-shap', action='store_true',
+                   help='calculate SHAP from selected runs, not saved rankings')
     args = p.parse_args()
+    runs = args.run_dir or RUNS
+    if args.run_dir and not args.recompute_shap:
+        p.error('--run-dir requires --recompute-shap to avoid old rankings')
     args.out_dir.mkdir(parents=True, exist_ok=True)
     for name in ['log_reg', 'random_forest', 'xgboost']:
         (args.out_dir / name).mkdir(exist_ok=True)
     coefficients = []
     importance = []
     sources = []
-    for run in RUNS:
+    for run in runs:
         manifest = json.loads((run / 'run.json').read_text())
         if manifest.get('status') != 'complete' or not manifest.get('refit_after_calibration'):
             raise ValueError(f'Not a completed final refit: {run}')
@@ -59,10 +112,16 @@ def main():
             fig.tight_layout()
             fig.savefig(args.out_dir / ('log_reg' if model == 'logreg' else model) / f'{model}_h{h}.png', dpi=160)
             plt.close(fig)
-        source = RUNS[0] / f'shap_ranking_xgboost_t2_h{h}.csv'
-        ranking = pd.read_csv(source)
+        filename = f'shap_ranking_xgboost_t2_h{h}.csv'
+        if args.recompute_shap:
+            ranking, evidence = shap_ranking(runs, h)
+            sources.extend(evidence)
+        else:
+            source = runs[0] / filename
+            ranking = pd.read_csv(source)
+            sources.append(dict(path=str(source), sha256=sha256(source)))
         values = ranking.set_index('feature').mean_abs_shap.nlargest(12).sort_values()
-        ranking.to_csv(args.out_dir / 'xgboost' / source.name, index=False)
+        ranking.to_csv(args.out_dir / 'xgboost' / filename, index=False)
         fig, ax = plt.subplots(figsize=(8, 5))
         values.plot.barh(ax=ax)
         ax.set_title(f'Final XGBoost, market + on-chain, h={h}h')
@@ -70,8 +129,7 @@ def main():
         fig.tight_layout()
         fig.savefig(args.out_dir / 'xgboost' / f'xgboost_shap_h{h}.png', dpi=160)
         plt.close(fig)
-        sources.append(dict(path=str(source), sha256=sha256(source)))
-    (args.out_dir / 'manifest.json').write_text(json.dumps(dict(sources=sources, notes=['LR coefficients follow training winsorisation and standardisation, with derived features.', 'RF impurity importance and SHAP are descriptive, not causal.', 'XGB SHAP rankings reused from saved final-model analysis.']), indent=2) + '\n')
+    (args.out_dir / 'manifest.json').write_text(json.dumps(dict(sources=sources, notes=['LR coefficients follow training winsorisation and standardisation, with derived features.', 'RF impurity importance and SHAP are descriptive, not causal.', 'XGB SHAP recalculated from selected test partitions.' if args.recompute_shap else 'XGB SHAP rankings reused from saved final-model analysis.']), indent=2) + '\n')
     print('Saved final-model interpretation:', args.out_dir)
 if __name__ == '__main__':
     main()

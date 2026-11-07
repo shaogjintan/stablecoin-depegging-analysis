@@ -1,4 +1,4 @@
-"""Tier 2 on-chain change-feature checks (run from the repo root):.
+"""Diagnose on-chain feature scales, missingness, and coin identity.
 
     python -m tests.diagnose_onchain_features
 
@@ -15,6 +15,9 @@
 
 3. NaN pattern: the change features are NaN exactly where an endpoint of the
    lag window is unobserved (coin starts, TUSD's late Dune start, gaps).
+
+This manual diagnostic retains its historical retrospective risk mask for
+comparison continuity. It does not define the canonical training sample.
 
 Exit code is non-zero only on hard failures (missing columns, +/-inf).
 The accuracy comparison is informational: the plan records the before/after
@@ -34,11 +37,48 @@ REPO_ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(REPO_ROOT))
 sys.path.insert(0, str(REPO_ROOT / "data_processing"))
 
-from data_processing.sample_preparation import at_risk_mask, ONCHAIN_FEATURES  # noqa: E402
+from data_processing.config import DEPEG_GAP_HOURS
+from data_processing.feature_schema import ONCHAIN_FEATURES
 from data_processing.splits import load_master  # noqa: E402
 
 RAW_LEVELS = ["tx_count", "tx_volume", "active_senders", "active_receivers"]
 SPLIT_HOUR = pd.Timestamp("2024-01-01", tz="UTC")
+
+
+RECOVERY_HOURS = DEPEG_GAP_HOURS
+
+
+def recovery_window_mask(df: pd.DataFrame, episodes: pd.DataFrame,
+                         recovery_hours: int = RECOVERY_HOURS) -> pd.Series:
+    """Mark same-coin rows within the post-episode recovery window.
+
+    True for hours in (episode end, episode end + recovery_hours] of the same
+    coin.
+    """
+    mask = pd.Series(False, index=df.index)
+    if recovery_hours <= 0:
+        return mask
+    for _, ep in episodes.iterrows():
+        lo = ep["end"]
+        hi = ep["end"] + pd.Timedelta(hours=recovery_hours)
+        mask |= (df["coin"] == ep["coin"]) & (df["hour"] > lo) & (df["hour"] <= hi)
+    return mask
+
+
+
+def at_risk_mask(df: pd.DataFrame, episodes: pd.DataFrame, horizon: int,
+                 recovery_hours: int = RECOVERY_HOURS) -> pd.Series:
+    """Rows in the risk set for horizon h (see module docstring).
+
+    This retrospective mask is retained only for historical diagnostic
+    comparisons. Production training uses canonical eligibility flags.
+    """
+    return (
+        ~df["in_episode"]
+        & ~recovery_window_mask(df, episodes, recovery_hours)
+        & df[f"label_h{horizon}"].notna()
+    )
+
 
 
 def coin_probe(master: pd.DataFrame, features: list[str], label: str,

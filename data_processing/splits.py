@@ -7,8 +7,9 @@ For each test year Y from OOS_START_YEAR to OOS_END_YEAR:
     everything before Y-1, validate on Y-1), for nested tuning of
     hyperparameters and the decision threshold without touching year Y
 
-Pooling the test predictions across folds scores every episode from
-OOS_START_YEAR onwards out of sample, while staying strictly chronological.
+Pooling eligible test predictions across folds gives chronological
+out-of-sample evaluation. Episodes without eligible prediction origins or
+excluded at split boundaries do not enter the targetable episode denominator.
 
 Leakage control:
   - Purge: labels look up to 24h ahead plus one confirmation bar, so the last
@@ -18,13 +19,12 @@ Leakage control:
   - Episode-aware: any depeg episode overlapping a boundary window
     [boundary - purge, boundary + embargo] is dropped from every fold set.
 
-Rows are returned unfiltered, including unlabelled rows.
-data_processing/sample_preparation.py applies tier- and horizon-specific
-eligibility.
+This module applies temporal and boundary-episode exclusions, not feature
+or label eligibility. data_processing/sample_preparation.py selects tier-
+and horizon-specific eligible rows before calling expanding_window_folds().
 
 Usage from modelling code (run from the repo root):
-    import sys; sys.path.insert(0, "data_processing")
-    from splits import load_master, expanding_window_folds
+    from data_processing.splits import load_master, expanding_window_folds
     master, episodes = load_master()
     for fold in expanding_window_folds(master, episodes):
         fold["year"], fold["train"], fold["test"]

@@ -20,13 +20,59 @@ python3.12 -m venv .venv
 source .venv/bin/activate
 python -m pip install -r requirements.lock
 python -m pip check
-python -m data_processing.build_dataset
 python -W ignore::DeprecationWarning -m unittest discover -s tests -v
+```
+
+Run these commands from the repository root. On Windows, create the environment
+with `py -3.12 -m venv .venv` and activate it with
+`.venv\Scripts\Activate.ps1`. The dependency freeze was checked on macOS with
+CPython 3.12; installation on other platforms has not been validated.
+
+A Git clone alone does **not** contain every required research artifact:
+
+| Workflow | Additional files needed |
+|---|---|
+| Full reproduction | `data/interim/hourly_stablecoin.parquet`, supplied separately; `dune_onchain.zip` is tracked in Git |
+| Verify saved models or regenerate their reports | Retained inputs and saved run evidence described in [artifacts/runs/README.md](artifacts/runs/README.md) |
+
+There is currently no published download for the separately supplied files.
+Check their paths and SHA-256 hashes against [data/manifest.json](data/manifest.json).
+Installing Python packages does not supply research data or saved models.
+
+For local handoff, `artifacts/distribution/source_data.zip` contains the hourly
+source, `SOURCE_DATA_SHA256SUMS`, and `SOURCE_DATA_README.md`. Supply the ZIP and
+its companion `source_data.zip.sha256` alongside this repository. Extract into
+the repository root without overwriting existing files, then follow the bundled
+checksum and reproduction instructions. This bundle is generated locally and
+is not included in Git; a public download link has not been published.
+
+## Reproduce from retained source data
+
+After setup, run the complete workflow with:
+
+```sh
+python -m reports.reproduce --full
+```
+
+This rebuilds features and the dataset, trains logistic regression, random
+forest and XGBoost for h1/h6/h24 across 2021–2025, verifies the new predictions,
+and generates robustness checks, benchmarks and reports. It requires the
+retained `data/interim/hourly_stablecoin.parquet` and `dune_onchain.zip`, not
+historical fitted models. It does not download updated data.
+
+All fresh outputs go under `artifacts/reproduction/`, leaving the retained
+research evidence unchanged. Preview stages with `--full --dry-run`. An existing
+output folder is rejected; use `--out-dir <new-folder>` for another run. Full
+retraining is computationally intensive. See the [workflow details](docs/reproduction.md).
+
+With the separately supplied saved-model artifacts in place, verify or regenerate
+the original reports without retraining:
+
+```sh
+python -m data_processing.build_dataset
 python -W ignore::DeprecationWarning -m modelling.validation.verify_model_results
 python -m reports.reproduce
 ```
-
-Verification and saved-model report generation require the local run artifacts described in [artifacts/runs/README.md](artifacts/runs/README.md). They are not all stored in Git. No network data acquisition runs as part of these commands.
 
 ## Repository
 

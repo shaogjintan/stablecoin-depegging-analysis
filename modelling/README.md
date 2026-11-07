@@ -12,7 +12,7 @@ Run package commands from the repository root. The primary workflow uses a pract
 | `reporting/` | CSV/figure exporters, calibration audit, and benchmark comparisons. |
 | `utils/` | Checksums, JSON writing, and relocated saved-evidence resolution. |
 
-Feature definitions, sample preparation, matched populations, dataset transformations, and canonical dataset construction live in `data_processing/`. See `data_processing/dataset_transforms.py` and `data_processing/build_dataset.py`.
+Feature definitions, sample preparation, matched populations, dataset transformations, and canonical dataset construction live in `data_processing/`. See `data_processing/dataset_transformation.py` and `data_processing/build_dataset.py`.
 
 ## Main commands
 

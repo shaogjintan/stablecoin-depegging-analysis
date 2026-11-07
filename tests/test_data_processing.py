@@ -66,6 +66,22 @@ assert fetch_stablecoin_data.SESSION is None
             self.assertFalse(saved.duplicated(["coin", "hour"]).any())
             self.assertIn("volume_pct_change_24h", saved)
 
+    def test_calendar_lags_preserve_missing_hours(self):
+        """Ensure missing hours cannot become adjacent return observations."""
+        frame = pd.DataFrame({
+            "coin": ["USDT", "USDT"],
+            "hour": pd.to_datetime(["2021-01-01T00:00Z",
+                                    "2021-01-01T02:00Z"]),
+            "price": [1., 1.02], "trading_volume": [100., 120.],
+            "hours_since_venue_start": [30, 32],
+        })
+        result = build_market_features.calendar_market_features(frame)
+        self.assertEqual(len(result), 3)
+        self.assertTrue(pd.isna(result.loc[1, "price"]))
+        self.assertTrue(result["return_1h"].isna().all())
+        self.assertTrue(result["log_return_1h"].isna().all())
+        self.assertTrue(result["volume_pct_change_1h"].isna().all())
+
     def test_onchain_writer_creates_missing_output_directory(self):
         """Check the on-chain writer creates a missing output directory."""
         csv = (
