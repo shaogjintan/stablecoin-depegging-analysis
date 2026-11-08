@@ -37,14 +37,6 @@
       }
     }
   ],
-  "primary_horizons": [
-    6,
-    24
-  ],
-  "supplementary_horizons": [
-    1
-  ],
-  "note": "Saved results combined without retraining or changing metrics.",
   "headline_metrics": [
     "median_lead_hours",
     "episode_recall",
@@ -52,5 +44,12 @@
     "false_alarms_per_coin_month",
     "average_precision"
   ],
-  "report_layout": "Identifiers, five headline metrics, supporting counts; remaining fields in adjacent _diagnostics.csv."
+  "primary_horizons": [
+    6,
+    24
+  ],
+  "supplementary_horizons": [
+    1
+  ],
+  "note": "Saved results combined without retraining or changing metrics."
 }

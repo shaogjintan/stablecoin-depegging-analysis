@@ -164,7 +164,17 @@ def build_report(summary, root):
                 ]
             })
         pred = pd.concat(predictions, ignore_index=True)
-        event = pd.concat(alarms, ignore_index=True)
+        # Empty years and all-missing target fields must not influence the
+        # pooled dtypes. Restore omitted columns for downstream metrics.
+        populated = [
+            frame.dropna(axis=1, how="all")
+            for frame in alarms if not frame.empty
+        ]
+        event = (
+            pd.concat(populated, ignore_index=True).reindex(
+                columns=alarms[0].columns
+            ) if populated else alarms[0].iloc[:0].copy()
+        )
         if pred.duplicated(["coin", "hour"]).any():
             raise ValueError("Duplicate pooled prediction origins")
         if event.duplicated(["coin", "alarm_hour"]).any():

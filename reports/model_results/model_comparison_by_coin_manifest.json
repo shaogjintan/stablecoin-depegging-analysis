@@ -724,13 +724,6 @@
       ]
     }
   ],
-  "notes": [
-    "Saved final predictions and alarms; no retraining.",
-    "Counts reconcile to the overall summary.",
-    "AP pools each coin's test years; it is not additive.",
-    "Recall/AP are blank with no targets/positives respectively.",
-    "Observed coin-months include partial months."
-  ],
   "headline_metrics": [
     "median_lead_hours",
     "episode_recall",
@@ -738,5 +731,11 @@
     "false_alarms_per_coin_month",
     "average_precision"
   ],
-  "report_layout": "Identifiers, five headline metrics, supporting counts; remaining fields in adjacent _diagnostics.csv."
+  "notes": [
+    "Saved final predictions and alarms; no retraining.",
+    "Counts reconcile to the overall summary.",
+    "AP pools each coin's test years; it is not additive.",
+    "Recall/AP are blank with no targets/positives respectively.",
+    "Observed coin-months include partial months."
+  ]
 }
