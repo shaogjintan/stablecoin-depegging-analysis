@@ -45,10 +45,9 @@ class ReproductionWorkflowTests(unittest.TestCase):
         """Never run reporting after an upstream failure or overwrite a run."""
         with tempfile.TemporaryDirectory() as temporary:
             root = Path(temporary)
-            hourly = root / 'data/interim/hourly_stablecoin.parquet'
+            hourly = root / 'data/raw/hourly_stablecoin.parquet'
             hourly.parent.mkdir(parents=True)
             hourly.write_bytes(b'retained source')
-            (root / 'data/raw').mkdir()
             (root / 'data/raw/dune_onchain.zip').write_bytes(b'retained archive')
             output = root / 'fresh'
             plan = [('first', []), ('second', []), ('third', [])]
@@ -68,6 +67,10 @@ class ReproductionWorkflowTests(unittest.TestCase):
                 with self.assertRaises(FileExistsError):
                     reproduce.run_full(output, plan, env)
             self.assertEqual(hourly.read_bytes(), b'retained source')
+            self.assertEqual(
+                (output / 'data/raw/hourly_stablecoin.parquet').read_bytes(),
+                b'retained source',
+            )
 
     def test_dry_run_has_no_output_side_effects(self):
         """Print the entire workflow without acquiring data or making files."""

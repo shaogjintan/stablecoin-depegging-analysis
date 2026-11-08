@@ -107,7 +107,7 @@
       "sha256": "e17273df97163e74855d6edd0c758037180fb063e97d0319cb4c446e42cc413d"
     },
     {
-      "path": "data/interim/hourly_stablecoin.parquet",
+      "path": "data/raw/hourly_stablecoin.parquet",
       "bytes": 8313553,
       "sha256": "e8b151a360e386443389d9abe45a6b2c1467c3c9a3c6da449fe495fba09a95bf",
       "rows": 344729,

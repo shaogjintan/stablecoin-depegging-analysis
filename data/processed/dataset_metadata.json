@@ -1,7 +1,7 @@
 {
   "sources": [
     {
-      "path": "data/interim/hourly_stablecoin.parquet",
+      "path": "data/raw/hourly_stablecoin.parquet",
       "sha256": "e8b151a360e386443389d9abe45a6b2c1467c3c9a3c6da449fe495fba09a95bf"
     },
     {
@@ -13,7 +13,7 @@
       "sha256": "7324b4ab913cfbde123418e1f1c7834953411568cec3792ac07b9e3c5d5d0363"
     }
   ],
-  "pipeline": "data/interim/ (hourly_stablecoin.parquet + hourly_stablecoin_market_features.parquet + hourly_stablecoin_onchain_features.parquet) -> merge on coin/hour -> compute calendar-based market features, merged-onset labels and causal prediction eligibility -> shift timestamps to completed-bar close -> master.parquet + depeg_episodes.parquet in the output directory",
+  "pipeline": "data/raw/hourly_stablecoin.parquet + data/interim/ (hourly_stablecoin_market_features.parquet + hourly_stablecoin_onchain_features.parquet) -> merge on coin/hour -> compute calendar-based market features, merged-onset labels and causal prediction eligibility -> shift timestamps to completed-bar close -> master.parquet + depeg_episodes.parquet in the output directory",
   "master": "data/processed/master.parquet",
   "master_sha256": "450865153d17b95627daeb48d8f64baf7d0f403b3c9b57d564e2a9aeaf284a37",
   "episodes": "data/processed/depeg_episodes.parquet",

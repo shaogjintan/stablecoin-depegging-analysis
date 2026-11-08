@@ -13,7 +13,7 @@ dependencies and is not equivalent to installing the freeze.
 
 Required inputs, explicitly allowed in Git:
 
-- `data/interim/hourly_stablecoin.parquet`: retained hourly market observations.
+- `data/raw/hourly_stablecoin.parquet`: retained hourly market observations.
 - `data/raw/dune_onchain.zip`: original per-coin Dune exports.
 
 Verify their hashes against `data/manifest.json`. Their inclusion in a clone

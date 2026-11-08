@@ -11,7 +11,7 @@ import os
 DATA_DIR = Path(os.environ.get("STABLECOIN_DATA_DIR", "data"))
 RAW_DATA_DIR = DATA_DIR / "raw"
 INTERIM_DATA_DIR = DATA_DIR / "interim"
-HOURLY_MARKET_PATH = INTERIM_DATA_DIR / "hourly_stablecoin.parquet"
+HOURLY_MARKET_PATH = RAW_DATA_DIR / "hourly_stablecoin.parquet"
 MARKET_FEATURES_PATH = (
     INTERIM_DATA_DIR / "hourly_stablecoin_market_features.parquet"
 )

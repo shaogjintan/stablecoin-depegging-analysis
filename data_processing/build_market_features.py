@@ -6,7 +6,7 @@ are preserved under delete/archive_cleanup/history/data_processing/.
 
 Run ``python -m data_processing.build_market_features`` to rebuild
 data/interim/hourly_stablecoin_market_features.parquet from the retained
-data/interim/hourly_stablecoin.parquet. This replaces the interim feature
+data/raw/hourly_stablecoin.parquet. This replaces the interim feature
 file with the current calculation; it does not fetch data or train models.
 
 The retained historical interim file can differ in simple-return diagnostics

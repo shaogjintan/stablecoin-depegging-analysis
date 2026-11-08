@@ -9,6 +9,16 @@ Files named __init__.py let Python import code from a folder. Most do not
 perform analysis themselves. Test files check that the code behaves correctly;
 they do not produce the study results.
 
+## Data storage
+
+| Subfolder | Data file name | What it contains |
+|---|---|---|
+| `raw/` | `hourly_stablecoin.parquet` | Retained hourly reference prices, exchange trading volumes and venue information used to rebuild market features. |
+| `raw/` | `dune_onchain.zip`, six coin-specific CSVs | Original on-chain export bundle and the extracted study-coin inputs. |
+| `interim/` | `hourly_stablecoin_market_features.parquet` | Derived market features. |
+| `interim/` | `hourly_stablecoin_onchain_features.parquet` | Derived on-chain features. |
+| `processed/` | `master.parquet`, `depeg_episodes.parquet` | Final hourly modelling dataset and episode records. |
+
 ## data_processing
 
 | Python file | Purpose |

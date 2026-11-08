@@ -93,7 +93,7 @@ def run_full(output, plan, env):
     """
     from modelling.utils.io import sha256
 
-    hourly = ROOT / 'data/interim/hourly_stablecoin.parquet'
+    hourly = ROOT / 'data/raw/hourly_stablecoin.parquet'
     archive = ROOT / 'data/raw/dune_onchain.zip'
     for path in (hourly, archive):
         if not path.is_file():
@@ -101,9 +101,9 @@ def run_full(output, plan, env):
     output.mkdir(parents=True, exist_ok=False)
     interim = output / 'data' / 'interim'
     interim.mkdir(parents=True)
-    shutil.copy2(hourly, interim / hourly.name)
     raw = output / "data" / "raw"
     raw.mkdir(parents=True)
+    shutil.copy2(hourly, raw / hourly.name)
     shutil.copy2(archive, raw / archive.name)
     state = dict(status='running', sources=[
         dict(path=str(path), sha256=sha256(path)) for path in (hourly, archive)

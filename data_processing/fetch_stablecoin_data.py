@@ -1,4 +1,4 @@
-"""Acquire reference prices and exchange volume into the interim hourly table.
+"""Acquire reference prices and exchange volume into the raw hourly source table.
 
 Run explicitly with ``python -m data_processing.fetch_stablecoin_data``.
 This command makes network requests; normal model reproduction uses the frozen

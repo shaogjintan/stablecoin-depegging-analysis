@@ -34,7 +34,7 @@ reproduction. Saved fitted-model evidence remains separate:
 
 | Workflow | Additional files needed |
 |---|---|
-| Full reproduction | `data/interim/hourly_stablecoin.parquet` and the `data/raw/dune_onchain.zip` |
+| Full reproduction | `data/raw/hourly_stablecoin.parquet` and the `data/raw/dune_onchain.zip` |
 | Verify saved models or regenerate their reports | Retained inputs and saved run evidence described in [artifacts/README.md](artifacts/README.md) |
 
 The hourly Parquet must be included in the repository commit before reviewers
@@ -47,7 +47,7 @@ Installing Python packages does not supply research data or saved models.
 Reviewers can also generate their own hourly market table by installing the
 optional acquisition dependencies and running
 `python -m data_processing.fetch_stablecoin_data`. This uses external APIs and
-replaces `data/interim/hourly_stablecoin.parquet`. It reruns the method on newly
+replaces `data/raw/hourly_stablecoin.parquet`. It reruns the method on newly
 downloaded observations; the values and resulting metrics may differ from the
 reported analysis. Use the supplied hourly source to reproduce the same inputs.
 See the [fresh-data route](docs/reproduction.md#rerun-with-newly-downloaded-market-data).
@@ -65,7 +65,7 @@ python -m reports.reproduce --full
 This rebuilds features and the dataset, trains logistic regression, random
 forest and XGBoost for h1/h6/h24 across 2021–2025, verifies the new predictions,
 and generates robustness checks, benchmarks and reports. It requires the
-retained `data/interim/hourly_stablecoin.parquet` and `data/raw/dune_onchain.zip`, not
+retained `data/raw/hourly_stablecoin.parquet` and `data/raw/dune_onchain.zip`, not
 historical fitted models. It does not download updated data.
 
 All fresh outputs go under `artifacts/reproduction/`, leaving the retained

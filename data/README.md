@@ -4,7 +4,7 @@
 
 Both `python -m data_processing.merge_and_label` and `python -m data_processing.build_dataset` use the same direct route: acquired hourly market snapshot + interim market/on-chain feature tables -> corrected features, episodes and labels in memory -> canonical outputs. No old master is needed or written. Existing outputs are validated without overwriting; add `--rebuild` to compare a reconstruction or `--rebuild --out-dir <fresh>` to create a fresh pair.
 
-`interim/` holds the acquired hourly market table and the market/on-chain feature tables; `raw/` holds the six extracted source CSVs and the original ZIP. The Dune ZIP at `data/raw/dune_onchain.zip` is retained. All six CSVs match their ZIP members byte-for-byte; see `dune_export_verification` in `manifest.json`. The old original master and old episode manifest are quarantined under delete/, never used by the maintained build.
+`raw/` holds the acquired hourly market table, six extracted source CSVs and original ZIP. `interim/` holds the derived market and on-chain feature tables. The Dune ZIP at `data/raw/dune_onchain.zip` is retained. All six CSVs match their ZIP members byte-for-byte; see `dune_export_verification` in `manifest.json`. The old original master and old episode manifest are quarantined under delete/, never used by the maintained build.
 
 The derived interim tables can be rebuilt from retained local sources. The
 market writer now uses the same calendar-based calculation as the final
@@ -16,7 +16,7 @@ and the explicitly reported historical diagnostic differences.
 
 manifest.json records current paths, schemas and hashes. Original market API responses are not available. Existing corrected inputs remain byte-identical to the model evidence. Fresh rolling reductions may vary by up to 1e-9 near zero; see docs/reproduction.md for strict comparison scope. Large source snapshots/intermediates remain local artifacts and require separate distribution.
 
-Git rules explicitly allow the retained `interim/hourly_stablecoin.parquet`
+Git rules explicitly allow the retained `raw/hourly_stablecoin.parquet`
 source, alongside the frozen processed inputs. Commit that hourly file to make
 same-input rebuilding available in a clone. Derived interim feature tables,
 extracted raw CSVs, and fitted models remain excluded. The source-data ZIP is

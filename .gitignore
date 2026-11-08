@@ -20,9 +20,6 @@ ENV/
 !data/README.md
 !data/manifest.json
 # The retained hourly observations make same-input reproduction possible.
-!data/interim/
-/data/interim/*
-!data/interim/hourly_stablecoin.parquet
 
 # Modelling scratch (predictions, model artifacts; final tables/figures -> reports/)
 results/
@@ -100,3 +97,4 @@ data/processed/*
 !data/raw/
 /data/raw/*
 !data/raw/dune_onchain.zip
+!data/raw/hourly_stablecoin.parquet

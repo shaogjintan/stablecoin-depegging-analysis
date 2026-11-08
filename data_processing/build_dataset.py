@@ -1,4 +1,4 @@
-"""Build canonical corrected tables from the three retained interim inputs.
+"""Build canonical corrected tables from retained source and feature tables.
 
 Run ``python -m data_processing.build_dataset`` to validate existing outputs.
 Add ``--rebuild`` to compare a reconstruction, or ``--out-dir`` to write a fresh
@@ -90,7 +90,7 @@ MASTER_COLUMNS = [
 ]
 
 PIPELINE_DESCRIPTION = (
-    "configured interim root (hourly_stablecoin.parquet + "
+    "configured raw root (hourly_stablecoin.parquet) + interim root ("
     "hourly_stablecoin_market_features.parquet + "
     "hourly_stablecoin_onchain_features.parquet) -> merge on coin/hour "
     "-> compute calendar-based market features, merged-onset labels and "
@@ -213,7 +213,7 @@ def main():
     parser.add_argument("--out-dir", type=Path, default=PROCESSED_DATA_DIR)
     parser.add_argument(
         "--rebuild", action="store_true",
-        help="Rebuild from interim inputs; compare if outputs already exist.",
+        help="Rebuild from source and feature tables; compare if outputs already exist.",
     )
     args = parser.parse_args()
     master_path = args.out_dir / ACTIVE_MASTER_PATH.name
