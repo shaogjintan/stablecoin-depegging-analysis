@@ -29,6 +29,8 @@ class ReproductionWorkflowTests(unittest.TestCase):
             if module in {
                 'modelling.validation.verify_model_results',
                 'modelling.robustness_checks.alternative_definitions',
+                'modelling.robustness_checks.alarm_smoothing',
+                'modelling.robustness_checks.or_combination',
                 'modelling.reporting.model_results',
                 'modelling.reporting.calibration_audit',
                 'modelling.reporting.detection_by_type',

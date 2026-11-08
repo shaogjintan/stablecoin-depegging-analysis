@@ -172,32 +172,32 @@
       ]
     },
     {
-      "path": "data/raw/dune_onchain/pax.csv",
+      "path": "data/raw/pax.csv",
       "bytes": 3139228,
       "sha256": "ae2e643a813956e1031f6b5c35e419e2d83a61b160f6775d13e6dc053f1b0f17"
     },
     {
-      "path": "data/raw/dune_onchain/usdt.csv",
+      "path": "data/raw/usdt.csv",
       "bytes": 4010298,
       "sha256": "92270d8839fd352b40e024987c97a766a5a7cda734cf9c5981661cc3446fb0ca"
     },
     {
-      "path": "data/raw/dune_onchain/usdc.csv",
+      "path": "data/raw/usdc.csv",
       "bytes": 3777520,
       "sha256": "6a0c88e69e3bf30d63f6a99519fe443f713b601097113ed71713638dfeef26e1"
     },
     {
-      "path": "data/raw/dune_onchain/busd.csv",
+      "path": "data/raw/busd.csv",
       "bytes": 2796108,
       "sha256": "8941568382969f83b5c90efbbb656c7dd1a18eab0539d9ad13c46a8c84d7c211"
     },
     {
-      "path": "data/raw/dune_onchain/dai.csv",
+      "path": "data/raw/dai.csv",
       "bytes": 3131843,
       "sha256": "4cfd453774dff4e23163ae4e1e3b3bdf1ba1616f23ab8fcfb2e759dc04f93078"
     },
     {
-      "path": "data/raw/dune_onchain/tusd.csv",
+      "path": "data/raw/tusd.csv",
       "bytes": 3035217,
       "sha256": "4f7b979f1b282dafaedd0155fce200b77be8a0dfea0cf79c56305828fbbef237"
     },
@@ -214,35 +214,157 @@
     "all_match": true,
     "files": [
       {
-        "csv": "data/raw/dune_onchain/busd.csv",
+        "csv": "data/raw/busd.csv",
         "zip_member": "dune_onchain/busd.csv",
-        "byte_identical": true
+        "byte_identical": true,
+        "coin": "BUSD",
+        "sha256": "8941568382969f83b5c90efbbb656c7dd1a18eab0539d9ad13c46a8c84d7c211",
+        "rows": 52542,
+        "first_hour": "2019-09-10 18:00:00.000 UTC",
+        "last_hour": "2025-12-31 23:00:00.000 UTC",
+        "query_url": null,
+        "query_id": null,
+        "exported_at": null,
+        "verified_contract_address": null,
+        "verified_decimal_divisor": null,
+        "query_provenance_status": "unconfirmed; original per-coin query settings not supplied",
+        "archived_config_candidate": {
+          "source": "archive/midterm_presentation/code/config.py",
+          "contract_address": "0x4fabb145d64652a948d72533023f6e7a623c7c53",
+          "token_decimals": 18,
+          "status": "historical configuration only; not verified against this export"
+        },
+        "zip_member_timestamp_without_timezone": "2026-09-09 01:46:54"
       },
       {
-        "csv": "data/raw/dune_onchain/dai.csv",
+        "csv": "data/raw/dai.csv",
         "zip_member": "dune_onchain/dai.csv",
-        "byte_identical": true
+        "byte_identical": true,
+        "coin": "DAI",
+        "sha256": "4cfd453774dff4e23163ae4e1e3b3bdf1ba1616f23ab8fcfb2e759dc04f93078",
+        "rows": 53654,
+        "first_hour": "2019-11-13 21:00:00.000 UTC",
+        "last_hour": "2025-12-31 23:00:00.000 UTC",
+        "query_url": null,
+        "query_id": null,
+        "exported_at": null,
+        "verified_contract_address": null,
+        "verified_decimal_divisor": null,
+        "query_provenance_status": "unconfirmed; original per-coin query settings not supplied",
+        "archived_config_candidate": {
+          "source": "archive/midterm_presentation/code/config.py",
+          "contract_address": "0x6b175474e89094c44da98b954eedeac495271d0f",
+          "token_decimals": 18,
+          "status": "historical configuration only; not verified against this export"
+        },
+        "zip_member_timestamp_without_timezone": "2026-09-09 00:21:50"
       },
       {
-        "csv": "data/raw/dune_onchain/pax.csv",
+        "csv": "data/raw/pax.csv",
         "zip_member": "dune_onchain/pax.csv",
-        "byte_identical": true
+        "byte_identical": true,
+        "coin": "PAX",
+        "sha256": "ae2e643a813956e1031f6b5c35e419e2d83a61b160f6775d13e6dc053f1b0f17",
+        "rows": 59600,
+        "first_hour": "2018-09-10 13:00:00.000 UTC",
+        "last_hour": "2025-12-31 23:00:00.000 UTC",
+        "query_url": null,
+        "query_id": null,
+        "exported_at": null,
+        "verified_contract_address": null,
+        "verified_decimal_divisor": null,
+        "query_provenance_status": "unconfirmed; original per-coin query settings not supplied",
+        "archived_config_candidate": {
+          "source": "archive/midterm_presentation/code/config.py",
+          "contract_address": "0x8e870d67f660d95d5be530380d0ec0bd388289e1",
+          "token_decimals": 18,
+          "status": "historical configuration only; not verified against this export"
+        },
+        "zip_member_timestamp_without_timezone": "2026-09-09 01:05:24"
       },
       {
-        "csv": "data/raw/dune_onchain/tusd.csv",
+        "csv": "data/raw/tusd.csv",
         "zip_member": "dune_onchain/tusd.csv",
-        "byte_identical": true
+        "byte_identical": true,
+        "coin": "TUSD",
+        "sha256": "4f7b979f1b282dafaedd0155fce200b77be8a0dfea0cf79c56305828fbbef237",
+        "rows": 57100,
+        "first_hour": "2019-01-04 03:00:00.000 UTC",
+        "last_hour": "2025-12-31 23:00:00.000 UTC",
+        "query_url": null,
+        "query_id": null,
+        "exported_at": null,
+        "verified_contract_address": null,
+        "verified_decimal_divisor": null,
+        "query_provenance_status": "unconfirmed; original per-coin query settings not supplied",
+        "archived_config_candidate": {
+          "source": "archive/midterm_presentation/code/config.py",
+          "contract_address": "0x0000000000085d4780b73119b644ae5ecd22b376",
+          "token_decimals": 18,
+          "status": "historical configuration only; not verified against this export"
+        },
+        "zip_member_timestamp_without_timezone": "2026-09-09 00:53:30"
       },
       {
-        "csv": "data/raw/dune_onchain/usdc.csv",
+        "csv": "data/raw/usdc.csv",
         "zip_member": "dune_onchain/usdc.csv",
-        "byte_identical": true
+        "byte_identical": true,
+        "coin": "USDC",
+        "sha256": "6a0c88e69e3bf30d63f6a99519fe443f713b601097113ed71713638dfeef26e1",
+        "rows": 63333,
+        "first_hour": "2018-09-10 18:00:00.000 UTC",
+        "last_hour": "2025-12-31 23:00:00.000 UTC",
+        "query_url": null,
+        "query_id": null,
+        "exported_at": null,
+        "verified_contract_address": null,
+        "verified_decimal_divisor": null,
+        "query_provenance_status": "unconfirmed; original per-coin query settings not supplied",
+        "archived_config_candidate": {
+          "source": "archive/midterm_presentation/code/config.py",
+          "contract_address": "0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48",
+          "token_decimals": 6,
+          "status": "historical configuration only; not verified against this export"
+        },
+        "zip_member_timestamp_without_timezone": "2026-09-09 00:18:28"
       },
       {
-        "csv": "data/raw/dune_onchain/usdt.csv",
+        "csv": "data/raw/usdt.csv",
         "zip_member": "dune_onchain/usdt.csv",
-        "byte_identical": true
+        "byte_identical": true,
+        "coin": "USDT",
+        "sha256": "92270d8839fd352b40e024987c97a766a5a7cda734cf9c5981661cc3446fb0ca",
+        "rows": 67714,
+        "first_hour": "2018-01-22 08:00:00.000 UTC",
+        "last_hour": "2025-12-31 23:00:00.000 UTC",
+        "query_url": null,
+        "query_id": null,
+        "exported_at": null,
+        "verified_contract_address": null,
+        "verified_decimal_divisor": null,
+        "query_provenance_status": "unconfirmed; original per-coin query settings not supplied",
+        "archived_config_candidate": {
+          "source": "archive/midterm_presentation/code/config.py",
+          "contract_address": "0xdac17f958d2ee523a2206206994597c13d831ec7",
+          "token_decimals": 6,
+          "status": "historical configuration only; not verified against this export"
+        },
+        "zip_member_timestamp_without_timezone": "2026-09-09 00:02:48"
       }
+    ],
+    "supplied_query_example": {
+      "path": "data_processing/dune_hourly_transfers.sql",
+      "sha256": "d42c47e111e689e8f3bafc899004bfb0a30c286dfebbda0065e34f7824509e15",
+      "contract_address": "0xdC035D45d973E3EC169d2276DDab16f1e407384F",
+      "decimal_divisor": "1e18",
+      "archived_config_token_label": "USDS",
+      "status": "user is unsure whether contract/divisor were changed per study coin; not verified as source of the six study exports"
+    },
+    "provenance_limitations": [
+      "CSV bytes and schema are verified against retained ZIP members; this does not verify the acquisition query.",
+      "Query IDs, original per-coin contract addresses/divisors, and actual export dates are unknown.",
+      "ZIP member timestamps have no timezone and must not be interpreted as verified export dates.",
+      "Archived contract/decimal settings are candidates only. No values were rescaled or replaced."
     ]
   }
 }

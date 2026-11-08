@@ -1674,5 +1674,40 @@
     "from": "agent.md",
     "to": "delete/agent.md",
     "action": "quarantine redundant assistant working instructions as requested; contents unchanged"
+  },
+  {
+    "from": "data/raw/dune_onchain/pax.csv",
+    "to": "data/raw/pax.csv",
+    "action": "flatten extracted Dune CSVs directly into raw; SHA-256 unchanged"
+  },
+  {
+    "from": "data/raw/dune_onchain/usdt.csv",
+    "to": "data/raw/usdt.csv",
+    "action": "flatten extracted Dune CSVs directly into raw; SHA-256 unchanged"
+  },
+  {
+    "from": "data/raw/dune_onchain/usdc.csv",
+    "to": "data/raw/usdc.csv",
+    "action": "flatten extracted Dune CSVs directly into raw; SHA-256 unchanged"
+  },
+  {
+    "from": "data/raw/dune_onchain/busd.csv",
+    "to": "data/raw/busd.csv",
+    "action": "flatten extracted Dune CSVs directly into raw; SHA-256 unchanged"
+  },
+  {
+    "from": "data/raw/dune_onchain/dai.csv",
+    "to": "data/raw/dai.csv",
+    "action": "flatten extracted Dune CSVs directly into raw; SHA-256 unchanged"
+  },
+  {
+    "from": "data/raw/dune_onchain/tusd.csv",
+    "to": "data/raw/tusd.csv",
+    "action": "flatten extracted Dune CSVs directly into raw; SHA-256 unchanged"
+  },
+  {
+    "from": "historical alarm smoothing and OR-combination concepts",
+    "to": "modelling/robustness_checks/alarm_smoothing.py and or_combination.py",
+    "action": "implement new saved-final-score fixed-calibration-cutoff checks; original historical files remain quarantined; no test-optimised cutoff search reused"
   }
 ]

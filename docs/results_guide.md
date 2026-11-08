@@ -31,3 +31,12 @@ The combined model comparison summary, yearly table, and per-coin table include 
 ## Five headline metrics
 
 Comparison tables order identifiers first, then `median_lead_hours`, `episode_recall`, `false_alarms`, `false_alarms_per_coin_month`, and `average_precision`, followed by supporting counts. Other fields remain available in adjacent `*_diagnostics.csv` files, joined by model/configuration/horizon/policy and applicable year or coin. Benchmark identifiers are model and horizon. Frozen run tables retain their original schemas. Event-type detection counts are a separate analysis: false alarms cannot be assigned an observed event type. See modelling/reporting/README.md for exporter scope.
+
+## Alarm-rule robustness
+
+`reports/robustness/alarm_smoothing/` compares original alarms with consecutive-
+hour confirmation. `reports/robustness/or_combination/` compares each model pair
+with its fixed-cutoff OR rule. Both contain yearly and pooled summaries and
+source manifests. Models and original cutoffs are unchanged; calibration rates
+are reported separately. These are distinct from alternative episode definitions.
+Smoothing AP uses unchanged model scores. Binary OR AP is undefined and blank.

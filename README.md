@@ -1,6 +1,6 @@
 # Stablecoin depeg early-warning analysis
 
-NUS DSE4101, Group 1. We test whether market information predicts depeg onsets within 1, 6 or 24 hours, and whether on-chain change features improve warnings on matched coin-hours.
+We test whether market information predicts depeg onsets within 1, 6 or 24 hours, and whether on-chain change features improve warnings on matched coin-hours.
 
 The study covers USDT, USDC, BUSD, DAI, TUSD and PAX. Final results use the corrected bar-close dataset, expanding test years 2021–2025, a 25-hour purge and 24-hour embargo. Practice models select the lowest feasible validation cutoff under an average budget of one false alarm per observed coin-month. Final models refit on the outer training population and keep that cutoff. LR also keeps the C selected within practice training. The validation budget is not a test-period guarantee.
 
@@ -11,6 +11,7 @@ The study covers USDT, USDC, BUSD, DAI, TUSD and PAX. Final results use the corr
 - [Outcome-definition robustness](reports/robustness/alt_definitions/README.md)
 - [Reproduction instructions](docs/reproduction.md)
 - [Methodology and limitations](docs/methodology.md)
+- [Python file inventory](docs/code_inventory.md)
 - [Historical cleanup record](archive/maintenance/cleanup_history.md)
 
 ## Setup and checks

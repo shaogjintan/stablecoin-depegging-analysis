@@ -19,7 +19,7 @@ ONCHAIN_FEATURES_PATH = (
     INTERIM_DATA_DIR / "hourly_stablecoin_onchain_features.parquet"
 )
 DUNE_ONCHAIN_ZIP = RAW_DATA_DIR / "dune_onchain.zip"
-DUNE_ONCHAIN_DIR = RAW_DATA_DIR / "dune_onchain"
+DUNE_ONCHAIN_DIR = RAW_DATA_DIR
 PROCESSED_DATA_DIR = DATA_DIR / "processed"
 # Canonical corrected inputs; dataset_version records the statistical protocol.
 MODELLING_DATA_VERSION = "corrected_v1"

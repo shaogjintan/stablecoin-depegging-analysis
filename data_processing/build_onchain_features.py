@@ -1,7 +1,7 @@
 """Build hourly on-chain features from Dune Analytics exports.
 
 Extracts the per-coin CSV for each coin in config.FIAT_COINS from
-config.DUNE_ONCHAIN_ZIP into config.DUNE_ONCHAIN_DIR (data/raw/dune_onchain),
+config.DUNE_ONCHAIN_ZIP into config.DUNE_ONCHAIN_DIR (data/raw),
 then builds features from those extracted files only. Identical extracted
 files are reused; conflicts are rejected before extraction. Invalid exports
 raise errors rather than being skipped. Missing observations remain missing.

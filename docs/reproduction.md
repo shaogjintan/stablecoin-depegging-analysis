@@ -21,6 +21,13 @@ requires committing and pushing the files, not merely allowing them in Git.
 The original market API responses are unavailable; the hourly table is the
 retained acquisition output.
 
+The retained Dune CSVs match their ZIP members. Their original per-coin query
+IDs, contract/divisor settings and export dates are unconfirmed. The supplied
+single-contract SQL is an example, not a verified query for all six coins.
+`data/manifest.json` distinguishes file verification from unknown acquisition
+provenance. Full reproduction uses the retained exports; exact on-chain
+reacquisition from SQL has not been established.
+
 ```sh
 python -m reports.reproduce --full --dry-run
 python -m reports.reproduce --full
@@ -34,7 +41,7 @@ The dry run prints the plan without writing or training. Full reproduction:
 2. Rebuilds market and on-chain features and the processed dataset.
 3. Trains LR, random forest and XGBoost for h1/h6/h24 across 2021–2025.
 4. Verifies the new run, including saved prediction replay.
-5. Runs h6/h24 alternative-outcome robustness checks.
+5. Runs h6/h24 alternative-outcome, alarm-smoothing and OR-combination checks.
 6. Exports comparisons, per-coin and event-type results, calibration, coverage,
    benchmarks and model interpretation. XGBoost SHAP uses the new test evidence.
 
@@ -154,3 +161,11 @@ characters per line; `.style.yapf` records formatting preferences.
 Historical cleanup records and the delete-folder dependency audit live under
 `archive/maintenance/`. They describe their recorded scope, not new validation
 of every later change.
+
+Alarm-rule checks can also run independently using
+`python -m modelling.robustness_checks.alarm_smoothing` and
+`python -m modelling.robustness_checks.or_combination`. They use the original
+saved calibration cutoffs; no test outcome selects a cutoff or pair. See
+`modelling/robustness_checks/README.md` for population, cooldown and AP rules.
+An OR rule may exceed the original calibration budget; that is reported, not
+silently corrected using test data.
