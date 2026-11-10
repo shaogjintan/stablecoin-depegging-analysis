@@ -1,3 +1,9 @@
+"""Logistic estimator with training-fitted feature transforms and scaling.
+
+The study protocol selects C for L1 regression in training/logistic_tuning.py.
+The public L2 constructor default is retained for existing model compatibility;
+the maintained training pipeline explicitly requests L1.
+"""
 import inspect
 import numpy as np
 import pandas as pd
@@ -8,23 +14,20 @@ from .base import BaseModel
 
 
 class LogRegModel(BaseModel):
+    """Fit logistic regression with training-fitted feature transforms."""
     name = "logreg"
-    needs_imputation = True  # train.py median-imputes using the train fold only
+    needs_imputation = True  # The training pipeline fits a median imputer.
 
-    # --tune tries each combo. Smaller C = stronger shrinkage.
-    param_grid = [
-        {"C": c, "penalty": p}
-        for p in ("l1", "l2")
-        for c in (0.001, 0.01, 0.1, 1.0)
-    ]
 
     def __init__(self, C=0.1, penalty="l2", class_weight="balanced", winsor=0.01):
+        """Store logistic regularisation and preprocessing settings."""
         self.C = C
         self.penalty = penalty
         self.class_weight = class_weight
         self.winsor = winsor
 
     def _add_feats(self, X):
+        """Add peg-deviation magnitude and volatility interaction features."""
         X = pd.DataFrame(X).copy()
         if "peg_deviation" in X.columns:
             X["abs_peg_dev"] = X["peg_deviation"].abs()
@@ -33,6 +36,7 @@ class LogRegModel(BaseModel):
         return X
 
     def fit(self, X_train, y_train, X_val=None, y_val=None):
+        """Fit feature transforms, scaling, and logistic coefficients."""
         X = self._add_feats(X_train)
         self.cols_ = list(X.columns)
         # winsorise using TRAIN quantiles only (no leakage)
@@ -63,10 +67,12 @@ class LogRegModel(BaseModel):
         return self
 
     def predict_proba(self, X):
+        """Return negative- and positive-class scores for the supplied rows."""
         X = self._add_feats(X)[self.cols_]
         X = X.clip(self.lo_, self.hi_, axis=1)
         return self.clf_.predict_proba(self.scaler_.transform(X))
 
     def get_params(self):
+        """Return estimator settings and fitted metadata for run recording."""
         return {"name": self.name, "C": self.C, "penalty": self.penalty,
                 "class_weight": self.class_weight, "winsor": self.winsor}

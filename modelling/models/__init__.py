@@ -1,12 +1,9 @@
-"""
-Model registry used by `modelling/train.py --model {name}`.
+"""Estimator registry for modelling.training.train_models and benchmarks.
 
-Teammates: add your model class here once it subclasses BaseModel
-(Rule 3 in agent.md -- data access goes through modelling/prepare_data.py).
-
-    "logistic"      -> Javier  (Phase 3+)
-    "random_forest" -> Russell (Phase 3+)
-    "xgboost"       -> Sasi   (Phase 4, done)
+Model implementations expose a common fitting and prediction interface.
+Sample preparation lives in data_processing/; training settings and logistic
+C selection live in modelling/training/. Existing class module paths remain
+stable so retained joblib model files can be loaded.
 """
 from .base import BaseModel, MedianImputer
 from .baseline import ConstantPriorModel, PersistenceModel
@@ -23,7 +20,7 @@ MODEL_REGISTRY: dict[str, type[BaseModel]] = {
 }
 
 __all__ = ["BaseModel", "MedianImputer", "ConstantPriorModel",
-           "PersistenceModel", "XGBModel", "RFModel", "MODEL_REGISTRY",
+           "PersistenceModel", "XGBModel", "RFModel", "LogRegModel", "MODEL_REGISTRY",
            "get_model"]
 
 

@@ -1,0 +1,1713 @@
+[
+  {
+    "from": "archive/midterm_presentation_folder (sasi)",
+    "to": "archive/history/midterm_presentation_folder (sasi)"
+  },
+  {
+    "from": "archive/workstream-1-literature-replication",
+    "to": "archive/history/workstream-1-literature-replication"
+  },
+  {
+    "from": "archive/legacy_modelling",
+    "to": "archive/history/legacy_modelling"
+  },
+  {
+    "from": "archive/legacy_figures",
+    "to": "archive/history/legacy_figures"
+  },
+  {
+    "from": "plans/ex_post_comparison.py",
+    "to": "archive/history/analysis/ex_post_comparison.py"
+  },
+  {
+    "from": "plans/prof_changes_summary.md",
+    "to": "archive/history/planning/prof_changes_summary.md"
+  },
+  {
+    "from": "plans/coverage_table.py",
+    "to": "modelling/reporting/coverage_table.py"
+  },
+  {
+    "from": "plans/agent_md_section7_update.md",
+    "to": "archive/history/planning/agent_md_section7_update.md"
+  },
+  {
+    "from": "plans/2026-10-13-recall-first-early-warning.md",
+    "to": "archive/history/planning/2026-10-13-recall-first-early-warning.md"
+  },
+  {
+    "from": "plans/local_final_numbers.md",
+    "to": "archive/history/planning/local_final_numbers.md"
+  },
+  {
+    "from": "plans/final_presentation_structure.md",
+    "to": "archive/history/planning/final_presentation_structure.md"
+  },
+  {
+    "from": "plans/final_deck_changes.md",
+    "to": "archive/history/planning/final_deck_changes.md"
+  },
+  {
+    "from": "plans/local_curve.py",
+    "to": "archive/history/analysis/local_curve.py"
+  },
+  {
+    "from": "plans/event_types.py",
+    "to": "modelling/reporting/event_types.py"
+  },
+  {
+    "from": "plans/2026-10-13-sasi-phase3-roadmap.md",
+    "to": "archive/history/planning/2026-10-13-sasi-phase3-roadmap.md"
+  },
+  {
+    "from": "plans",
+    "to": "delete/empty_directories/plans"
+  },
+  {
+    "from": "modelling/add_event_type.py",
+    "to": "modelling/reporting/event_annotations.py"
+  },
+  {
+    "from": "reports/final_results",
+    "to": "archive/history/reports/final_results"
+  },
+  {
+    "from": "reports/rf_importance",
+    "to": "archive/history/reports/rf_importance"
+  },
+  {
+    "from": "reports/lr_corrected",
+    "to": "archive/history/reports/lr_corrected"
+  },
+  {
+    "from": "reports/logreg_l1_yearcv",
+    "to": "archive/history/reports/logreg_l1_yearcv"
+  },
+  {
+    "from": "reports/logreg_tuning",
+    "to": "archive/history/reports/logreg_tuning"
+  },
+  {
+    "from": "reports/xgb_corrected_shap_v1",
+    "to": "archive/history/reports/xgb_corrected_shap_v1"
+  },
+  {
+    "from": "reports/xgb_threshold_search",
+    "to": "archive/history/reports/xgb_threshold_search"
+  },
+  {
+    "from": "reports/rolling_thresholds",
+    "to": "archive/history/reports/rolling_thresholds"
+  },
+  {
+    "from": "reports/alarm_tables",
+    "to": "archive/history/reports/alarm_tables"
+  },
+  {
+    "from": "reports/figures",
+    "to": "archive/history/reports/figures"
+  },
+  {
+    "from": "reports/presentation_consolidated",
+    "to": "reports/final/presentation"
+  },
+  {
+    "from": "reports/robustness/REFIT-CONCLUSIONS-CORRECTED",
+    "to": "reports/final/robustness"
+  },
+  {
+    "from": "reports/robustness/xgb_d3_lr005_300_t2_h24_robustness.csv",
+    "to": "archive/history/reports/robustness/xgb_d3_lr005_300_t2_h24_robustness.csv"
+  },
+  {
+    "from": "reports/robustness/xgboost_xgb_d3_lr005_300_t2_h24_depeg_robustness_recall_heatmap.svg",
+    "to": "archive/history/reports/robustness/xgboost_xgb_d3_lr005_300_t2_h24_depeg_robustness_recall_heatmap.svg"
+  },
+  {
+    "from": "reports/robustness/xgboost_xgb_d3_lr005_300_t2_h24_depeg_robustness_false_alarms_per_coin_month_heatmap.svg",
+    "to": "archive/history/reports/robustness/xgboost_xgb_d3_lr005_300_t2_h24_depeg_robustness_false_alarms_per_coin_month_heatmap.svg"
+  },
+  {
+    "from": "reports/robustness",
+    "to": "delete/empty_directories/robustness"
+  },
+  {
+    "from": "reports/recall_operating_points.csv",
+    "to": "archive/history/reports/recall_operating_points.csv"
+  },
+  {
+    "from": "reports/local_budget_per_year.csv",
+    "to": "archive/history/reports/local_budget_per_year.csv"
+  },
+  {
+    "from": "reports/logreg_matched_tier_eval.csv",
+    "to": "archive/history/reports/logreg_matched_tier_eval.csv"
+  },
+  {
+    "from": "reports/ex_post_comparison.csv",
+    "to": "archive/history/reports/ex_post_comparison.csv"
+  },
+  {
+    "from": "reports/local_budget_curve_t2_h24.png",
+    "to": "archive/history/reports/local_budget_curve_t2_h24.png"
+  },
+  {
+    "from": "reports/modelling_comparison.csv",
+    "to": "archive/history/reports/modelling_comparison.csv"
+  },
+  {
+    "from": "reports/combination_results.csv",
+    "to": "archive/history/reports/combination_results.csv"
+  },
+  {
+    "from": "reports/coverage_table.csv",
+    "to": "archive/history/reports/coverage_before_regeneration/coverage_table.csv"
+  },
+  {
+    "from": "reports/local_budget_curve_t1_h24.png",
+    "to": "archive/history/reports/local_budget_curve_t1_h24.png"
+  },
+  {
+    "from": "reports/logreg_coef_slide_h24_t2.csv",
+    "to": "archive/history/reports/logreg_coef_slide_h24_t2.csv"
+  },
+  {
+    "from": "reports/ex_post_vs_real_time_h24.png",
+    "to": "archive/history/reports/ex_post_vs_real_time_h24.png"
+  },
+  {
+    "from": "reports/logreg_coefficients.csv",
+    "to": "archive/history/reports/logreg_coefficients.csv"
+  },
+  {
+    "from": "reports/market_coverage_table.csv",
+    "to": "archive/history/reports/coverage_before_regeneration/market_coverage_table.csv"
+  },
+  {
+    "from": "reports/annual_calibration.csv",
+    "to": "archive/history/reports/annual_calibration.csv"
+  },
+  {
+    "from": "reports/logreg_operating_point.csv",
+    "to": "archive/history/reports/logreg_operating_point.csv"
+  },
+  {
+    "from": "reports/logreg_tuning_summary.csv",
+    "to": "archive/history/reports/logreg_tuning_summary.csv"
+  },
+  {
+    "from": "reports/onchain_coverage_table.csv",
+    "to": "archive/history/reports/coverage_before_regeneration/onchain_coverage_table.csv"
+  },
+  {
+    "from": "reports/ex_post_comparison_per_year.csv",
+    "to": "archive/history/reports/ex_post_comparison_per_year.csv"
+  },
+  {
+    "from": "reports/local_budget_curve.csv",
+    "to": "archive/history/reports/local_budget_curve.csv"
+  },
+  {
+    "from": "reports/event_tables",
+    "to": "archive/history/reports/event_tables"
+  },
+  {
+    "from": "runs/REFIT-LOWEST-NEW",
+    "to": "artifacts/runs/primary/REFIT-LOWEST-NEW"
+  },
+  {
+    "from": "runs/LR-REFIT-LOWEST-NEW",
+    "to": "artifacts/runs/primary/LR-REFIT-LOWEST-NEW"
+  },
+  {
+    "from": "runs/REFIT-LOWEST-H1",
+    "to": "artifacts/runs/supplementary/REFIT-LOWEST-H1"
+  },
+  {
+    "from": "runs/LR-REFIT-LOWEST-H1",
+    "to": "artifacts/runs/supplementary/LR-REFIT-LOWEST-H1"
+  },
+  {
+    "from": "runs/EXHAUSTIVE-LOWEST-NEW",
+    "to": "artifacts/runs/sensitivity/EXHAUSTIVE-LOWEST-NEW"
+  },
+  {
+    "from": "runs/XGB-NEW",
+    "to": "artifacts/runs/sensitivity/XGB-NEW"
+  },
+  {
+    "from": "runs/LR-EXHAUSTIVE-LOWEST",
+    "to": "archive/history/runs/LR-EXHAUSTIVE-LOWEST"
+  },
+  {
+    "from": "runs",
+    "to": "delete/empty_directories/runs"
+  },
+  {
+    "from": "modelling/train.py",
+    "to": "archive/history/modelling/train.py"
+  },
+  {
+    "from": "modelling/alarm_report.py",
+    "to": "archive/history/modelling/alarm_report.py"
+  },
+  {
+    "from": "modelling/annual_calibration.py",
+    "to": "archive/history/modelling/annual_calibration.py"
+  },
+  {
+    "from": "modelling/episode_summary.py",
+    "to": "archive/history/modelling/episode_summary.py"
+  },
+  {
+    "from": "modelling/compare_runs.py",
+    "to": "archive/history/modelling/compare_runs.py"
+  },
+  {
+    "from": "modelling/combine_alarms.py",
+    "to": "archive/history/modelling/combine_alarms.py"
+  },
+  {
+    "from": "modelling/compare_xgb_early_stopping.py",
+    "to": "archive/history/modelling/compare_xgb_early_stopping.py"
+  },
+  {
+    "from": "modelling/plot_metric_sensitivity.py",
+    "to": "archive/history/modelling/plot_metric_sensitivity.py"
+  },
+  {
+    "from": "modelling/matched_tier_eval.py",
+    "to": "archive/history/modelling/matched_tier_eval.py"
+  },
+  {
+    "from": "modelling/logreg_coefficients.py",
+    "to": "archive/history/modelling/logreg_coefficients.py"
+  },
+  {
+    "from": "modelling/logreg_operating_point.py",
+    "to": "archive/history/modelling/logreg_operating_point.py"
+  },
+  {
+    "from": "modelling/logreg_slide_tables.py",
+    "to": "archive/history/modelling/logreg_slide_tables.py"
+  },
+  {
+    "from": "modelling/lr_rf_presentation.py",
+    "to": "archive/history/modelling/lr_rf_presentation.py"
+  },
+  {
+    "from": "modelling/corrected_h1.py",
+    "to": "archive/history/modelling/corrected_h1.py"
+  },
+  {
+    "from": "modelling/corrected_baselines.py",
+    "to": "archive/history/modelling/corrected_baselines.py"
+  },
+  {
+    "from": "modelling/recalibrate_thresholds.py",
+    "to": "archive/history/modelling/recalibrate_thresholds.py"
+  },
+  {
+    "from": "modelling/refit_final.py",
+    "to": "archive/history/modelling/refit_final.py"
+  },
+  {
+    "from": "modelling/robustness_extensions.py",
+    "to": "archive/history/modelling/robustness_extensions.py"
+  },
+  {
+    "from": "modelling/robustness_conclusion.py",
+    "to": "archive/history/modelling/robustness_conclusion.py"
+  },
+  {
+    "from": "modelling/corrected_lr_rf.py",
+    "to": "archive/history/modelling/corrected_lr_rf.py"
+  },
+  {
+    "from": "modelling/train_logreg_yearcv.py",
+    "to": "archive/history/modelling/train_logreg_yearcv.py"
+  },
+  {
+    "from": "modelling/false_alarm_framework.py",
+    "to": "archive/history/modelling/false_alarm_framework.py"
+  },
+  {
+    "from": "modelling/consolidate_slide_values.py",
+    "to": "archive/history/modelling/consolidate_slide_values.py"
+  },
+  {
+    "from": "modelling/robustness_check.py",
+    "to": "archive/history/modelling/robustness_check.py"
+  },
+  {
+    "from": "modelling/feature_importance",
+    "to": "archive/history/modelling/feature_importance"
+  },
+  {
+    "from": "modelling/verify_baselines.py",
+    "to": "archive/history/modelling/verify_baselines.py"
+  },
+  {
+    "from": "modelling/verify_lr_rf_run.py",
+    "to": "archive/history/modelling/verify_lr_rf_run.py"
+  },
+  {
+    "from": "modelling/verify_corrected_run.py",
+    "to": "archive/history/modelling/verify_corrected_run.py"
+  },
+  {
+    "from": "modelling/verify_refit_run.py",
+    "to": "archive/history/modelling/verify_refit_run.py"
+  },
+  {
+    "from": "modelling/robustness_refit_alarms.py",
+    "to": "archive/history/modelling/robustness_refit_alarms.py"
+  },
+  {
+    "from": "modelling/checks",
+    "to": "tests"
+  },
+  {
+    "from": "tests/test_corrected_baselines.py",
+    "to": "archive/history/tests/test_corrected_baselines.py"
+  },
+  {
+    "from": "tests/test_lr_rf_repair.py",
+    "to": "archive/history/tests/test_lr_rf_repair.py"
+  },
+  {
+    "from": "tests/test_readiness.py",
+    "to": "archive/history/tests/test_readiness.py"
+  },
+  {
+    "from": "tests/test_refit_final.py",
+    "to": "archive/history/tests/test_refit_final.py"
+  },
+  {
+    "from": "tests/test_robustness_refit_alarms.py",
+    "to": "archive/history/tests/test_robustness_refit_alarms.py"
+  },
+  {
+    "from": "tests/test_threshold_policy.py",
+    "to": "archive/history/tests/test_threshold_policy.py"
+  },
+  {
+    "from": "data/processed/master.parquet",
+    "to": "data/snapshots/master_original.parquet"
+  },
+  {
+    "from": "data/processed/hourly_stablecoin.parquet",
+    "to": "data/snapshots/hourly_stablecoin.parquet"
+  },
+  {
+    "from": "data/processed/hourly_stablecoin_market_features.parquet",
+    "to": "data/interim/hourly_stablecoin_market_features.parquet"
+  },
+  {
+    "from": "data/processed/hourly_stablecoin_onchain_features.parquet",
+    "to": "data/interim/hourly_stablecoin_onchain_features.parquet"
+  },
+  {
+    "from": "data/processed/test_h24_fiat.parquet",
+    "to": "archive/history/data/test_h24_fiat.parquet"
+  },
+  {
+    "from": "data/processed/cv_folds_summary.csv",
+    "to": "archive/history/data/cv_folds_summary.csv"
+  },
+  {
+    "from": "data/processed/depeg_episodes.parquet",
+    "to": "archive/history/data/depeg_episodes.parquet"
+  },
+  {
+    "from": "data/processed/train_h1_fiat.parquet",
+    "to": "archive/history/data/train_h1_fiat.parquet"
+  },
+  {
+    "from": "data/processed/train_h6_fiat.parquet",
+    "to": "archive/history/data/train_h6_fiat.parquet"
+  },
+  {
+    "from": "data/processed/market_coverage_table.csv",
+    "to": "archive/history/data/market_coverage_table.csv"
+  },
+  {
+    "from": "data/processed/master.csv",
+    "to": "delete/data/processed/master.csv"
+  },
+  {
+    "from": "data/processed/test_h1_fiat.parquet",
+    "to": "archive/history/data/test_h1_fiat.parquet"
+  },
+  {
+    "from": "data/processed/test_h6_fiat.parquet",
+    "to": "archive/history/data/test_h6_fiat.parquet"
+  },
+  {
+    "from": "data/processed/train_h24_fiat.parquet",
+    "to": "archive/history/data/train_h24_fiat.parquet"
+  },
+  {
+    "from": "data/processed/depeg_episodes.csv",
+    "to": "delete/data/processed/depeg_episodes.csv"
+  },
+  {
+    "from": "data/processed/onchain_coverage_table.csv",
+    "to": "archive/history/data/onchain_coverage_table.csv"
+  },
+  {
+    "from": "results",
+    "to": "archive/history/results"
+  },
+  {
+    "from": "README.md",
+    "to": "archive/history/documentation/README.md"
+  },
+  {
+    "from": "agent.md",
+    "to": "archive/history/documentation/agent.md"
+  },
+  {
+    "from": "requirements.txt",
+    "to": "archive/history/documentation/requirements.txt"
+  },
+  {
+    "from": "requirements-modelling.txt",
+    "to": "archive/history/documentation/requirements-modelling.txt"
+  },
+  {
+    "from": "data_processing/coverage_table.py",
+    "to": "archive/history/data_processing/coverage_table.py"
+  },
+  {
+    "from": "modelling/checks/test_corrected_baselines.py",
+    "to": "archive/history/tests/test_corrected_baselines.py"
+  },
+  {
+    "from": "modelling/checks/test_lr_rf_repair.py",
+    "to": "archive/history/tests/test_lr_rf_repair.py"
+  },
+  {
+    "from": "modelling/checks/test_readiness.py",
+    "to": "archive/history/tests/test_readiness.py"
+  },
+  {
+    "from": "modelling/checks/test_refit_final.py",
+    "to": "archive/history/tests/test_refit_final.py"
+  },
+  {
+    "from": "modelling/checks/test_robustness_refit_alarms.py",
+    "to": "archive/history/tests/test_robustness_refit_alarms.py"
+  },
+  {
+    "from": "modelling/checks/test_threshold_policy.py",
+    "to": "archive/history/tests/test_threshold_policy.py"
+  },
+  {
+    "from": "data/snapshots/hourly_stablecoin.parquet",
+    "to": "data/interim/hourly_stablecoin.parquet"
+  },
+  {
+    "from": "data/dune_export_comparison.json",
+    "to": "delete/data/dune_export_comparison.json"
+  },
+  {
+    "from": "data_processing/PROPOSAL_PHASE_2_NOTES.md",
+    "to": "archive/history/planning/PROPOSAL_PHASE_2_NOTES.md"
+  },
+  {
+    "from": "data_processing/PROPOSAL_UPDATES_WEEK_7.md",
+    "to": "archive/history/planning/PROPOSAL_UPDATES_WEEK_7.md"
+  },
+  {
+    "from": "data_processing/verify_embargo_and_episodes.py",
+    "to": "archive/history/data_processing/verify_embargo_and_episodes.py"
+  },
+  {
+    "from": "modelling/build_corrected_dataset.py",
+    "to": "data_processing/build_dataset.py",
+    "note": "Original module retained as a compatibility wrapper."
+  },
+  {
+    "from": "reports/final/depeg_events/by_event_type.csv",
+    "to": "reports/final/model_results/by_event_type.csv"
+  },
+  {
+    "from": "reports/final/depeg_events/detection_manifest.json",
+    "to": "reports/final/model_results/detection_manifest.json"
+  },
+  {
+    "from": "scripts/reproduce.py",
+    "to": "reports/reproduce.py"
+  },
+  {
+    "from": "tests/test_xgb_repair.py",
+    "to": "tests/test_labels_and_evaluation.py"
+  },
+  {
+    "from": "tests/test_shared_training.py",
+    "to": "tests/test_training_and_calibration.py"
+  },
+  {
+    "from": "tests/test_tier2_features.py",
+    "to": "tests/diagnose_onchain_features.py"
+  },
+  {
+    "from": "tests/.py",
+    "to": "tests/test_coverage_and_event_grouping.py"
+  },
+  {
+    "from": "tests/test_by_coin.py",
+    "to": "tests/test_per_coin_metrics.py"
+  },
+  {
+    "from": "modelling/prepare_data.py",
+    "to": "modelling/data/sample_preparation.py"
+  },
+  {
+    "from": "modelling/matched_sample.py",
+    "to": "modelling/data/matched_sample.py"
+  },
+  {
+    "from": "modelling/calendar_cv.py",
+    "to": "modelling/training/calendar_cv.py"
+  },
+  {
+    "from": "modelling/lr_training.py",
+    "to": "modelling/training/logistic_regression.py"
+  },
+  {
+    "from": "modelling/refit_after_calibration.py",
+    "to": "modelling/training/refit_after_calibration.py"
+  },
+  {
+    "from": "modelling/alarm_events.py",
+    "to": "modelling/evaluation/alarm_events.py"
+  },
+  {
+    "from": "modelling/evaluate.py",
+    "to": "modelling/evaluation/metrics.py"
+  },
+  {
+    "from": "modelling/rolling_threshold.py",
+    "to": "modelling/evaluation/threshold_selection.py"
+  },
+  {
+    "from": "modelling/exact_threshold.py",
+    "to": "modelling/evaluation/exact_threshold.py"
+  },
+  {
+    "from": "modelling/run_summary.py",
+    "to": "modelling/evaluation/run_summary.py"
+  },
+  {
+    "from": "modelling/episode_definitions.py",
+    "to": "modelling/sensitivity/episode_definitions.py"
+  },
+  {
+    "from": "modelling/robustness_refit.py",
+    "to": "modelling/sensitivity/alternative_definitions.py"
+  },
+  {
+    "from": "modelling/run_exhaustive_lowest.py",
+    "to": "modelling/sensitivity/no_refit.py"
+  },
+  {
+    "from": "modelling/corrected_xgb.py",
+    "to": "modelling/sensitivity/xgboost_no_refit.py"
+  },
+  {
+    "from": "modelling/verify_release.py",
+    "to": "modelling/validation/verify_saved_runs.py"
+  },
+  {
+    "from": "modelling/reference_checks.py",
+    "to": "modelling/validation/reference_checks.py"
+  },
+  {
+    "from": "modelling/reporting/paths.py",
+    "to": "modelling/utils/artifacts.py"
+  },
+  {
+    "from": "modelling/consolidate_refit_slides.py",
+    "to": "modelling/reporting/slide_support.py"
+  },
+  {
+    "from": "modelling/reporting/lr_coef_slide.py",
+    "to": "archive/history/modelling/reporting/lr_coef_slide.py"
+  },
+  {
+    "from": "modelling/reporting/rf_importance.py",
+    "to": "archive/history/modelling/reporting/rf_importance.py"
+  },
+  {
+    "from": "modelling/verify_release.py",
+    "to": "archive/history/modelling/compatibility/verify_release.py"
+  },
+  {
+    "from": "modelling/run_exhaustive_lowest.py",
+    "to": "archive/history/modelling/compatibility/run_exhaustive_lowest.py"
+  },
+  {
+    "from": "modelling/consolidate_refit_slides.py",
+    "to": "archive/history/modelling/compatibility/consolidate_refit_slides.py"
+  },
+  {
+    "from": "modelling/lr_training.py",
+    "to": "archive/history/modelling/compatibility/lr_training.py"
+  },
+  {
+    "from": "modelling/prepare_data.py",
+    "to": "archive/history/modelling/compatibility/prepare_data.py"
+  },
+  {
+    "from": "modelling/matched_sample.py",
+    "to": "archive/history/modelling/compatibility/matched_sample.py"
+  },
+  {
+    "from": "modelling/calendar_cv.py",
+    "to": "archive/history/modelling/compatibility/calendar_cv.py"
+  },
+  {
+    "from": "modelling/robustness_refit.py",
+    "to": "archive/history/modelling/compatibility/robustness_refit.py"
+  },
+  {
+    "from": "modelling/episode_definitions.py",
+    "to": "archive/history/modelling/compatibility/episode_definitions.py"
+  },
+  {
+    "from": "modelling/run_summary.py",
+    "to": "archive/history/modelling/compatibility/run_summary.py"
+  },
+  {
+    "from": "modelling/exact_threshold.py",
+    "to": "archive/history/modelling/compatibility/exact_threshold.py"
+  },
+  {
+    "from": "modelling/evaluate.py",
+    "to": "archive/history/modelling/compatibility/evaluate.py"
+  },
+  {
+    "from": "modelling/refit_after_calibration.py",
+    "to": "archive/history/modelling/compatibility/refit_after_calibration.py"
+  },
+  {
+    "from": "modelling/corrected_xgb.py",
+    "to": "archive/history/modelling/compatibility/corrected_xgb.py"
+  },
+  {
+    "from": "modelling/alarm_events.py",
+    "to": "archive/history/modelling/compatibility/alarm_events.py"
+  },
+  {
+    "from": "modelling/corrected_data.py",
+    "to": "archive/history/modelling/compatibility/corrected_data.py"
+  },
+  {
+    "from": "modelling/rolling_threshold.py",
+    "to": "archive/history/modelling/compatibility/rolling_threshold.py"
+  },
+  {
+    "from": "modelling/reference_checks.py",
+    "to": "archive/history/modelling/compatibility/reference_checks.py"
+  },
+  {
+    "from": "modelling/reporting/paths.py",
+    "to": "archive/history/modelling/compatibility/reporting/paths.py"
+  },
+  {
+    "from": "modelling/build_corrected_dataset.py",
+    "to": "archive/history/modelling/build_corrected_dataset.py"
+  },
+  {
+    "from": "modelling/corrected_data.py",
+    "to": "data_processing/dataset_transforms.py",
+    "action": "extract shared functions or definitions"
+  },
+  {
+    "from": "modelling/corrected_data.py",
+    "to": "modelling/data/sample_preparation.py",
+    "action": "extract shared functions or definitions"
+  },
+  {
+    "from": "modelling/prepare_data.py",
+    "to": "modelling/data/feature_schema.py",
+    "action": "extract shared functions or definitions"
+  },
+  {
+    "from": "modelling/corrected_xgb.py",
+    "to": "modelling/utils/io.py",
+    "action": "extract shared functions or definitions"
+  },
+  {
+    "from": "modelling/corrected_xgb.py",
+    "to": "modelling/training/parameters.py",
+    "action": "extract shared functions or definitions"
+  },
+  {
+    "from": "modelling/consolidate_refit_slides.py",
+    "to": "modelling/reporting/calibration_audit.py",
+    "action": "extract shared functions or definitions"
+  },
+  {
+    "from": "modelling/consolidate_refit_slides.py",
+    "to": "modelling/reporting/benchmarks.py",
+    "action": "extract shared functions or definitions"
+  },
+  {
+    "from": "modelling/data/feature_schema.py",
+    "to": "data_processing/feature_schema.py"
+  },
+  {
+    "from": "modelling/data/sample_preparation.py",
+    "to": "data_processing/sample_preparation.py"
+  },
+  {
+    "from": "modelling/data/matched_sample.py",
+    "to": "data_processing/matched_sample.py"
+  },
+  {
+    "from": "modelling/data",
+    "to": "archive/history/modelling/data_package"
+  },
+  {
+    "from": "modelling/evaluation/metrics.py:pooled_metrics",
+    "to": "archive/history/modelling/evaluation/metrics_with_brier_and_roc.py",
+    "action": "archive original pooled metric implementation containing Brier score and ROC-AUC"
+  },
+  {
+    "from": "modelling/evaluation/metrics.py",
+    "to": "archive/history/modelling/evaluation/legacy_evaluation.py",
+    "action": "archive unused generic evaluation helpers and self-test; retain four current metric functions unchanged"
+  },
+  {
+    "from": "modelling/reporting/final_models.py",
+    "to": "modelling/reporting/model_interpretation.py"
+  },
+  {
+    "from": "modelling/reporting/slide_support.py",
+    "to": "archive/history/modelling/reporting/slide_support.py"
+  },
+  {
+    "from": "modelling/reporting/formatting.py",
+    "to": "archive/history/modelling/reporting/formatting.py"
+  },
+  {
+    "from": "modelling/reporting/event_table.py:plot_expanding_window",
+    "to": "archive/history/modelling/reporting/expanding_window_plot.py",
+    "action": "archive unused plotting helper"
+  },
+  {
+    "from": "modelling/sensitivity/no_refit.py",
+    "to": "archive/history/modelling/sensitivity/no_refit.py"
+  },
+  {
+    "from": "modelling/sensitivity/xgboost_no_refit.py",
+    "to": "archive/history/modelling/sensitivity/xgboost_no_refit.py"
+  },
+  {
+    "from": "modelling/sensitivity",
+    "to": "modelling/robustness_checks"
+  },
+  {
+    "from": "modelling/sensitivity/alternative_definitions.py:targetable_ids",
+    "to": "modelling/evaluation/targetability.py",
+    "action": "extract shared label-independent targetability helper unchanged"
+  },
+  {
+    "from": "modelling/training/calendar_cv.py:_average_precision",
+    "to": "archive/history/modelling/training/unused_average_precision.py",
+    "action": "archive unused AP wrapper"
+  },
+  {
+    "from": "modelling/training/calendar_cv.py:_fit_model",
+    "to": "modelling/training/logistic_regression.py",
+    "action": "move logistic model fitting unchanged"
+  },
+  {
+    "from": "modelling/training/logistic_regression.py",
+    "to": "modelling/training/logistic_tuning.py"
+  },
+  {
+    "from": "modelling/training/refit_after_calibration.py",
+    "to": "modelling/training/train_models.py"
+  },
+  {
+    "from": "modelling/models/logreg.py:LogRegModel.param_grid",
+    "to": "archive/history/modelling/models/logreg_tuning_grid.py",
+    "action": "archive unused legacy L1/L2 tuning grid; retain estimator methods unchanged"
+  },
+  {
+    "from": "modelling/models/:unused param_grid attributes",
+    "to": "archive/history/modelling/models/legacy_tuning_grids.py",
+    "action": "archive unused base, RF, XGB and benchmark tuning grids; estimator methods unchanged"
+  },
+  {
+    "from": "modelling/validation/verify_saved_runs.py",
+    "to": "modelling/validation/verify_model_results.py"
+  },
+  {
+    "from": "modelling/validation/reference_checks.py",
+    "to": "modelling/validation/independent_calculations.py"
+  },
+  {
+    "from": "modelling/validation/independent_calculations.py",
+    "to": "modelling/validation/reference_checks.py"
+  },
+  {
+    "from": "data_processing/sample_preparation.py",
+    "to": "archive/history/data_processing/sample_preparation_before_cleanup.py",
+    "action": "preserve original module before removing legacy fallbacks and duplicate fold construction"
+  },
+  {
+    "from": "data_processing/sample_preparation.py:recovery_window_mask/at_risk_mask",
+    "to": "tests/diagnose_onchain_features.py",
+    "action": "move unchanged masks to their sole manual diagnostic caller"
+  },
+  {
+    "from": "data_processing/dataset_transforms.py:calendar_market_features",
+    "to": "data_processing/build_market_features.py:calendar_market_features",
+    "action": "extract authoritative calendar-based calculation unchanged; preserve historical completeness formulas"
+  },
+  {
+    "from": "data_processing/build_market_features.py",
+    "to": "archive/history/data_processing/market_features_before_consolidation.py",
+    "action": "preserve the interim feature builder before documenting shared canonical calculation"
+  },
+  {
+    "from": "data_processing/build_onchain_features.py",
+    "to": "archive/history/data_processing/onchain_features_before_validation.py",
+    "action": "preserve on-chain builder before strict input validation and non-overwriting extraction"
+  },
+  {
+    "from": "data_processing/build_market_features.py",
+    "to": "archive/history/data_processing/market_features_before_retiring_interim.py",
+    "action": "archive historical price/exchange functions before using calendar calculation throughout"
+  },
+  {
+    "from": "data_processing/merge_and_label.py",
+    "to": "archive/history/data_processing/merge_and_label_before_retiring_interim.py",
+    "action": "archive unused historical eligibility helper before removal from maintained module"
+  },
+  {
+    "from": "data_processing/merge_and_label.py:build_labels",
+    "to": "archive/history/data_processing/merge_and_label_before_label_cleanup.py",
+    "action": "archive unused qualifying-dip label helper; retain merged-episode labels in dataset_transforms.episode_labels"
+  },
+  {
+    "from": "data_processing/dataset_transforms.py",
+    "to": "data_processing/dataset_transformation.py",
+    "action": "rename as requested; update maintained imports and new metadata provenance; share configured episode settings"
+  },
+  {
+    "from": "data_processing/matched_sample.py",
+    "to": "archive/history/data_processing/matched_sample_before_validation.py",
+    "action": "preserve population matcher before identity, duplicate-key, row-count and label validation"
+  },
+  {
+    "from": "data_processing/config.py:unused snapshot paths, report path and transfer-filter settings",
+    "to": "archive/history/data_processing/config_before_unused_settings_cleanup.py",
+    "action": "archive seven unreferenced settings; preserve all active configuration values"
+  },
+  {
+    "from": "data_processing/fetch_stablecoin_data.py",
+    "to": "archive/history/data_processing/fetch_stablecoin_data_before_acquisition_cleanup.py",
+    "action": "preserve acquisition source before fixing undefined request exception handlers and clarifying zero-fill assumptions"
+  },
+  {
+    "from": "data_processing/config.py:BINANCE_KLINE_COLS",
+    "to": "archive/history/data_processing/config_before_unused_settings_cleanup.py",
+    "action": "retire unused archive column list; current parser explicitly reads timestamp and volume"
+  },
+  {
+    "from": "reports/reproduce.py",
+    "to": "archive/history/reports/reproduce_before_full_reproduction.py",
+    "action": "preserve report-only runner before adding isolated full local-source reproduction"
+  },
+  {
+    "from": "modelling/reporting/model_interpretation.py",
+    "to": "archive/history/modelling/reporting/model_interpretation_before_full_reproduction.py",
+    "action": "preserve saved ranking exporter before selected-run and fresh native SHAP support"
+  },
+  {
+    "to": "artifacts/runs/final/h6_and_h24/random_forest_xgboost/by_year.csv",
+    "action": "relocate unchanged final evidence or archive historical experiments",
+    "from": "artifacts/runs/primary/REFIT-LOWEST-NEW/by_year.csv"
+  },
+  {
+    "to": "artifacts/runs/final/h6_and_h24/random_forest_xgboost/summary.csv",
+    "action": "relocate unchanged final evidence or archive historical experiments",
+    "from": "artifacts/runs/primary/REFIT-LOWEST-NEW/summary.csv"
+  },
+  {
+    "to": "artifacts/runs/final/h6_and_h24/random_forest_xgboost/shap_ranking_xgboost_t2_h24.csv",
+    "action": "relocate unchanged final evidence or archive historical experiments",
+    "from": "artifacts/runs/primary/REFIT-LOWEST-NEW/shap_ranking_xgboost_t2_h24.csv"
+  },
+  {
+    "to": "artifacts/runs/final/h6_and_h24/random_forest_xgboost/shap_ranking_xgboost_t2_h6.csv",
+    "action": "relocate unchanged final evidence or archive historical experiments",
+    "from": "artifacts/runs/primary/REFIT-LOWEST-NEW/shap_ranking_xgboost_t2_h6.csv"
+  },
+  {
+    "to": "artifacts/runs/final/h6_and_h24/random_forest_xgboost/alarm_events.csv",
+    "action": "relocate unchanged final evidence or archive historical experiments",
+    "from": "artifacts/runs/primary/REFIT-LOWEST-NEW/alarm_events.csv"
+  },
+  {
+    "to": "artifacts/runs/final/h6_and_h24/random_forest_xgboost/shap_checks_xgboost_t2_h24.csv",
+    "action": "relocate unchanged final evidence or archive historical experiments",
+    "from": "artifacts/runs/primary/REFIT-LOWEST-NEW/shap_checks_xgboost_t2_h24.csv"
+  },
+  {
+    "to": "artifacts/runs/final/h6_and_h24/random_forest_xgboost/run.json",
+    "action": "relocate unchanged final evidence or archive historical experiments",
+    "from": "artifacts/runs/primary/REFIT-LOWEST-NEW/run.json"
+  },
+  {
+    "to": "artifacts/runs/final/h6_and_h24/random_forest_xgboost/shap_summary.csv",
+    "action": "relocate unchanged final evidence or archive historical experiments",
+    "from": "artifacts/runs/primary/REFIT-LOWEST-NEW/shap_summary.csv"
+  },
+  {
+    "to": "artifacts/runs/final/h6_and_h24/random_forest_xgboost/shap_checks_xgboost_t2_h6.csv",
+    "action": "relocate unchanged final evidence or archive historical experiments",
+    "from": "artifacts/runs/primary/REFIT-LOWEST-NEW/shap_checks_xgboost_t2_h6.csv"
+  },
+  {
+    "to": "artifacts/runs/final/h6_and_h24/random_forest_xgboost/source",
+    "action": "relocate unchanged final evidence or archive historical experiments",
+    "from": "artifacts/runs/h6_and_h24/REFIT-LOWEST-NEW/source"
+  },
+  {
+    "to": "artifacts/runs/final/h6_and_h24/random_forest_xgboost/fits",
+    "action": "relocate unchanged final evidence or archive historical experiments",
+    "from": "artifacts/runs/h6_and_h24/REFIT-LOWEST-NEW/fits"
+  },
+  {
+    "to": "artifacts/runs/final/h6_and_h24/random_forest_xgboost/episodes.parquet",
+    "action": "relocate unchanged final evidence or archive historical experiments",
+    "from": "artifacts/runs/h6_and_h24/REFIT-LOWEST-NEW/episodes.parquet"
+  },
+  {
+    "to": "artifacts/runs/final/h6_and_h24/logistic_regression/by_year.csv",
+    "action": "relocate unchanged final evidence or archive historical experiments",
+    "from": "artifacts/runs/primary/LR-REFIT-LOWEST-NEW/by_year.csv"
+  },
+  {
+    "to": "artifacts/runs/final/h6_and_h24/logistic_regression/summary.csv",
+    "action": "relocate unchanged final evidence or archive historical experiments",
+    "from": "artifacts/runs/primary/LR-REFIT-LOWEST-NEW/summary.csv"
+  },
+  {
+    "to": "artifacts/runs/final/h6_and_h24/logistic_regression/alarm_events.csv",
+    "action": "relocate unchanged final evidence or archive historical experiments",
+    "from": "artifacts/runs/primary/LR-REFIT-LOWEST-NEW/alarm_events.csv"
+  },
+  {
+    "to": "artifacts/runs/final/h6_and_h24/logistic_regression/run.json",
+    "action": "relocate unchanged final evidence or archive historical experiments",
+    "from": "artifacts/runs/primary/LR-REFIT-LOWEST-NEW/run.json"
+  },
+  {
+    "to": "artifacts/runs/final/h6_and_h24/logistic_regression/source",
+    "action": "relocate unchanged final evidence or archive historical experiments",
+    "from": "artifacts/runs/h6_and_h24/LR-REFIT-LOWEST-NEW/source"
+  },
+  {
+    "to": "artifacts/runs/final/h6_and_h24/logistic_regression/fits",
+    "action": "relocate unchanged final evidence or archive historical experiments",
+    "from": "artifacts/runs/h6_and_h24/LR-REFIT-LOWEST-NEW/fits"
+  },
+  {
+    "to": "artifacts/runs/final/h6_and_h24/logistic_regression/episodes.parquet",
+    "action": "relocate unchanged final evidence or archive historical experiments",
+    "from": "artifacts/runs/h6_and_h24/LR-REFIT-LOWEST-NEW/episodes.parquet"
+  },
+  {
+    "to": "artifacts/runs/final/h1/random_forest_xgboost/by_year.csv",
+    "action": "relocate unchanged final evidence or archive historical experiments",
+    "from": "artifacts/runs/supplementary/REFIT-LOWEST-H1/by_year.csv"
+  },
+  {
+    "to": "artifacts/runs/final/h1/random_forest_xgboost/summary.csv",
+    "action": "relocate unchanged final evidence or archive historical experiments",
+    "from": "artifacts/runs/supplementary/REFIT-LOWEST-H1/summary.csv"
+  },
+  {
+    "to": "artifacts/runs/final/h1/random_forest_xgboost/alarm_events.csv",
+    "action": "relocate unchanged final evidence or archive historical experiments",
+    "from": "artifacts/runs/supplementary/REFIT-LOWEST-H1/alarm_events.csv"
+  },
+  {
+    "to": "artifacts/runs/final/h1/random_forest_xgboost/run.json",
+    "action": "relocate unchanged final evidence or archive historical experiments",
+    "from": "artifacts/runs/supplementary/REFIT-LOWEST-H1/run.json"
+  },
+  {
+    "to": "artifacts/runs/final/h1/random_forest_xgboost/source",
+    "action": "relocate unchanged final evidence or archive historical experiments",
+    "from": "artifacts/runs/h1/REFIT-LOWEST-H1/source"
+  },
+  {
+    "to": "artifacts/runs/final/h1/random_forest_xgboost/fits",
+    "action": "relocate unchanged final evidence or archive historical experiments",
+    "from": "artifacts/runs/h1/REFIT-LOWEST-H1/fits"
+  },
+  {
+    "to": "artifacts/runs/final/h1/random_forest_xgboost/episodes.parquet",
+    "action": "relocate unchanged final evidence or archive historical experiments",
+    "from": "artifacts/runs/h1/REFIT-LOWEST-H1/episodes.parquet"
+  },
+  {
+    "to": "artifacts/runs/final/h1/logistic_regression/by_year.csv",
+    "action": "relocate unchanged final evidence or archive historical experiments",
+    "from": "artifacts/runs/supplementary/LR-REFIT-LOWEST-H1/by_year.csv"
+  },
+  {
+    "to": "artifacts/runs/final/h1/logistic_regression/summary.csv",
+    "action": "relocate unchanged final evidence or archive historical experiments",
+    "from": "artifacts/runs/supplementary/LR-REFIT-LOWEST-H1/summary.csv"
+  },
+  {
+    "to": "artifacts/runs/final/h1/logistic_regression/alarm_events.csv",
+    "action": "relocate unchanged final evidence or archive historical experiments",
+    "from": "artifacts/runs/supplementary/LR-REFIT-LOWEST-H1/alarm_events.csv"
+  },
+  {
+    "to": "artifacts/runs/final/h1/logistic_regression/run.json",
+    "action": "relocate unchanged final evidence or archive historical experiments",
+    "from": "artifacts/runs/supplementary/LR-REFIT-LOWEST-H1/run.json"
+  },
+  {
+    "to": "artifacts/runs/final/h1/logistic_regression/source",
+    "action": "relocate unchanged final evidence or archive historical experiments",
+    "from": "artifacts/runs/h1/log_reg/source"
+  },
+  {
+    "to": "artifacts/runs/final/h1/logistic_regression/fits",
+    "action": "relocate unchanged final evidence or archive historical experiments",
+    "from": "artifacts/runs/h1/log_reg/fits"
+  },
+  {
+    "to": "artifacts/runs/final/h1/logistic_regression/episodes.parquet",
+    "action": "relocate unchanged final evidence or archive historical experiments",
+    "from": "artifacts/runs/h1/log_reg/episodes.parquet"
+  },
+  {
+    "to": "archive/history/artifacts/runs/sensitivity",
+    "action": "relocate unchanged final evidence or archive historical experiments",
+    "from": "artifacts/runs/sensitivity"
+  },
+  {
+    "to": "archive/history/artifacts/runs/sensitivity_checks",
+    "action": "relocate unchanged final evidence or archive historical experiments",
+    "from": "artifacts/runs/sensitivity_checks"
+  },
+  {
+    "from": "data_processing/build_market_features.py",
+    "to": "archive/history/data_processing/market_features_before_restoring_calendar_writer.py",
+    "action": "preserve reintroduced historical writer before restoring calendar-only generation"
+  },
+  {
+    "from": "artifacts/runs/final/h1",
+    "to": "artifacts/h1",
+    "action": "flatten final run evidence directly under artifacts as requested"
+  },
+  {
+    "from": "artifacts/runs/final/h6_and_h24",
+    "to": "artifacts/h6_and_h24",
+    "action": "flatten final run evidence directly under artifacts as requested"
+  },
+  {
+    "from": "artifacts/runs/README.md",
+    "to": "artifacts/README.md",
+    "action": "flatten final run evidence directly under artifacts as requested"
+  },
+  {
+    "from": "artifacts/runs/index.json",
+    "to": "artifacts/index.json",
+    "action": "flatten final run evidence directly under artifacts as requested"
+  },
+  {
+    "from": "reports/manifest.json",
+    "to": "archive/history/report_provenance_before_artifact_flattening/manifest.json",
+    "action": "preserve original report provenance before updating relocated artifact paths; metrics and audit claims unchanged"
+  },
+  {
+    "from": "reports/verification.json",
+    "to": "archive/history/report_provenance_before_artifact_flattening/verification.json",
+    "action": "preserve original report provenance before updating relocated artifact paths; metrics and audit claims unchanged"
+  },
+  {
+    "from": "reports/model_results/model_comparison_by_coin_manifest.json",
+    "to": "archive/history/report_provenance_before_artifact_flattening/model_results/model_comparison_by_coin_manifest.json",
+    "action": "preserve original report provenance before updating relocated artifact paths; metrics and audit claims unchanged"
+  },
+  {
+    "from": "reports/model_results/detection_manifest.json",
+    "to": "archive/history/report_provenance_before_artifact_flattening/model_results/detection_manifest.json",
+    "action": "preserve original report provenance before updating relocated artifact paths; metrics and audit claims unchanged"
+  },
+  {
+    "from": "reports/model_results/model_comparison_manifest.json",
+    "to": "archive/history/report_provenance_before_artifact_flattening/model_results/model_comparison_manifest.json",
+    "action": "preserve original report provenance before updating relocated artifact paths; metrics and audit claims unchanged"
+  },
+  {
+    "from": "reports/model_interpretation/manifest.json",
+    "to": "archive/history/report_provenance_before_artifact_flattening/model_interpretation/manifest.json",
+    "action": "preserve original report provenance before updating relocated artifact paths; metrics and audit claims unchanged"
+  },
+  {
+    "from": "archive/history/runs/LR-EXHAUSTIVE-LOWEST",
+    "to": "delete/archive_cleanup/history/runs/LR-EXHAUSTIVE-LOWEST",
+    "action": "quarantine approved redundant archive material; no permanent deletion"
+  },
+  {
+    "from": "archive/history/artifacts/runs/sensitivity_checks",
+    "to": "delete/archive_cleanup/history/artifacts/runs/sensitivity_checks",
+    "action": "quarantine approved redundant archive material; no permanent deletion"
+  },
+  {
+    "from": "archive/history/results",
+    "to": "delete/archive_cleanup/history/results",
+    "action": "quarantine approved redundant archive material; no permanent deletion"
+  },
+  {
+    "from": "archive/history/data",
+    "to": "delete/archive_cleanup/history/data",
+    "action": "quarantine approved redundant archive material; no permanent deletion"
+  },
+  {
+    "from": "archive/history/reports",
+    "to": "delete/archive_cleanup/history/reports",
+    "action": "quarantine approved redundant archive material; no permanent deletion"
+  },
+  {
+    "from": "archive/history/pre_cleanup_source",
+    "to": "delete/archive_cleanup/history/pre_cleanup_source",
+    "action": "quarantine approved redundant archive material; no permanent deletion"
+  },
+  {
+    "from": "archive/history/pre_direct_dataset",
+    "to": "delete/archive_cleanup/history/pre_direct_dataset",
+    "action": "quarantine approved redundant archive material; no permanent deletion"
+  },
+  {
+    "from": "archive/history/pre_data_processing_consistency",
+    "to": "delete/archive_cleanup/history/pre_data_processing_consistency",
+    "action": "quarantine approved redundant archive material; no permanent deletion"
+  },
+  {
+    "from": "archive/history/report_provenance_before_artifact_flattening",
+    "to": "delete/archive_cleanup/history/report_provenance_before_artifact_flattening",
+    "action": "quarantine approved redundant archive material; no permanent deletion"
+  },
+  {
+    "from": "archive/history/tests",
+    "to": "delete/archive_cleanup/history/tests",
+    "action": "quarantine approved redundant archive material; no permanent deletion"
+  },
+  {
+    "from": "archive/history/legacy_figures",
+    "to": "delete/archive_cleanup/history/legacy_figures",
+    "action": "quarantine approved redundant archive material; no permanent deletion"
+  },
+  {
+    "from": "archive/history/data_processing/config_before_unused_settings_cleanup.py",
+    "to": "delete/archive_cleanup/history/data_processing/config_before_unused_settings_cleanup.py",
+    "action": "quarantine approved redundant archive material; no permanent deletion"
+  },
+  {
+    "from": "archive/history/data_processing/fetch_stablecoin_data_before_acquisition_cleanup.py",
+    "to": "delete/archive_cleanup/history/data_processing/fetch_stablecoin_data_before_acquisition_cleanup.py",
+    "action": "quarantine approved redundant archive material; no permanent deletion"
+  },
+  {
+    "from": "archive/history/data_processing/market_features_before_consolidation.py",
+    "to": "delete/archive_cleanup/history/data_processing/market_features_before_consolidation.py",
+    "action": "quarantine approved redundant archive material; no permanent deletion"
+  },
+  {
+    "from": "archive/history/data_processing/market_features_before_restoring_calendar_writer.py",
+    "to": "delete/archive_cleanup/history/data_processing/market_features_before_restoring_calendar_writer.py",
+    "action": "quarantine approved redundant archive material; no permanent deletion"
+  },
+  {
+    "from": "archive/history/data_processing/market_features_before_retiring_interim.py",
+    "to": "delete/archive_cleanup/history/data_processing/market_features_before_retiring_interim.py",
+    "action": "quarantine approved redundant archive material; no permanent deletion"
+  },
+  {
+    "from": "archive/history/data_processing/matched_sample_before_validation.py",
+    "to": "delete/archive_cleanup/history/data_processing/matched_sample_before_validation.py",
+    "action": "quarantine approved redundant archive material; no permanent deletion"
+  },
+  {
+    "from": "archive/history/data_processing/merge_and_label_before_label_cleanup.py",
+    "to": "delete/archive_cleanup/history/data_processing/merge_and_label_before_label_cleanup.py",
+    "action": "quarantine approved redundant archive material; no permanent deletion"
+  },
+  {
+    "from": "archive/history/data_processing/merge_and_label_before_retiring_interim.py",
+    "to": "delete/archive_cleanup/history/data_processing/merge_and_label_before_retiring_interim.py",
+    "action": "quarantine approved redundant archive material; no permanent deletion"
+  },
+  {
+    "from": "archive/history/data_processing/onchain_features_before_validation.py",
+    "to": "delete/archive_cleanup/history/data_processing/onchain_features_before_validation.py",
+    "action": "quarantine approved redundant archive material; no permanent deletion"
+  },
+  {
+    "from": "archive/history/data_processing/sample_preparation_before_cleanup.py",
+    "to": "delete/archive_cleanup/history/data_processing/sample_preparation_before_cleanup.py",
+    "action": "quarantine approved redundant archive material; no permanent deletion"
+  },
+  {
+    "from": "archive/history/documentation/agent.md",
+    "to": "delete/archive_cleanup/history/documentation/agent.md",
+    "action": "quarantine approved redundant archive material; no permanent deletion"
+  },
+  {
+    "from": "archive/history/documentation/README.md",
+    "to": "delete/archive_cleanup/history/documentation/README.md",
+    "action": "quarantine approved redundant archive material; no permanent deletion"
+  },
+  {
+    "from": "archive/history/planning/agent_md_section7_update.md",
+    "to": "delete/archive_cleanup/history/planning/agent_md_section7_update.md",
+    "action": "quarantine approved redundant archive material; no permanent deletion"
+  },
+  {
+    "from": "archive/history/planning/local_final_numbers.md",
+    "to": "delete/archive_cleanup/history/planning/local_final_numbers.md",
+    "action": "quarantine approved redundant archive material; no permanent deletion"
+  },
+  {
+    "from": "archive/history/planning/final_presentation_structure.md",
+    "to": "delete/archive_cleanup/history/planning/final_presentation_structure.md",
+    "action": "quarantine approved redundant archive material; no permanent deletion"
+  },
+  {
+    "from": "archive/history/planning/final_deck_changes.md",
+    "to": "delete/archive_cleanup/history/planning/final_deck_changes.md",
+    "action": "quarantine approved redundant archive material; no permanent deletion"
+  },
+  {
+    "from": "archive/history/planning/2026-10-13-sasi-phase3-roadmap.md",
+    "to": "delete/archive_cleanup/history/planning/2026-10-13-sasi-phase3-roadmap.md",
+    "action": "quarantine approved redundant archive material; no permanent deletion"
+  },
+  {
+    "from": "selected historical experiment records",
+    "to": "archive/history/experiment_records",
+    "action": "retain checksummed summaries, manifests, and original source before quarantining large outputs; see inventory.json"
+  },
+  {
+    "from": "archive/history/modelling/reporting/model_interpretation_before_full_reproduction.py",
+    "to": "delete/archive_cleanup/history/modelling/reporting/model_interpretation_before_full_reproduction.py",
+    "action": "quarantine remaining automatic editing checkpoint; preserve without deletion"
+  },
+  {
+    "from": "archive/history/workstream-1-literature-replication",
+    "to": "archive/history/literature_replication",
+    "action": "simplify archive names and nesting, or quarantine redundant archived helpers; preserve contents"
+  },
+  {
+    "from": "archive/history/midterm_presentation_folder (sasi)",
+    "to": "archive/history/midterm_presentation",
+    "action": "simplify archive names and nesting, or quarantine redundant archived helpers; preserve contents"
+  },
+  {
+    "from": "archive/history/artifacts/runs/sensitivity/EXHAUSTIVE-LOWEST-NEW",
+    "to": "archive/history/artifacts/sensitivity/random_forest_xgboost_no_refit",
+    "action": "simplify archive names and nesting, or quarantine redundant archived helpers; preserve contents"
+  },
+  {
+    "from": "archive/history/artifacts/runs/sensitivity/XGB-NEW",
+    "to": "archive/history/artifacts/sensitivity/xgboost_no_refit",
+    "action": "simplify archive names and nesting, or quarantine redundant archived helpers; preserve contents"
+  },
+  {
+    "from": "archive/history/artifacts/runs/index.json",
+    "to": "archive/history/artifacts/index.json",
+    "action": "simplify archive names and nesting, or quarantine redundant archived helpers; preserve contents"
+  },
+  {
+    "from": "archive/history/artifacts/runs/index_before_final_consolidation.json",
+    "to": "delete/archive_cleanup/history/artifacts/index_before_final_consolidation.json",
+    "action": "simplify archive names and nesting, or quarantine redundant archived helpers; preserve contents"
+  },
+  {
+    "from": "archive/history/experiment_records/runs/LR-EXHAUSTIVE-LOWEST",
+    "to": "archive/history/artifacts/sensitivity/logistic_regression_no_refit",
+    "action": "simplify archive names and nesting, or quarantine redundant archived helpers; preserve contents"
+  },
+  {
+    "from": "archive/history/experiment_records/artifacts/runs/sensitivity_checks/EXHAUSTIVE-LOWEST-NEW",
+    "to": "archive/history/artifacts/sensitivity/random_forest_xgboost_no_refit/original_runner",
+    "action": "simplify archive names and nesting, or quarantine redundant archived helpers; preserve contents"
+  },
+  {
+    "from": "archive/history/experiment_records/artifacts/runs/sensitivity_checks/XGB-NEW",
+    "to": "archive/history/artifacts/sensitivity/xgboost_no_refit/original_source",
+    "action": "simplify archive names and nesting, or quarantine redundant archived helpers; preserve contents"
+  },
+  {
+    "from": "archive/history/modelling/compatibility",
+    "to": "delete/archive_cleanup/history/modelling_redundant/compatibility",
+    "action": "simplify archive names and nesting, or quarantine redundant archived helpers; preserve contents"
+  },
+  {
+    "from": "archive/history/modelling/consolidate_slide_values.py",
+    "to": "delete/archive_cleanup/history/modelling_redundant/consolidate_slide_values.py",
+    "action": "simplify archive names and nesting, or quarantine redundant archived helpers; preserve contents"
+  },
+  {
+    "from": "archive/history/modelling/verify_corrected_run.py",
+    "to": "delete/archive_cleanup/history/modelling_redundant/verify_corrected_run.py",
+    "action": "simplify archive names and nesting, or quarantine redundant archived helpers; preserve contents"
+  },
+  {
+    "from": "archive/history/modelling/lr_rf_presentation.py",
+    "to": "delete/archive_cleanup/history/modelling_redundant/lr_rf_presentation.py",
+    "action": "simplify archive names and nesting, or quarantine redundant archived helpers; preserve contents"
+  },
+  {
+    "from": "archive/history/modelling/reporting",
+    "to": "delete/archive_cleanup/history/modelling_redundant/reporting",
+    "action": "simplify archive names and nesting, or quarantine redundant archived helpers; preserve contents"
+  },
+  {
+    "from": "archive/history/modelling/corrected_baselines.py",
+    "to": "delete/archive_cleanup/history/modelling_redundant/corrected_baselines.py",
+    "action": "simplify archive names and nesting, or quarantine redundant archived helpers; preserve contents"
+  },
+  {
+    "from": "archive/history/modelling/logreg_slide_tables.py",
+    "to": "delete/archive_cleanup/history/modelling_redundant/logreg_slide_tables.py",
+    "action": "simplify archive names and nesting, or quarantine redundant archived helpers; preserve contents"
+  },
+  {
+    "from": "archive/history/modelling/verify_baselines.py",
+    "to": "delete/archive_cleanup/history/modelling_redundant/verify_baselines.py",
+    "action": "simplify archive names and nesting, or quarantine redundant archived helpers; preserve contents"
+  },
+  {
+    "from": "archive/history/modelling/training",
+    "to": "delete/archive_cleanup/history/modelling_redundant/training",
+    "action": "simplify archive names and nesting, or quarantine redundant archived helpers; preserve contents"
+  },
+  {
+    "from": "archive/history/modelling/recalibrate_thresholds.py",
+    "to": "delete/archive_cleanup/history/modelling_redundant/recalibrate_thresholds.py",
+    "action": "simplify archive names and nesting, or quarantine redundant archived helpers; preserve contents"
+  },
+  {
+    "from": "archive/history/modelling/episode_summary.py",
+    "to": "delete/archive_cleanup/history/modelling_redundant/episode_summary.py",
+    "action": "simplify archive names and nesting, or quarantine redundant archived helpers; preserve contents"
+  },
+  {
+    "from": "archive/history/modelling/annual_calibration.py",
+    "to": "delete/archive_cleanup/history/modelling_redundant/annual_calibration.py",
+    "action": "simplify archive names and nesting, or quarantine redundant archived helpers; preserve contents"
+  },
+  {
+    "from": "archive/history/modelling/robustness_refit_alarms.py",
+    "to": "delete/archive_cleanup/history/modelling_redundant/robustness_refit_alarms.py",
+    "action": "simplify archive names and nesting, or quarantine redundant archived helpers; preserve contents"
+  },
+  {
+    "from": "archive/history/modelling/alarm_report.py",
+    "to": "delete/archive_cleanup/history/modelling_redundant/alarm_report.py",
+    "action": "simplify archive names and nesting, or quarantine redundant archived helpers; preserve contents"
+  },
+  {
+    "from": "archive/history/modelling/models",
+    "to": "delete/archive_cleanup/history/modelling_redundant/models",
+    "action": "simplify archive names and nesting, or quarantine redundant archived helpers; preserve contents"
+  },
+  {
+    "from": "archive/history/modelling/compare_runs.py",
+    "to": "delete/archive_cleanup/history/modelling_redundant/compare_runs.py",
+    "action": "simplify archive names and nesting, or quarantine redundant archived helpers; preserve contents"
+  },
+  {
+    "from": "archive/history/modelling/legacy_practice_scoring.py",
+    "to": "delete/archive_cleanup/history/modelling_redundant/legacy_practice_scoring.py",
+    "action": "simplify archive names and nesting, or quarantine redundant archived helpers; preserve contents"
+  },
+  {
+    "from": "archive/history/modelling/robustness_extensions.py",
+    "to": "delete/archive_cleanup/history/modelling_redundant/robustness_extensions.py",
+    "action": "simplify archive names and nesting, or quarantine redundant archived helpers; preserve contents"
+  },
+  {
+    "from": "archive/history/modelling/feature_importance",
+    "to": "delete/archive_cleanup/history/modelling_redundant/feature_importance",
+    "action": "simplify archive names and nesting, or quarantine redundant archived helpers; preserve contents"
+  },
+  {
+    "from": "archive/history/modelling/verify_lr_rf_run.py",
+    "to": "delete/archive_cleanup/history/modelling_redundant/verify_lr_rf_run.py",
+    "action": "simplify archive names and nesting, or quarantine redundant archived helpers; preserve contents"
+  },
+  {
+    "from": "archive/history/modelling/build_corrected_dataset.py",
+    "to": "delete/archive_cleanup/history/modelling_redundant/build_corrected_dataset.py",
+    "action": "simplify archive names and nesting, or quarantine redundant archived helpers; preserve contents"
+  },
+  {
+    "from": "archive/history/modelling/logreg_operating_point.py",
+    "to": "delete/archive_cleanup/history/modelling_redundant/logreg_operating_point.py",
+    "action": "simplify archive names and nesting, or quarantine redundant archived helpers; preserve contents"
+  },
+  {
+    "from": "archive/history/modelling/matched_tier_eval.py",
+    "to": "delete/archive_cleanup/history/modelling_redundant/matched_tier_eval.py",
+    "action": "simplify archive names and nesting, or quarantine redundant archived helpers; preserve contents"
+  },
+  {
+    "from": "archive/history/modelling/robustness_conclusion.py",
+    "to": "delete/archive_cleanup/history/modelling_redundant/robustness_conclusion.py",
+    "action": "simplify archive names and nesting, or quarantine redundant archived helpers; preserve contents"
+  },
+  {
+    "from": "archive/history/modelling/train.py",
+    "to": "delete/archive_cleanup/history/modelling_redundant/train.py",
+    "action": "simplify archive names and nesting, or quarantine redundant archived helpers; preserve contents"
+  },
+  {
+    "from": "archive/history/modelling/false_alarm_framework.py",
+    "to": "delete/archive_cleanup/history/modelling_redundant/false_alarm_framework.py",
+    "action": "simplify archive names and nesting, or quarantine redundant archived helpers; preserve contents"
+  },
+  {
+    "from": "archive/history/modelling/evaluation",
+    "to": "delete/archive_cleanup/history/modelling_redundant/evaluation",
+    "action": "simplify archive names and nesting, or quarantine redundant archived helpers; preserve contents"
+  },
+  {
+    "from": "archive/history/modelling/plot_metric_sensitivity.py",
+    "to": "delete/archive_cleanup/history/modelling_redundant/plot_metric_sensitivity.py",
+    "action": "simplify archive names and nesting, or quarantine redundant archived helpers; preserve contents"
+  },
+  {
+    "from": "archive/history/modelling/verify_refit_run.py",
+    "to": "delete/archive_cleanup/history/modelling_redundant/verify_refit_run.py",
+    "action": "simplify archive names and nesting, or quarantine redundant archived helpers; preserve contents"
+  },
+  {
+    "from": "archive/history/modelling/combine_alarms.py",
+    "to": "delete/archive_cleanup/history/modelling_redundant/combine_alarms.py",
+    "action": "simplify archive names and nesting, or quarantine redundant archived helpers; preserve contents"
+  },
+  {
+    "from": "archive/history/modelling/logreg_coefficients.py",
+    "to": "delete/archive_cleanup/history/modelling_redundant/logreg_coefficients.py",
+    "action": "simplify archive names and nesting, or quarantine redundant archived helpers; preserve contents"
+  },
+  {
+    "from": "archive/history/modelling/data_package",
+    "to": "delete/archive_cleanup/history/modelling_redundant/data_package",
+    "action": "simplify archive names and nesting, or quarantine redundant archived helpers; preserve contents"
+  },
+  {
+    "from": "archive/history/modelling/robustness_check.py",
+    "to": "delete/archive_cleanup/history/modelling_redundant/robustness_check.py",
+    "action": "simplify archive names and nesting, or quarantine redundant archived helpers; preserve contents"
+  },
+  {
+    "from": "archive/history/modelling/compare_xgb_early_stopping.py",
+    "to": "delete/archive_cleanup/history/modelling_redundant/compare_xgb_early_stopping.py",
+    "action": "simplify archive names and nesting, or quarantine redundant archived helpers; preserve contents"
+  },
+  {
+    "from": "archive/history/legacy_modelling",
+    "to": "delete/archive_cleanup/history/legacy_modelling",
+    "action": "quarantine four unused abandoned experiments; retain a descriptive historical note; all file hashes unchanged"
+  },
+  {
+    "from": "archive/history/modelling/train_logreg_yearcv.py",
+    "to": "delete/archive_cleanup/history/modelling/train_logreg_yearcv.py",
+    "action": "quarantine obsolete combined runner or abandoned exploratory analysis; retain methodological note"
+  },
+  {
+    "from": "archive/history/analysis/local_curve.py",
+    "to": "delete/archive_cleanup/history/analysis/local_curve.py",
+    "action": "quarantine obsolete combined runner or abandoned exploratory analysis; retain methodological note"
+  },
+  {
+    "from": "archive/history/analysis/ex_post_comparison.py",
+    "to": "delete/archive_cleanup/history/analysis/ex_post_comparison.py",
+    "action": "quarantine obsolete combined runner or abandoned exploratory analysis; retain methodological note"
+  },
+  {
+    "from": "archive/history/modelling/corrected_h1.py",
+    "to": "delete/archive_cleanup/history/modelling/corrected_h1.py",
+    "action": "quarantine obsolete historical runner; retain protocol differences in historical note; final source snapshots unchanged"
+  },
+  {
+    "from": "archive/history/modelling/corrected_lr_rf.py",
+    "to": "delete/archive_cleanup/history/modelling/corrected_lr_rf.py",
+    "action": "quarantine obsolete historical runner; retain protocol differences in historical note; final source snapshots unchanged"
+  },
+  {
+    "from": "archive/history/modelling/refit_final.py",
+    "to": "delete/archive_cleanup/history/modelling/refit_final.py",
+    "action": "quarantine obsolete historical runner; retain protocol differences in historical note; final source snapshots unchanged"
+  },
+  {
+    "from": "archive/history/modelling/sensitivity",
+    "to": "delete/archive_cleanup/history/no_refit_refactored_copies",
+    "action": "quarantine later unused no-refit runner copies; retain original experiment sources with historical artifacts; remove empty modelling container"
+  },
+  {
+    "from": "archive/history/data_processing",
+    "to": "delete/archive_cleanup/history/obsolete_data_processing_checks",
+    "action": "quarantine two superseded coverage/validation diagnostics with matching checksums; retain note and four original planning documents"
+  },
+  {
+    "from": "archive/history/planning/PROPOSAL_PHASE_2_NOTES.md",
+    "to": "archive/history/planning/phase_2_methodology_notes.md",
+    "action": "rename historical planning note or quarantine superseded generated figure; contents unchanged"
+  },
+  {
+    "from": "archive/history/planning/PROPOSAL_UPDATES_WEEK_7.md",
+    "to": "archive/history/planning/week_7_methodology_updates.md",
+    "action": "rename historical planning note or quarantine superseded generated figure; contents unchanged"
+  },
+  {
+    "from": "archive/history/planning/2026-10-13-recall-first-early-warning.md",
+    "to": "archive/history/planning/recall_first_proposal_2026-10-13.md",
+    "action": "rename historical planning note or quarantine superseded generated figure; contents unchanged"
+  },
+  {
+    "from": "archive/history/planning/prof_changes_summary.md",
+    "to": "archive/history/planning/supervisor_feedback_2026-10-30.md",
+    "action": "rename historical planning note or quarantine superseded generated figure; contents unchanged"
+  },
+  {
+    "from": "archive/history/literature_replication/outputs/proof_daily_vs_hourly.png",
+    "to": "delete/archive_cleanup/history/literature_replication/outputs/proof_daily_vs_hourly.png",
+    "action": "rename historical planning note or quarantine superseded generated figure; contents unchanged"
+  },
+  {
+    "from": "archive/history/midterm_presentation/figures",
+    "to": "delete/archive_cleanup/history/midterm_presentation/figures",
+    "action": "rename historical planning note or quarantine superseded generated figure; contents unchanged"
+  },
+  {
+    "from": "archive/history/planning/supervisor_feedback_2026-10-30.md",
+    "to": "archive/history/planning/prof_feedback_2026_10_30.md",
+    "action": "rename professor feedback note as requested; preserve content"
+  },
+  {
+    "from": "archive/history/artifacts",
+    "to": "archive/artifacts",
+    "action": "flatten retained history directly under archive; file identities unchanged"
+  },
+  {
+    "from": "archive/history/documentation",
+    "to": "archive/documentation",
+    "action": "flatten retained history directly under archive; file identities unchanged"
+  },
+  {
+    "from": "archive/history/experiment_records",
+    "to": "archive/experiment_records",
+    "action": "flatten retained history directly under archive; file identities unchanged"
+  },
+  {
+    "from": "archive/history/planning",
+    "to": "archive/planning",
+    "action": "flatten retained history directly under archive; file identities unchanged"
+  },
+  {
+    "from": "archive/history/README.md",
+    "to": "archive/README.md",
+    "action": "flatten retained history directly under archive; file identities unchanged"
+  },
+  {
+    "from": "archive/history/literature_replication",
+    "to": "archive/literature_replication",
+    "action": "flatten retained history directly under archive; file identities unchanged"
+  },
+  {
+    "from": "archive/history/midterm_presentation",
+    "to": "archive/midterm_presentation",
+    "action": "flatten retained history directly under archive; file identities unchanged"
+  },
+  {
+    "from": "dune_onchain.zip",
+    "to": "data/raw/dune_onchain.zip",
+    "action": "organise retained source data and reviewer documentation; preserve files without deletion"
+  },
+  {
+    "from": "docs/cleanup_moves.json",
+    "to": "archive/maintenance/cleanup_moves.json",
+    "action": "organise retained source data and reviewer documentation; preserve files without deletion"
+  },
+  {
+    "from": "docs/cleanup_checklist.md",
+    "to": "archive/maintenance/cleanup_history.md",
+    "action": "organise retained source data and reviewer documentation; preserve files without deletion"
+  },
+  {
+    "from": "docs/delete_review.md",
+    "to": "archive/maintenance/delete_dependency_review.md",
+    "action": "organise retained source data and reviewer documentation; preserve files without deletion"
+  },
+  {
+    "from": "docs/cleanup_validation.json",
+    "to": "delete/docs/cleanup_validation.json",
+    "action": "organise retained source data and reviewer documentation; preserve files without deletion"
+  },
+  {
+    "from": ".DS_Store",
+    "to": "delete/root_metadata/.DS_Store",
+    "action": "organise retained source data and reviewer documentation; preserve files without deletion"
+  },
+  {
+    "from": "agent.md",
+    "to": "delete/agent.md",
+    "action": "quarantine redundant assistant working instructions as requested; contents unchanged"
+  },
+  {
+    "from": "data/raw/dune_onchain/pax.csv",
+    "to": "data/raw/pax.csv",
+    "action": "flatten extracted Dune CSVs directly into raw; SHA-256 unchanged"
+  },
+  {
+    "from": "data/raw/dune_onchain/usdt.csv",
+    "to": "data/raw/usdt.csv",
+    "action": "flatten extracted Dune CSVs directly into raw; SHA-256 unchanged"
+  },
+  {
+    "from": "data/raw/dune_onchain/usdc.csv",
+    "to": "data/raw/usdc.csv",
+    "action": "flatten extracted Dune CSVs directly into raw; SHA-256 unchanged"
+  },
+  {
+    "from": "data/raw/dune_onchain/busd.csv",
+    "to": "data/raw/busd.csv",
+    "action": "flatten extracted Dune CSVs directly into raw; SHA-256 unchanged"
+  },
+  {
+    "from": "data/raw/dune_onchain/dai.csv",
+    "to": "data/raw/dai.csv",
+    "action": "flatten extracted Dune CSVs directly into raw; SHA-256 unchanged"
+  },
+  {
+    "from": "data/raw/dune_onchain/tusd.csv",
+    "to": "data/raw/tusd.csv",
+    "action": "flatten extracted Dune CSVs directly into raw; SHA-256 unchanged"
+  },
+  {
+    "from": "historical alarm smoothing and OR-combination concepts",
+    "to": "modelling/robustness_checks/alarm_smoothing.py and or_combination.py",
+    "action": "implement new saved-final-score fixed-calibration-cutoff checks; original historical files remain quarantined; no test-optimised cutoff search reused"
+  }
+]

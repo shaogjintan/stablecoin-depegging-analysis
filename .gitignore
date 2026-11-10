@@ -15,14 +15,18 @@ ENV/
 # Environment variables / secrets
 .env
 
-# Data (large/regenerable — keep raw & processed data out of git)
-data/
+# Data: allow documented retained inputs; exclude other source/generated data.
+/data/*
+!data/README.md
+!data/manifest.json
+# The retained hourly observations make same-input reproduction possible.
 
 # Modelling scratch (predictions, model artifacts; final tables/figures -> reports/)
 results/
 
 # Experiment artifacts stay local; retain summaries, manifests and figures.
 /runs/*/fits/
+/runs/*/partitions/
 /runs/*/excluded_partial/
 /runs/*/source/
 /runs/*/source_diff.patch
@@ -48,3 +52,49 @@ build/
 dist/
 *.egg-info/
 Untitled.ipynb
+
+# Relocated artifacts: keep large evidence local, retain tables and manifests.
+/artifacts/runs/**/fits/
+/artifacts/runs/**/partitions/
+/artifacts/runs/**/excluded_partial/
+/artifacts/runs/**/source/
+/artifacts/runs/**/source_diff.patch
+/artifacts/runs/**/runner_source.py
+/artifacts/runs/**/*.parquet
+/artifacts/runs/**/*.npz
+/archive/**/fits/
+/archive/**/partitions/
+/archive/**/source/
+/archive/**/source_diff.patch
+/archive/**/*.parquet
+/archive/**/*.npz
+/archive/results/
+/archive/outputs/
+/delete/
+# Preserve previously committed canonical inputs and their original rebuild source.
+!data/processed/
+data/processed/*
+!data/processed/master.parquet
+!data/processed/depeg_episodes.parquet
+!data/processed/depeg_episodes_w_event_type.parquet
+!data/processed/dataset_metadata.json
+
+# Isolated full reproduction outputs; original evidence remains separate.
+/artifacts/reproduction/
+
+# Source-data release bundle is shared separately from the Git repository.
+/artifacts/distribution/
+
+# Flattened final evidence retains only small summaries/manifests in Git.
+/artifacts/h1/**/fits/
+/artifacts/h1/**/source/
+/artifacts/h1/**/*.parquet
+/artifacts/h6_and_h24/**/fits/
+/artifacts/h6_and_h24/**/source/
+/artifacts/h6_and_h24/**/*.parquet
+
+# Retain the original on-chain export archive; extracted CSVs stay local.
+!data/raw/
+/data/raw/*
+!data/raw/dune_onchain.zip
+!data/raw/hourly_stablecoin.parquet

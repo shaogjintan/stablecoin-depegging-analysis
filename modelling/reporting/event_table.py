@@ -1,5 +1,6 @@
-"""
-Group depeg episodes into market-wide events (definition only, no model output).
+"""Group depeg episodes into descriptive market-wide events.
+
+Event grouping does not use model output or change training labels.
 
 Several coin-episodes can be one market shock (SVB in March 2023 hit USDC,
 DAI, PAX and TUSD), so counting episodes overstates how much independent
@@ -16,24 +17,28 @@ event. An event's year is the year of its first episode.
 INPUT
   data/processed/depeg_episodes.parquet
 
-OUTPUT (reports/event_tables/)
-  episodes.csv  one row per episode with its event_id
-  events.csv    one row per event: start, coins, episode IDs
-  by_year.csv   number of episodes vs events per year (and per coin)
+OUTPUT (reports/depeg_events/)
+  episode_event_mapping.csv  one row per episode with its event_id
+  grouped_depeg_events.csv    one row per event: start, coins, episode IDs
+  depeg_events_by_year.csv   number of episodes vs events per year (and per
+  coin)
   figures/      (skip with --no-plots; prices read from master.parquet)
-    1_timeline.png        every episode per coin, multi-coin events shaded
-    2_event_zooms.png     price of each coin around every multi-coin event
-    3_onset_gaps.png      hours to nearest other-coin onset (why 48h)
-    4_episodes_vs_events.png  per-year episode vs event counts
-    5_coin_year_heatmap.png   episodes per coin per year, with totals
+    timeline.png        every episode per coin, multi-coin events shaded
+    event_zooms.png     price of each coin around every multi-coin event
+    onset_gaps.png      hours to nearest other-coin onset (why 48h)
+    episodes_vs_events.png  per-year episode vs event counts
+  ../depeg_episodes/coin_year_heatmap.png   episodes per coin per year, with
+  totals
 
 Usage (from the repo root):
-    python modelling/reporting/event_table.py
-    python modelling/reporting/event_table.py --window-hours 72
+    python -m modelling.reporting.event_table
+    python -m modelling.reporting.event_table --window-hours 72
 """
 from __future__ import annotations
 
 import argparse
+import json
+from modelling.utils.io import sha256
 import math
 import sys
 from pathlib import Path
@@ -46,9 +51,10 @@ import numpy as np  # noqa: E402
 import pandas as pd  # noqa: E402
 
 REPO_ROOT = Path(__file__).resolve().parents[2]
+sys.path.insert(0, str(REPO_ROOT))
 sys.path.insert(0, str(REPO_ROOT / "data_processing"))
 
-from config import (  # noqa: E402
+from data_processing.config import (  # noqa: E402
     DEPEG_BAND, FIAT_COINS, OOS_END_YEAR, OOS_START_YEAR, PROCESSED_DATA_DIR,
 )
 
@@ -68,7 +74,10 @@ plt.rcParams.update({
 
 
 def group_events(episodes: pd.DataFrame, window_hours: float) -> pd.DataFrame:
-    """Add event_id / event_start to each episode (anchored on the first episode)."""
+    """Assign event IDs using first-onset anchored episode groups.
+
+    Add event_id / event_start to each episode (anchored on the first episode).
+    """
     eps = episodes.sort_values(["start", "coin"]).reset_index(drop=True).copy()
     window = pd.Timedelta(hours=window_hours)
     event_ids, event_starts = [], []
@@ -91,7 +100,11 @@ def group_events(episodes: pd.DataFrame, window_hours: float) -> pd.DataFrame:
 
 
 def plot_timeline(eps: pd.DataFrame, ev_tab: pd.DataFrame, path: Path) -> None:
-    """One lane per coin, one dot per episode; multi-coin events shaded and numbered."""
+    """Plot coin-specific episodes and highlight multi-coin events.
+
+    One lane per coin, one dot per episode; multi-coin events shaded and
+    numbered.
+    """
     fig, ax = plt.subplots(figsize=(13, 3.8))
     lanes = {c: i for i, c in enumerate(FIAT_COINS[::-1])}
     multi = ev_tab.loc[ev_tab["n_episodes"] > 1].reset_index(drop=True)
@@ -116,7 +129,7 @@ def plot_timeline(eps: pd.DataFrame, ev_tab: pd.DataFrame, path: Path) -> None:
     ax.set_title(f"{len(eps)} depeg episodes form {len(ev_tab)} events; "
                  f"shaded = the {len(multi)} events spanning several coins", loc="left")
     ax.text(0, -0.17, "Dot = one episode (size ~ hours below $0.99). Numbers match "
-            "the panels in 2_event_zooms.png.", transform=ax.transAxes, color=MUTED, fontsize=8)
+            "the panels in event_zooms.png.", transform=ax.transAxes, color=MUTED, fontsize=8)
     fig.tight_layout()
     fig.savefig(path, dpi=180)
     plt.close(fig)
@@ -126,8 +139,11 @@ def plot_event_zooms(eps: pd.DataFrame, ev_tab: pd.DataFrame, prices: pd.DataFra
                      window_hours: float, path: Path) -> None:
     """Small multiples: price of every coin around each multi-coin event.
 
-    Member coins are drawn in colour; non-member coins in light grey for context.
-    Shaded spans are each member's episode; the dashed box is the grouping window."""
+    Member coins are drawn in colour; non-member coins in light grey for
+    context.
+    Shaded spans are each member's episode; the dashed box is the grouping
+    window.
+    """
     multi = ev_tab.loc[ev_tab["n_episodes"] > 1].reset_index(drop=True)
     ncol = 4
     nrow = math.ceil(len(multi) / ncol)
@@ -202,6 +218,7 @@ def plot_onset_gaps(eps: pd.DataFrame, window_hours: float, path: Path) -> None:
 
 
 def plot_episodes_vs_events(by_year: pd.DataFrame, path: Path) -> None:
+    """Plot yearly counts of individual episodes and grouped events."""
     yrs = by_year.loc[by_year["year"] != "total"]
     x = np.arange(len(yrs))
     w = 0.38
@@ -223,7 +240,10 @@ def plot_episodes_vs_events(by_year: pd.DataFrame, path: Path) -> None:
 
 
 def plot_coin_year_heatmap(by_year: pd.DataFrame, test_start: int, path: Path) -> None:
-    """Episodes per coin per year (one-hue blue ramp), totals as plain columns."""
+    """Plot episode counts by coin and year, including totals.
+
+    Episodes per coin per year (one-hue blue ramp), totals as plain columns.
+    """
     yrs = by_year.loc[by_year["year"] != "total"].copy()
     coins = [c for c in ["USDT", "USDC", "BUSD", "DAI", "TUSD", "PAX"]
              if f"episodes_{c}" in yrs.columns]
@@ -290,94 +310,30 @@ def plot_coin_year_heatmap(by_year: pd.DataFrame, test_start: int, path: Path) -
     plt.close(fig)
 
 
-def plot_expanding_window(by_year: pd.DataFrame, path: Path) -> None:
-    """Expanding-window CV folds: train / threshold year / test per fold, with
-    each fold's test episodes and events alongside."""
-    yrs = by_year.loc[by_year["year"] != "total"].copy()
-    yrs["year"] = yrs["year"].astype(int)
-    first, last = int(yrs["year"].min()), int(yrs["year"].max())
-    counts = yrs.set_index("year")
-    train_c, thresh_c, test_c = "#2a78d6", "#9ec5f4", "#eb6834"
-    folds = list(range(OOS_START_YEAR, OOS_END_YEAR + 1))
-    fig, ax = plt.subplots(figsize=(11, 4.4))
-    ax.grid(False)
-    for s in ax.spines.values():
-        s.set_visible(False)
-    gap = 0.06
-    for r, test_year in enumerate(folds):
-        for y in range(first, last + 1):
-            x0, w, h = y - first + gap / 2, 1 - gap, 0.62
-            if y < test_year - 1:
-                fc, ec, label, tc = train_c, train_c, "train", SURFACE
-            elif y == test_year - 1:
-                fc, ec, label, tc = thresh_c, thresh_c, "train +\nthreshold", INK
-            elif y == test_year:
-                fc, ec, label, tc = test_c, test_c, "TEST", SURFACE
-            else:
-                fc, ec, label, tc = SURFACE, GRID, "", MUTED
-            ax.add_patch(matplotlib.patches.FancyBboxPatch(
-                (x0, r - h / 2), w, h, boxstyle="round,pad=0,rounding_size=0.06",
-                facecolor=fc, edgecolor=ec, lw=1))
-            if label:
-                ax.text(x0 + w / 2, r, label, ha="center", va="center", fontsize=8,
-                        color=tc, fontweight="bold" if label == "TEST" else "normal",
-                        linespacing=0.95)
-        n = last - first + 1
-        ep, ev = int(counts.loc[test_year, "episodes"]), int(counts.loc[test_year, "events"])
-        ax.text(n + 0.35, r, f"{ep}", ha="center", va="center", fontsize=10.5, color=INK)
-        ax.text(n + 1.15, r, f"{ev}", ha="center", va="center", fontsize=10.5, color=INK)
-    n = last - first + 1
-    tot_ep = int(counts.loc[folds, "episodes"].sum())
-    tot_ev = int(counts.loc[folds, "events"].sum())
-    ax.plot([n + 0.05, n + 1.45], [len(folds) - 0.5] * 2, color=GRID, lw=1)
-    ax.text(n + 0.35, len(folds) - 0.1, str(tot_ep), ha="center", va="center",
-            fontsize=10.5, fontweight="bold", color=INK)
-    ax.text(n + 1.15, len(folds) - 0.1, str(tot_ev), ha="center", va="center",
-            fontsize=10.5, fontweight="bold", color=INK)
-    ax.text(n - 0.1, len(folds) - 0.1, "pooled test", ha="right", va="center",
-            fontsize=9, fontweight="bold", color=INK)
-    for j, lab in enumerate(["test\nepisodes", "test\nevents"]):
-        ax.text(n + 0.35 + 0.8 * j, -0.62, lab, ha="center", va="bottom", fontsize=8.5,
-                fontweight="bold", color=INK, linespacing=0.95)
-    for y in range(first, last + 1):
-        ax.text(y - first + 0.5, -0.62, str(y), ha="center", va="bottom", fontsize=9.5,
-                color=INK)
-    ax.set_yticks(range(len(folds)), [f"Fold {i + 1}" for i in range(len(folds))])
-    ax.tick_params(length=0, labelsize=9.5, colors=INK)
-    ax.set_xticks([])
-    ax.set_xlim(-0.05, n + 1.6)
-    ax.set_ylim(len(folds) + 0.25, -1.05)
-    ax.set_title("Expanding-window evaluation: each year from "
-                 f"{OOS_START_YEAR} is tested once, by a model that never saw it",
-                 loc="left", fontsize=11.5, pad=14)
-    fig.text(0.012, 0.02,
-             "Threshold year: a practice model trained on the earlier years scores it, and the "
-             "alarm threshold is set there (false-alarm budget).\nThe final model is then "
-             "trained on all years before the test year. 24h purge/embargo at each "
-             "boundary; episodes straddling a boundary are dropped.",
-             fontsize=8, color=MUTED, ha="left", va="bottom")
-    fig.tight_layout(rect=(0, 0.09, 1, 1))
-    fig.savefig(path, dpi=200)
-    plt.close(fig)
 
 
 def main(argv=None) -> int:
+    """Export grouped events, episode mappings, annotations, and figures."""
     parser = argparse.ArgumentParser(description=__doc__,
                                      formatter_class=argparse.RawDescriptionHelpFormatter)
     parser.add_argument("--window-hours", type=float, default=48,
                         help="episodes on different coins starting within this many hours "
                              "of an event's first episode join that event (default 48)")
-    parser.add_argument("--out-dir", default=str(REPO_ROOT / "reports/event_tables"))
+    parser.add_argument("--out-dir", default=str(REPO_ROOT / "reports/depeg_events"))
+    parser.add_argument("--episode-out-dir", type=Path,
+                        default=REPO_ROOT / "reports/depeg_episodes")
     parser.add_argument("--no-plots", action="store_true", help="skip the figures")
     args = parser.parse_args(argv)
 
     episodes = pd.read_parquet(PROCESSED_DATA_DIR / "depeg_episodes.parquet")
     for col in ("start", "end"):
         episodes[col] = pd.to_datetime(episodes[col], utc=True)
-    eps = group_events(episodes, args.window_hours)
+    from modelling.reporting.event_annotations import annotate
+    from modelling.reporting.event_types import classify
+    eps = annotate(group_events(episodes, args.window_hours))
 
     ep_tab = eps[["event_id", "event_start", "year", "episode_id", "coin",
-                  "start", "end", "n_hours", "min_price"]]
+                  "start", "end", "n_hours", "min_price", "historical_context"]]
     ev_tab = (eps.groupby("event_id", sort=False)
               .agg(event_start=("event_start", "first"),
                    last_episode_start=("start", "max"),
@@ -399,11 +355,23 @@ def main(argv=None) -> int:
 
     out_dir = Path(args.out_dir)
     out_dir.mkdir(parents=True, exist_ok=True)
-    for name, frame in {"episodes": ep_tab, "events": ev_tab, "by_year": by_year}.items():
+    for name, frame in {"episode_event_mapping": ep_tab, "grouped_depeg_events": ev_tab,
+                        "depeg_events_by_year": by_year}.items():
         path = out_dir / f"{name}.csv"
         frame.to_csv(path, index=False)
         print(f"Saved {name}: {path}")
 
+    (out_dir / "manifest.json").write_text(json.dumps(dict(
+        episodes=str(PROCESSED_DATA_DIR / "depeg_episodes.parquet"),
+        sha256=sha256(PROCESSED_DATA_DIR / "depeg_episodes.parquet"),
+        window_hours=args.window_hours,
+        grouping="first-onset anchor; at most one episode per coin in each event",
+        historical_context="date-based heuristic, not causal attribution",
+    ), indent=2) + "\n")
+
+    types = classify(eps, ev_tab)
+    types.to_csv(out_dir / "event_classification.csv", index=False)
+    types.groupby("type").agg(events=("event_id", "size"), episodes=("n_episodes", "sum")).reset_index().to_csv(out_dir / "event_types_summary.csv", index=False)
     print(f"\n{len(eps)} episodes -> {len(ev_tab)} events "
           f"(window {args.window_hours:g}h)\n")
     print(by_year.to_string(index=False))
@@ -417,12 +385,13 @@ def main(argv=None) -> int:
         prices = pd.read_parquet(PROCESSED_DATA_DIR / "master.parquet",
                                  columns=["coin", "hour", "price"])
         prices["hour"] = pd.to_datetime(prices["hour"], utc=True)
-        plot_timeline(eps, ev_tab, fig_dir / "1_timeline.png")
-        plot_event_zooms(eps, ev_tab, prices, args.window_hours, fig_dir / "2_event_zooms.png")
-        plot_onset_gaps(eps, args.window_hours, fig_dir / "3_onset_gaps.png")
-        plot_episodes_vs_events(by_year, fig_dir / "4_episodes_vs_events.png")
-        plot_coin_year_heatmap(by_year, OOS_START_YEAR, fig_dir / "5_coin_year_heatmap.png")
-        plot_expanding_window(by_year, fig_dir / "6_expanding_window.png")
+        plot_timeline(eps, ev_tab, fig_dir / "timeline.png")
+        plot_event_zooms(eps, ev_tab, prices, args.window_hours, fig_dir / "event_zooms.png")
+        plot_onset_gaps(eps, args.window_hours, fig_dir / "onset_gaps.png")
+        plot_episodes_vs_events(by_year, fig_dir / "episodes_vs_events.png")
+        args.episode_out_dir.mkdir(parents=True, exist_ok=True)
+        plot_coin_year_heatmap(by_year, OOS_START_YEAR,
+                               args.episode_out_dir / "coin_year_heatmap.png")
         print(f"\nSaved figures: {fig_dir}")
     return 0
 

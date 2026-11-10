@@ -1,0 +1,56 @@
+{
+  "sources": [
+    {
+      "path": "data/raw/hourly_stablecoin.parquet",
+      "sha256": "e8b151a360e386443389d9abe45a6b2c1467c3c9a3c6da449fe495fba09a95bf"
+    },
+    {
+      "path": "data/interim/hourly_stablecoin_onchain_features.parquet",
+      "sha256": "3eb69edfd80ae6fa9aace15f77003cd0e94814b936f250024c915850987ffe4f"
+    },
+    {
+      "path": "data/interim/hourly_stablecoin_market_features.parquet",
+      "sha256": "7324b4ab913cfbde123418e1f1c7834953411568cec3792ac07b9e3c5d5d0363"
+    }
+  ],
+  "pipeline": "data/raw/hourly_stablecoin.parquet + data/interim/ (hourly_stablecoin_market_features.parquet + hourly_stablecoin_onchain_features.parquet) -> merge on coin/hour -> compute calendar-based market features, merged-onset labels and causal prediction eligibility -> shift timestamps to completed-bar close -> master.parquet + depeg_episodes.parquet in the output directory",
+  "master": "data/processed/master.parquet",
+  "master_sha256": "450865153d17b95627daeb48d8f64baf7d0f403b3c9b57d564e2a9aeaf284a37",
+  "episodes": "data/processed/depeg_episodes.parquet",
+  "episodes_sha256": "dcf23bf6662556d5432e6b1afa7127a5376c7154ec0403cf50a5d6f6131e9bdf",
+  "preparation_sha256": "1ca5204b4b841e61ac256b12df4160a49b2926d829c7b6dea19b93312ca8cb73",
+  "rows": 345361,
+  "episodes_defined": 79,
+  "counts": {
+    "tier1_h1": {
+      "eligible_rows": 291141,
+      "positive_hours": 52
+    },
+    "tier1_h6": {
+      "eligible_rows": 290659,
+      "positive_hours": 310
+    },
+    "tier1_h24": {
+      "eligible_rows": 289039,
+      "positive_hours": 1249
+    },
+    "tier2_h1": {
+      "eligible_rows": 267919,
+      "positive_hours": 51
+    },
+    "tier2_h6": {
+      "eligible_rows": 267486,
+      "positive_hours": 299
+    },
+    "tier2_h24": {
+      "eligible_rows": 266037,
+      "positive_hours": 1196
+    }
+  },
+  "clock": "bar close = source bar start + 1 hour",
+  "target": "new merged episode starts in (origin, origin+h]",
+  "recovery": "exclude through 24 hours after recovery anchor of confirmed two-hour dip",
+  "retained_frozen_inputs": true,
+  "build_verification": "All non-volatility columns and episode data match exactly; two rolling volatility columns match within 1e-9 absolute. Frozen Parquet bytes have not been replaced.",
+  "previous_preparation_metadata": "delete/data/processed/corrected_v1_metadata.before_direct_build.json"
+}

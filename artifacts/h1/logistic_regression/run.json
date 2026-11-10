@@ -1,0 +1,41 @@
+{
+  "run_id": "d429d3d5-937c-49aa-b3c8-6ead1446fb9d",
+  "status": "complete",
+  "started_utc": "2026-11-02T15:54:19.028007+00:00",
+  "dataset_version": "corrected_v1",
+  "models": [
+    "logreg"
+  ],
+  "horizons": [
+    1
+  ],
+  "years": [
+    2021,
+    2022,
+    2023,
+    2024,
+    2025
+  ],
+  "configs": [
+    "market_matched",
+    "market_onchain"
+  ],
+  "policy": "exhaustive_lowest",
+  "refit_after_calibration": true,
+  "budget_fa_per_coin_month": 1.0,
+  "purge_hours": 25,
+  "embargo_hours": 24,
+  "protocol": "practice inner_train -> calibrate inner_val -> refit train -> test; cutoff unchanged",
+  "logreg_selection": "calendar-year CV inside inner_train; keep selected C for refit",
+  "packages": {
+    "numpy": "2.5.4",
+    "pandas": "2.2.3",
+    "scikit-learn": "1.8.0",
+    "xgboost": "3.4.1"
+  },
+  "input_sha256": {
+    "data/processed/master_corrected_v1.parquet": "450865153d17b95627daeb48d8f64baf7d0f403b3c9b57d564e2a9aeaf284a37",
+    "data/processed/depeg_episodes_corrected_v1.parquet": "dcf23bf6662556d5432e6b1afa7127a5376c7154ec0403cf50a5d6f6131e9bdf"
+  },
+  "finished_utc": "2026-11-02T23:02:36.696667+00:00"
+}

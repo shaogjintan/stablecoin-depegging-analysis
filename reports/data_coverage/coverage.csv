@@ -1,0 +1,25 @@
+coin,coverage_definition,start,end,expected_hours,observed_hours,coverage_pct,denominator
+USDT,market_volume,2018-09-01 01:00:00+00:00,2025-12-31 23:00:00+00:00,64295,62270,96.85045493428727,full first-to-last timestamp span in corrected master
+USDT,onchain_all_raw_fields,2018-09-01 01:00:00+00:00,2025-12-31 23:00:00+00:00,64295,63840,99.29232444202503,full first-to-last timestamp span in corrected master
+USDT,joint_volume_and_onchain,2018-09-01 01:00:00+00:00,2025-12-31 23:00:00+00:00,64295,62027,96.47250952640174,full first-to-last timestamp span in corrected master
+USDT,onchain_tx_count_current_complete,2018-09-01 01:00:00+00:00,2025-12-31 23:00:00+00:00,64295,60607,94.26393965316122,full first-to-last timestamp span in corrected master
+USDC,market_volume,2018-10-05 01:00:00+00:00,2025-12-31 23:00:00+00:00,63479,62071,97.78194363490289,full first-to-last timestamp span in corrected master
+USDC,onchain_all_raw_fields,2018-10-05 01:00:00+00:00,2025-12-31 23:00:00+00:00,63479,63218,99.58884040391311,full first-to-last timestamp span in corrected master
+USDC,joint_volume_and_onchain,2018-10-05 01:00:00+00:00,2025-12-31 23:00:00+00:00,63479,62071,97.78194363490289,full first-to-last timestamp span in corrected master
+USDC,onchain_tx_count_current_complete,2018-10-05 01:00:00+00:00,2025-12-31 23:00:00+00:00,63479,57405,90.4314812772728,full first-to-last timestamp span in corrected master
+BUSD,market_volume,2019-09-21 01:00:00+00:00,2024-02-29 23:00:00+00:00,38951,37386,95.98213139585633,full first-to-last timestamp span in corrected master
+BUSD,onchain_all_raw_fields,2019-09-21 01:00:00+00:00,2024-02-29 23:00:00+00:00,38951,37891,97.27863212754487,full first-to-last timestamp span in corrected master
+BUSD,joint_volume_and_onchain,2019-09-21 01:00:00+00:00,2024-02-29 23:00:00+00:00,38951,36359,93.34548535339272,full first-to-last timestamp span in corrected master
+BUSD,onchain_tx_count_current_complete,2019-09-21 01:00:00+00:00,2024-02-29 23:00:00+00:00,38951,34128,87.61777618032913,full first-to-last timestamp span in corrected master
+DAI,market_volume,2019-11-18 18:00:00+00:00,2025-12-31 23:00:00+00:00,53646,53595,99.9049323341908,full first-to-last timestamp span in corrected master
+DAI,onchain_all_raw_fields,2019-11-18 18:00:00+00:00,2025-12-31 23:00:00+00:00,53646,53646,100.0,full first-to-last timestamp span in corrected master
+DAI,joint_volume_and_onchain,2019-11-18 18:00:00+00:00,2025-12-31 23:00:00+00:00,53646,53595,99.9049323341908,full first-to-last timestamp span in corrected master
+DAI,onchain_tx_count_current_complete,2019-11-18 18:00:00+00:00,2025-12-31 23:00:00+00:00,53646,29499,54.98825634716475,full first-to-last timestamp span in corrected master
+TUSD,market_volume,2019-01-04 01:00:00+00:00,2025-12-31 23:00:00+00:00,61295,61176,99.80585692144547,full first-to-last timestamp span in corrected master
+TUSD,onchain_all_raw_fields,2019-01-04 01:00:00+00:00,2025-12-31 23:00:00+00:00,61295,57099,93.15441716290073,full first-to-last timestamp span in corrected master
+TUSD,joint_volume_and_onchain,2019-01-04 01:00:00+00:00,2025-12-31 23:00:00+00:00,61295,56991,92.97822008320418,full first-to-last timestamp span in corrected master
+TUSD,onchain_tx_count_current_complete,2019-01-04 01:00:00+00:00,2025-12-31 23:00:00+00:00,61295,45154,73.66669385757403,full first-to-last timestamp span in corrected master
+PAX,market_volume,2018-09-26 01:00:00+00:00,2025-12-31 23:00:00+00:00,63695,61950,97.26038150561268,full first-to-last timestamp span in corrected master
+PAX,onchain_all_raw_fields,2018-09-26 01:00:00+00:00,2025-12-31 23:00:00+00:00,63695,59509,93.42805557736087,full first-to-last timestamp span in corrected master
+PAX,joint_volume_and_onchain,2018-09-26 01:00:00+00:00,2025-12-31 23:00:00+00:00,63695,58033,91.1107622262344,full first-to-last timestamp span in corrected master
+PAX,onchain_tx_count_current_complete,2018-09-26 01:00:00+00:00,2025-12-31 23:00:00+00:00,63695,44648,70.09655388963027,full first-to-last timestamp span in corrected master

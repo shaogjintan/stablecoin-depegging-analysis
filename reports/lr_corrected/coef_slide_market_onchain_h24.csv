@@ -1,6 +1,0 @@
-test_year,C,top3_market,onchain_nonzero,max_onchain,top_market_abs,max_onchain_abs,run_id
-2021,0.1,peg_stress (0.71); volume_pct_change_24h (0.26); realised_vol_6h (0.24),12/12,active_receivers_logdiff_24h (0.60),0.708,0.6001,20261102T061216Z-276e2c21
-2022,0.1,peg_deviation (-1.78); abs_peg_dev (1.26); peg_stress (-0.30),12/12,active_receivers_logdiff_24h (0.36),1.784,0.3552,20261102T061216Z-276e2c21
-2023,0.1,peg_deviation (-1.75); abs_peg_dev (1.21); peg_stress (-0.59),11/12,active_senders_logdiff_24h (-0.27),1.7471,0.2687,20261102T061216Z-276e2c21
-2024,0.1,peg_deviation (-1.55); abs_peg_dev (1.20); peg_stress (-0.63),12/12,active_senders_logdiff_24h (-0.26),1.5501,0.2551,20261102T061216Z-276e2c21
-2025,0.1,peg_deviation (-1.48); abs_peg_dev (1.19); peg_stress (-0.66),11/12,active_senders_logdiff_24h (-0.26),1.4834,0.2579,20261102T061216Z-276e2c21

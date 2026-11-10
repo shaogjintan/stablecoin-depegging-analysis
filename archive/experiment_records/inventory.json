@@ -1,0 +1,292 @@
+[
+  {
+    "original": "archive/history/runs/LR-EXHAUSTIVE-LOWEST/summary.csv",
+    "retained": "archive/artifacts/sensitivity/logistic_regression_no_refit/summary.csv",
+    "sha256": "cc7d26be2baba1de2c1c52fbc79132b7b8b9bb54508d88c89b00c4b455d8b926"
+  },
+  {
+    "original": "archive/history/runs/LR-EXHAUSTIVE-LOWEST/source_diff.patch",
+    "retained": "archive/artifacts/sensitivity/logistic_regression_no_refit/source_diff.patch",
+    "sha256": "40fd26a41d58be5f4178f5b9a373fea93b63ab0ca9aae71da806f35ea524ceda"
+  },
+  {
+    "original": "archive/history/runs/LR-EXHAUSTIVE-LOWEST/per_year.csv",
+    "retained": "archive/artifacts/sensitivity/logistic_regression_no_refit/per_year.csv",
+    "sha256": "a4e907e9937b125577939d7f3c75423edbf27cbbde00b8d51e001aa166b564c9"
+  },
+  {
+    "original": "archive/history/runs/LR-EXHAUSTIVE-LOWEST/matched_uncertainty.csv",
+    "retained": "archive/artifacts/sensitivity/logistic_regression_no_refit/matched_uncertainty.csv",
+    "sha256": "8f2d83028bf9fe89412d7acb532b92720a8233054b311c948892c1cf1f6b3f24"
+  },
+  {
+    "original": "archive/history/runs/LR-EXHAUSTIVE-LOWEST/partitions.json",
+    "retained": "archive/artifacts/sensitivity/logistic_regression_no_refit/partitions.json",
+    "sha256": "00a4cef13432a47351081767844ac37ddd84bf0bebb0e1314f7787146eee5007"
+  },
+  {
+    "original": "archive/history/runs/LR-EXHAUSTIVE-LOWEST/run.json",
+    "retained": "archive/artifacts/sensitivity/logistic_regression_no_refit/run.json",
+    "sha256": "5ed3ee552370004ee033f6e26c307bdb0c8457071e68d08aa5c7af8e172168f3"
+  },
+  {
+    "original": "archive/history/runs/LR-EXHAUSTIVE-LOWEST/lr_selected_c.csv",
+    "retained": "archive/artifacts/sensitivity/logistic_regression_no_refit/lr_selected_c.csv",
+    "sha256": "86f841a89b61645c0ae75f0c039eb8d081a9342b9f2d48bb7249f8ee7dba498d"
+  },
+  {
+    "original": "archive/history/runs/LR-EXHAUSTIVE-LOWEST/source/modelling/prepare_data.py",
+    "retained": "archive/artifacts/sensitivity/logistic_regression_no_refit/source/modelling/prepare_data.py",
+    "sha256": "6768bc6324c30939244f674232098d1925e5ee2f9e5d9436a77af253bb320979"
+  },
+  {
+    "original": "archive/history/runs/LR-EXHAUSTIVE-LOWEST/source/modelling/corrected_lr_rf.py",
+    "retained": "archive/artifacts/sensitivity/logistic_regression_no_refit/source/modelling/corrected_lr_rf.py",
+    "sha256": "93f7f7581d147b369355f82a8a246e52e8993ebb5c2d4cd8cd1621b54d8e2cf4"
+  },
+  {
+    "original": "archive/history/runs/LR-EXHAUSTIVE-LOWEST/source/modelling/corrected_h1.py",
+    "retained": "archive/artifacts/sensitivity/logistic_regression_no_refit/source/modelling/corrected_h1.py",
+    "sha256": "c547315a3e51a403eee0eeea27050f92167a018c99f5395a2f6f9675f63278b3"
+  },
+  {
+    "original": "archive/history/runs/LR-EXHAUSTIVE-LOWEST/source/modelling/verify_lr_rf_run.py",
+    "retained": "archive/artifacts/sensitivity/logistic_regression_no_refit/source/modelling/verify_lr_rf_run.py",
+    "sha256": "bd8cf6859828d77e499aa71e5e81063c7fcf723d7012581343a0708bb27b312e"
+  },
+  {
+    "original": "archive/history/runs/LR-EXHAUSTIVE-LOWEST/source/modelling/false_alarm_framework.py",
+    "retained": "archive/artifacts/sensitivity/logistic_regression_no_refit/source/modelling/false_alarm_framework.py",
+    "sha256": "8d6bed9c3efd27de49618f18a6b2fe90d516fa969b6ffd65a88aca736b624fe8"
+  },
+  {
+    "original": "archive/history/runs/LR-EXHAUSTIVE-LOWEST/source/modelling/exact_threshold.py",
+    "retained": "archive/artifacts/sensitivity/logistic_regression_no_refit/source/modelling/exact_threshold.py",
+    "sha256": "afd469d3626c95789fb98f6adfcd9b5abb5cb8dd694d23c5269ef6a2548bf097"
+  },
+  {
+    "original": "archive/history/runs/LR-EXHAUSTIVE-LOWEST/source/modelling/corrected_xgb.py",
+    "retained": "archive/artifacts/sensitivity/logistic_regression_no_refit/source/modelling/corrected_xgb.py",
+    "sha256": "06b3a009b587ae86e0c045db28185379ec72bb32f057e86c85bf9a5d813a663a"
+  },
+  {
+    "original": "archive/history/runs/LR-EXHAUSTIVE-LOWEST/source/modelling/alarm_events.py",
+    "retained": "archive/artifacts/sensitivity/logistic_regression_no_refit/source/modelling/alarm_events.py",
+    "sha256": "c362d11359757531383e7cbfa006aa1857c89d549cd7a8e86062c804b0d4f4f7"
+  },
+  {
+    "original": "archive/history/runs/LR-EXHAUSTIVE-LOWEST/source/modelling/corrected_data.py",
+    "retained": "archive/artifacts/sensitivity/logistic_regression_no_refit/source/modelling/corrected_data.py",
+    "sha256": "3a30c695108624e37c471ea4bfb93cd9d01f8ecf7e3ebdda6ebb3e64ded65e8c"
+  },
+  {
+    "original": "archive/history/runs/LR-EXHAUSTIVE-LOWEST/source/modelling/rolling_threshold.py",
+    "retained": "archive/artifacts/sensitivity/logistic_regression_no_refit/source/modelling/rolling_threshold.py",
+    "sha256": "9568c4bcfa25a2b47f43542111fb2e26dc9a15f3c6194815a2c669043126a26e"
+  },
+  {
+    "original": "archive/history/runs/LR-EXHAUSTIVE-LOWEST/source/modelling/train_logreg_yearcv.py",
+    "retained": "archive/artifacts/sensitivity/logistic_regression_no_refit/source/modelling/train_logreg_yearcv.py",
+    "sha256": "d318703dbf595dfee2ffbaa0b7b7a97d9e98100c88509053637c940b8c2112e3"
+  },
+  {
+    "original": "archive/history/runs/LR-EXHAUSTIVE-LOWEST/source/data_processing/merge_and_label.py",
+    "retained": "archive/artifacts/sensitivity/logistic_regression_no_refit/source/data_processing/merge_and_label.py",
+    "sha256": "5be29e5b03375f8e3a7216261bd3c0a13229ef08351a76d573d6c9742473e029"
+  },
+  {
+    "original": "archive/history/runs/LR-EXHAUSTIVE-LOWEST/source/data_processing/config.py",
+    "retained": "archive/artifacts/sensitivity/logistic_regression_no_refit/source/data_processing/config.py",
+    "sha256": "7ec4411f3de39e60d5ad27cad7098f3c7501c21badf044f9b4a4ba9697ae9715"
+  },
+  {
+    "original": "archive/history/runs/LR-EXHAUSTIVE-LOWEST/source/data_processing/splits.py",
+    "retained": "archive/artifacts/sensitivity/logistic_regression_no_refit/source/data_processing/splits.py",
+    "sha256": "b134c7b43c3faf09425b09cc95bd44a5d15fe7ce6e1a6144138612c839d48c9a"
+  },
+  {
+    "original": "archive/history/runs/LR-EXHAUSTIVE-LOWEST/source/modelling/models/baseline.py",
+    "retained": "archive/artifacts/sensitivity/logistic_regression_no_refit/source/modelling/models/baseline.py",
+    "sha256": "700c7948251c0604b5ab444aa76a157087bb837a164de2bcc7b91e1687404174"
+  },
+  {
+    "original": "archive/history/runs/LR-EXHAUSTIVE-LOWEST/source/modelling/models/random_forest_model.py",
+    "retained": "archive/artifacts/sensitivity/logistic_regression_no_refit/source/modelling/models/random_forest_model.py",
+    "sha256": "c2e2a23b93d41ca766f07f0817857bd6f637400491f76b67242d56f539cd38d3"
+  },
+  {
+    "original": "archive/history/runs/LR-EXHAUSTIVE-LOWEST/source/modelling/models/logreg.py",
+    "retained": "archive/artifacts/sensitivity/logistic_regression_no_refit/source/modelling/models/logreg.py",
+    "sha256": "f6492deeffef1c5435086a37cdf7ac94012a782e3bcbf13259d0a04587b5fdba"
+  },
+  {
+    "original": "archive/history/runs/LR-EXHAUSTIVE-LOWEST/source/modelling/models/base.py",
+    "retained": "archive/artifacts/sensitivity/logistic_regression_no_refit/source/modelling/models/base.py",
+    "sha256": "90bda1af1d5d8ecf41b5592faa3c5d4e6433ebe88666bf92a4435bb9c52aa910"
+  },
+  {
+    "original": "archive/history/artifacts/runs/sensitivity_checks/EXHAUSTIVE-LOWEST-NEW/runner_source.py",
+    "retained": "archive/artifacts/sensitivity/random_forest_xgboost_no_refit/original_runner/runner_source.py",
+    "sha256": "a338d66577b2300cc01b658452b7c109ed452e3fee6feaddfb51bbad747a95e1"
+  },
+  {
+    "original": "archive/history/artifacts/runs/sensitivity_checks/XGB-NEW/source_diff.patch",
+    "retained": "archive/artifacts/sensitivity/xgboost_no_refit/original_source/source_diff.patch",
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "original": "archive/history/artifacts/runs/sensitivity_checks/XGB-NEW/source/verify_corrected_run.py",
+    "retained": "archive/artifacts/sensitivity/xgboost_no_refit/original_source/source/verify_corrected_run.py",
+    "sha256": "3587d570fbd317e6d8e728fd3c04043aa3482006f3cefecd6d37113d7015fef5"
+  },
+  {
+    "original": "archive/history/artifacts/runs/sensitivity_checks/XGB-NEW/source/merge_and_label.py",
+    "retained": "archive/artifacts/sensitivity/xgboost_no_refit/original_source/source/merge_and_label.py",
+    "sha256": "5be29e5b03375f8e3a7216261bd3c0a13229ef08351a76d573d6c9742473e029"
+  },
+  {
+    "original": "archive/history/artifacts/runs/sensitivity_checks/XGB-NEW/source/config.py",
+    "retained": "archive/artifacts/sensitivity/xgboost_no_refit/original_source/source/config.py",
+    "sha256": "7ec4411f3de39e60d5ad27cad7098f3c7501c21badf044f9b4a4ba9697ae9715"
+  },
+  {
+    "original": "archive/history/artifacts/runs/sensitivity_checks/XGB-NEW/source/prepare_data.py",
+    "retained": "archive/artifacts/sensitivity/xgboost_no_refit/original_source/source/prepare_data.py",
+    "sha256": "6768bc6324c30939244f674232098d1925e5ee2f9e5d9436a77af253bb320979"
+  },
+  {
+    "original": "archive/history/artifacts/runs/sensitivity_checks/XGB-NEW/source/xgboost_model.py",
+    "retained": "archive/artifacts/sensitivity/xgboost_no_refit/original_source/source/xgboost_model.py",
+    "sha256": "5054ffcd71259d55a9fed9c7d70126649db7b8f73a92e92c0dded7b418191e07"
+  },
+  {
+    "original": "archive/history/artifacts/runs/sensitivity_checks/XGB-NEW/source/false_alarm_framework.py",
+    "retained": "archive/artifacts/sensitivity/xgboost_no_refit/original_source/source/false_alarm_framework.py",
+    "sha256": "8d6bed9c3efd27de49618f18a6b2fe90d516fa969b6ffd65a88aca736b624fe8"
+  },
+  {
+    "original": "archive/history/artifacts/runs/sensitivity_checks/XGB-NEW/source/exact_threshold.py",
+    "retained": "archive/artifacts/sensitivity/xgboost_no_refit/original_source/source/exact_threshold.py",
+    "sha256": "afd469d3626c95789fb98f6adfcd9b5abb5cb8dd694d23c5269ef6a2548bf097"
+  },
+  {
+    "original": "archive/history/artifacts/runs/sensitivity_checks/XGB-NEW/source/splits.py",
+    "retained": "archive/artifacts/sensitivity/xgboost_no_refit/original_source/source/splits.py",
+    "sha256": "b134c7b43c3faf09425b09cc95bd44a5d15fe7ce6e1a6144138612c839d48c9a"
+  },
+  {
+    "original": "archive/history/artifacts/runs/sensitivity_checks/XGB-NEW/source/corrected_xgb.py",
+    "retained": "archive/artifacts/sensitivity/xgboost_no_refit/original_source/source/corrected_xgb.py",
+    "sha256": "06b3a009b587ae86e0c045db28185379ec72bb32f057e86c85bf9a5d813a663a"
+  },
+  {
+    "original": "archive/history/artifacts/runs/sensitivity_checks/XGB-NEW/source/alarm_events.py",
+    "retained": "archive/artifacts/sensitivity/xgboost_no_refit/original_source/source/alarm_events.py",
+    "sha256": "c362d11359757531383e7cbfa006aa1857c89d549cd7a8e86062c804b0d4f4f7"
+  },
+  {
+    "original": "archive/history/artifacts/runs/sensitivity_checks/XGB-NEW/source/corrected_data.py",
+    "retained": "archive/artifacts/sensitivity/xgboost_no_refit/original_source/source/corrected_data.py",
+    "sha256": "3a30c695108624e37c471ea4bfb93cd9d01f8ecf7e3ebdda6ebb3e64ded65e8c"
+  },
+  {
+    "original": "archive/history/artifacts/runs/sensitivity_checks/XGB-NEW/source/rolling_threshold.py",
+    "retained": "archive/artifacts/sensitivity/xgboost_no_refit/original_source/source/rolling_threshold.py",
+    "sha256": "0cefaf22646c627dc3f41a615634cd0806a735365282d373d8d7d7a4755ade52"
+  },
+  {
+    "original": "archive/history/reports/logreg_tuning_summary.csv",
+    "retained": "archive/experiment_records/reports/logreg_tuning_summary.csv",
+    "sha256": "09b22b4624f8cf23e780d0b68fb9ffc2bd4ec3f2edcedd5546af168a88406ee5"
+  },
+  {
+    "original": "archive/history/reports/event_tables/by_year.csv",
+    "retained": "archive/experiment_records/reports/event_tables/by_year.csv",
+    "sha256": "54dfe306ff10b32926336bef0c0d1717f82cbb4af66209ce6a17ab3980eb962e"
+  },
+  {
+    "original": "archive/history/reports/rf_importance/summary.csv",
+    "retained": "archive/experiment_records/reports/rf_importance/summary.csv",
+    "sha256": "a07f7cf264ce6ddf8605579145c26d325e929962c82e51992e5e6bcc11cd1402"
+  },
+  {
+    "original": "archive/history/reports/xgb_threshold_search/by_year.csv",
+    "retained": "archive/experiment_records/reports/xgb_threshold_search/by_year.csv",
+    "sha256": "cf312da8e9a0ef3e73b4f730ffb9fcb4895d1a3a757f711366c7771bb9f6fc70"
+  },
+  {
+    "original": "archive/history/reports/xgb_threshold_search/summary.csv",
+    "retained": "archive/experiment_records/reports/xgb_threshold_search/summary.csv",
+    "sha256": "d55fd6c263a9e832796dbbf44ae6f377cdb1944b1c284b5cb75f94c16954219e"
+  },
+  {
+    "original": "archive/history/reports/xgb_threshold_search/protocol.json",
+    "retained": "archive/experiment_records/reports/xgb_threshold_search/protocol.json",
+    "sha256": "75a7292fe48c787491df9c42b25d0ec1b4dfaec2572380dac01f7a4c15c7d845"
+  },
+  {
+    "original": "archive/history/reports/xgb_threshold_search/findings.md",
+    "retained": "archive/experiment_records/reports/xgb_threshold_search/findings.md",
+    "sha256": "45417552a93f9fc9b04600b440a9416562389f031a6bd62e1f044953674fd977"
+  },
+  {
+    "original": "archive/history/reports/xgb_corrected_shap_v1/summary.csv",
+    "retained": "archive/experiment_records/reports/xgb_corrected_shap_v1/summary.csv",
+    "sha256": "0812af4fc578324bfe3e37188921c64d98c2f4619864ab386a311aa26c4b89a6"
+  },
+  {
+    "original": "archive/history/reports/xgb_corrected_shap_v1/source_diff.patch",
+    "retained": "archive/experiment_records/reports/xgb_corrected_shap_v1/source_diff.patch",
+    "sha256": "390751b6db92f90e087bf187dbf0e61676dbec1cd56f325d35da628ebb8c22b9"
+  },
+  {
+    "original": "archive/history/reports/xgb_corrected_shap_v1/per_year.csv",
+    "retained": "archive/experiment_records/reports/xgb_corrected_shap_v1/per_year.csv",
+    "sha256": "1a6d82c26dac8afd1e14072ec1377f24c3f7af9ca31fe02d76f90e9f1705b40b"
+  },
+  {
+    "original": "archive/history/reports/xgb_corrected_shap_v1/matched_uncertainty.csv",
+    "retained": "archive/experiment_records/reports/xgb_corrected_shap_v1/matched_uncertainty.csv",
+    "sha256": "73e76b3b830a100b1bdc69971957783be6087a8310b1ce5ab4d6efb379d593c8"
+  },
+  {
+    "original": "archive/history/reports/xgb_corrected_shap_v1/run.json",
+    "retained": "archive/experiment_records/reports/xgb_corrected_shap_v1/run.json",
+    "sha256": "2f8cfaf3e0646735904761f3ef0522490cdd6fb35607efe572c356c9bb38fb60"
+  },
+  {
+    "original": "archive/history/reports/xgb_corrected_shap_v1/shap_summary.csv",
+    "retained": "archive/experiment_records/reports/xgb_corrected_shap_v1/shap_summary.csv",
+    "sha256": "1c7b03a90232805683c425382f54c8d81084ed6d4274aa29861dfa32c76ce384"
+  },
+  {
+    "original": "archive/history/reports/xgb_corrected_shap_v1/source/exact_threshold.py",
+    "retained": "archive/experiment_records/reports/xgb_corrected_shap_v1/source/exact_threshold.py",
+    "sha256": "afd469d3626c95789fb98f6adfcd9b5abb5cb8dd694d23c5269ef6a2548bf097"
+  },
+  {
+    "original": "archive/history/reports/xgb_corrected_shap_v1/source/corrected_xgb.py",
+    "retained": "archive/experiment_records/reports/xgb_corrected_shap_v1/source/corrected_xgb.py",
+    "sha256": "711e53c87432bec78af1705809b3f872815cf723a3baa2bc780812384a63c2db"
+  },
+  {
+    "original": "archive/history/reports/xgb_corrected_shap_v1/source/alarm_events.py",
+    "retained": "archive/experiment_records/reports/xgb_corrected_shap_v1/source/alarm_events.py",
+    "sha256": "dd56137bf80e3442c267fba41422693ce78978eea50f82bf08e0e22af57103f6"
+  },
+  {
+    "original": "archive/history/reports/xgb_corrected_shap_v1/source/corrected_data.py",
+    "retained": "archive/experiment_records/reports/xgb_corrected_shap_v1/source/corrected_data.py",
+    "sha256": "06be9dd8fe92478b71628a6c0f8a4999c729eab31a2805b04321917ba8f49079"
+  },
+  {
+    "original": "archive/history/reports/xgb_corrected_shap_v1/source/rolling_threshold.py",
+    "retained": "archive/experiment_records/reports/xgb_corrected_shap_v1/source/rolling_threshold.py",
+    "sha256": "0cefaf22646c627dc3f41a615634cd0806a735365282d373d8d7d7a4755ade52"
+  },
+  {
+    "original": "archive/history/data/cv_folds_summary.csv",
+    "retained": "archive/experiment_records/data/cv_folds_summary.csv",
+    "sha256": "3fe1c354743732c15ed16288eb77a9cc3ea276435bdaef0d59640a08db5bc26b"
+  }
+]

@@ -1,0 +1,14 @@
+{
+  "source_run": "reports/xgb_corrected_shap_v1",
+  "run_id": "20261101T151240Z-3a736b58",
+  "budget": 1.0,
+  "retrained": false,
+  "policies": [
+    "binary_legacy",
+    "exhaustive_lowest",
+    "exact_max_recall"
+  ],
+  "calibration": "saved inner_val only",
+  "test": "same saved test predictions and episode manifest for every policy",
+  "implementation": "exhaustive cooldown counts; simulate original binary decisions on those counts; independently verify selected cutoffs with build_alarm_events"
+}
