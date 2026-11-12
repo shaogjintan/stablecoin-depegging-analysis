@@ -1,19 +1,13 @@
 """Calculate calendar-based market features for interim and final tables.
 
-Missing hours remain missing; lags refer to calendar hours. Volatility uses
-independent, centered sample-deviation calculations for each window. The command-line
-writer uses the same calculation as the dataset builder. Historical formulas
-are preserved under delete/archive_cleanup/history/data_processing/.
+Lags use elapsed calendar hours and preserve missing observations. Volatility
+uses independent, centered sample-deviation calculations for each window.
+The interim writer and dataset builder share this calculation.
 
-Run ``python -m data_processing.build_market_features`` to rebuild
-data/interim/hourly_stablecoin_market_features.parquet from the retained
-data/raw/hourly_stablecoin.parquet. This replaces the interim feature
-file with the current calculation; it does not fetch data or train models.
-
-The retained historical interim file can differ in simple-return diagnostics
-and completeness. Verify frozen model evidence using its recorded input
-hashes; a current rebuild need not reproduce historical file bytes. Normal
-report reproduction reads retained inputs without running this writer.
+Run ``python -m data_processing.build_market_features`` to read
+``data/raw/hourly_stablecoin.parquet`` and replace the derived table at
+``data/interim/hourly_stablecoin_market_features.parquet``. This command
+uses retained local observations; it does not fetch data or train models.
 """
 import math
 
@@ -76,7 +70,7 @@ def calendar_market_features(df):
             g[f"return_{h}h"] = p.pct_change(h, fill_method=None)
             g[f"log_return_{h}h"] = np.log(p / p.shift(h))
             change = v.div(v.shift(h)).sub(1).replace([np.inf, -np.inf], np.nan)
-            # Missing venue provenance is not evidence of an uninterrupted venue.
+            # Require observed venue continuity throughout the lookback.
             g[f"volume_pct_change_{h}h"] = change.where(
                 g.hours_since_venue_start >= h + 1
             )

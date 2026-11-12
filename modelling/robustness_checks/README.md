@@ -59,8 +59,3 @@ has no unique continuous probability ranking; its AP is blank. Component
 baseline AP uses each original score. In the exported alarms, rule_signal is
 a binary flag and rule_threshold is 0.5, not a fitted risk-score cutoff; original
 component cutoffs are recorded separately.
-
-The historical smoothing and test-optimised OR scripts remain in delete/.
-They are not imported by these modules. The old OR experiment swept cutoffs
-against pooled test outcomes and used an hourly alarm-rate budget; its results
-must not be substituted for these out-of-sample fixed-cutoff comparisons.

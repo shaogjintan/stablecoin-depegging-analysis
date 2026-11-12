@@ -15,7 +15,7 @@ def classify(row):
         return "Crypto market stress (early 2022)"
     if s.year == 2021:
         return "DeFi / liquidity stress (2021)"
-    # PAX-specific depegs Jan-Mar 2023 (Paxos regulatory pressure, NYDFS BUSD order)
+    # PAX-specific context window; date overlap does not establish cause.
     if pd.Timestamp("2023-01-01", tz="UTC") <= s <= pd.Timestamp("2023-03-08", tz="UTC"):
         return "Paxos regulatory pressure (early 2023)"
     if pd.Timestamp("2023-03-15", tz="UTC") <= s <= pd.Timestamp("2023-12-31", tz="UTC"):

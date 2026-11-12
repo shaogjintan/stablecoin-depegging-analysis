@@ -22,10 +22,6 @@ python -W ignore::DeprecationWarning -m unittest discover -s tests -v
 - `reports/baseline.json`: selected final run, data root and input relocations.
 - `reports/validation_checks/reproducibility/`: independent comparison evidence.
 
-The temporary stable-a and stable-b workspaces have served their verification
-purpose and are not required for reviewers. The selected run is now
-`artifacts/final_run/`; the report values did not change during relocation.
-
 ## Regenerate the published reports from saved models
 
 With the final run evidence supplied, run:
@@ -64,9 +60,8 @@ Required retained source inputs:
 - `data/raw/hourly_stablecoin.parquet`
 - `data/raw/dune_onchain.zip`
 
-Verify their hashes against `data/manifest.json`. Both must actually be included
-in the materials supplied to reviewers; allowing a file in Git is not a substitute
-for committing it. Installing dependencies does not supply research data.
+Verify their hashes against `data/manifest.json`. Both files are required in the supplied review materials.
+Installing dependencies does not supply research data.
 
 ```sh
 python -m reports.reproduce --full --dry-run
@@ -132,9 +127,8 @@ Volatility uses centered, compensated sample-deviation calculations independentl
 for every complete window (ddof=1); constant windows are exactly zero without
 rounding away genuine variation. RF prediction accumulates trees in fixed order.
 Training settings, seeds, labels and eligibility definitions are unchanged.
-The earlier report snapshot and investigation remain archived; the current
-report baseline is the repeatable final run. Arbitrary hardware or package
-versions are not promised to produce identical results.
+The current report baseline is the validated final run. Other hardware or
+package versions have not been independently checked for identical results.
 
 ## Fresh market acquisition and on-chain provenance
 

@@ -12,7 +12,6 @@ The study covers USDT, USDC, BUSD, DAI, TUSD and PAX. Final results use the corr
 - [Reproduction instructions](docs/reproduction.md)
 - [Methodology and limitations](docs/methodology.md)
 - [Python file inventory](docs/code_inventory.md)
-- [Historical cleanup record](archive/maintenance/cleanup_history.md)
 
 ## Setup and checks
 
@@ -80,15 +79,18 @@ See [detailed instructions](docs/reproduction.md).
 modelling/             training, evaluation, robustness and reporting packages
 modelling/reporting/   final-model interpretation, events and coverage
 data_processing/       acquisition, feature building, sample preparation and splits
-data/                  frozen inputs, source snapshots and intermediates
+data/                  retained source inputs, features and final datasets
 tests/                 maintained data/threshold/model checks
 reports/               report outputs, provenance and reproduce.py
 artifacts/final_run/    one final fitted run and its verification evidence
-docs/                  methodology, reproduction and relocation records
-archive/       earlier experiments and original implementations
+docs/                  methodology, reproduction and code inventory
+archive/               earlier experiments and research records
 delete/                preserved deletion candidates; not used by the pipeline
 ```
 
-Archived code is historical evidence and is not a supported reproduction route. Original run manifests and source snapshots retain historical paths; [the relocation map](archive/maintenance/cleanup_moves.json) maps them to current locations. `data/raw/dune_onchain.zip` and extracted Dune CSVs are both retained.
+Archived code is excluded from the maintained reproduction workflow. Original
+run manifests and source snapshots retain execution-time paths; current input
+relocations are recorded in `reports/baseline.json`. The original Dune bundle is
+retained, and its six study-coin CSVs can be extracted locally.
 
 See [the modelling guide](modelling/README.md) for the pipeline structure and current command entry points.

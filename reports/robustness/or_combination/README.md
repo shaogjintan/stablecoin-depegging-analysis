@@ -4,7 +4,7 @@ Report every available model pair within the same tier, horizon and test year. C
 
 An hour is flagged if either model reaches its own fixed saved calibration cutoff. Apply one standard cooldown to the union of flags.
 
-No optimisation of thresholds, pairs or alarm budgets uses test outcomes. This is not the historical test-optimised OR analysis.
+No optimisation of thresholds, pairs or alarm budgets uses test outcomes; component cutoffs are not retuned.
 
 The OR rule may exceed the original calibration budget. Inspect calibration and test false-alarm rates alongside recall and lead time. Cooldown interactions mean OR recall need not dominate both components.
 

@@ -1,4 +1,4 @@
-"""Acquire reference prices and exchange volume into the raw hourly source table.
+"""Acquire reference prices and exchange volume for the raw hourly table.
 
 Run explicitly with ``python -m data_processing.fetch_stablecoin_data``.
 This command makes network requests; normal model reproduction uses the frozen
@@ -321,9 +321,7 @@ def fetch_binance_month(symbol: str, month: str) -> pd.DataFrame | None:
         return None
     with zipfile.ZipFile(io.BytesIO(r.content)) as z:
         raw = z.read(z.namelist()[0]).decode("utf-8")
-    # Keep only the fields needed downstream. The archive contains many
-    # columns we never use (for example trades / taker-buy volumes), and
-    # materialising them just adds noise and unnecessary storage.
+    # Read only the timestamp and trading volume needed by the market table.
     df = pd.read_csv(
         io.StringIO(raw),
         header=None,

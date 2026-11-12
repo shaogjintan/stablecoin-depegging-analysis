@@ -21,7 +21,7 @@ ONCHAIN_FEATURES_PATH = (
 DUNE_ONCHAIN_ZIP = RAW_DATA_DIR / "dune_onchain.zip"
 DUNE_ONCHAIN_DIR = RAW_DATA_DIR
 PROCESSED_DATA_DIR = DATA_DIR / "processed"
-# Canonical corrected inputs; dataset_version records the statistical protocol.
+# Canonical inputs; the protocol identifier supports saved-run verification.
 MODELLING_DATA_VERSION = "corrected_v1"
 ACTIVE_MASTER_PATH = PROCESSED_DATA_DIR / "master.parquet"
 ACTIVE_EPISODES_PATH = PROCESSED_DATA_DIR / "depeg_episodes.parquet"

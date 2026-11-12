@@ -23,7 +23,9 @@ were removed after validation; promotion checksums remain in
 
 The h1 results are supplementary and belong to the same published final run. Model interpretation figures and benchmark comparisons cover primary h6/h24. Counts by type also cover h1. Historical annotations must be reviewed as context; date membership is not evidence of causation.
 
-All old final_results/, fixed/tuned figures and non-refit coefficients are archived. Do not combine their values with the current final-model outputs. Frozen JSON manifests may contain old paths; resolve them with archive/maintenance/cleanup_moves.json rather than editing the original provenance.
+Use the selected final run for report comparisons. Original training metadata
+may retain execution-time paths; current input relocations are recorded in
+`reports/baseline.json`.
 
 ## Per-coin model comparison
 

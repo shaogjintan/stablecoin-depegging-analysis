@@ -21,7 +21,7 @@ AP uses pooled prediction scores. Episode recall uses targetable episodes. Media
 | `model_results` | Combine RF/XGB/LR saved summaries and yearly results for h1/h6/h24 into `reports/model_results/`. |
 | `by_coin` | Recompute per-coin metrics from saved predictions/alarms, verify aggregate count agreement, and record source hashes. |
 | `calibration_audit` | Read saved fit metadata into `reports/validation_checks/`; primary h6/h24 by default, optional h1. |
-| `model_interpretation` | Export coefficients, RF importance, and figures; reuse saved XGB SHAP rankings under `reports/model_interpretation/`. |
+| `model_interpretation` | Export coefficients, RF importance, and figures; calculate XGB SHAP rankings from the selected saved fits under `reports/model_interpretation/`. |
 | `coverage_table` | Source completeness against each coin's full observed timestamp span under `reports/data_coverage/`. |
 | `event_table` | Group episodes into events, add annotations/classifications, and export event tables/figures. The coin/year heatmap goes under `reports/depeg_episodes/`. |
 | `detection_by_type` | Detection counts and conditional lead time by structural event type. False alarms have no observed event type, so this is not a full five-metric comparison. |
@@ -31,5 +31,3 @@ AP uses pooled prediction scores. Episode recall uses targetable episodes. Media
 | `schema` | Consistent comparison column order and separation of diagnostics. |
 
 h1 is supplementary; h6/h24 are primary. Benchmark coverage remains h6/h24. Event-type detections cover all three horizons. Figures and interpretation exporters currently cover primary h6/h24.
-
-Obsolete slide support, its Markdown formatting helper, and the unused expanding-window plot are archived under `delete/archive_cleanup/history/modelling_redundant/reporting/`. They are excluded from report reproduction.

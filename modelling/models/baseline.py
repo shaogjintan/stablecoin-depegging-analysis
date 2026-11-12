@@ -59,7 +59,7 @@ class PersistenceModel(BaseModel):
     def predict_proba(self, X) -> np.ndarray:
         """Return downward peg-stress scores in two-column classifier form."""
         dev = np.asarray(X["peg_deviation"], dtype=float)
-        p = np.clip(-dev, 0.0, 0.01)  # stress = distance below $1 (at-risk rows: <= 0.01)
+        p = np.clip(-dev, 0.0, 0.01)  # Distance below the dollar peg.
         return np.column_stack([1.0 - p, p])
 
     def get_params(self) -> dict:

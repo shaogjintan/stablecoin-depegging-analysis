@@ -38,7 +38,7 @@ class NumericalReproducibilityTests(unittest.TestCase):
         self.assertEqual(result.iloc[11], 0.)
 
     def test_stable_rebuild_rejects_even_small_volatility_changes(self):
-        """New datasets require exact features rather than historical tolerance."""
+        """Require exact feature equality for current datasets."""
         a = pd.DataFrame({'realised_vol_6h': [0.],
                           'realised_vol_24h': [0.], 'value': [1.]})
         b = a.copy()

@@ -50,7 +50,7 @@ class XGBModel(BaseModel):
             spw = float(self.scale_pos_weight)
 
         use_es = X_val is not None
-        n_estimators = max(int(self.n_estimators), 1)  # 0 trees predicts constants
+        n_estimators = max(int(self.n_estimators), 1)  # No trees gives constant scores.
         clf = XGBClassifier(
             tree_method="hist",
             learning_rate=self.learning_rate,

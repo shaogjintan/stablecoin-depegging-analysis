@@ -9,7 +9,7 @@ Exact columns, row counts and file checksums are recorded in data/manifest.json.
 - trading_volume: retained exchange volume; missing values remain missing.
 - episode_id, start, end: merged episode identity and corrected boundaries.
 - label_h1, label_h6, label_h24: future merged onset targets. Eligibility also depends on label observability.
-- prediction_eligible_*: versioned at-risk/sample eligibility masks by tier and horizon.
+- prediction_eligible_*: at-risk/sample eligibility masks by tier and horizon.
 - observable_at_risk: causal online eligibility, distinct from future-label observability.
 - *_logdiff_{1h,6h,24h}: on-chain log1p changes, used instead of raw activity levels as model features.
 - historical_context (report output): heuristic date-based context, not a causal label.

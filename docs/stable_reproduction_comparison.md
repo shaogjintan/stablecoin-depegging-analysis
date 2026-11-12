@@ -1,38 +1,35 @@
-# Stable reproduction comparison
+# Reproduction comparison and result changes
 
-Primary training in `artifacts/reproduction-stable-a/` and
-`artifacts/reproduction-stable-b/` matches exactly across all 90 cells.
-Both saved audits passed, including model-score replay.
+The published run is `artifacts/final_run/`, with exact input datasets under
+`data/processed/` and report outputs under `reports/`. `reports/baseline.json`
+selects this evidence. Two independent full reproductions matched before one
+run was retained and the duplicate workspaces were removed.
 
-The exact comparison covers 455 tables: the master and episode datasets;
-all four saved partitions and alarm tables for every fit; and the combined
-summary, yearly results and alarms. Scientific fit metadata also matches,
-excluding run IDs and pipeline checksums. There are 18 pooled summary rows,
-90 yearly rows and 6,918 combined alarm records. No numerical tolerance was
-used for this between-run comparison.
+## Comparison scope
 
-This establishes reproducibility of the primary data, training, calibration,
-prediction and alarm results in the tested environment. Other software versions
-and hardware have not been tested.
+Both workflows completed all 16 stages and passed their 90-cell saved-model
+score audits. Primary comparison covered 455 tables: the master and episode
+datasets, four partitions and alarms for each fit, and combined summary,
+yearly and alarm tables. Scientific fit metadata also matched, excluding run
+identities and serialized-model checksums. These tables contain 18 pooled
+results, 90 yearly results and 6,918 combined alarms.
 
-Both complete workflows have now finished all 16 stages. The full comparison
-passed 490 checks, including the generated report CSVs. Two interpretation
-tables contain different run IDs, as expected: each ID was checked against its
-own run manifest and all remaining values match exactly. Workspace paths were
-normalised. Figures and path-bearing JSON manifests were not compared bytewise.
+The full comparison passed 490 checks, including downstream scientific CSVs.
+Expected run identifiers were validated against each run's manifest before
+comparison; workspace paths were normalized. Scientific values matched exactly.
+Figures and path-bearing JSON files were not compared bytewise. This evidence
+applies to the tested software environment, not arbitrary platforms.
 
-## Changes against the original report baseline
+## Changes from the superseded baseline
 
-LR's pooled headline metrics are unchanged. Episode recall is unchanged for
-all models. RF false-alarm counts differ in two cells, by at most two alarms;
-XGBoost counts differ in six cells, by at most 13. RF/XGBoost AP differ in six
-cells each. Two XGBoost median lead times differ, by at most one hour.
-The original report baseline has now been archived, and `reports/` has been
-updated to stable-a.
-
-All 30 changed pooled headline values are listed below. Only the comparison
-against the old baseline uses rtol=1e-10 and atol=1e-12. Stable-a and stable-b
-values are exactly equal.
+The numerical corrections are explained in
+[numerical reproducibility](reproducibility_investigation.md). LR pooled headline
+metrics and episode recall for every model were unchanged. RF false-alarm
+counts changed in two cells; XGBoost counts changed in six. RF/XGBoost average
+precision changed in all six pooled cells each. Two XGBoost median lead times
+changed. The table records all 30 changed pooled headline values; comparisons
+against the superseded baseline used rtol=1e-10 and atol=1e-12. The two new
+reproductions matched exactly.
 
 | Model | Tier | Horizon | Metric | Original | Stable |
 |---|---|---:|---|---:|---:|
@@ -67,60 +64,18 @@ values are exactly equal.
 | xgboost | 2 | 24 | false_alarms_per_coin_month | 0.775316455696 | 0.753164556962 |
 | xgboost | 2 | 24 | average_precision | 0.0163145158362 | 0.0164386473936 |
 
-## Evidence
 
-Local training comparison: `reports/validation_checks/reproducibility/training_comparison.json`.
-Automatic full comparison: `reports/validation_checks/reproducibility/full_comparison.json`.
-Local diagnostic artifacts are ignored in Git.
+## Retained evidence
 
-## Publication of the stable baseline
+| Record | Purpose |
+|---|---|
+| `reports/validation_checks/reproducibility/training_comparison.json` | Exact primary training and result comparison. |
+| `reports/validation_checks/reproducibility/full_comparison.json` | Full workflow comparison, including report tables. |
+| `reports/validation_checks/reproducibility/report_promotion.json` | Checksums recording replacement of the superseded reports. |
+| `reports/validation_checks/reproducibility/reviewer_relocation.json` | Checksums and relocation of the canonical inputs. |
+| `reports/verification.json` | Verification of the selected published model evidence. |
 
-The report baseline has been updated to stable-a, selected in
-`reports/baseline.json`. All 29 current report CSVs match stable-a exactly.
-Superseded report and input snapshots were removed after validation.
-Old/new SHA-256 hashes remain in
-`reports/validation_checks/reproducibility/report_promotion.json`; input
-relocation checksums remain in `reviewer_relocation.json` in the same folder.
-
-Fifteen existing CSVs were updated and six alarm-rule CSVs were added. Related
-interpretation figures, source manifests and verification records were updated
-together. Unchanged coverage, event and benchmark table values were preserved.
-The complete full-workflow scope now includes h1 in the calibration audit
-(60 to 90 rows), LR coefficients (360 to 540) and RF importance (320 to 480).
-LR's h6/h24 coefficient values and all LR headline performance values remain
-unchanged; the larger coefficient table adds supplementary h1 records.
-
-`python -m reports.reproduce` selects this published run and its actual data
-workspace, verifies its identity and regenerates reports without training.
-Direct report exporters use the selected run where applicable. The original
-`data/processed/` pair remains available for historical comparison; its values
-are not silently substituted for the published stable-a training inputs.
-
-Validation: 82 automated tests passed, all 29 published CSVs matched stable-a
-exactly, promoted output checksums matched their source files, and archived
-file checksums matched the pre-promotion reports. Figures were copied from
-stable-a; the independent a/b comparison checked scientific CSV values rather
-than image bytes.
-
-
-## Superseded workspace cleanup
-
-The project owner subsequently requested deletion of the superseded artifact
-folders: `artifacts/h1/`, `artifacts/h6_and_h24/` and the initial
-`artifacts/reproduction/`. Their historical paths above describe the evidence
-reviewed before removal; the old fitted models are no longer available there.
-Stable-a, stable-b, the original report snapshot and the small comparison
-summaries remain retained. The two final comparison JSON summaries are tracked
-in Git; other local diagnostic artifacts remain ignored.
-
-## Current reviewer layout (12 November 2026)
-
-The selected validated run was moved, without changing model/result values, to
-`artifacts/final_run/`. Its exact datasets are now under `data/processed/`.
-The duplicate stable-a/stable-b workspaces and large diagnostic trials were
-removed after verification; the names above describe the historical comparison,
-not current reviewer paths. Small final audit records are retained under
-`reports/validation_checks/reproducibility/`. Original run metadata remains
-immutable, and its historical input paths are translated by the explicit
-relocation map in `reports/baseline.json`. See
-`docs/reviewer_code_organisation.md` for the final folder table and report edits.
+Superseded inputs and report snapshots were removed after validation. Their
+former paths in audit records describe the evidence checked at that stage;
+they are not current reproduction inputs. Current model-result tables,
+interpretation outputs and robustness reports use the selected final run.

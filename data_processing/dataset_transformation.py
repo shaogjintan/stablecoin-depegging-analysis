@@ -20,9 +20,18 @@ def causal_risk_mask(
     df, recovery_hours=DEPEG_GAP_HOURS, band=DEPEG_BAND,
     min_duration=DEPEG_MIN_DURATION_HOURS,
 ):
-    """Identify causal at-risk prediction rows at bar close.
+    """Identify prediction origins using only observed price history.
 
-    At bar close, exclude below-band and confirmed-dip recovery; no final end.
+    Args:
+        df: Coin-hour rows on a sorted, complete hourly calendar.
+        recovery_hours: Exclusion period after a confirmed dip recovers.
+        band: Downward deviation from one dollar defining a dip.
+        min_duration: Consecutive below-band hours confirming a dip.
+
+    Returns:
+        A Boolean Series aligned to df. Missing or below-band prices and
+        origins through the recovery window are excluded. Future episode
+        boundaries and prediction labels are not used.
     """
     out = pd.Series(False, index=df.index)
     for _, g in df.groupby("coin", sort=False):
@@ -52,9 +61,20 @@ def episode_labels(
     df, episodes, horizons=tuple(FORECAST_HORIZONS_HOURS), band=DEPEG_BAND,
     min_duration=DEPEG_MIN_DURATION_HOURS,
 ):
-    """Label new merged episode onsets and observed negative windows.
+    """Assign horizon-specific labels for new merged episode onsets.
 
-    New merged starts only; negative windows include onset-confirmation bar.
+    Args:
+        df: Coin-hour rows on a sorted, complete hourly calendar.
+        episodes: Merged episode records with coin and start columns.
+        horizons: Prediction horizons in hours.
+        band: Downward price deviation defining a dip.
+        min_duration: Hours required to confirm a qualifying dip.
+
+    Returns:
+        A copy with label_h<horizon> columns. A label is one when an onset
+        falls in (t, t + horizon], and zero when the full future window and
+        necessary confirmation bars are observed without an onset. Missing
+        outcomes and origins with missing or below-band prices are unlabelled.
     """
     df = df.copy()
     for h in horizons:
@@ -72,7 +92,7 @@ def episode_labels(
             right = np.searchsorted(starts, end, side="right")
             positive = right > left
             i = np.arange(len(g))
-            # Minimum-duration=2 requires the bar after a putative horizon-end onset.
+            # Include confirmation bars after a possible horizon-end onset.
             complete = i + h + min_duration - 1 < len(g)
             hi = np.minimum(i + h + min_duration, len(g))
             observed = complete & ((cumulative[hi] - cumulative[i + 1]) == 0)
@@ -83,7 +103,20 @@ def episode_labels(
 
 
 def prepare_corrected(master):
-    """Build causal features and labels, then shift clocks to bar close."""
+    """Construct features, episodes, labels and prediction eligibility.
+
+    Args:
+        master: Merged source rows whose hour denotes the hourly bar start.
+
+    Returns:
+        The hourly dataset and merged episode table. Operational timestamps
+        are shifted one hour to bar close. Tier-specific eligibility records
+        feature availability and the causal risk mask; horizon-specific flags
+        additionally require an observable prediction label.
+
+    Raises:
+        ValueError: The input already contains completed-bar transformations.
+    """
     if "bar_start" in master or "observable_at_risk" in master:
         raise ValueError("Input is already corrected; refusing to shift bar clocks twice")
     master = calendar_market_features(master)

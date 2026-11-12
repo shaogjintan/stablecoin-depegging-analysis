@@ -143,7 +143,7 @@ def assert_rebuild_matches(rebuilt, frozen, *, allow_historical_diagnostics=Fals
     Args:
         rebuilt: Current reconstructed master.
         frozen: Retained master used for the reported model results.
-        allow_historical_diagnostics: Allow only named historical completeness and
+        allow_historical_diagnostics: Allow named historical completeness and
             simple-return diagnostics to differ; print each changed count.
         stable_volatility: Require exact volatility for the window-local method.
     """

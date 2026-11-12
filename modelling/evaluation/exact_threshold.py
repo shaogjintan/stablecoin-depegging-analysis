@@ -79,7 +79,7 @@ def exhaustive_counts(scores, times, coin_ends, targets, horizon_ns):
                 if times[pos] <= times[prior] + horizon_ns:
                     continue
             end = ends[pos]
-            # Insert the newly enabled unsuppressed flag; only its suffix can change.
+            # Enable this flag; only subsequent alarms can change.
             while pos < end and not is_alarm[pos]:
                 is_alarm[pos] = True
                 _add(selected, pos, 1)
@@ -99,7 +99,7 @@ def exhaustive_counts(scores, times, coin_ends, targets, horizon_ns):
                         lo = mid + 1
                     else:
                         hi = mid
-                # Remove previously selected alarms now suppressed by this origin.
+                # Remove later alarms suppressed by this origin.
                 prior_rank = _prefix(selected, pos + 1)
                 limit = _prefix(selected, lo)
                 while prior_rank < limit:

@@ -1,54 +1,60 @@
 # Modelling pipeline
 
-Run package commands from the repository root. The primary workflow uses a practice model to calibrate an alarm cutoff, then refits on the full eligible training window and transfers that cutoff unchanged to the test year. The primary horizons are h6/h24; h1 is supplementary.
+Run package commands from the repository root. For each test fold, a practice
+model scores the calibration year and selects an alarm cutoff. The final model
+refits on the full eligible training period and transfers that cutoff unchanged
+to the test year. Horizons 6 and 24 are primary; h1 is supplementary.
 
 | Folder | Responsibility |
 |---|---|
-| `models/` | Estimator classes and preprocessing used by saved model files. Keep these module paths stable. |
-| `training/` | Main refit runner, training-only calendar CV, logistic fitting, and fixed estimator parameters. |
-| `evaluation/` | Grouped alarms, targetability, metrics, exhaustive threshold selection, and pooled run summaries. |
-| `robustness_checks/` | Alternative episode definitions evaluated using frozen predictions and alarms. |
-| `validation/` | Independent checks of saved run evidence and preprocessing. |
-| `reporting/` | CSV/figure exporters, calibration audit, and benchmark comparisons. |
-| `utils/` | Checksums, JSON writing, and relocated saved-evidence resolution. |
+| `models/` | Estimator classes and model-specific preprocessing. |
+| `training/` | Training runner, calendar validation, logistic tuning and fixed parameters. |
+| `evaluation/` | Grouped alarms, targetability, five headline metrics and cutoff selection. |
+| `robustness_checks/` | Alternative episode definitions, alarm smoothing and model-pair OR rules. |
+| `validation/` | Verification of saved models, partitions, scores, alarms and metrics. |
+| `reporting/` | Performance tables, interpretation, calibration audits, coverage and event outputs. |
+| `utils/` | Checksums, JSON writing and saved-evidence resolution. |
 
-Feature definitions, sample preparation, matched populations, dataset transformations, and canonical dataset construction live in `data_processing/`. See `data_processing/dataset_transformation.py` and `data_processing/build_dataset.py`.
+Feature definitions, sample preparation, matched populations and dataset
+construction live in `data_processing/`. Model classes retain their module
+paths so saved fitted models can be loaded.
 
-The single reviewer run is `artifacts/final_run/`. Its exact inputs are under
-`data/processed/`; published outputs are under `reports/`.
+The published evidence is `artifacts/final_run/`, its exact inputs are in
+`data/processed/`, and tables and figures are in `reports/`.
 
-## Main commands
+## Commands
 
 ```sh
-# Verify retained inputs without rebuilding them.
+# Validate retained data without replacing it.
 python -m data_processing.build_dataset
 
 # Run automated implementation checks.
 make test
 
-# Verify saved run evidence without training.
-python -m modelling.validation.verify_model_results
+# Verify saved model evidence, including score replay.
+python -m modelling.validation.verify_model_results --check-model-scores
 
-# Regenerate reports from retained inputs and saved models.
+# Regenerate published reports from the saved final run.
 python -m reports.reproduce
 
-# Generate the primary h6/h24 calibration audit without training.
-python -m modelling.reporting.calibration_audit
+# Export calibration records for all three horizons.
+python -m modelling.reporting.calibration_audit --include-h1
 
-# Train new models into a fresh directory only.
-python -m modelling.training.train_models --out-dir artifacts/runs/primary/ALL-MODELS-REPRODUCED --models logreg random_forest xgboost --horizon 6 --horizon 24
+# Train a new run in a fresh directory.
+python -m modelling.training.train_models --out-dir output/new-model-run
 ```
 
-`reporting.benchmarks` fits constant-prior and persistence benchmarks on retained partitions; it is separate from saved-model-only report reproduction. It does not retrain primary RF/XGB/LR models. Obsolete slide support and Markdown formatting are archived under `delete/archive_cleanup/history/modelling_redundant/reporting/`.
+The training runner defaults to all three models and horizons 1/6/24. Use
+`--models`, `--horizon` or `--year` to select a smaller scope. Fixed settings
+and the logistic C grid are in `training/parameters.py`. Chronological CV
+splits are in `training/calendar_cv.py`; logistic tuning is in
+`training/logistic_tuning.py`.
 
-`evaluation.threshold_selection` implements the final coin-month budget policy. Unused generic hour-level curves, F1/F-beta threshold selection, and the old standalone evaluation exporter are archived in `delete/archive_cleanup/history/modelling_redundant/evaluation/legacy_evaluation.py`. `evaluation.metrics` contains only the maintained grouped-alarm metrics.
+`make test` checks implementation behaviour. Saved-run verification checks the
+retained research evidence; its own behaviour is covered by automated tests.
+Benchmark exporters fit simple constant-prior and persistence comparisons on
+saved partitions without refitting the primary models.
 
-Historical launchers and obsolete compatibility shims are preserved under `delete/archive_cleanup/history/`; original experiment sources remain with their historical artifacts. Current commands and imports use the folders above. Original run manifests and source snapshots remain unchanged; their older module paths describe the historical runs. Relocations are recorded in `archive/maintenance/cleanup_moves.json`.
-
-Historical RF/XGBoost no-refit runners are archived under `archive/artifacts/sensitivity/`. Saved no-refit summaries remain in archive/artifacts/sensitivity/; the maintained sensitivity workflow uses alternative outcome definitions only.
-
-Training settings live in `training/parameters.py`: `XGBOOST_FIXED_PARAMS`, `RANDOM_FOREST_FIXED_PARAMS`, and `DEFAULT_C_GRID`. Calendar CV only constructs chronological splits; logistic fitting and C selection live in `training/logistic_tuning.py`. The main runner defaults to RF, XGBoost, and logistic regression across all three horizons (h1/h6/h24). Use `--models` to select a subset.
-
-The audit implementation under `validation/` is itself tested by `tests/test_saved_run_verification.py`. `make test` checks code behaviour; `make verify` checks the retained research evidence, including all five headline metrics. Neither is a substitute for the other.
-
-Shared utilities stream SHA-256 checksums in 1 MiB chunks. Evidence lookup checks every fit run ID across the retained two-level run layout, rejects mixed/incomplete or ambiguous evidence, requires the episode snapshot, and does not cache paths. Fit-cell scope and result correctness are checked separately by the verifier. Tests for these utilities live in `tests/test_artifact_utilities.py`.
+See [reproduction instructions](../docs/reproduction.md) for the complete
+source-data rebuild and training workflow. Archived code is excluded from that
+workflow.

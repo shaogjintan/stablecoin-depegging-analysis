@@ -109,8 +109,8 @@ def main():
                         val["y_score"] = predict(practice, fold["X_inner_val"])
                         cutoff, validation = _choose_threshold(val, episodes, h, 1., policy="exhaustive_lowest")
                         joblib.dump(dict(model=practice[0], imputer=practice[1]), folder / "practice_pipeline.joblib")
-                        # Full outer train is provided by the splitter, rather than
-                        # concatenating inner partitions with their artificial gap.
+                        # Use the full outer training partition from the splitter.
+                        # Inner partitions contain a calibration-boundary gap.
                         final = fit(name, fold["X_train"], fold["y_train"], C)
                         joblib.dump(dict(model=final[0], imputer=final[1]), folder / "pipeline.joblib")
                         test = frame(fold, "test")

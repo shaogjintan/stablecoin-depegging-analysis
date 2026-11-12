@@ -36,7 +36,7 @@ class RFModel(BaseModel):
         self.feature_names_: list[str] | None = None
 
     def fit(self, X_train, y_train, X_val=None, y_val=None) -> "RFModel":
-        # X_val / y_val are accepted for the contract but unused: no early stopping.
+        # Validation inputs are unused; the forest has no early stopping.
         """Fit a random forest on the supplied training features and labels."""
         clf = RandomForestClassifier(
             n_estimators=self.n_estimators,

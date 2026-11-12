@@ -112,8 +112,6 @@ data/processed/*
 /artifacts/final_run/fits/
 /artifacts/final_run/source/
 /artifacts/final_run/*.parquet
-# Historical processed inputs remain local archival evidence.
-/archive/report_baselines/**/previous_data/
 
 # Fresh source-reproduction outputs are separate from final reviewer evidence.
 /output/reproduction*/
