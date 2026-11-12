@@ -70,8 +70,8 @@
     },
     {
       "path": "data/processed/depeg_episodes_w_event_type.parquet",
-      "bytes": 9320,
-      "sha256": "cdcfd2b852027ec561f601556da564e5b2dd923efbac7421b4879c660846d930",
+      "bytes": 12797,
+      "sha256": "2d4a2cec949be7c70f0696ed7c417925da85a1394604f696ee2616f633c146a3",
       "rows": 79,
       "columns": [
         "coin",
@@ -82,6 +82,10 @@
         "min_price",
         "max_price",
         "dataset_version",
+        "event_id",
+        "event_start",
+        "year",
+        "historical_context",
         "event_type"
       ]
     },

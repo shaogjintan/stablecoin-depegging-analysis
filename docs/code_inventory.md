@@ -18,7 +18,7 @@ they do not produce the study results.
 | `interim/` | `hourly_stablecoin_market_features.parquet` | Derived market features. |
 | `interim/` | `hourly_stablecoin_onchain_features.parquet` | Derived on-chain features. |
 | `processed/` | `master.parquet`, `depeg_episodes.parquet` | Final hourly modelling dataset and episode records. |
-| `processed/` | `depeg_episodes_w_event_type.parquet` | Retained episode annotations for reporting; fresh event outputs are generated under `reports/depeg_events/`. |
+| `processed/` | `depeg_episodes_w_event_type.parquet` | Regenerated episode annotations: event IDs, structural event types and historical context, consistent with the event report tables. |
 | `processed/` | `dataset_metadata.json` | Dataset construction settings, feature method and input/output checksums. |
 | - | `manifest.json` | Data file locations, schemas, coverage and checksums. |
 

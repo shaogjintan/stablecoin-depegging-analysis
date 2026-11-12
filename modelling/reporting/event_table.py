@@ -17,6 +17,11 @@ event. An event's year is the year of its first episode.
 INPUT
   data/processed/depeg_episodes.parquet
 
+ANNOTATED DATA OUTPUT
+  data/processed/depeg_episodes_w_event_type.parquet
+  Episode records with event IDs, historical context and structural event type.
+  The data root follows STABLECOIN_DATA_DIR during full reproduction.
+
 OUTPUT (reports/depeg_events/)
   episode_event_mapping.csv  one row per episode with its event_id
   grouped_depeg_events.csv    one row per event: start, coins, episode IDs
@@ -370,6 +375,27 @@ def main(argv=None) -> int:
     ), indent=2) + "\n")
 
     types = classify(eps, ev_tab)
+    # Use the same classification for report CSVs and annotated episode data.
+    annotated = eps.merge(
+        types[["event_id", "type"]].rename(columns={"type": "event_type"}),
+        on="event_id", how="left", validate="many_to_one",
+    )
+    if annotated.event_type.isna().any():
+        raise ValueError("An episode has no structural event classification")
+    annotated_path = (
+        PROCESSED_DATA_DIR / "depeg_episodes_w_event_type.parquet"
+    )
+    annotated.to_parquet(annotated_path, index=False)
+    manifest_path = out_dir / "manifest.json"
+    manifest = json.loads(manifest_path.read_text())
+    manifest["annotated_episodes"] = dict(
+        path=str(annotated_path), sha256=sha256(annotated_path),
+        rows=len(annotated),
+        event_type="structural type from event_classification.csv",
+        historical_context="date-based heuristic, not causal attribution",
+    )
+    manifest_path.write_text(json.dumps(manifest, indent=2) + "\n")
+    print(f"Saved annotated episodes: {annotated_path}")
     types.to_csv(out_dir / "event_classification.csv", index=False)
     types.groupby("type").agg(events=("event_id", "size"), episodes=("n_episodes", "sum")).reset_index().to_csv(out_dir / "event_types_summary.csv", index=False)
     print(f"\n{len(eps)} episodes -> {len(ev_tab)} events "

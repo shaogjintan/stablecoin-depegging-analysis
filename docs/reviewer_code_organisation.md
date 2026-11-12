@@ -27,9 +27,10 @@ The exact model inputs are `data/processed/master.parquet` and
 `data/processed/depeg_episodes.parquet`. Dataset metadata records construction
 settings; `data/manifest.json` records paths, schemas and hashes.
 
-`data/processed/depeg_episodes_w_event_type.parquet` is a retained reporting
-annotation file. Fresh full reproductions generate event classifications under
-`reports/depeg_events/`; they do not need to rewrite this extra Parquet.
+`data/processed/depeg_episodes_w_event_type.parquet` is regenerated alongside
+the event report tables. It preserves episode records and adds event IDs,
+structural event types and separate historical-context annotations. Full
+reproduction writes it under the new workspace's `data/processed/` directory.
 
 ## Published report evidence
 

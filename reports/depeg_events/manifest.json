@@ -3,5 +3,12 @@
   "sha256": "d7047ce6633500aab03abcc1d6f07663d0fe87d2ad50a40573c6edb6e3a154d9",
   "window_hours": 48,
   "grouping": "first-onset anchor; at most one episode per coin in each event",
-  "historical_context": "date-based heuristic, not causal attribution"
+  "historical_context": "date-based heuristic, not causal attribution",
+  "annotated_episodes": {
+    "path": "data/processed/depeg_episodes_w_event_type.parquet",
+    "sha256": "2d4a2cec949be7c70f0696ed7c417925da85a1394604f696ee2616f633c146a3",
+    "rows": 79,
+    "event_type": "structural type from event_classification.csv",
+    "historical_context": "date-based heuristic, not causal attribution"
+  }
 }

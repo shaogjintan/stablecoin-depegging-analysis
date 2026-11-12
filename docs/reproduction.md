@@ -81,7 +81,10 @@ The workflow builds market/on-chain features and datasets, trains all three
 models for h1/h6/h24 and 2021-2025, audits all 90 cells with model-score replay,
 and creates alternative-definition and alarm-rule robustness outputs, model
 comparisons, calibration audits, event tables, coverage, benchmarks and
-interpretation. Primary training is computationally intensive. `reproduction.json`
+interpretation. The event exporter also regenerates
+`data/processed/depeg_episodes_w_event_type.parquet` within that workspace,
+using the same classifications as the event report tables. Primary training is
+computationally intensive. `reproduction.json`
 records source hashes, commands, completed stages and failure/completion status.
 The selected final run and published report outputs are not replaced.
 

@@ -23,7 +23,7 @@ AP uses pooled prediction scores. Episode recall uses targetable episodes. Media
 | `calibration_audit` | Read saved fit metadata into `reports/validation_checks/`; primary h6/h24 by default, optional h1. |
 | `model_interpretation` | Export coefficients, RF importance, and figures; calculate XGB SHAP rankings from the selected saved fits under `reports/model_interpretation/`. |
 | `coverage_table` | Source completeness against each coin's full observed timestamp span under `reports/data_coverage/`. |
-| `event_table` | Group episodes into events, add annotations/classifications, and export event tables/figures. The coin/year heatmap goes under `reports/depeg_episodes/`. |
+| `event_table` | Group episodes into events, add annotations/classifications, and export event tables/figures. Also regenerates `data/processed/depeg_episodes_w_event_type.parquet`; the coin/year heatmap goes under `reports/depeg_episodes/`. |
 | `detection_by_type` | Detection counts and conditional lead time by structural event type. False alarms have no observed event type, so this is not a full five-metric comparison. |
 | `event_annotations` | Historical context heuristics, not causal labels; helper used by `event_table`. |
 | `event_types` | Structural event classifications; helper used by `event_table`. |
