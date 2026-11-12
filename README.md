@@ -85,7 +85,6 @@ tests/                 maintained data/threshold/model checks
 reports/               report outputs, provenance and reproduce.py
 artifacts/final_run/    one final fitted run and its verification evidence
 docs/                  methodology, reproduction and relocation records
-output/                fresh reproduction workspaces and review deliverables
 archive/       earlier experiments and original implementations
 delete/                preserved deletion candidates; not used by the pipeline
 ```
