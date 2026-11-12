@@ -1,6 +1,6 @@
 # Appendix: Python file inventory
 
-This inventory covers all 76 maintained Python files. Paths are relative
+This inventory covers all 77 maintained Python files. Paths are relative
 to the repository root. Historical code in archive/, quarantined code in
 delete/, virtual environments, caches and immutable artifact source snapshots
 are excluded from the maintained inventory.
@@ -18,6 +18,14 @@ they do not produce the study results.
 | `interim/` | `hourly_stablecoin_market_features.parquet` | Derived market features. |
 | `interim/` | `hourly_stablecoin_onchain_features.parquet` | Derived on-chain features. |
 | `processed/` | `master.parquet`, `depeg_episodes.parquet` | Final hourly modelling dataset and episode records. |
+
+## Final reviewer model evidence
+
+The one published run is `artifacts/final_run/`. Its exact dataset is in
+`data/processed/`, and presentation tables/figures are under `reports/`.
+Independent repeatability records are in
+`reports/validation_checks/reproducibility/`. Temporary validation workspaces
+are not retained. See `docs/reviewer_code_organisation.md` for appendix rows.
 
 ## data_processing
 
@@ -145,6 +153,7 @@ These alarm-rule checks use the saved final models and original cutoffs; they do
 | `tests/test_matched_sample.py` | Checks that feature tiers use matching observations and rejects duplicate or inconsistent records. |
 | `tests/test_onchain_validation.py` | Checks that invalid Dune exports and conflicting ZIP contents are rejected. |
 | `tests/test_per_coin_metrics.py` | Checks performance calculations for individual coins, including cases with no targetable episodes or positive labels. |
+| `tests/test_numerical_reproducibility.py` | Checks that volatility does not depend on earlier windows and that forest prediction uses a fixed tree order. |
 | `tests/test_reproduction_workflow.py` | Checks workflow order, output locations and failure handling without running full model retraining. |
 | `tests/test_sample_preparation.py` | Checks that only eligible observations are selected and prepared consistently for modelling. |
 | `tests/test_saved_run_verification.py` | Checks that the saved-result verifier rejects deliberately altered or inconsistent evidence. |

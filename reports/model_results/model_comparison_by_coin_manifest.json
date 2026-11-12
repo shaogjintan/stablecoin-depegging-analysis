@@ -1,45 +1,45 @@
 {
   "summary": "reports/model_results/model_comparison_summary.csv",
-  "summary_sha256": "c61d7af56d42de03a9ae04ef83bb3714a777d38d521c4faaed4d2208ed181f0b",
+  "summary_sha256": "4d161fdc5d51e1ab4b3b04566faea40ca9e13ea632260a99db1a33bba7499ad8",
   "rows": 108,
   "sources": [
     {
       "model": "logreg",
       "config": "market_matched",
       "horizon_hours": 1,
-      "run_id": "d429d3d5-937c-49aa-b3c8-6ead1446fb9d",
-      "manifest": "artifacts/h1/logistic_regression/run.json",
-      "manifest_sha256": "e140725d4c8fc281dc343ca3e3f4bcfd5abe9f18ff5603e4c7652571d2f3c6e0",
+      "run_id": "a4b62db2-1fc8-42ec-9a5f-3a94999860f5",
+      "manifest": "artifacts/final_run/run.json",
+      "manifest_sha256": "9661514af8ee9deb580eabb4f2d24a7805b31d79e50c8e00d6da8b8241e99997",
       "fit_inputs": [
         {
-          "artifacts/h1/logistic_regression/fits/logreg_market_matched_h1_2021/fit.json": "f4528b09e4cd68ae33c498a576d732f8d7aa19d9cf0cca224c88e8c796f4ac9a",
-          "artifacts/h1/logistic_regression/fits/logreg_market_matched_h1_2021/test.parquet": "12fad227d40c18b1452d619f93bcb066f17b0cc11ce0c0dd766a5e64fb87f15d",
-          "artifacts/h1/logistic_regression/fits/logreg_market_matched_h1_2021/alarms.csv": "6fa34c9f84ed7659fe76751edfa6a1bf67af61bc37704c31ced9d1c3db5955e2",
-          "artifacts/h1/logistic_regression/episodes.parquet": "d7047ce6633500aab03abcc1d6f07663d0fe87d2ad50a40573c6edb6e3a154d9"
+          "artifacts/final_run/fits/logreg_market_matched_h1_2021/fit.json": "15eccc66d73633dcd6845ae3567d7b6f8e8e3375c01aabecee855f5689e6cef2",
+          "artifacts/final_run/fits/logreg_market_matched_h1_2021/test.parquet": "687ce12090bee000d38587e6b7560e77ff495f3e44e7e1a15c78d1e08cd2b9a8",
+          "artifacts/final_run/fits/logreg_market_matched_h1_2021/alarms.csv": "ce0ca0c7879756cfb6cb3e819c18bfaeb9965228475748d637b7444b0676e624",
+          "artifacts/final_run/episodes.parquet": "d7047ce6633500aab03abcc1d6f07663d0fe87d2ad50a40573c6edb6e3a154d9"
         },
         {
-          "artifacts/h1/logistic_regression/fits/logreg_market_matched_h1_2022/fit.json": "ec9d7d62ea99981adbe2056e3fb2534c1faabd0d2ef3a14a7437b0c0304632d5",
-          "artifacts/h1/logistic_regression/fits/logreg_market_matched_h1_2022/test.parquet": "a27b5ee30399b7d7e6da930f00cc4bcf118bd006102ff6de5a5887e3701f2c1a",
-          "artifacts/h1/logistic_regression/fits/logreg_market_matched_h1_2022/alarms.csv": "ec451deb33a4b62c8a88833a0f375c4f8b9f6ca8eabc6a438de2ff3e907cfdd8",
-          "artifacts/h1/logistic_regression/episodes.parquet": "d7047ce6633500aab03abcc1d6f07663d0fe87d2ad50a40573c6edb6e3a154d9"
+          "artifacts/final_run/fits/logreg_market_matched_h1_2022/fit.json": "fbed207c5ec5a07165ee5251e4794f200bb2111b4e08caa2551440339b485704",
+          "artifacts/final_run/fits/logreg_market_matched_h1_2022/test.parquet": "f1379081bfd5e0100fe962b1505a244d486e72b4359193c9ba33d0ec3b7f6ad4",
+          "artifacts/final_run/fits/logreg_market_matched_h1_2022/alarms.csv": "ec451deb33a4b62c8a88833a0f375c4f8b9f6ca8eabc6a438de2ff3e907cfdd8",
+          "artifacts/final_run/episodes.parquet": "d7047ce6633500aab03abcc1d6f07663d0fe87d2ad50a40573c6edb6e3a154d9"
         },
         {
-          "artifacts/h1/logistic_regression/fits/logreg_market_matched_h1_2023/fit.json": "9ab047ee38dadc0acd74ec88ec6a2074f38868cf1f1c6f309a64f2d630c23629",
-          "artifacts/h1/logistic_regression/fits/logreg_market_matched_h1_2023/test.parquet": "04cdfcb8c3f4ff8c8000fb4a3ffa7cf655e4481d44da86f92b913c1176d7fdd2",
-          "artifacts/h1/logistic_regression/fits/logreg_market_matched_h1_2023/alarms.csv": "b5fe35edb584c132c52281cc64c7bf23bfe6d99fa79694696cd2dde625155f80",
-          "artifacts/h1/logistic_regression/episodes.parquet": "d7047ce6633500aab03abcc1d6f07663d0fe87d2ad50a40573c6edb6e3a154d9"
+          "artifacts/final_run/fits/logreg_market_matched_h1_2023/fit.json": "d51c81037af7f375488d2574eecb286d051d1a9cd178d60574d32c174ed1fa9b",
+          "artifacts/final_run/fits/logreg_market_matched_h1_2023/test.parquet": "df1ccfb0bcc1b10a018f92c0b647e963c99fbcbb6316783e49e1a3a13d125563",
+          "artifacts/final_run/fits/logreg_market_matched_h1_2023/alarms.csv": "ec32be23c8bcce2a78f971e14891491d593c7bd15a6be4ac1442fc5de8f986ce",
+          "artifacts/final_run/episodes.parquet": "d7047ce6633500aab03abcc1d6f07663d0fe87d2ad50a40573c6edb6e3a154d9"
         },
         {
-          "artifacts/h1/logistic_regression/fits/logreg_market_matched_h1_2024/fit.json": "bcea251dea7506d949d9d18af5f3e2a95d5d993ad7b3ab7864d8352862b02024",
-          "artifacts/h1/logistic_regression/fits/logreg_market_matched_h1_2024/test.parquet": "4f180171eb2dda3cd138ce63858e41d6abd1cf043b60911074efd6d45ac61d4f",
-          "artifacts/h1/logistic_regression/fits/logreg_market_matched_h1_2024/alarms.csv": "4ec096c2afd6ec517e0ff401e19da9b8a5cc036fafd64cc8f4fdc0611982986c",
-          "artifacts/h1/logistic_regression/episodes.parquet": "d7047ce6633500aab03abcc1d6f07663d0fe87d2ad50a40573c6edb6e3a154d9"
+          "artifacts/final_run/fits/logreg_market_matched_h1_2024/fit.json": "d78202bc05cb088d3e8475824ef6ae86ee492fb6ec0d06cd52a2e0fdfb921c52",
+          "artifacts/final_run/fits/logreg_market_matched_h1_2024/test.parquet": "0bc785678b8e1116428b152c87c5b95f2cfac4e0f4fe77af72472f8438dc9257",
+          "artifacts/final_run/fits/logreg_market_matched_h1_2024/alarms.csv": "6d316e1dbbd47e3479ca947f92dd2de32504b144014a43db6e9afc6d10271a88",
+          "artifacts/final_run/episodes.parquet": "d7047ce6633500aab03abcc1d6f07663d0fe87d2ad50a40573c6edb6e3a154d9"
         },
         {
-          "artifacts/h1/logistic_regression/fits/logreg_market_matched_h1_2025/fit.json": "53e829a6e229c6e4f2f2689c0fd57c21d7bf22e4723028009e76ea4c6a41bdf4",
-          "artifacts/h1/logistic_regression/fits/logreg_market_matched_h1_2025/test.parquet": "268412b408d7d0364a4267937bdb35809bb103af63c5d949c2b64672447ecef2",
-          "artifacts/h1/logistic_regression/fits/logreg_market_matched_h1_2025/alarms.csv": "9db88c40da8424c3ae26a5767e5d36a387b54329af2530c97802cdd401d749bb",
-          "artifacts/h1/logistic_regression/episodes.parquet": "d7047ce6633500aab03abcc1d6f07663d0fe87d2ad50a40573c6edb6e3a154d9"
+          "artifacts/final_run/fits/logreg_market_matched_h1_2025/fit.json": "4a31e6000d056c5bdf09f479897bd91e9c087552564b80586465929396a99e93",
+          "artifacts/final_run/fits/logreg_market_matched_h1_2025/test.parquet": "b44419df3cd49119e982998f4a2014cef92173b62e9643b71be51127eea24677",
+          "artifacts/final_run/fits/logreg_market_matched_h1_2025/alarms.csv": "16470ed613e75e9a88f7975572cf8861ea57f75df11e8ccff3e82290c3143558",
+          "artifacts/final_run/episodes.parquet": "d7047ce6633500aab03abcc1d6f07663d0fe87d2ad50a40573c6edb6e3a154d9"
         }
       ]
     },
@@ -47,39 +47,39 @@
       "model": "logreg",
       "config": "market_matched",
       "horizon_hours": 6,
-      "run_id": "ac334862-a86f-4a75-9fea-5180ef51e6af",
-      "manifest": "artifacts/h6_and_h24/logistic_regression/run.json",
-      "manifest_sha256": "1dd8fe7c66dfd56268abf401fd189d09e4ab2d342aa164fac0ff9987ab7b1c05",
+      "run_id": "a4b62db2-1fc8-42ec-9a5f-3a94999860f5",
+      "manifest": "artifacts/final_run/run.json",
+      "manifest_sha256": "9661514af8ee9deb580eabb4f2d24a7805b31d79e50c8e00d6da8b8241e99997",
       "fit_inputs": [
         {
-          "artifacts/h6_and_h24/logistic_regression/fits/logreg_market_matched_h6_2021/fit.json": "d781da8358b646585729f2605dee2f79eb5ea95cafa277d411ea1b42b4fb69d5",
-          "artifacts/h6_and_h24/logistic_regression/fits/logreg_market_matched_h6_2021/test.parquet": "53c0724df4be3ee1b5e7f1288f50fd9a51cf9876b38615cbcce66abd4ca2abba",
-          "artifacts/h6_and_h24/logistic_regression/fits/logreg_market_matched_h6_2021/alarms.csv": "7ba424337486fa6c5c2b5ebe10e3902f2ef4a7bd1057552a5cb133fb1c35d3a3",
-          "artifacts/h6_and_h24/logistic_regression/episodes.parquet": "d7047ce6633500aab03abcc1d6f07663d0fe87d2ad50a40573c6edb6e3a154d9"
+          "artifacts/final_run/fits/logreg_market_matched_h6_2021/fit.json": "b5e891b02b8e52e28019a3f9eb75cfd55b14e3988635d7b091f28a4cb533b979",
+          "artifacts/final_run/fits/logreg_market_matched_h6_2021/test.parquet": "4f3b008c06171aef6aa126b9e4f2864dd91e26386e4073079ed61405f7aad812",
+          "artifacts/final_run/fits/logreg_market_matched_h6_2021/alarms.csv": "7df1aeb78603e9073abb65aae9758ebd6f06fcf39671df201bdb569a3249c0d4",
+          "artifacts/final_run/episodes.parquet": "d7047ce6633500aab03abcc1d6f07663d0fe87d2ad50a40573c6edb6e3a154d9"
         },
         {
-          "artifacts/h6_and_h24/logistic_regression/fits/logreg_market_matched_h6_2022/fit.json": "4a24623fc2f9bd37c4dc1e1dc6bc06c7f4c2f84734686a4767de08b5dbee462d",
-          "artifacts/h6_and_h24/logistic_regression/fits/logreg_market_matched_h6_2022/test.parquet": "88ccb0c5b8b9f83e9dcc7e31f9cdcf918a7bbc54e65068f7df62a60228ac7773",
-          "artifacts/h6_and_h24/logistic_regression/fits/logreg_market_matched_h6_2022/alarms.csv": "c1bec4d4eef8cb2b6844e6a61ae548766ff1f3c4682c73c963aa97903c670cae",
-          "artifacts/h6_and_h24/logistic_regression/episodes.parquet": "d7047ce6633500aab03abcc1d6f07663d0fe87d2ad50a40573c6edb6e3a154d9"
+          "artifacts/final_run/fits/logreg_market_matched_h6_2022/fit.json": "83402584cab28f48b1a266b6d555b4acfd5a0dcc8ad47c925b9440504d58fb8a",
+          "artifacts/final_run/fits/logreg_market_matched_h6_2022/test.parquet": "ee4074ee5c75f84b0ec0500ae1b7ebaa879503629c96c9652d8380107490fa12",
+          "artifacts/final_run/fits/logreg_market_matched_h6_2022/alarms.csv": "7d44440abc5af51fa115c13f25570bfdbe31da2290dbd6611014dad6fdd6599b",
+          "artifacts/final_run/episodes.parquet": "d7047ce6633500aab03abcc1d6f07663d0fe87d2ad50a40573c6edb6e3a154d9"
         },
         {
-          "artifacts/h6_and_h24/logistic_regression/fits/logreg_market_matched_h6_2023/fit.json": "31fbc670022a49162ced3851b846cb350edf23c91cba26a0b9435a7b65e0718a",
-          "artifacts/h6_and_h24/logistic_regression/fits/logreg_market_matched_h6_2023/test.parquet": "33eeaea0496ba6185b513e65502039789916f1d2527d3e39d36ef09c82c5d7b3",
-          "artifacts/h6_and_h24/logistic_regression/fits/logreg_market_matched_h6_2023/alarms.csv": "114f0aa42bbee51cff5d8db80398f951c474cb3d574089ee8c4378a44bc282f0",
-          "artifacts/h6_and_h24/logistic_regression/episodes.parquet": "d7047ce6633500aab03abcc1d6f07663d0fe87d2ad50a40573c6edb6e3a154d9"
+          "artifacts/final_run/fits/logreg_market_matched_h6_2023/fit.json": "3f2e8e64ba29966fbb20cde28829904cf3e2f103a921e7a5491be02c7bee1df5",
+          "artifacts/final_run/fits/logreg_market_matched_h6_2023/test.parquet": "53def0fc5924d78cec95cb8eee03ba240bfacbdcecbc1b0b65197991aad77c6b",
+          "artifacts/final_run/fits/logreg_market_matched_h6_2023/alarms.csv": "e0c4f3902557409a090717b3effd1c11272d3dbf2f7dd237bab524167f605806",
+          "artifacts/final_run/episodes.parquet": "d7047ce6633500aab03abcc1d6f07663d0fe87d2ad50a40573c6edb6e3a154d9"
         },
         {
-          "artifacts/h6_and_h24/logistic_regression/fits/logreg_market_matched_h6_2024/fit.json": "b6a1d34530674341f800e201e8f6cae967cca15214ac4534b456589cec717803",
-          "artifacts/h6_and_h24/logistic_regression/fits/logreg_market_matched_h6_2024/test.parquet": "60e1019e41e30492071f680e9b2c57f9ad50c29916a309532e16fb4054af6c8e",
-          "artifacts/h6_and_h24/logistic_regression/fits/logreg_market_matched_h6_2024/alarms.csv": "99eed48968e267826f56c8637799abf953074dbe9ae180327098a4095d411e6e",
-          "artifacts/h6_and_h24/logistic_regression/episodes.parquet": "d7047ce6633500aab03abcc1d6f07663d0fe87d2ad50a40573c6edb6e3a154d9"
+          "artifacts/final_run/fits/logreg_market_matched_h6_2024/fit.json": "38cccd09f07cdf13b1d6d34eb46ecc71a3a301dbb0d892611d0998ee21f7f5ca",
+          "artifacts/final_run/fits/logreg_market_matched_h6_2024/test.parquet": "1f3539add4d43c5b80accb905bf6a8cd46e5d26a76d565b89c086302eb72e76f",
+          "artifacts/final_run/fits/logreg_market_matched_h6_2024/alarms.csv": "518ebaf59c05976ac59309955799d5088683dc6e2a89062c5c9d6e848a3a2a19",
+          "artifacts/final_run/episodes.parquet": "d7047ce6633500aab03abcc1d6f07663d0fe87d2ad50a40573c6edb6e3a154d9"
         },
         {
-          "artifacts/h6_and_h24/logistic_regression/fits/logreg_market_matched_h6_2025/fit.json": "138ff1629f9db2c0fe06038b328496a1cc579c04b53c48a4f1a836cf3fff1c06",
-          "artifacts/h6_and_h24/logistic_regression/fits/logreg_market_matched_h6_2025/test.parquet": "eacfb70c31091d4e7d7cfd33211b23f61c5cdf1862e442013d54ef25f16918a9",
-          "artifacts/h6_and_h24/logistic_regression/fits/logreg_market_matched_h6_2025/alarms.csv": "9b6d18b1d91d716d185d850f188e465b0f1419dd9fdbc93fa5440636fb1c0d2c",
-          "artifacts/h6_and_h24/logistic_regression/episodes.parquet": "d7047ce6633500aab03abcc1d6f07663d0fe87d2ad50a40573c6edb6e3a154d9"
+          "artifacts/final_run/fits/logreg_market_matched_h6_2025/fit.json": "e1db10665fec989f9f35f1cc974f2a9bad0176a7a9c52108f280a7f2208f2560",
+          "artifacts/final_run/fits/logreg_market_matched_h6_2025/test.parquet": "cc4594b45309e9db554f5215ebd4cf468ece9f3f6ef493ce440159aa1403fd08",
+          "artifacts/final_run/fits/logreg_market_matched_h6_2025/alarms.csv": "d2aef990acc3bb0ec4ee99ff96637c9b1febb819f61b71de44db5c953016dce2",
+          "artifacts/final_run/episodes.parquet": "d7047ce6633500aab03abcc1d6f07663d0fe87d2ad50a40573c6edb6e3a154d9"
         }
       ]
     },
@@ -87,39 +87,39 @@
       "model": "logreg",
       "config": "market_matched",
       "horizon_hours": 24,
-      "run_id": "ac334862-a86f-4a75-9fea-5180ef51e6af",
-      "manifest": "artifacts/h6_and_h24/logistic_regression/run.json",
-      "manifest_sha256": "1dd8fe7c66dfd56268abf401fd189d09e4ab2d342aa164fac0ff9987ab7b1c05",
+      "run_id": "a4b62db2-1fc8-42ec-9a5f-3a94999860f5",
+      "manifest": "artifacts/final_run/run.json",
+      "manifest_sha256": "9661514af8ee9deb580eabb4f2d24a7805b31d79e50c8e00d6da8b8241e99997",
       "fit_inputs": [
         {
-          "artifacts/h6_and_h24/logistic_regression/fits/logreg_market_matched_h24_2021/fit.json": "e4c1603d5b501b0ab3390e999472c6a801bab2d2c69e87542f75486d249172d8",
-          "artifacts/h6_and_h24/logistic_regression/fits/logreg_market_matched_h24_2021/test.parquet": "19d8387f6eade5d48df36bcaa590b035e40138c1ed0cd8630654897c94876bd0",
-          "artifacts/h6_and_h24/logistic_regression/fits/logreg_market_matched_h24_2021/alarms.csv": "3f163d87b58449ee6c8e9500908666b41c8913fc78a426ce789d338259c86fe1",
-          "artifacts/h6_and_h24/logistic_regression/episodes.parquet": "d7047ce6633500aab03abcc1d6f07663d0fe87d2ad50a40573c6edb6e3a154d9"
+          "artifacts/final_run/fits/logreg_market_matched_h24_2021/fit.json": "9a3c6e9acfb82c64cb6b1f4dfc3be8bec58ca0cfd927d00482462c3b2c164a08",
+          "artifacts/final_run/fits/logreg_market_matched_h24_2021/test.parquet": "56e507e4dcdb6040ad1c971ae194b8c4cca9ebb089772e2e828e95e2d3b72ad4",
+          "artifacts/final_run/fits/logreg_market_matched_h24_2021/alarms.csv": "6b636a6e84c1cce884d0ce33a03a1fc7864f86ade6948ed391e70e7d821254b0",
+          "artifacts/final_run/episodes.parquet": "d7047ce6633500aab03abcc1d6f07663d0fe87d2ad50a40573c6edb6e3a154d9"
         },
         {
-          "artifacts/h6_and_h24/logistic_regression/fits/logreg_market_matched_h24_2022/fit.json": "456784efb30b4265a9b8d774e808adb2c4d48c42fd909a5421d45cf857bb9d14",
-          "artifacts/h6_and_h24/logistic_regression/fits/logreg_market_matched_h24_2022/test.parquet": "bee3d67b6ddd31fd9a02f1d0bc1b525118b9af0100ba4828ca7419e6af471ee4",
-          "artifacts/h6_and_h24/logistic_regression/fits/logreg_market_matched_h24_2022/alarms.csv": "7e070a94948580e9fba8d2ea0b61283845211cc743400ed175657a84fd9b1a50",
-          "artifacts/h6_and_h24/logistic_regression/episodes.parquet": "d7047ce6633500aab03abcc1d6f07663d0fe87d2ad50a40573c6edb6e3a154d9"
+          "artifacts/final_run/fits/logreg_market_matched_h24_2022/fit.json": "788dad8b68f33b5b29643cea1aaa132afaf60218c7c056ea006a6519fd314886",
+          "artifacts/final_run/fits/logreg_market_matched_h24_2022/test.parquet": "f11378c75a32fe3d3b6158a308706214b9784897e5d979569e2d2235481a4af2",
+          "artifacts/final_run/fits/logreg_market_matched_h24_2022/alarms.csv": "7c74e365382d30010d6817e49ecb9be964769dccb68ef1c2843b615ea6850758",
+          "artifacts/final_run/episodes.parquet": "d7047ce6633500aab03abcc1d6f07663d0fe87d2ad50a40573c6edb6e3a154d9"
         },
         {
-          "artifacts/h6_and_h24/logistic_regression/fits/logreg_market_matched_h24_2023/fit.json": "d6dc364a8e95b4ec4e647389c7cafe3d2b797745db6643b6a112e148087fb9c6",
-          "artifacts/h6_and_h24/logistic_regression/fits/logreg_market_matched_h24_2023/test.parquet": "e41ba188d1454eb94a324dc22e7aa9918a26a03cd4c52ccd5e4e97ca6ea46c30",
-          "artifacts/h6_and_h24/logistic_regression/fits/logreg_market_matched_h24_2023/alarms.csv": "0af9938c44bc3b88d261bd05a24e448a37c6404c797cf8f8879a1424362a5e5e",
-          "artifacts/h6_and_h24/logistic_regression/episodes.parquet": "d7047ce6633500aab03abcc1d6f07663d0fe87d2ad50a40573c6edb6e3a154d9"
+          "artifacts/final_run/fits/logreg_market_matched_h24_2023/fit.json": "2ba505fcc8e22df1421a88b01482adc808e2739d795cbab62fa95b7be747f6d2",
+          "artifacts/final_run/fits/logreg_market_matched_h24_2023/test.parquet": "2490c84a2369129b6d2c04b47bae01f12faadea58c460b451c174d7d8bd84c14",
+          "artifacts/final_run/fits/logreg_market_matched_h24_2023/alarms.csv": "f5499161297c4d0ef292133ea9efd3ec9b2ddc530597678acf9ba3832bdc9cea",
+          "artifacts/final_run/episodes.parquet": "d7047ce6633500aab03abcc1d6f07663d0fe87d2ad50a40573c6edb6e3a154d9"
         },
         {
-          "artifacts/h6_and_h24/logistic_regression/fits/logreg_market_matched_h24_2024/fit.json": "a4fb175a7ccddd828fe40361a599a031f7e6b2193cd3908860e6274968a95e1b",
-          "artifacts/h6_and_h24/logistic_regression/fits/logreg_market_matched_h24_2024/test.parquet": "b6b18ebc89f905672d95a1f6b6e36d31a3f1bcaa4ff7eb23003b38254dd8228c",
-          "artifacts/h6_and_h24/logistic_regression/fits/logreg_market_matched_h24_2024/alarms.csv": "4a8424606ec1d711ed2101a08c2e551a61937d522af79d544ed73684b9f66adf",
-          "artifacts/h6_and_h24/logistic_regression/episodes.parquet": "d7047ce6633500aab03abcc1d6f07663d0fe87d2ad50a40573c6edb6e3a154d9"
+          "artifacts/final_run/fits/logreg_market_matched_h24_2024/fit.json": "11ef68b4a1aea7f2760d80eb7abd5ac1e62fef7944c50f78d113dae9ea54afe7",
+          "artifacts/final_run/fits/logreg_market_matched_h24_2024/test.parquet": "3cc9b243c67dd3f96a0863e4224ce16c1e06a2ad2375b72af3d240a6159406e1",
+          "artifacts/final_run/fits/logreg_market_matched_h24_2024/alarms.csv": "f3bc882fab5ed86e68164a84d15e38bd7210bb3a02b984acf01207a9fde70296",
+          "artifacts/final_run/episodes.parquet": "d7047ce6633500aab03abcc1d6f07663d0fe87d2ad50a40573c6edb6e3a154d9"
         },
         {
-          "artifacts/h6_and_h24/logistic_regression/fits/logreg_market_matched_h24_2025/fit.json": "bfd9104be36cab8c64f32e007506da2e4c6b667a8ea6873f621887f559994f40",
-          "artifacts/h6_and_h24/logistic_regression/fits/logreg_market_matched_h24_2025/test.parquet": "4817be5f8974756b8b66b14c07cf6edc9aa52ffbec7292da1462b39125aa9d56",
-          "artifacts/h6_and_h24/logistic_regression/fits/logreg_market_matched_h24_2025/alarms.csv": "f8d4ed086047f2efbd3d535b05b0671a4e49a89163d6c2f2f58bc583cec1dd31",
-          "artifacts/h6_and_h24/logistic_regression/episodes.parquet": "d7047ce6633500aab03abcc1d6f07663d0fe87d2ad50a40573c6edb6e3a154d9"
+          "artifacts/final_run/fits/logreg_market_matched_h24_2025/fit.json": "815b2abc0c2f0f7eaeb3504c1a66381b18556e83a6956d1529cac72255bf25a3",
+          "artifacts/final_run/fits/logreg_market_matched_h24_2025/test.parquet": "e45996d1f39aa61afe7e8dd09c2ced5e4c12d9a4d42150d3b18f4f44b1679a87",
+          "artifacts/final_run/fits/logreg_market_matched_h24_2025/alarms.csv": "3c81cc98a3fe737a9e35c2ff7ff2a1f472adac189cff725651587fbe3fee26f9",
+          "artifacts/final_run/episodes.parquet": "d7047ce6633500aab03abcc1d6f07663d0fe87d2ad50a40573c6edb6e3a154d9"
         }
       ]
     },
@@ -127,39 +127,39 @@
       "model": "logreg",
       "config": "market_onchain",
       "horizon_hours": 1,
-      "run_id": "d429d3d5-937c-49aa-b3c8-6ead1446fb9d",
-      "manifest": "artifacts/h1/logistic_regression/run.json",
-      "manifest_sha256": "e140725d4c8fc281dc343ca3e3f4bcfd5abe9f18ff5603e4c7652571d2f3c6e0",
+      "run_id": "a4b62db2-1fc8-42ec-9a5f-3a94999860f5",
+      "manifest": "artifacts/final_run/run.json",
+      "manifest_sha256": "9661514af8ee9deb580eabb4f2d24a7805b31d79e50c8e00d6da8b8241e99997",
       "fit_inputs": [
         {
-          "artifacts/h1/logistic_regression/fits/logreg_market_onchain_h1_2021/fit.json": "a03d578f7c76ae553fcae94c6e27270ae877895341e373dabdf554337616af06",
-          "artifacts/h1/logistic_regression/fits/logreg_market_onchain_h1_2021/test.parquet": "7beadb2796038c9f48463dde59f874a486732150810ff1404df22729714f01ae",
-          "artifacts/h1/logistic_regression/fits/logreg_market_onchain_h1_2021/alarms.csv": "edeb05895afd6144b93d3bc2920eb58a05d34c75bae09945339f660adcdda2c8",
-          "artifacts/h1/logistic_regression/episodes.parquet": "d7047ce6633500aab03abcc1d6f07663d0fe87d2ad50a40573c6edb6e3a154d9"
+          "artifacts/final_run/fits/logreg_market_onchain_h1_2021/fit.json": "fa07325a7f3b590a4440aae54471dd0268925f55e9f46670f1865b5696c64ba0",
+          "artifacts/final_run/fits/logreg_market_onchain_h1_2021/test.parquet": "5f9c7a0ba7da2bfaa76ffdb0770137c1c8dd3b7af2514b7a4581e08fb764fbec",
+          "artifacts/final_run/fits/logreg_market_onchain_h1_2021/alarms.csv": "03ce6216828796453f78246e18e91653c6e6c36a0c20334442b16b93ef2335cc",
+          "artifacts/final_run/episodes.parquet": "d7047ce6633500aab03abcc1d6f07663d0fe87d2ad50a40573c6edb6e3a154d9"
         },
         {
-          "artifacts/h1/logistic_regression/fits/logreg_market_onchain_h1_2022/fit.json": "9d07461fff201faf997e4480f109b052cfbdc31ec046896a87099c561e8f5db4",
-          "artifacts/h1/logistic_regression/fits/logreg_market_onchain_h1_2022/test.parquet": "f4a4076699981b3f1e9033f28d34eae0b4ae9be8959c4fe80ca604b6aebc670b",
-          "artifacts/h1/logistic_regression/fits/logreg_market_onchain_h1_2022/alarms.csv": "08e12dd9327dac9f37646ede7d97c601e65f8791fdcc8e20d0d248b30dc87bab",
-          "artifacts/h1/logistic_regression/episodes.parquet": "d7047ce6633500aab03abcc1d6f07663d0fe87d2ad50a40573c6edb6e3a154d9"
+          "artifacts/final_run/fits/logreg_market_onchain_h1_2022/fit.json": "dd229edfab6e0d7ce303fd0bb0883176cd87bc61f7a4960d8715de52d5c3693b",
+          "artifacts/final_run/fits/logreg_market_onchain_h1_2022/test.parquet": "e772cfee4ce0f19fb73a0f0867b660f192be260a457b58835d88272b38ef67db",
+          "artifacts/final_run/fits/logreg_market_onchain_h1_2022/alarms.csv": "08e12dd9327dac9f37646ede7d97c601e65f8791fdcc8e20d0d248b30dc87bab",
+          "artifacts/final_run/episodes.parquet": "d7047ce6633500aab03abcc1d6f07663d0fe87d2ad50a40573c6edb6e3a154d9"
         },
         {
-          "artifacts/h1/logistic_regression/fits/logreg_market_onchain_h1_2023/fit.json": "240c60ff80c92bb2ff5d3b7b2ae3d5d11df37012b40267c217cb7c86f91da29f",
-          "artifacts/h1/logistic_regression/fits/logreg_market_onchain_h1_2023/test.parquet": "f4decae04001604f8b7a24c9a539ad7e5ab45faf78ff4dda7543755bd781e9e0",
-          "artifacts/h1/logistic_regression/fits/logreg_market_onchain_h1_2023/alarms.csv": "032e5255ae30cc61514d8d30a07c3d31cedab06fb9fe808c393fe701dc2d3119",
-          "artifacts/h1/logistic_regression/episodes.parquet": "d7047ce6633500aab03abcc1d6f07663d0fe87d2ad50a40573c6edb6e3a154d9"
+          "artifacts/final_run/fits/logreg_market_onchain_h1_2023/fit.json": "6d3697b1cda75c9b13b36977b81146862e8c5fde051ca167daf6a39ee32671a0",
+          "artifacts/final_run/fits/logreg_market_onchain_h1_2023/test.parquet": "4ae6d2ca0d77a409018e3b313c61fa11845c80650009c41a49976a3bfa17142a",
+          "artifacts/final_run/fits/logreg_market_onchain_h1_2023/alarms.csv": "6e1c868dd31adf6c48becd2595e4b3a35b0185f4dc92b969e2cbec9b71b1bda4",
+          "artifacts/final_run/episodes.parquet": "d7047ce6633500aab03abcc1d6f07663d0fe87d2ad50a40573c6edb6e3a154d9"
         },
         {
-          "artifacts/h1/logistic_regression/fits/logreg_market_onchain_h1_2024/fit.json": "86aae89cbcf76ab267b5f3b7a2381ddbbb50d95d2a29bc4357f656982cf9937d",
-          "artifacts/h1/logistic_regression/fits/logreg_market_onchain_h1_2024/test.parquet": "8977c8d39e1074d99e75c12b761ecbcd46ce5f95e36d047238a824325f79b79f",
-          "artifacts/h1/logistic_regression/fits/logreg_market_onchain_h1_2024/alarms.csv": "6ea456247e2573cbb53cd1e19af3fda67ab51c6f8107590a1e3546cefe624a96",
-          "artifacts/h1/logistic_regression/episodes.parquet": "d7047ce6633500aab03abcc1d6f07663d0fe87d2ad50a40573c6edb6e3a154d9"
+          "artifacts/final_run/fits/logreg_market_onchain_h1_2024/fit.json": "37d2f43adcccb75158cac41e1975ea0b4d51110b2e3e952efa901755291660e6",
+          "artifacts/final_run/fits/logreg_market_onchain_h1_2024/test.parquet": "18a0650f923e4174c2d1b7ce41e7ad372247c3ee422a2604b8b47bc2b8a78790",
+          "artifacts/final_run/fits/logreg_market_onchain_h1_2024/alarms.csv": "b40ae079270f649f6a49ce5f8ebb207bcd0c47d5977b4ec02496cfd25116f3f4",
+          "artifacts/final_run/episodes.parquet": "d7047ce6633500aab03abcc1d6f07663d0fe87d2ad50a40573c6edb6e3a154d9"
         },
         {
-          "artifacts/h1/logistic_regression/fits/logreg_market_onchain_h1_2025/fit.json": "8a8e54e44718f61531f4ac48d7ba3b8df468d545dba3f42f3e8f06633da7413b",
-          "artifacts/h1/logistic_regression/fits/logreg_market_onchain_h1_2025/test.parquet": "2e875fa93bf5f7d33af0583760b847ab1857a95b4955b5739d4a7e70a834b207",
-          "artifacts/h1/logistic_regression/fits/logreg_market_onchain_h1_2025/alarms.csv": "67a4a7d154a7d23493c8545f3d0f111f76cf99de0435ccc9e505a251764a512b",
-          "artifacts/h1/logistic_regression/episodes.parquet": "d7047ce6633500aab03abcc1d6f07663d0fe87d2ad50a40573c6edb6e3a154d9"
+          "artifacts/final_run/fits/logreg_market_onchain_h1_2025/fit.json": "9f373f31a28f25f7ee72563112e018072222631bdc9640273b07648ca6c0a853",
+          "artifacts/final_run/fits/logreg_market_onchain_h1_2025/test.parquet": "9e8ce63b44699346975949673fb43454a0639eadf9779d1aee8199e5caffc61a",
+          "artifacts/final_run/fits/logreg_market_onchain_h1_2025/alarms.csv": "e6bec4acd5caeaa78e2232084c6af9ce820aeccecf94b5083ee460072e94feed",
+          "artifacts/final_run/episodes.parquet": "d7047ce6633500aab03abcc1d6f07663d0fe87d2ad50a40573c6edb6e3a154d9"
         }
       ]
     },
@@ -167,39 +167,39 @@
       "model": "logreg",
       "config": "market_onchain",
       "horizon_hours": 6,
-      "run_id": "ac334862-a86f-4a75-9fea-5180ef51e6af",
-      "manifest": "artifacts/h6_and_h24/logistic_regression/run.json",
-      "manifest_sha256": "1dd8fe7c66dfd56268abf401fd189d09e4ab2d342aa164fac0ff9987ab7b1c05",
+      "run_id": "a4b62db2-1fc8-42ec-9a5f-3a94999860f5",
+      "manifest": "artifacts/final_run/run.json",
+      "manifest_sha256": "9661514af8ee9deb580eabb4f2d24a7805b31d79e50c8e00d6da8b8241e99997",
       "fit_inputs": [
         {
-          "artifacts/h6_and_h24/logistic_regression/fits/logreg_market_onchain_h6_2021/fit.json": "bc79e3e87d9b78c24c7ec3af3524c6749a5c6c0cdfa4b96ca4ce6e74dd42b714",
-          "artifacts/h6_and_h24/logistic_regression/fits/logreg_market_onchain_h6_2021/test.parquet": "22b97d8fbe65662d1bee119c9fc82061d731f71649fefe1d06b2b6825cb58ab2",
-          "artifacts/h6_and_h24/logistic_regression/fits/logreg_market_onchain_h6_2021/alarms.csv": "11e0208411493d28edd477ec3ddbf3a006083f70675a420e5c66ff9cccca3059",
-          "artifacts/h6_and_h24/logistic_regression/episodes.parquet": "d7047ce6633500aab03abcc1d6f07663d0fe87d2ad50a40573c6edb6e3a154d9"
+          "artifacts/final_run/fits/logreg_market_onchain_h6_2021/fit.json": "450073b3c4f1f0a306f62cbc3c22f640b3476b19cb7a167a772e975e6cb2973d",
+          "artifacts/final_run/fits/logreg_market_onchain_h6_2021/test.parquet": "d1288ea63cb296136fc596da4b891f78f4ed7b6a9fdbf21a7a550dcfb3e5a9ba",
+          "artifacts/final_run/fits/logreg_market_onchain_h6_2021/alarms.csv": "1c9eb4447ddfba714fffd81ee5212231bf473c39428fcebb2d94f0f441d7680d",
+          "artifacts/final_run/episodes.parquet": "d7047ce6633500aab03abcc1d6f07663d0fe87d2ad50a40573c6edb6e3a154d9"
         },
         {
-          "artifacts/h6_and_h24/logistic_regression/fits/logreg_market_onchain_h6_2022/fit.json": "c41d116fd0a56037d96e1169a445ac90449887145e0307255022c9337c505ce9",
-          "artifacts/h6_and_h24/logistic_regression/fits/logreg_market_onchain_h6_2022/test.parquet": "4fadd759930cbe193717a7d2b689f22acf81b37785b80b4c4c15baf1344288ef",
-          "artifacts/h6_and_h24/logistic_regression/fits/logreg_market_onchain_h6_2022/alarms.csv": "440c02278e0c449cd3de5fce1cf7ec80fd222a7855d608e64056ec882dc95ac4",
-          "artifacts/h6_and_h24/logistic_regression/episodes.parquet": "d7047ce6633500aab03abcc1d6f07663d0fe87d2ad50a40573c6edb6e3a154d9"
+          "artifacts/final_run/fits/logreg_market_onchain_h6_2022/fit.json": "cd66eda508d694396127a8caacadff5295ad02a0c362205b6b73192cfe8f8aa6",
+          "artifacts/final_run/fits/logreg_market_onchain_h6_2022/test.parquet": "f0380001e9d8fd70b0db480d7461d9a365bfc2c79f5f5b7fc1a6a6e2fb487cfb",
+          "artifacts/final_run/fits/logreg_market_onchain_h6_2022/alarms.csv": "cc8188ec371ff1655cb3206957c13ab3d610c45ea7ff7b9bc15cce24dc286c89",
+          "artifacts/final_run/episodes.parquet": "d7047ce6633500aab03abcc1d6f07663d0fe87d2ad50a40573c6edb6e3a154d9"
         },
         {
-          "artifacts/h6_and_h24/logistic_regression/fits/logreg_market_onchain_h6_2023/fit.json": "215a7416a2b5b86ef64df40300d99558d800b1583a8508e8363560b17634fe59",
-          "artifacts/h6_and_h24/logistic_regression/fits/logreg_market_onchain_h6_2023/test.parquet": "fe036bcc941c5d3ba1e0a9c5aa114de1979edec1ca411046fa4a759b9d1ce645",
-          "artifacts/h6_and_h24/logistic_regression/fits/logreg_market_onchain_h6_2023/alarms.csv": "9044d7541c9364c5089506d7a5c9e99e87b0e965cee6668d7a6f07da40b4b844",
-          "artifacts/h6_and_h24/logistic_regression/episodes.parquet": "d7047ce6633500aab03abcc1d6f07663d0fe87d2ad50a40573c6edb6e3a154d9"
+          "artifacts/final_run/fits/logreg_market_onchain_h6_2023/fit.json": "1efa626783a18df2666c1f217f63018e9d457b87569f78a2cf4e05be11f9ee4a",
+          "artifacts/final_run/fits/logreg_market_onchain_h6_2023/test.parquet": "ed3535882234d315b21d17ae535af6c56fe5f9a29397d30ad5f758d9994b7e1e",
+          "artifacts/final_run/fits/logreg_market_onchain_h6_2023/alarms.csv": "368e3873271e024adedf90231b2b06b008dd54ab3422f50803a9a7c11b2a0f88",
+          "artifacts/final_run/episodes.parquet": "d7047ce6633500aab03abcc1d6f07663d0fe87d2ad50a40573c6edb6e3a154d9"
         },
         {
-          "artifacts/h6_and_h24/logistic_regression/fits/logreg_market_onchain_h6_2024/fit.json": "c93dc02fb7e0d8e839f64b7cc48864d210686b33e6c2a897da02160536eea44d",
-          "artifacts/h6_and_h24/logistic_regression/fits/logreg_market_onchain_h6_2024/test.parquet": "5e53effa5dd40ecc9eaa7efec87ee1f0e9aedd625f60584f9768053be5d9dd1d",
-          "artifacts/h6_and_h24/logistic_regression/fits/logreg_market_onchain_h6_2024/alarms.csv": "0e2074ff809788496f4d06c2054986ef3121effd3dab877c67469d783c4a12ad",
-          "artifacts/h6_and_h24/logistic_regression/episodes.parquet": "d7047ce6633500aab03abcc1d6f07663d0fe87d2ad50a40573c6edb6e3a154d9"
+          "artifacts/final_run/fits/logreg_market_onchain_h6_2024/fit.json": "92f670a8112e1dcab72fae9daf164a8cbf0124fbf5733c8175ebfd25f73c72a0",
+          "artifacts/final_run/fits/logreg_market_onchain_h6_2024/test.parquet": "f53cf3d76f8267d745d603b3bb2848aa6f39713e013e1c1b46ab2bb979470ece",
+          "artifacts/final_run/fits/logreg_market_onchain_h6_2024/alarms.csv": "2878d22752a0785ebff5c6bdeb7e55c553e4dce8384feb63b75cf890d8092756",
+          "artifacts/final_run/episodes.parquet": "d7047ce6633500aab03abcc1d6f07663d0fe87d2ad50a40573c6edb6e3a154d9"
         },
         {
-          "artifacts/h6_and_h24/logistic_regression/fits/logreg_market_onchain_h6_2025/fit.json": "23eb1f393fa0d3b4c1061f5ae6792330259d1b4e6c30366f7a30c9af70a4151c",
-          "artifacts/h6_and_h24/logistic_regression/fits/logreg_market_onchain_h6_2025/test.parquet": "b58058b6b8bcdf5050f8a33cc93b0394b672cf497bdefa084a3ed8e9968a56da",
-          "artifacts/h6_and_h24/logistic_regression/fits/logreg_market_onchain_h6_2025/alarms.csv": "288d9e814fb4cd2aa40beb8ec425d9ad7ad3fa3c3e5849037e269cc79e5b8c78",
-          "artifacts/h6_and_h24/logistic_regression/episodes.parquet": "d7047ce6633500aab03abcc1d6f07663d0fe87d2ad50a40573c6edb6e3a154d9"
+          "artifacts/final_run/fits/logreg_market_onchain_h6_2025/fit.json": "7ab3b9395386f2aa38ad998d36a98a15c34641b511f65c48e0f90f2d75f0c2b9",
+          "artifacts/final_run/fits/logreg_market_onchain_h6_2025/test.parquet": "5f71c2ce19684e7ffc5ae3679d392514771349b809e74f76acdc6a2a18c68a95",
+          "artifacts/final_run/fits/logreg_market_onchain_h6_2025/alarms.csv": "12067842b4b006ed623fb665dcb8ea60d9980172e2ed60f5d9bbc1c9af4587c4",
+          "artifacts/final_run/episodes.parquet": "d7047ce6633500aab03abcc1d6f07663d0fe87d2ad50a40573c6edb6e3a154d9"
         }
       ]
     },
@@ -207,39 +207,39 @@
       "model": "logreg",
       "config": "market_onchain",
       "horizon_hours": 24,
-      "run_id": "ac334862-a86f-4a75-9fea-5180ef51e6af",
-      "manifest": "artifacts/h6_and_h24/logistic_regression/run.json",
-      "manifest_sha256": "1dd8fe7c66dfd56268abf401fd189d09e4ab2d342aa164fac0ff9987ab7b1c05",
+      "run_id": "a4b62db2-1fc8-42ec-9a5f-3a94999860f5",
+      "manifest": "artifacts/final_run/run.json",
+      "manifest_sha256": "9661514af8ee9deb580eabb4f2d24a7805b31d79e50c8e00d6da8b8241e99997",
       "fit_inputs": [
         {
-          "artifacts/h6_and_h24/logistic_regression/fits/logreg_market_onchain_h24_2021/fit.json": "5e884befd01c3ff36b8fbc10730a73750db5f78ea32dafe66da740037d2b2855",
-          "artifacts/h6_and_h24/logistic_regression/fits/logreg_market_onchain_h24_2021/test.parquet": "041f42b05613f5e6e72fb4a2acfb63c12b1551d88197932f178da580d3525c3d",
-          "artifacts/h6_and_h24/logistic_regression/fits/logreg_market_onchain_h24_2021/alarms.csv": "93bb05b78cc8fb531bed10f514374f4efbef0bb088ff85eae757b3545a222d2c",
-          "artifacts/h6_and_h24/logistic_regression/episodes.parquet": "d7047ce6633500aab03abcc1d6f07663d0fe87d2ad50a40573c6edb6e3a154d9"
+          "artifacts/final_run/fits/logreg_market_onchain_h24_2021/fit.json": "ffb401f4187b076d71ca5dd7747e30a971f491d96fbb5f6666423e800d7f3e17",
+          "artifacts/final_run/fits/logreg_market_onchain_h24_2021/test.parquet": "d6e94aabfe63be4c0a6c653576fe5f25e2c6da5a26fa549d7f3ab9ab18e54d08",
+          "artifacts/final_run/fits/logreg_market_onchain_h24_2021/alarms.csv": "0de6ac050feec513a7973d9f848512a6fdee0337ae4483501e3b8da99b3d0054",
+          "artifacts/final_run/episodes.parquet": "d7047ce6633500aab03abcc1d6f07663d0fe87d2ad50a40573c6edb6e3a154d9"
         },
         {
-          "artifacts/h6_and_h24/logistic_regression/fits/logreg_market_onchain_h24_2022/fit.json": "7ca2a37fa299bac483050766943a19d8baca46aee131c83db2a9a2ec2c45c931",
-          "artifacts/h6_and_h24/logistic_regression/fits/logreg_market_onchain_h24_2022/test.parquet": "4955cdf645057236e2e6dec95e784bef8fc0034cd1317c2cc5c42e7fddac0a2e",
-          "artifacts/h6_and_h24/logistic_regression/fits/logreg_market_onchain_h24_2022/alarms.csv": "374aa3125498831574fc73cddbcdc07afe28c6eafa575008b0f1c217d68c0371",
-          "artifacts/h6_and_h24/logistic_regression/episodes.parquet": "d7047ce6633500aab03abcc1d6f07663d0fe87d2ad50a40573c6edb6e3a154d9"
+          "artifacts/final_run/fits/logreg_market_onchain_h24_2022/fit.json": "4658ff36a36046603d1b716f28589f6ccc9c687d144d49ce987ee9fead0e4cff",
+          "artifacts/final_run/fits/logreg_market_onchain_h24_2022/test.parquet": "f24f0c9242e54ac3ac16a3dc1b98d9cc05aec53f5287f31e14f29532215dccd6",
+          "artifacts/final_run/fits/logreg_market_onchain_h24_2022/alarms.csv": "6b493ebfa4f056958dcc6ad5a2dcbc9cb35e983d1a7f6aed81e92eaf00209b3a",
+          "artifacts/final_run/episodes.parquet": "d7047ce6633500aab03abcc1d6f07663d0fe87d2ad50a40573c6edb6e3a154d9"
         },
         {
-          "artifacts/h6_and_h24/logistic_regression/fits/logreg_market_onchain_h24_2023/fit.json": "27b808a8d1abd7e878dae5a92d4bf06bfdfb2a9b42bc2aa34869579cc64d48f4",
-          "artifacts/h6_and_h24/logistic_regression/fits/logreg_market_onchain_h24_2023/test.parquet": "604b8e93f6b77f6fbf61e8348a73625208097e306f34d713fd67322153a75f44",
-          "artifacts/h6_and_h24/logistic_regression/fits/logreg_market_onchain_h24_2023/alarms.csv": "2abbf39339698aa9e22a94a788ef0fbd37cd814fadf6ed613b7e13b37ff5c536",
-          "artifacts/h6_and_h24/logistic_regression/episodes.parquet": "d7047ce6633500aab03abcc1d6f07663d0fe87d2ad50a40573c6edb6e3a154d9"
+          "artifacts/final_run/fits/logreg_market_onchain_h24_2023/fit.json": "02774c14ac192cddc55e9b90fc07db34dc5396c07fd4e7971ebb58b85ac00b5c",
+          "artifacts/final_run/fits/logreg_market_onchain_h24_2023/test.parquet": "f5d567e9c4b5f527d26e508488c1ba5dda84307f7c9f012e277ad3123730fe8f",
+          "artifacts/final_run/fits/logreg_market_onchain_h24_2023/alarms.csv": "3c6840d3c5eeab549d9a72cd4d02ebeb5efab49f2e69c5ddbde9be365a581e2d",
+          "artifacts/final_run/episodes.parquet": "d7047ce6633500aab03abcc1d6f07663d0fe87d2ad50a40573c6edb6e3a154d9"
         },
         {
-          "artifacts/h6_and_h24/logistic_regression/fits/logreg_market_onchain_h24_2024/fit.json": "69d68e1881dcdff808a7636a46c3cac74e7247ff0d76b294e9a9b67ef77fc203",
-          "artifacts/h6_and_h24/logistic_regression/fits/logreg_market_onchain_h24_2024/test.parquet": "95ebbdc35b3d1a556114a4faed51687ee6d7609c4cbf9edfeb9647d1e3b073c5",
-          "artifacts/h6_and_h24/logistic_regression/fits/logreg_market_onchain_h24_2024/alarms.csv": "56bffaf01c65407208f7a9c63981d26b8de63eda157f5f2e0dfc0400e084fcb8",
-          "artifacts/h6_and_h24/logistic_regression/episodes.parquet": "d7047ce6633500aab03abcc1d6f07663d0fe87d2ad50a40573c6edb6e3a154d9"
+          "artifacts/final_run/fits/logreg_market_onchain_h24_2024/fit.json": "3a0b9229c11f6e921b0b1d4f71afb05f824626d2b55d8c9e0b786b6076a92c0d",
+          "artifacts/final_run/fits/logreg_market_onchain_h24_2024/test.parquet": "4a06db8f410539d0f3013875b9ea2cefb93e3dab92ec44f4079114061154d146",
+          "artifacts/final_run/fits/logreg_market_onchain_h24_2024/alarms.csv": "b9a94637b0e422762b6b7819f62fa1979fec7db7d07ed47208a1e08e360a9fdf",
+          "artifacts/final_run/episodes.parquet": "d7047ce6633500aab03abcc1d6f07663d0fe87d2ad50a40573c6edb6e3a154d9"
         },
         {
-          "artifacts/h6_and_h24/logistic_regression/fits/logreg_market_onchain_h24_2025/fit.json": "94d5240dd72febcfc46b4a79810488fdb2c35e12ad3edd2fbbd1ad0fad1d5d34",
-          "artifacts/h6_and_h24/logistic_regression/fits/logreg_market_onchain_h24_2025/test.parquet": "4bb6bbd3395f49f7b2d65b7d6598e88b055a9a38611675b9499210f88e5cfa37",
-          "artifacts/h6_and_h24/logistic_regression/fits/logreg_market_onchain_h24_2025/alarms.csv": "5d5da0d35c174e6df8559c0f542efbf10e3f5dee001d96a757cd251c945af8d4",
-          "artifacts/h6_and_h24/logistic_regression/episodes.parquet": "d7047ce6633500aab03abcc1d6f07663d0fe87d2ad50a40573c6edb6e3a154d9"
+          "artifacts/final_run/fits/logreg_market_onchain_h24_2025/fit.json": "6f807b224b09d4c4244fbaa35d65e8889150fe026cecaa8bdf59b9fdc2cfd26d",
+          "artifacts/final_run/fits/logreg_market_onchain_h24_2025/test.parquet": "9160187312097ccd3b8b218253f31ebce378c8cc95411f550e0e38ff9ee83973",
+          "artifacts/final_run/fits/logreg_market_onchain_h24_2025/alarms.csv": "c071ffd29e8128221b549d428e13f0dffb11a4ebde26fe4f07962b334f983a23",
+          "artifacts/final_run/episodes.parquet": "d7047ce6633500aab03abcc1d6f07663d0fe87d2ad50a40573c6edb6e3a154d9"
         }
       ]
     },
@@ -247,39 +247,39 @@
       "model": "random_forest",
       "config": "market_matched",
       "horizon_hours": 1,
-      "run_id": "c2cf3957-6d75-4b4d-96f0-916c81df7ead",
-      "manifest": "artifacts/h1/random_forest_xgboost/run.json",
-      "manifest_sha256": "e22531653f48163a46290ea111368eef310d2afd4ebfbd5a7cf95f0e61714f52",
+      "run_id": "a4b62db2-1fc8-42ec-9a5f-3a94999860f5",
+      "manifest": "artifacts/final_run/run.json",
+      "manifest_sha256": "9661514af8ee9deb580eabb4f2d24a7805b31d79e50c8e00d6da8b8241e99997",
       "fit_inputs": [
         {
-          "artifacts/h1/random_forest_xgboost/fits/random_forest_market_matched_h1_2021/fit.json": "6755da87ff1c0cc009daa386d1c13c844c1dd0604187aeda5b71af13c6e9dfe7",
-          "artifacts/h1/random_forest_xgboost/fits/random_forest_market_matched_h1_2021/test.parquet": "4c517ad879a59a4f87a2fc834aa875063db93dcc7c60ecd684006bc8a0565a85",
-          "artifacts/h1/random_forest_xgboost/fits/random_forest_market_matched_h1_2021/alarms.csv": "e41f1134153f3632c67ceadcd15a7dd1ce7e8056fcc86e37bd0d434ad21d2397",
-          "artifacts/h1/random_forest_xgboost/episodes.parquet": "d7047ce6633500aab03abcc1d6f07663d0fe87d2ad50a40573c6edb6e3a154d9"
+          "artifacts/final_run/fits/random_forest_market_matched_h1_2021/fit.json": "86680b7a1b9ae9737e55e50875a6a037a98f650411477d11f24806b86e181f59",
+          "artifacts/final_run/fits/random_forest_market_matched_h1_2021/test.parquet": "38f15adeeb492df410c89296b92c55192224650762b6294a55627d6903dcf26f",
+          "artifacts/final_run/fits/random_forest_market_matched_h1_2021/alarms.csv": "0b9976f98c6fc9105742f852cffd9efeadf809338544ca1ea27d94dd3c8523fa",
+          "artifacts/final_run/episodes.parquet": "d7047ce6633500aab03abcc1d6f07663d0fe87d2ad50a40573c6edb6e3a154d9"
         },
         {
-          "artifacts/h1/random_forest_xgboost/fits/random_forest_market_matched_h1_2022/fit.json": "2968e8bb7c0d5414c075b3c7f5fa00e13f711ee26c643ad6fe9eac537cce3afd",
-          "artifacts/h1/random_forest_xgboost/fits/random_forest_market_matched_h1_2022/test.parquet": "3fe7297bc297f5743d8e8d478c54fa5d1b618f4f349f327a9cc89453c9335655",
-          "artifacts/h1/random_forest_xgboost/fits/random_forest_market_matched_h1_2022/alarms.csv": "35c5eed5f9cb20ca052f3a66b36eaa8ce802b4de95df1920b5cc379a72fc186e",
-          "artifacts/h1/random_forest_xgboost/episodes.parquet": "d7047ce6633500aab03abcc1d6f07663d0fe87d2ad50a40573c6edb6e3a154d9"
+          "artifacts/final_run/fits/random_forest_market_matched_h1_2022/fit.json": "901fcb0a6636bc74c284744d6a99a9ad09e4cd5d3bef536a7077cf35ce83af2e",
+          "artifacts/final_run/fits/random_forest_market_matched_h1_2022/test.parquet": "1fbd85c917a871b9c6bc0a0bfcb4607fd92bbcef1864af52ebdd34f78bc94977",
+          "artifacts/final_run/fits/random_forest_market_matched_h1_2022/alarms.csv": "35c5eed5f9cb20ca052f3a66b36eaa8ce802b4de95df1920b5cc379a72fc186e",
+          "artifacts/final_run/episodes.parquet": "d7047ce6633500aab03abcc1d6f07663d0fe87d2ad50a40573c6edb6e3a154d9"
         },
         {
-          "artifacts/h1/random_forest_xgboost/fits/random_forest_market_matched_h1_2023/fit.json": "a76ac5c0a0312c726170c0506c47ac3339177461b7e1bb72a02a4cb997aa0174",
-          "artifacts/h1/random_forest_xgboost/fits/random_forest_market_matched_h1_2023/test.parquet": "fce67cd85dcc029a1c11330c212626e5d0fba587440ed4750e1afa46963cfccf",
-          "artifacts/h1/random_forest_xgboost/fits/random_forest_market_matched_h1_2023/alarms.csv": "2309d91edb007f5abeba177a7d1248b285aedc093304d3e78dff3746e6bf72bf",
-          "artifacts/h1/random_forest_xgboost/episodes.parquet": "d7047ce6633500aab03abcc1d6f07663d0fe87d2ad50a40573c6edb6e3a154d9"
+          "artifacts/final_run/fits/random_forest_market_matched_h1_2023/fit.json": "38950764f1a1f124ca5c0949fd3af4cf37ad4745e63f413b2eb9c4e54f763faa",
+          "artifacts/final_run/fits/random_forest_market_matched_h1_2023/test.parquet": "27c23b2ffb9ff543df86ea338b29ca1bd5f99abd20e02a2cdf62f2c43ce742bc",
+          "artifacts/final_run/fits/random_forest_market_matched_h1_2023/alarms.csv": "da01252a9b5adc5432cf2eb4ccd481cacb383db2ec359670774ba3796bb690ac",
+          "artifacts/final_run/episodes.parquet": "d7047ce6633500aab03abcc1d6f07663d0fe87d2ad50a40573c6edb6e3a154d9"
         },
         {
-          "artifacts/h1/random_forest_xgboost/fits/random_forest_market_matched_h1_2024/fit.json": "1f3a00deb41ca505dbd3b978d7d32dd72019188c61adca761b2dadcf6fe74732",
-          "artifacts/h1/random_forest_xgboost/fits/random_forest_market_matched_h1_2024/test.parquet": "ed519be4fb3e9c76dd7d768d398bee63d908097da9e36e6e6fb5a674eeb3bc85",
-          "artifacts/h1/random_forest_xgboost/fits/random_forest_market_matched_h1_2024/alarms.csv": "548f33e1d1de50862ed8a275b5df96c3627f3dc9671de1481f2734526088b380",
-          "artifacts/h1/random_forest_xgboost/episodes.parquet": "d7047ce6633500aab03abcc1d6f07663d0fe87d2ad50a40573c6edb6e3a154d9"
+          "artifacts/final_run/fits/random_forest_market_matched_h1_2024/fit.json": "c390a56b1f6810c586f65b798dbc825303bd5e4479183f8c14f021efd9a78443",
+          "artifacts/final_run/fits/random_forest_market_matched_h1_2024/test.parquet": "3ad97539fb8e701a76c36321160361df19a4ebc7f6714b40666ca2a9e28eee50",
+          "artifacts/final_run/fits/random_forest_market_matched_h1_2024/alarms.csv": "6a61f75b4f3f9152500d6d32ad1540dfe5e0060f7b1dd48ec82609d9aab97a8a",
+          "artifacts/final_run/episodes.parquet": "d7047ce6633500aab03abcc1d6f07663d0fe87d2ad50a40573c6edb6e3a154d9"
         },
         {
-          "artifacts/h1/random_forest_xgboost/fits/random_forest_market_matched_h1_2025/fit.json": "20477d8cc689fec5190dbfe8bd445b56c83149e2d5db128cfda540d139993f01",
-          "artifacts/h1/random_forest_xgboost/fits/random_forest_market_matched_h1_2025/test.parquet": "c537973a1a2ac61bc872fbdbf6b64f0ea83bc21ebaf57004122875a7ea251aa9",
-          "artifacts/h1/random_forest_xgboost/fits/random_forest_market_matched_h1_2025/alarms.csv": "6cd27fc4767e311ba50fefbda2fdc509029cd98ae21910010869255b80615104",
-          "artifacts/h1/random_forest_xgboost/episodes.parquet": "d7047ce6633500aab03abcc1d6f07663d0fe87d2ad50a40573c6edb6e3a154d9"
+          "artifacts/final_run/fits/random_forest_market_matched_h1_2025/fit.json": "4a0c5915e485a927ff2b5cc7a8f24c4e5d56aa92ead0e53008b326587ce51155",
+          "artifacts/final_run/fits/random_forest_market_matched_h1_2025/test.parquet": "a2b6ff9757f645dfd6692fb711c71861cac1ad1e55e920da68acbf23eec889db",
+          "artifacts/final_run/fits/random_forest_market_matched_h1_2025/alarms.csv": "0c392ba266860107e2f5a70f747c37b1d6d831f81d4220da53678992731e9051",
+          "artifacts/final_run/episodes.parquet": "d7047ce6633500aab03abcc1d6f07663d0fe87d2ad50a40573c6edb6e3a154d9"
         }
       ]
     },
@@ -287,39 +287,39 @@
       "model": "random_forest",
       "config": "market_matched",
       "horizon_hours": 6,
-      "run_id": "f2c840d7-2ff9-4552-84fe-cbc4c616ea5d",
-      "manifest": "artifacts/h6_and_h24/random_forest_xgboost/run.json",
-      "manifest_sha256": "c920bd6418c14a81d180870da3c486b1c0bab947e59b193beb1e0f4da3582146",
+      "run_id": "a4b62db2-1fc8-42ec-9a5f-3a94999860f5",
+      "manifest": "artifacts/final_run/run.json",
+      "manifest_sha256": "9661514af8ee9deb580eabb4f2d24a7805b31d79e50c8e00d6da8b8241e99997",
       "fit_inputs": [
         {
-          "artifacts/h6_and_h24/random_forest_xgboost/fits/random_forest_market_matched_h6_2021/fit.json": "75d37feb35e24920559b85195d6fff49a2660b4a8ee53f21430e48bb3306f6f3",
-          "artifacts/h6_and_h24/random_forest_xgboost/fits/random_forest_market_matched_h6_2021/test.parquet": "91a07e3ccb98a5147e0243b6d2cb204f48e7db81ef4bc7a0a1b683bb43e3ce0c",
-          "artifacts/h6_and_h24/random_forest_xgboost/fits/random_forest_market_matched_h6_2021/alarms.csv": "e16079590c818cf47874244520f4861cd14ec7269ed8157fa59ba34cb7e64587",
-          "artifacts/h6_and_h24/random_forest_xgboost/episodes.parquet": "d7047ce6633500aab03abcc1d6f07663d0fe87d2ad50a40573c6edb6e3a154d9"
+          "artifacts/final_run/fits/random_forest_market_matched_h6_2021/fit.json": "f387b9c6f0fbce752ccde9c3111b483805635118d410db78679de8de9abb17a5",
+          "artifacts/final_run/fits/random_forest_market_matched_h6_2021/test.parquet": "4145fa1849b053e8062726249c44fad532fe05ee89b13da2a85b431de2cd2d0a",
+          "artifacts/final_run/fits/random_forest_market_matched_h6_2021/alarms.csv": "27511ae7fe940b7f9b561420be7467f021153687677c5c34ba7947ad5d5daa8d",
+          "artifacts/final_run/episodes.parquet": "d7047ce6633500aab03abcc1d6f07663d0fe87d2ad50a40573c6edb6e3a154d9"
         },
         {
-          "artifacts/h6_and_h24/random_forest_xgboost/fits/random_forest_market_matched_h6_2022/fit.json": "9614ca73deb0f652a8c95d3bae4289db7ee0ca8e7401bd6d87f3199eba2b7d70",
-          "artifacts/h6_and_h24/random_forest_xgboost/fits/random_forest_market_matched_h6_2022/test.parquet": "041a934d254f235bf76a6d8c861d8ccce19fa69d11b41b1ca7489a791c67d9ec",
-          "artifacts/h6_and_h24/random_forest_xgboost/fits/random_forest_market_matched_h6_2022/alarms.csv": "f98d09bf6dfc9b37bf2aeb5418c387615b8d19f9a27ba6861d122aa72c6d2016",
-          "artifacts/h6_and_h24/random_forest_xgboost/episodes.parquet": "d7047ce6633500aab03abcc1d6f07663d0fe87d2ad50a40573c6edb6e3a154d9"
+          "artifacts/final_run/fits/random_forest_market_matched_h6_2022/fit.json": "69ff83dc2667ba36467cb5c25d123975a5ea2cde680454db81b4f197dd098ea2",
+          "artifacts/final_run/fits/random_forest_market_matched_h6_2022/test.parquet": "f0fc1ef12ac6f719570bdc402f9b514a9d486c45404340a64f83f8f48d85ddbe",
+          "artifacts/final_run/fits/random_forest_market_matched_h6_2022/alarms.csv": "214d1b83cb3ade20e4219fdc7debacbe9c73f1d4636bcca7e9fd23ea17244e36",
+          "artifacts/final_run/episodes.parquet": "d7047ce6633500aab03abcc1d6f07663d0fe87d2ad50a40573c6edb6e3a154d9"
         },
         {
-          "artifacts/h6_and_h24/random_forest_xgboost/fits/random_forest_market_matched_h6_2023/fit.json": "da1f6af691b08b9fb9ebf5f3c020d074abc295b0843056e72ecbc51d2b18c51a",
-          "artifacts/h6_and_h24/random_forest_xgboost/fits/random_forest_market_matched_h6_2023/test.parquet": "b2e1f204c4f4db06efc322e6a46868fe3cce04d184bf439225cfcb671fb7a537",
-          "artifacts/h6_and_h24/random_forest_xgboost/fits/random_forest_market_matched_h6_2023/alarms.csv": "ce1ec4d35c79b5a5f9ac7c2ae8f2a01f8487fbe5ff2fce53b34ab08a038e7fc8",
-          "artifacts/h6_and_h24/random_forest_xgboost/episodes.parquet": "d7047ce6633500aab03abcc1d6f07663d0fe87d2ad50a40573c6edb6e3a154d9"
+          "artifacts/final_run/fits/random_forest_market_matched_h6_2023/fit.json": "463272ee9334331d4c8c7cc2f7edb2555eb826e3f5758354485b804a61f553d2",
+          "artifacts/final_run/fits/random_forest_market_matched_h6_2023/test.parquet": "ce8a78fa95163da60c277c7961134eca5b6b27b7a5938d748a2a7e7afe492fec",
+          "artifacts/final_run/fits/random_forest_market_matched_h6_2023/alarms.csv": "56f108024f5c4d71f72bd807315133db6993361cd871be2f8357cfec7cea3a64",
+          "artifacts/final_run/episodes.parquet": "d7047ce6633500aab03abcc1d6f07663d0fe87d2ad50a40573c6edb6e3a154d9"
         },
         {
-          "artifacts/h6_and_h24/random_forest_xgboost/fits/random_forest_market_matched_h6_2024/fit.json": "acc8a13e29351f847ab70fc2b444b5a14beed4ee5fd35da700726daaeaac6dba",
-          "artifacts/h6_and_h24/random_forest_xgboost/fits/random_forest_market_matched_h6_2024/test.parquet": "f89b29d4f49a911045b0e81b9e9f78f8db4498448943ed646540bbd272b5ec9f",
-          "artifacts/h6_and_h24/random_forest_xgboost/fits/random_forest_market_matched_h6_2024/alarms.csv": "6ea55f5befb8326efd628570164519dc12a58d4159b8732de3ebdd817c72b482",
-          "artifacts/h6_and_h24/random_forest_xgboost/episodes.parquet": "d7047ce6633500aab03abcc1d6f07663d0fe87d2ad50a40573c6edb6e3a154d9"
+          "artifacts/final_run/fits/random_forest_market_matched_h6_2024/fit.json": "f05fb0b7bb2f2ce3746f54e4d9264df02f1f14bb7ae787b07ea0c4f9bca8e535",
+          "artifacts/final_run/fits/random_forest_market_matched_h6_2024/test.parquet": "0d3c6b3f35f0bf64af2ca240ceafcfd50d1c1a59f9653f9c2e9e122abbbd05c8",
+          "artifacts/final_run/fits/random_forest_market_matched_h6_2024/alarms.csv": "3e0cfae889e313e812d55722bef580a97ba4bd30944f3d87df513bf900499de9",
+          "artifacts/final_run/episodes.parquet": "d7047ce6633500aab03abcc1d6f07663d0fe87d2ad50a40573c6edb6e3a154d9"
         },
         {
-          "artifacts/h6_and_h24/random_forest_xgboost/fits/random_forest_market_matched_h6_2025/fit.json": "8edc8e6ca35867717ecb087ff38a06da3684486dd135dc1b523d0f47a87bbc27",
-          "artifacts/h6_and_h24/random_forest_xgboost/fits/random_forest_market_matched_h6_2025/test.parquet": "00d2f1e7bcc351bc08fee1967ad29c3c68432ce022a11493bbe4930a364ebf23",
-          "artifacts/h6_and_h24/random_forest_xgboost/fits/random_forest_market_matched_h6_2025/alarms.csv": "2f193400134f4df1e5a0e8b71e908fe616c7f8ae9ff4a71afb76e20a159d6e4f",
-          "artifacts/h6_and_h24/random_forest_xgboost/episodes.parquet": "d7047ce6633500aab03abcc1d6f07663d0fe87d2ad50a40573c6edb6e3a154d9"
+          "artifacts/final_run/fits/random_forest_market_matched_h6_2025/fit.json": "af6ff1682a1554c5c0b611905b2c971c18c99f9c2c289fd7131d1889006b98e7",
+          "artifacts/final_run/fits/random_forest_market_matched_h6_2025/test.parquet": "beb7104b8afe6e8a8a58aef7b3beadd28f1d9dd8f376d00a3b85c67acdd10de7",
+          "artifacts/final_run/fits/random_forest_market_matched_h6_2025/alarms.csv": "b273dc2dee1bf05b8d2a3e6a9c4a2fd0f3b583acbf897e550e4b6294515b7edb",
+          "artifacts/final_run/episodes.parquet": "d7047ce6633500aab03abcc1d6f07663d0fe87d2ad50a40573c6edb6e3a154d9"
         }
       ]
     },
@@ -327,39 +327,39 @@
       "model": "random_forest",
       "config": "market_matched",
       "horizon_hours": 24,
-      "run_id": "f2c840d7-2ff9-4552-84fe-cbc4c616ea5d",
-      "manifest": "artifacts/h6_and_h24/random_forest_xgboost/run.json",
-      "manifest_sha256": "c920bd6418c14a81d180870da3c486b1c0bab947e59b193beb1e0f4da3582146",
+      "run_id": "a4b62db2-1fc8-42ec-9a5f-3a94999860f5",
+      "manifest": "artifacts/final_run/run.json",
+      "manifest_sha256": "9661514af8ee9deb580eabb4f2d24a7805b31d79e50c8e00d6da8b8241e99997",
       "fit_inputs": [
         {
-          "artifacts/h6_and_h24/random_forest_xgboost/fits/random_forest_market_matched_h24_2021/fit.json": "f327381de9ab20327d6798e5cf2bcd20e55f98cc2029ec1242538215661980f2",
-          "artifacts/h6_and_h24/random_forest_xgboost/fits/random_forest_market_matched_h24_2021/test.parquet": "d2dd723b28f693aa9949c41db66cb6a849bea0c389972046f06b68e9fa4541a6",
-          "artifacts/h6_and_h24/random_forest_xgboost/fits/random_forest_market_matched_h24_2021/alarms.csv": "edae07eec35f63a58c791073577f593633f41a084391ee107a66be1f8599b1b8",
-          "artifacts/h6_and_h24/random_forest_xgboost/episodes.parquet": "d7047ce6633500aab03abcc1d6f07663d0fe87d2ad50a40573c6edb6e3a154d9"
+          "artifacts/final_run/fits/random_forest_market_matched_h24_2021/fit.json": "1907eddb59b76de706c304730234f04a69a467b26103e922837df691094d6094",
+          "artifacts/final_run/fits/random_forest_market_matched_h24_2021/test.parquet": "5aa5dcfc856378ecd557795fa519aef0f6eac1be934f6fb93373858d5c5dad39",
+          "artifacts/final_run/fits/random_forest_market_matched_h24_2021/alarms.csv": "5a6255ecc19712340a585d99dcd4b2933f22e79d2929291ab668922aaed580fe",
+          "artifacts/final_run/episodes.parquet": "d7047ce6633500aab03abcc1d6f07663d0fe87d2ad50a40573c6edb6e3a154d9"
         },
         {
-          "artifacts/h6_and_h24/random_forest_xgboost/fits/random_forest_market_matched_h24_2022/fit.json": "de24d6d1b92ce018bb3ab6bb2c08df52faa0b7b4d0d2c3e0f9d7ff5088d5e114",
-          "artifacts/h6_and_h24/random_forest_xgboost/fits/random_forest_market_matched_h24_2022/test.parquet": "69e015fb6561382b22118588482ced04c1b7fbb4b9a3ef747a0ce4f2ce7f7288",
-          "artifacts/h6_and_h24/random_forest_xgboost/fits/random_forest_market_matched_h24_2022/alarms.csv": "30c50f76ed7996e041440a6b08a9579b69f462b784c9a1114057fa7738d281b4",
-          "artifacts/h6_and_h24/random_forest_xgboost/episodes.parquet": "d7047ce6633500aab03abcc1d6f07663d0fe87d2ad50a40573c6edb6e3a154d9"
+          "artifacts/final_run/fits/random_forest_market_matched_h24_2022/fit.json": "ded1613ce472c4dbaf915f8bfc72fd19d7bc2b2accdf971f3ba3980c32c7fcce",
+          "artifacts/final_run/fits/random_forest_market_matched_h24_2022/test.parquet": "174fb0169ddb75a4573a0f843a40513e68c4d72abcbf89931e16fce0732d9f5c",
+          "artifacts/final_run/fits/random_forest_market_matched_h24_2022/alarms.csv": "bce91aa2ccdf5b05a8b8da8441d54441dc0fd83a7ab8c923eeddb77a679f03bd",
+          "artifacts/final_run/episodes.parquet": "d7047ce6633500aab03abcc1d6f07663d0fe87d2ad50a40573c6edb6e3a154d9"
         },
         {
-          "artifacts/h6_and_h24/random_forest_xgboost/fits/random_forest_market_matched_h24_2023/fit.json": "30c53ce9973114cd8e6f3772c741a61ab28570f1cfd7d2b8b24fcb45133f4447",
-          "artifacts/h6_and_h24/random_forest_xgboost/fits/random_forest_market_matched_h24_2023/test.parquet": "06527d2b6851a7279bbd13936ddff113ffad1572592081f23195c771e569a9ff",
-          "artifacts/h6_and_h24/random_forest_xgboost/fits/random_forest_market_matched_h24_2023/alarms.csv": "44b2b795b87e9cd628fa587ac6521ebe0ef7d11862408226f51d9ded2b26ee5e",
-          "artifacts/h6_and_h24/random_forest_xgboost/episodes.parquet": "d7047ce6633500aab03abcc1d6f07663d0fe87d2ad50a40573c6edb6e3a154d9"
+          "artifacts/final_run/fits/random_forest_market_matched_h24_2023/fit.json": "af3211fcc22421d894af7aa7e0eda057fccabbb65100376769bd256167ada5ce",
+          "artifacts/final_run/fits/random_forest_market_matched_h24_2023/test.parquet": "5dc17330cf27bfd73dfaec460fe0ac43e8f052acde9dea3ebaaebd2df71f7d83",
+          "artifacts/final_run/fits/random_forest_market_matched_h24_2023/alarms.csv": "6500d93beb0fac10d64f38ca98c67e3aedeb8417d0ad8c7d046ff75bbdb1d006",
+          "artifacts/final_run/episodes.parquet": "d7047ce6633500aab03abcc1d6f07663d0fe87d2ad50a40573c6edb6e3a154d9"
         },
         {
-          "artifacts/h6_and_h24/random_forest_xgboost/fits/random_forest_market_matched_h24_2024/fit.json": "069c42c2b039ce7d6b5ec8f95599479b59634377f060b83e1e5107b83f3a29c3",
-          "artifacts/h6_and_h24/random_forest_xgboost/fits/random_forest_market_matched_h24_2024/test.parquet": "2c2a706374e76abe2822057005be2af7c2fe0a5bf038f9c5465f190800dcfe87",
-          "artifacts/h6_and_h24/random_forest_xgboost/fits/random_forest_market_matched_h24_2024/alarms.csv": "e484aca43e6262ca25a777998860935e55c35341d113cb33891f8f7fdd9edfc0",
-          "artifacts/h6_and_h24/random_forest_xgboost/episodes.parquet": "d7047ce6633500aab03abcc1d6f07663d0fe87d2ad50a40573c6edb6e3a154d9"
+          "artifacts/final_run/fits/random_forest_market_matched_h24_2024/fit.json": "02b517752cd258d9937f48e4c50bceb7346b4f9095d23b2d6586e9bd541f7dcb",
+          "artifacts/final_run/fits/random_forest_market_matched_h24_2024/test.parquet": "792071f1209b5e6584249141b898f5197f9bf98296f8a913ca2fa4efb36bbc06",
+          "artifacts/final_run/fits/random_forest_market_matched_h24_2024/alarms.csv": "4b8ea8cb26d03f3d7ce6189b4c6261eff7cb62a0376fcb5b40a24c27433a666d",
+          "artifacts/final_run/episodes.parquet": "d7047ce6633500aab03abcc1d6f07663d0fe87d2ad50a40573c6edb6e3a154d9"
         },
         {
-          "artifacts/h6_and_h24/random_forest_xgboost/fits/random_forest_market_matched_h24_2025/fit.json": "2c54cc20e5d8567c5bb75ed62249b77bbf151c2f2ab4b7d12d66a7d95fa6bed4",
-          "artifacts/h6_and_h24/random_forest_xgboost/fits/random_forest_market_matched_h24_2025/test.parquet": "9d97c7b9e5f94f1c91056a669d8949581d87c8463b7c4ba43f4e91837024bff2",
-          "artifacts/h6_and_h24/random_forest_xgboost/fits/random_forest_market_matched_h24_2025/alarms.csv": "e53fa5ea5950c08ee29d0d976f770da66299280bc6513703b54a2c85d82a1824",
-          "artifacts/h6_and_h24/random_forest_xgboost/episodes.parquet": "d7047ce6633500aab03abcc1d6f07663d0fe87d2ad50a40573c6edb6e3a154d9"
+          "artifacts/final_run/fits/random_forest_market_matched_h24_2025/fit.json": "74183c0f4985a914ac5196c1dd3d2fef6ebb627aa0d9184516f3b8324700136e",
+          "artifacts/final_run/fits/random_forest_market_matched_h24_2025/test.parquet": "8f42c1c967430a46373712a3ea57d4e54649536a411b888515371d4f969cd5ce",
+          "artifacts/final_run/fits/random_forest_market_matched_h24_2025/alarms.csv": "812faf0201fdcf4f628c7171cdc440cd64b2f106c9560b4574550ac47e57e33e",
+          "artifacts/final_run/episodes.parquet": "d7047ce6633500aab03abcc1d6f07663d0fe87d2ad50a40573c6edb6e3a154d9"
         }
       ]
     },
@@ -367,39 +367,39 @@
       "model": "random_forest",
       "config": "market_onchain",
       "horizon_hours": 1,
-      "run_id": "c2cf3957-6d75-4b4d-96f0-916c81df7ead",
-      "manifest": "artifacts/h1/random_forest_xgboost/run.json",
-      "manifest_sha256": "e22531653f48163a46290ea111368eef310d2afd4ebfbd5a7cf95f0e61714f52",
+      "run_id": "a4b62db2-1fc8-42ec-9a5f-3a94999860f5",
+      "manifest": "artifacts/final_run/run.json",
+      "manifest_sha256": "9661514af8ee9deb580eabb4f2d24a7805b31d79e50c8e00d6da8b8241e99997",
       "fit_inputs": [
         {
-          "artifacts/h1/random_forest_xgboost/fits/random_forest_market_onchain_h1_2021/fit.json": "d4a672018aac0bb19b2d2b322748be532393481eb3de3086f73194510c1de56a",
-          "artifacts/h1/random_forest_xgboost/fits/random_forest_market_onchain_h1_2021/test.parquet": "6e31098f2608df14557077481bffc8141d85caa54cab9885eaefaab0cc7bd25f",
-          "artifacts/h1/random_forest_xgboost/fits/random_forest_market_onchain_h1_2021/alarms.csv": "47d66b89aa30e9aa0883b7bec5b93a25e4c2c517a2781990f1572147a883c51c",
-          "artifacts/h1/random_forest_xgboost/episodes.parquet": "d7047ce6633500aab03abcc1d6f07663d0fe87d2ad50a40573c6edb6e3a154d9"
+          "artifacts/final_run/fits/random_forest_market_onchain_h1_2021/fit.json": "b2cc01aafa5db3a5273e84e3d166d9a73e4cbddc832dbf28ab4bd4f32f652bea",
+          "artifacts/final_run/fits/random_forest_market_onchain_h1_2021/test.parquet": "685441c019fd6c3c454e54134fb4eb7d8fbda3004aab5b957c9fb869a4c7ce59",
+          "artifacts/final_run/fits/random_forest_market_onchain_h1_2021/alarms.csv": "884a4a87a305006936596c9693cf8550abf7f4125ff0dfcb8a750d2525ba650e",
+          "artifacts/final_run/episodes.parquet": "d7047ce6633500aab03abcc1d6f07663d0fe87d2ad50a40573c6edb6e3a154d9"
         },
         {
-          "artifacts/h1/random_forest_xgboost/fits/random_forest_market_onchain_h1_2022/fit.json": "8b863f3fe4f908fcc1878ef498880401a22386338c8b877bf66ac7eb08c9cb39",
-          "artifacts/h1/random_forest_xgboost/fits/random_forest_market_onchain_h1_2022/test.parquet": "25ab09607e0697f792a61e03a55b5ed44f161ec7d603b64268b5cdffbf038f56",
-          "artifacts/h1/random_forest_xgboost/fits/random_forest_market_onchain_h1_2022/alarms.csv": "ec451deb33a4b62c8a88833a0f375c4f8b9f6ca8eabc6a438de2ff3e907cfdd8",
-          "artifacts/h1/random_forest_xgboost/episodes.parquet": "d7047ce6633500aab03abcc1d6f07663d0fe87d2ad50a40573c6edb6e3a154d9"
+          "artifacts/final_run/fits/random_forest_market_onchain_h1_2022/fit.json": "9146c5fa226303df81af8b8b49b06ebc151956be076555f61410a0117c74cfb8",
+          "artifacts/final_run/fits/random_forest_market_onchain_h1_2022/test.parquet": "0139393f3723035caddba3fe3742b9d3da11da2ca40224a8051208ea47a499bf",
+          "artifacts/final_run/fits/random_forest_market_onchain_h1_2022/alarms.csv": "ec451deb33a4b62c8a88833a0f375c4f8b9f6ca8eabc6a438de2ff3e907cfdd8",
+          "artifacts/final_run/episodes.parquet": "d7047ce6633500aab03abcc1d6f07663d0fe87d2ad50a40573c6edb6e3a154d9"
         },
         {
-          "artifacts/h1/random_forest_xgboost/fits/random_forest_market_onchain_h1_2023/fit.json": "c12ae3f1c80ec97c4821286f1e410f8785658b50dd3380a0f38bb918ebfc9ba4",
-          "artifacts/h1/random_forest_xgboost/fits/random_forest_market_onchain_h1_2023/test.parquet": "15c0bbeda75bbc7c9be0a6241a80b8b3235b822310c1332ecdbbff4d60c7a82a",
-          "artifacts/h1/random_forest_xgboost/fits/random_forest_market_onchain_h1_2023/alarms.csv": "e42f6e73af48535a5e4c71aff075269334d9055e35e8371bfd65a6003bc11fbc",
-          "artifacts/h1/random_forest_xgboost/episodes.parquet": "d7047ce6633500aab03abcc1d6f07663d0fe87d2ad50a40573c6edb6e3a154d9"
+          "artifacts/final_run/fits/random_forest_market_onchain_h1_2023/fit.json": "cf2d241fe634b7d1609da42f5848029a6317a1645bcbb89ee9fce7654c892a21",
+          "artifacts/final_run/fits/random_forest_market_onchain_h1_2023/test.parquet": "6c8d0b03b798904687dc7602d657fea47651d367a509084fd240cb2440407521",
+          "artifacts/final_run/fits/random_forest_market_onchain_h1_2023/alarms.csv": "36b10682d4f20e3500b8e6626bda509f82b26eabe8ad9ac08141118534eab84e",
+          "artifacts/final_run/episodes.parquet": "d7047ce6633500aab03abcc1d6f07663d0fe87d2ad50a40573c6edb6e3a154d9"
         },
         {
-          "artifacts/h1/random_forest_xgboost/fits/random_forest_market_onchain_h1_2024/fit.json": "146119bc60487e6098a8bb6d1c6e2e2ff90d44e40bb223705c819ecf3ca96c26",
-          "artifacts/h1/random_forest_xgboost/fits/random_forest_market_onchain_h1_2024/test.parquet": "b0232d493e7e4848dc3a62cd397a7fd66d27cc2a47152cdf48c0586ff81c6b2a",
-          "artifacts/h1/random_forest_xgboost/fits/random_forest_market_onchain_h1_2024/alarms.csv": "34f4af5a8aeb2374ba6b35b2469a01fe61a74a748b4a4e462f7b5da6e0eb540a",
-          "artifacts/h1/random_forest_xgboost/episodes.parquet": "d7047ce6633500aab03abcc1d6f07663d0fe87d2ad50a40573c6edb6e3a154d9"
+          "artifacts/final_run/fits/random_forest_market_onchain_h1_2024/fit.json": "b1d40dd52e79664f40ed12c4b970c655c1e0cc153309511f8221eb8d3ae11e53",
+          "artifacts/final_run/fits/random_forest_market_onchain_h1_2024/test.parquet": "59038fe254ff431f4c2e2e6aa4a1fa7b500d90cc65284fbc8424e5ab612077be",
+          "artifacts/final_run/fits/random_forest_market_onchain_h1_2024/alarms.csv": "79d11d46e9dc3dd85b6d236e5dda45bfa167b0db29eb9b2b55d3f6f6ed1ffe84",
+          "artifacts/final_run/episodes.parquet": "d7047ce6633500aab03abcc1d6f07663d0fe87d2ad50a40573c6edb6e3a154d9"
         },
         {
-          "artifacts/h1/random_forest_xgboost/fits/random_forest_market_onchain_h1_2025/fit.json": "5bffacf3b2604794eea617d2861b51ab60d2d129a6b37620e3f11f5273c02afa",
-          "artifacts/h1/random_forest_xgboost/fits/random_forest_market_onchain_h1_2025/test.parquet": "39f613d4b623dfea569f391fab9f02ce2d20163ca71b15c4759034c2ee8f832e",
-          "artifacts/h1/random_forest_xgboost/fits/random_forest_market_onchain_h1_2025/alarms.csv": "b4fb2d7a767f44bf348794b542656767777a2b6fc586724b1b40b53a0914c85b",
-          "artifacts/h1/random_forest_xgboost/episodes.parquet": "d7047ce6633500aab03abcc1d6f07663d0fe87d2ad50a40573c6edb6e3a154d9"
+          "artifacts/final_run/fits/random_forest_market_onchain_h1_2025/fit.json": "45816cf89a26dfe884e3638d6ab906fe998eaa112e7b14fb3f66b110d88dc64b",
+          "artifacts/final_run/fits/random_forest_market_onchain_h1_2025/test.parquet": "ed710ab9137c21508869b1fc0b559891f3333c36661a1b15c03320ee635e17d2",
+          "artifacts/final_run/fits/random_forest_market_onchain_h1_2025/alarms.csv": "22704e97dd6feee4d4df91d7a18390ac54a2efdd092e5a3671905ec03732e369",
+          "artifacts/final_run/episodes.parquet": "d7047ce6633500aab03abcc1d6f07663d0fe87d2ad50a40573c6edb6e3a154d9"
         }
       ]
     },
@@ -407,39 +407,39 @@
       "model": "random_forest",
       "config": "market_onchain",
       "horizon_hours": 6,
-      "run_id": "f2c840d7-2ff9-4552-84fe-cbc4c616ea5d",
-      "manifest": "artifacts/h6_and_h24/random_forest_xgboost/run.json",
-      "manifest_sha256": "c920bd6418c14a81d180870da3c486b1c0bab947e59b193beb1e0f4da3582146",
+      "run_id": "a4b62db2-1fc8-42ec-9a5f-3a94999860f5",
+      "manifest": "artifacts/final_run/run.json",
+      "manifest_sha256": "9661514af8ee9deb580eabb4f2d24a7805b31d79e50c8e00d6da8b8241e99997",
       "fit_inputs": [
         {
-          "artifacts/h6_and_h24/random_forest_xgboost/fits/random_forest_market_onchain_h6_2021/fit.json": "cd0866a04ccb1743231322584252b0aacb8bfa2c2a08796b910b6ac922d8dec5",
-          "artifacts/h6_and_h24/random_forest_xgboost/fits/random_forest_market_onchain_h6_2021/test.parquet": "856ffe46cc4106bab5013d130e6847e7b6d8a7c75121e0dc89c452770049ebb1",
-          "artifacts/h6_and_h24/random_forest_xgboost/fits/random_forest_market_onchain_h6_2021/alarms.csv": "a410d294e9241b01d68e1dd1b81ef713558e68591a959acb3bb897fb21bb4507",
-          "artifacts/h6_and_h24/random_forest_xgboost/episodes.parquet": "d7047ce6633500aab03abcc1d6f07663d0fe87d2ad50a40573c6edb6e3a154d9"
+          "artifacts/final_run/fits/random_forest_market_onchain_h6_2021/fit.json": "8337393e1a2ab120381520a7a8ea283e3807c702539ed35634c105dd13bf917f",
+          "artifacts/final_run/fits/random_forest_market_onchain_h6_2021/test.parquet": "4ef7c49a3a51c2a6f7e72367e5153afbb30aa227c112435974b3768310cd96b2",
+          "artifacts/final_run/fits/random_forest_market_onchain_h6_2021/alarms.csv": "07a3f17f3268fa213af6ca750a4d2525207249cb33d6a913f3477d86f0fd4db4",
+          "artifacts/final_run/episodes.parquet": "d7047ce6633500aab03abcc1d6f07663d0fe87d2ad50a40573c6edb6e3a154d9"
         },
         {
-          "artifacts/h6_and_h24/random_forest_xgboost/fits/random_forest_market_onchain_h6_2022/fit.json": "65893377ad66991673bed113f118de3b2c82f3e9d12ef86e8f20103f11ec1dd8",
-          "artifacts/h6_and_h24/random_forest_xgboost/fits/random_forest_market_onchain_h6_2022/test.parquet": "33e3aebb5c45da111c112d7b2e79bc326baaf1b5ab3058faf0bfcc80a5f6a25d",
-          "artifacts/h6_and_h24/random_forest_xgboost/fits/random_forest_market_onchain_h6_2022/alarms.csv": "70170bf14594107ca85061d56b8c2435808777ea25e7cbb42f83c71955830a04",
-          "artifacts/h6_and_h24/random_forest_xgboost/episodes.parquet": "d7047ce6633500aab03abcc1d6f07663d0fe87d2ad50a40573c6edb6e3a154d9"
+          "artifacts/final_run/fits/random_forest_market_onchain_h6_2022/fit.json": "f715a73332c8b79fb67f940517ad9e86c5dfa79fb36b6adcc90b8a06ce57a345",
+          "artifacts/final_run/fits/random_forest_market_onchain_h6_2022/test.parquet": "1596ff3c73760ff737a7e330380f27908ce97f643d540aff02d7fc75d09b1fa4",
+          "artifacts/final_run/fits/random_forest_market_onchain_h6_2022/alarms.csv": "5324685e20bfcdc65f2ad5565be25b168959f52f3ca41f84f305bdf1625ba9a2",
+          "artifacts/final_run/episodes.parquet": "d7047ce6633500aab03abcc1d6f07663d0fe87d2ad50a40573c6edb6e3a154d9"
         },
         {
-          "artifacts/h6_and_h24/random_forest_xgboost/fits/random_forest_market_onchain_h6_2023/fit.json": "0b19b1c048323233ffa67ed0b9b3f0456d9fe26bd7d250d501c80aed36daaeca",
-          "artifacts/h6_and_h24/random_forest_xgboost/fits/random_forest_market_onchain_h6_2023/test.parquet": "f9e1806a6c47c75f95a8793749bac71d6ac90c6cc638be50063b7ea41f42b576",
-          "artifacts/h6_and_h24/random_forest_xgboost/fits/random_forest_market_onchain_h6_2023/alarms.csv": "72d5bf7328fdeb53e5d732cfaf28df4eaec6ba22faea76c7b1b897b34fe24078",
-          "artifacts/h6_and_h24/random_forest_xgboost/episodes.parquet": "d7047ce6633500aab03abcc1d6f07663d0fe87d2ad50a40573c6edb6e3a154d9"
+          "artifacts/final_run/fits/random_forest_market_onchain_h6_2023/fit.json": "12a3f04f4a4bf878f463e5083e673195c3a8650a25acfa60d894451e4bf6afad",
+          "artifacts/final_run/fits/random_forest_market_onchain_h6_2023/test.parquet": "ffc519a8cee6c21c574e29f83c4b9e00fc9c19bfd69468b0f9c3a42475201695",
+          "artifacts/final_run/fits/random_forest_market_onchain_h6_2023/alarms.csv": "38eec709e6e7afd2bb59988532739e62c8dac55e25b7107af2d0d41cce785032",
+          "artifacts/final_run/episodes.parquet": "d7047ce6633500aab03abcc1d6f07663d0fe87d2ad50a40573c6edb6e3a154d9"
         },
         {
-          "artifacts/h6_and_h24/random_forest_xgboost/fits/random_forest_market_onchain_h6_2024/fit.json": "b6ce5a9f972b52144cf5093e53e1cd1c2b07c9b1979ec627c0637eee868e1a0e",
-          "artifacts/h6_and_h24/random_forest_xgboost/fits/random_forest_market_onchain_h6_2024/test.parquet": "a16b554695d6493fc6925d5d5270e1a7171b9024250aaf88665f68e7893da3e7",
-          "artifacts/h6_and_h24/random_forest_xgboost/fits/random_forest_market_onchain_h6_2024/alarms.csv": "0fcc55bf918f6be77eb7c13daa6c339fa74e1384788c908ae20c2308c47a8cbd",
-          "artifacts/h6_and_h24/random_forest_xgboost/episodes.parquet": "d7047ce6633500aab03abcc1d6f07663d0fe87d2ad50a40573c6edb6e3a154d9"
+          "artifacts/final_run/fits/random_forest_market_onchain_h6_2024/fit.json": "4233af5c769bcb00b5572ddf68a155a9f8d49c7d9c6f1c00b30d7badf4f0c354",
+          "artifacts/final_run/fits/random_forest_market_onchain_h6_2024/test.parquet": "dc4245866e4abe3dab18769c6432d96b497eec8acd0e27da55208b67680f6236",
+          "artifacts/final_run/fits/random_forest_market_onchain_h6_2024/alarms.csv": "3122d8e897abb00d5354b4e99f271bdf5a860f28e80de2a73ff6ca97ab4814a5",
+          "artifacts/final_run/episodes.parquet": "d7047ce6633500aab03abcc1d6f07663d0fe87d2ad50a40573c6edb6e3a154d9"
         },
         {
-          "artifacts/h6_and_h24/random_forest_xgboost/fits/random_forest_market_onchain_h6_2025/fit.json": "095396726d943aeb785e74f9eda06f681410e988725a118cf47cfd653daae6a4",
-          "artifacts/h6_and_h24/random_forest_xgboost/fits/random_forest_market_onchain_h6_2025/test.parquet": "726bc6922dd1f5057c98414ffc0a0de2418fb42615c32402f41a5943b93bb0f7",
-          "artifacts/h6_and_h24/random_forest_xgboost/fits/random_forest_market_onchain_h6_2025/alarms.csv": "6afc4904707bf1000d2b30721df214024cbecaacb4672c04c4dcd00b93ca10c7",
-          "artifacts/h6_and_h24/random_forest_xgboost/episodes.parquet": "d7047ce6633500aab03abcc1d6f07663d0fe87d2ad50a40573c6edb6e3a154d9"
+          "artifacts/final_run/fits/random_forest_market_onchain_h6_2025/fit.json": "2a5482e57a744bcc10e2d5860d307cc4ad502bc390f1836d263f44c5c838901b",
+          "artifacts/final_run/fits/random_forest_market_onchain_h6_2025/test.parquet": "69100ea078e5db2502740ed9058223e943d14f1ce49e8c8047325be14b3c3671",
+          "artifacts/final_run/fits/random_forest_market_onchain_h6_2025/alarms.csv": "c94d5c4a0edd7491557ec9f031c59e4ec21fdf2ba65cff5c054d2b57f864fa22",
+          "artifacts/final_run/episodes.parquet": "d7047ce6633500aab03abcc1d6f07663d0fe87d2ad50a40573c6edb6e3a154d9"
         }
       ]
     },
@@ -447,39 +447,39 @@
       "model": "random_forest",
       "config": "market_onchain",
       "horizon_hours": 24,
-      "run_id": "f2c840d7-2ff9-4552-84fe-cbc4c616ea5d",
-      "manifest": "artifacts/h6_and_h24/random_forest_xgboost/run.json",
-      "manifest_sha256": "c920bd6418c14a81d180870da3c486b1c0bab947e59b193beb1e0f4da3582146",
+      "run_id": "a4b62db2-1fc8-42ec-9a5f-3a94999860f5",
+      "manifest": "artifacts/final_run/run.json",
+      "manifest_sha256": "9661514af8ee9deb580eabb4f2d24a7805b31d79e50c8e00d6da8b8241e99997",
       "fit_inputs": [
         {
-          "artifacts/h6_and_h24/random_forest_xgboost/fits/random_forest_market_onchain_h24_2021/fit.json": "0615c8a51f8bd450d814c8eb4b5e91ea2ced13d50895cc1c6a8a0523dd0b999c",
-          "artifacts/h6_and_h24/random_forest_xgboost/fits/random_forest_market_onchain_h24_2021/test.parquet": "ac3abd4dcc4af9e351b0a0c470cc5c8785509e6c2d8ccb2931a5de9916b5ee00",
-          "artifacts/h6_and_h24/random_forest_xgboost/fits/random_forest_market_onchain_h24_2021/alarms.csv": "fd0e28ecbead6461395ffba0b5bf37ed9b8d9d653f90838b79b3913808dc3b38",
-          "artifacts/h6_and_h24/random_forest_xgboost/episodes.parquet": "d7047ce6633500aab03abcc1d6f07663d0fe87d2ad50a40573c6edb6e3a154d9"
+          "artifacts/final_run/fits/random_forest_market_onchain_h24_2021/fit.json": "c4a1cdc8d08cc188c15d3c3ad4d96541a24ebebcbab351219e5b68e8caa18c1b",
+          "artifacts/final_run/fits/random_forest_market_onchain_h24_2021/test.parquet": "a7701d8aef822aff6524044c1d699402ccb0d264aba071e2d01926e228d521ef",
+          "artifacts/final_run/fits/random_forest_market_onchain_h24_2021/alarms.csv": "f7650aaccdc8f559a1c06dbfc6a563cba76b90407f9581cbe8058590232b674a",
+          "artifacts/final_run/episodes.parquet": "d7047ce6633500aab03abcc1d6f07663d0fe87d2ad50a40573c6edb6e3a154d9"
         },
         {
-          "artifacts/h6_and_h24/random_forest_xgboost/fits/random_forest_market_onchain_h24_2022/fit.json": "5ec53298c1d1542f2876ffcaf6b48313cd1b4dbb16d76583fb7d6de79915baa2",
-          "artifacts/h6_and_h24/random_forest_xgboost/fits/random_forest_market_onchain_h24_2022/test.parquet": "302ebb09b31e437b5d1243a80f1219b9e616e4589d04ba1852ed2dfae792f9cc",
-          "artifacts/h6_and_h24/random_forest_xgboost/fits/random_forest_market_onchain_h24_2022/alarms.csv": "212c2bcb2533595a6af56080ff2dede1d684e0977ebe6e7b48d5a650c073ef12",
-          "artifacts/h6_and_h24/random_forest_xgboost/episodes.parquet": "d7047ce6633500aab03abcc1d6f07663d0fe87d2ad50a40573c6edb6e3a154d9"
+          "artifacts/final_run/fits/random_forest_market_onchain_h24_2022/fit.json": "b08fcc449afbe2a557c04ba307dae44af52771af814ca7458904a0d2f2da8e49",
+          "artifacts/final_run/fits/random_forest_market_onchain_h24_2022/test.parquet": "4181396ebcb54febbdb8edbf4f40e541c414e505e226279a8cd8aa74c5aefad8",
+          "artifacts/final_run/fits/random_forest_market_onchain_h24_2022/alarms.csv": "88f738277ca9f2fd83ef1af0c36037e034f04000fd0c9516d01c858212f76cd1",
+          "artifacts/final_run/episodes.parquet": "d7047ce6633500aab03abcc1d6f07663d0fe87d2ad50a40573c6edb6e3a154d9"
         },
         {
-          "artifacts/h6_and_h24/random_forest_xgboost/fits/random_forest_market_onchain_h24_2023/fit.json": "e64f4cf261565bf379194f2f45827b6369a8bfc396ffe08f625add9c7123582f",
-          "artifacts/h6_and_h24/random_forest_xgboost/fits/random_forest_market_onchain_h24_2023/test.parquet": "a2ca3e5f22a16b680474212dca75666747dc63323475be912867a08faf71b8fd",
-          "artifacts/h6_and_h24/random_forest_xgboost/fits/random_forest_market_onchain_h24_2023/alarms.csv": "8f9acfc1d0d18affbe5ff2b5652c8abeaa0918a6e10e3c39aae193adc7f2a744",
-          "artifacts/h6_and_h24/random_forest_xgboost/episodes.parquet": "d7047ce6633500aab03abcc1d6f07663d0fe87d2ad50a40573c6edb6e3a154d9"
+          "artifacts/final_run/fits/random_forest_market_onchain_h24_2023/fit.json": "e0858efb51d993fe6369b4b95324531521bd959477283e08f45c51d53fbcee54",
+          "artifacts/final_run/fits/random_forest_market_onchain_h24_2023/test.parquet": "5822db5d81257bd2c6e3c520777b1cb133d8a3c5ab9b07b40e1c0d3bbe1b35d7",
+          "artifacts/final_run/fits/random_forest_market_onchain_h24_2023/alarms.csv": "5fc6acc00b1c660285b01fe9073bd587989d3e2a95e34d8921829838d2ee7950",
+          "artifacts/final_run/episodes.parquet": "d7047ce6633500aab03abcc1d6f07663d0fe87d2ad50a40573c6edb6e3a154d9"
         },
         {
-          "artifacts/h6_and_h24/random_forest_xgboost/fits/random_forest_market_onchain_h24_2024/fit.json": "bcf101e929bc8992e65cebd334699b1569d28e78317e10ec4cc79e1e134ca929",
-          "artifacts/h6_and_h24/random_forest_xgboost/fits/random_forest_market_onchain_h24_2024/test.parquet": "a4fc15218a60e81832646d19d94539132efee6667139dc3541ed28a80c29b328",
-          "artifacts/h6_and_h24/random_forest_xgboost/fits/random_forest_market_onchain_h24_2024/alarms.csv": "9b59bffc2107f1b74d9db89af7be9a0330eae31953ce0d4b487be473efc24fd1",
-          "artifacts/h6_and_h24/random_forest_xgboost/episodes.parquet": "d7047ce6633500aab03abcc1d6f07663d0fe87d2ad50a40573c6edb6e3a154d9"
+          "artifacts/final_run/fits/random_forest_market_onchain_h24_2024/fit.json": "d312e63bdbdd2b1166af42b8ee518d36b2427038cf6a6902662bf5bcef934fbb",
+          "artifacts/final_run/fits/random_forest_market_onchain_h24_2024/test.parquet": "feebc6e51a2de3f0f63455b2072a3b904d1d5dd38eea6cdcf5139d6ab953f6f6",
+          "artifacts/final_run/fits/random_forest_market_onchain_h24_2024/alarms.csv": "b9d618dfa9d0215c397f96bdb971496e45e0eb4c805d93e72d0af8edc17584e4",
+          "artifacts/final_run/episodes.parquet": "d7047ce6633500aab03abcc1d6f07663d0fe87d2ad50a40573c6edb6e3a154d9"
         },
         {
-          "artifacts/h6_and_h24/random_forest_xgboost/fits/random_forest_market_onchain_h24_2025/fit.json": "c72355384022f4f759080002addf91247f08b77d0cda9d95ee159d8b947409f2",
-          "artifacts/h6_and_h24/random_forest_xgboost/fits/random_forest_market_onchain_h24_2025/test.parquet": "a01d386af7ce97b9a31fe18b3867d547ccf73b371cc0f55c9aa10e3dd513b1d7",
-          "artifacts/h6_and_h24/random_forest_xgboost/fits/random_forest_market_onchain_h24_2025/alarms.csv": "4e19eba603111327fcbeb30ac6952dc1b71524b8449e467d7842528b08f81069",
-          "artifacts/h6_and_h24/random_forest_xgboost/episodes.parquet": "d7047ce6633500aab03abcc1d6f07663d0fe87d2ad50a40573c6edb6e3a154d9"
+          "artifacts/final_run/fits/random_forest_market_onchain_h24_2025/fit.json": "ff356e6d1a51ed8eedb2b8008aeea3e2b7fae09decc343233d5df7174f5f873d",
+          "artifacts/final_run/fits/random_forest_market_onchain_h24_2025/test.parquet": "4f515dbf45d091f7726fc3a23a9e1fe7dc55b263bcb192b259cad1a303465882",
+          "artifacts/final_run/fits/random_forest_market_onchain_h24_2025/alarms.csv": "0c1af8090d834e2ed901aeff98706aec8a798ece25e9d4983bbf39240fb29c82",
+          "artifacts/final_run/episodes.parquet": "d7047ce6633500aab03abcc1d6f07663d0fe87d2ad50a40573c6edb6e3a154d9"
         }
       ]
     },
@@ -487,39 +487,39 @@
       "model": "xgboost",
       "config": "market_matched",
       "horizon_hours": 1,
-      "run_id": "c2cf3957-6d75-4b4d-96f0-916c81df7ead",
-      "manifest": "artifacts/h1/random_forest_xgboost/run.json",
-      "manifest_sha256": "e22531653f48163a46290ea111368eef310d2afd4ebfbd5a7cf95f0e61714f52",
+      "run_id": "a4b62db2-1fc8-42ec-9a5f-3a94999860f5",
+      "manifest": "artifacts/final_run/run.json",
+      "manifest_sha256": "9661514af8ee9deb580eabb4f2d24a7805b31d79e50c8e00d6da8b8241e99997",
       "fit_inputs": [
         {
-          "artifacts/h1/random_forest_xgboost/fits/xgboost_market_matched_h1_2021/fit.json": "03e74f59d8559ca22dd41158500ed48da7f9f672bb4bad8d0e2aa019ea0e9176",
-          "artifacts/h1/random_forest_xgboost/fits/xgboost_market_matched_h1_2021/test.parquet": "b5c7cb81a6a2628f050d1c3bfb7e572c4cf1946995936ff6dfe5715042bcad77",
-          "artifacts/h1/random_forest_xgboost/fits/xgboost_market_matched_h1_2021/alarms.csv": "fef81dc8fe95295f5a2db360724faffa339763db2a684283e133fadc8f6ffe70",
-          "artifacts/h1/random_forest_xgboost/episodes.parquet": "d7047ce6633500aab03abcc1d6f07663d0fe87d2ad50a40573c6edb6e3a154d9"
+          "artifacts/final_run/fits/xgboost_market_matched_h1_2021/fit.json": "ed70113ed30b3f0c5b8e429dc4f712e1e943c91b9414ba94d73b9f1e4e30116e",
+          "artifacts/final_run/fits/xgboost_market_matched_h1_2021/test.parquet": "ba3c49314b8aeffe11e3ef046955fdc598d6ca26ebf52b4fe2011e4f60366838",
+          "artifacts/final_run/fits/xgboost_market_matched_h1_2021/alarms.csv": "fef81dc8fe95295f5a2db360724faffa339763db2a684283e133fadc8f6ffe70",
+          "artifacts/final_run/episodes.parquet": "d7047ce6633500aab03abcc1d6f07663d0fe87d2ad50a40573c6edb6e3a154d9"
         },
         {
-          "artifacts/h1/random_forest_xgboost/fits/xgboost_market_matched_h1_2022/fit.json": "eb21c3db1c346081fa1877290968d51074e432d5397eaf90826fcf59687a0c1f",
-          "artifacts/h1/random_forest_xgboost/fits/xgboost_market_matched_h1_2022/test.parquet": "71237833883c571f70d1af31cfc8ffb9d7c98ce19a91a4e51a93acb5234ce203",
-          "artifacts/h1/random_forest_xgboost/fits/xgboost_market_matched_h1_2022/alarms.csv": "3f34ddda18790812a2c3c3474380e792f0360da1d27b645086b57a27c2de8054",
-          "artifacts/h1/random_forest_xgboost/episodes.parquet": "d7047ce6633500aab03abcc1d6f07663d0fe87d2ad50a40573c6edb6e3a154d9"
+          "artifacts/final_run/fits/xgboost_market_matched_h1_2022/fit.json": "02e11f47419098739d1531eb3eb347743af6e0d656d4c11a55a126a5c23985fe",
+          "artifacts/final_run/fits/xgboost_market_matched_h1_2022/test.parquet": "5f9a7f2e712137e87ee0cffe1f5bbc8cb571a9853e3d44d5ff6d9f63e59f5039",
+          "artifacts/final_run/fits/xgboost_market_matched_h1_2022/alarms.csv": "3f34ddda18790812a2c3c3474380e792f0360da1d27b645086b57a27c2de8054",
+          "artifacts/final_run/episodes.parquet": "d7047ce6633500aab03abcc1d6f07663d0fe87d2ad50a40573c6edb6e3a154d9"
         },
         {
-          "artifacts/h1/random_forest_xgboost/fits/xgboost_market_matched_h1_2023/fit.json": "f62bb6229cf944fbbb7dc1badada9aa74628f146ca06a822d7f0608235803924",
-          "artifacts/h1/random_forest_xgboost/fits/xgboost_market_matched_h1_2023/test.parquet": "0e5a470934c0ab27052b074821511146c45c822b4e6023b417458e081fbb3569",
-          "artifacts/h1/random_forest_xgboost/fits/xgboost_market_matched_h1_2023/alarms.csv": "3a3bca1864081ea26ef126e3c06f3ca5d32aa125284bda1d29a72c604b6ef710",
-          "artifacts/h1/random_forest_xgboost/episodes.parquet": "d7047ce6633500aab03abcc1d6f07663d0fe87d2ad50a40573c6edb6e3a154d9"
+          "artifacts/final_run/fits/xgboost_market_matched_h1_2023/fit.json": "157a0415ee7228bb40dc59b69436112f598eaa8c65b4f3cbb63c6efe05239a07",
+          "artifacts/final_run/fits/xgboost_market_matched_h1_2023/test.parquet": "dac29710d5b93e16d3d00771597c30e5b2d0729ea48156f2025a7fc350e61fb1",
+          "artifacts/final_run/fits/xgboost_market_matched_h1_2023/alarms.csv": "bceda58862fdbb3fc822d1d84b51359f0091fe7f5ed638addd4f9083a8788ca6",
+          "artifacts/final_run/episodes.parquet": "d7047ce6633500aab03abcc1d6f07663d0fe87d2ad50a40573c6edb6e3a154d9"
         },
         {
-          "artifacts/h1/random_forest_xgboost/fits/xgboost_market_matched_h1_2024/fit.json": "dd85d72d57c22040e1bd8a391aa54e219a8725feee7f75d584d817454c36bd29",
-          "artifacts/h1/random_forest_xgboost/fits/xgboost_market_matched_h1_2024/test.parquet": "b13217239a86a3bcd4e9959a0d3a44e9a34bf9a6cf97b9e811b8feaf53bf8c83",
-          "artifacts/h1/random_forest_xgboost/fits/xgboost_market_matched_h1_2024/alarms.csv": "55dce0c1cfbd47c6f57a2eee036330f3f55999b6a362d2f569bdf21d57384762",
-          "artifacts/h1/random_forest_xgboost/episodes.parquet": "d7047ce6633500aab03abcc1d6f07663d0fe87d2ad50a40573c6edb6e3a154d9"
+          "artifacts/final_run/fits/xgboost_market_matched_h1_2024/fit.json": "bebff896b91c0c4fa47aa2fe5c8b1286adca552da3bbf15f327f0ebbc221dd80",
+          "artifacts/final_run/fits/xgboost_market_matched_h1_2024/test.parquet": "30b2ff0fdc386d89a19888469807b79ad5145838842ebad4795c5ec4a82b23f8",
+          "artifacts/final_run/fits/xgboost_market_matched_h1_2024/alarms.csv": "b9883ada28c67f6a1301aca84e2741da0bf2fd100a9f20ae3b593b5e88d4578e",
+          "artifacts/final_run/episodes.parquet": "d7047ce6633500aab03abcc1d6f07663d0fe87d2ad50a40573c6edb6e3a154d9"
         },
         {
-          "artifacts/h1/random_forest_xgboost/fits/xgboost_market_matched_h1_2025/fit.json": "e507f5b46057ce324754386df56c223d505fdc7e7ea49e9d7b587b0d26e65ee9",
-          "artifacts/h1/random_forest_xgboost/fits/xgboost_market_matched_h1_2025/test.parquet": "d61d419c92f18d89b60d1fdb2adde1f50e3b4976250fa343754f61a99330efcb",
-          "artifacts/h1/random_forest_xgboost/fits/xgboost_market_matched_h1_2025/alarms.csv": "41e88d9e14930b95e2d53e7de4ad63120c9cf21289d99682f10306c97e3f9974",
-          "artifacts/h1/random_forest_xgboost/episodes.parquet": "d7047ce6633500aab03abcc1d6f07663d0fe87d2ad50a40573c6edb6e3a154d9"
+          "artifacts/final_run/fits/xgboost_market_matched_h1_2025/fit.json": "11d09a69857cf834f805dbb96d2d1f92a0211f21040413406147f2173becc29d",
+          "artifacts/final_run/fits/xgboost_market_matched_h1_2025/test.parquet": "dbe37d0f016868227a6f0da8b61122de6057dc28d195330bdad78ccd23627157",
+          "artifacts/final_run/fits/xgboost_market_matched_h1_2025/alarms.csv": "e0fa1e76fcbc86a4f5f40d60fd18cc3a8d36831fa5a6025f056e99b90fc73630",
+          "artifacts/final_run/episodes.parquet": "d7047ce6633500aab03abcc1d6f07663d0fe87d2ad50a40573c6edb6e3a154d9"
         }
       ]
     },
@@ -527,39 +527,39 @@
       "model": "xgboost",
       "config": "market_matched",
       "horizon_hours": 6,
-      "run_id": "f2c840d7-2ff9-4552-84fe-cbc4c616ea5d",
-      "manifest": "artifacts/h6_and_h24/random_forest_xgboost/run.json",
-      "manifest_sha256": "c920bd6418c14a81d180870da3c486b1c0bab947e59b193beb1e0f4da3582146",
+      "run_id": "a4b62db2-1fc8-42ec-9a5f-3a94999860f5",
+      "manifest": "artifacts/final_run/run.json",
+      "manifest_sha256": "9661514af8ee9deb580eabb4f2d24a7805b31d79e50c8e00d6da8b8241e99997",
       "fit_inputs": [
         {
-          "artifacts/h6_and_h24/random_forest_xgboost/fits/xgboost_market_matched_h6_2021/fit.json": "4db8c1a7fff3e5a26874949096550ab733b707ec5c91dba2665ddd378f218501",
-          "artifacts/h6_and_h24/random_forest_xgboost/fits/xgboost_market_matched_h6_2021/test.parquet": "61b4729a321401a2fbb9ec1825acd484feaa041f0332b1c57a8433f673d5d083",
-          "artifacts/h6_and_h24/random_forest_xgboost/fits/xgboost_market_matched_h6_2021/alarms.csv": "edfc281e60e94aaf9005c4946a9cdcdf3e346f78fdd91577e481a64ba6dad4f0",
-          "artifacts/h6_and_h24/random_forest_xgboost/episodes.parquet": "d7047ce6633500aab03abcc1d6f07663d0fe87d2ad50a40573c6edb6e3a154d9"
+          "artifacts/final_run/fits/xgboost_market_matched_h6_2021/fit.json": "d37d808632ba653badcacc17fad95825fd5f505958c3f8d7fa578ab9e4dbca41",
+          "artifacts/final_run/fits/xgboost_market_matched_h6_2021/test.parquet": "df6663448af66f1b509a3b0197032b3df2fc27c8b6a650affd7eec7409adf63e",
+          "artifacts/final_run/fits/xgboost_market_matched_h6_2021/alarms.csv": "edfc281e60e94aaf9005c4946a9cdcdf3e346f78fdd91577e481a64ba6dad4f0",
+          "artifacts/final_run/episodes.parquet": "d7047ce6633500aab03abcc1d6f07663d0fe87d2ad50a40573c6edb6e3a154d9"
         },
         {
-          "artifacts/h6_and_h24/random_forest_xgboost/fits/xgboost_market_matched_h6_2022/fit.json": "54ec91ae47dd67d1d267dbc5d812eb276ca2ff4f9856f9e9e36b11c78ae67d55",
-          "artifacts/h6_and_h24/random_forest_xgboost/fits/xgboost_market_matched_h6_2022/test.parquet": "e58b9e339808d8db43c50da63e3f8fea5643adf5bcc81f04fd78affe5135ec32",
-          "artifacts/h6_and_h24/random_forest_xgboost/fits/xgboost_market_matched_h6_2022/alarms.csv": "0e63ceeae6e522344d7ceca5baeb03db68d7dc947524b54ebadea2de15fbb76d",
-          "artifacts/h6_and_h24/random_forest_xgboost/episodes.parquet": "d7047ce6633500aab03abcc1d6f07663d0fe87d2ad50a40573c6edb6e3a154d9"
+          "artifacts/final_run/fits/xgboost_market_matched_h6_2022/fit.json": "00a8e96ad721dbcf4ab949a44f32bce2425ff179ba55763ddd7f8901c745f94a",
+          "artifacts/final_run/fits/xgboost_market_matched_h6_2022/test.parquet": "711155e17bf2fa685516b134f6e2b55b116446e145cdff3c3027d518be819aaa",
+          "artifacts/final_run/fits/xgboost_market_matched_h6_2022/alarms.csv": "0e63ceeae6e522344d7ceca5baeb03db68d7dc947524b54ebadea2de15fbb76d",
+          "artifacts/final_run/episodes.parquet": "d7047ce6633500aab03abcc1d6f07663d0fe87d2ad50a40573c6edb6e3a154d9"
         },
         {
-          "artifacts/h6_and_h24/random_forest_xgboost/fits/xgboost_market_matched_h6_2023/fit.json": "3d49c59a96828fe600bd7f6ffc50868ba2353ab064956a558ac7dcffe14faa9c",
-          "artifacts/h6_and_h24/random_forest_xgboost/fits/xgboost_market_matched_h6_2023/test.parquet": "8a73db65dda82f57923d1a6b3fb24135b45707a9c893c2f74eaa4ea8f9cb5519",
-          "artifacts/h6_and_h24/random_forest_xgboost/fits/xgboost_market_matched_h6_2023/alarms.csv": "2b7dc43d8f4079ecb69ef9c24ca8e0f5255cdfcc77b167d906b524ae41b3e321",
-          "artifacts/h6_and_h24/random_forest_xgboost/episodes.parquet": "d7047ce6633500aab03abcc1d6f07663d0fe87d2ad50a40573c6edb6e3a154d9"
+          "artifacts/final_run/fits/xgboost_market_matched_h6_2023/fit.json": "3244156d2e646327a6783ed29416d812aa813b78d8ed9f91338d5db6076670c5",
+          "artifacts/final_run/fits/xgboost_market_matched_h6_2023/test.parquet": "4e8af78a2d1953199eef1ccd6a9cef3004f7856b842f9bf8bf65c890af6874e6",
+          "artifacts/final_run/fits/xgboost_market_matched_h6_2023/alarms.csv": "63a7be9de2859b4c358d2bb969e60c8f127220403988556ff83e96f83b739135",
+          "artifacts/final_run/episodes.parquet": "d7047ce6633500aab03abcc1d6f07663d0fe87d2ad50a40573c6edb6e3a154d9"
         },
         {
-          "artifacts/h6_and_h24/random_forest_xgboost/fits/xgboost_market_matched_h6_2024/fit.json": "b1420c73bc10e3e4cdc119fe86bfb21bbc5f7e2594a0874f2273b746056ffdc7",
-          "artifacts/h6_and_h24/random_forest_xgboost/fits/xgboost_market_matched_h6_2024/test.parquet": "02be9bcb90431567a63e5d85fb764fb3d55ee8d70816871b2f722cabe4572e0d",
-          "artifacts/h6_and_h24/random_forest_xgboost/fits/xgboost_market_matched_h6_2024/alarms.csv": "1dc25ca2f7cff478cc8cee778fab4fd020bcbabb740b5e232209a92bb5a39fb4",
-          "artifacts/h6_and_h24/random_forest_xgboost/episodes.parquet": "d7047ce6633500aab03abcc1d6f07663d0fe87d2ad50a40573c6edb6e3a154d9"
+          "artifacts/final_run/fits/xgboost_market_matched_h6_2024/fit.json": "2e74a8af6ed2e2b020ec347ec182afc60c89d05ea0d4099d7ece54a1f57b8a17",
+          "artifacts/final_run/fits/xgboost_market_matched_h6_2024/test.parquet": "797254a1e2384012483375ac1c32cb067e12fb7a0cd34067c1c481fee1f48346",
+          "artifacts/final_run/fits/xgboost_market_matched_h6_2024/alarms.csv": "7ff30bc405ce097da05af96b9f452d0d6e618a89230e59b2b824de2fe017796c",
+          "artifacts/final_run/episodes.parquet": "d7047ce6633500aab03abcc1d6f07663d0fe87d2ad50a40573c6edb6e3a154d9"
         },
         {
-          "artifacts/h6_and_h24/random_forest_xgboost/fits/xgboost_market_matched_h6_2025/fit.json": "f6c443c709068721e65f96c6f59c9d13638bc58b31ba880a36b213fe167e8d95",
-          "artifacts/h6_and_h24/random_forest_xgboost/fits/xgboost_market_matched_h6_2025/test.parquet": "b06c8b85aa0e2a22395d159de64c712521e44f26f59af05c016900d0bdbf5a1e",
-          "artifacts/h6_and_h24/random_forest_xgboost/fits/xgboost_market_matched_h6_2025/alarms.csv": "ebd569bd0706bba880fb4d416379e96e70be3aca7f819361223c386cdd9db80b",
-          "artifacts/h6_and_h24/random_forest_xgboost/episodes.parquet": "d7047ce6633500aab03abcc1d6f07663d0fe87d2ad50a40573c6edb6e3a154d9"
+          "artifacts/final_run/fits/xgboost_market_matched_h6_2025/fit.json": "3b5bf49511a0628494ec375a2bd473af08c8195008897e37a59efd4c526436ef",
+          "artifacts/final_run/fits/xgboost_market_matched_h6_2025/test.parquet": "9b864cc8b98d290d7e72896ccdb59996e9657d4068e1c3143a6692683fedbe43",
+          "artifacts/final_run/fits/xgboost_market_matched_h6_2025/alarms.csv": "1921fcc0ac474063505f73a591899461625e2fc25b760a90fd3a0ac80361f1a5",
+          "artifacts/final_run/episodes.parquet": "d7047ce6633500aab03abcc1d6f07663d0fe87d2ad50a40573c6edb6e3a154d9"
         }
       ]
     },
@@ -567,39 +567,39 @@
       "model": "xgboost",
       "config": "market_matched",
       "horizon_hours": 24,
-      "run_id": "f2c840d7-2ff9-4552-84fe-cbc4c616ea5d",
-      "manifest": "artifacts/h6_and_h24/random_forest_xgboost/run.json",
-      "manifest_sha256": "c920bd6418c14a81d180870da3c486b1c0bab947e59b193beb1e0f4da3582146",
+      "run_id": "a4b62db2-1fc8-42ec-9a5f-3a94999860f5",
+      "manifest": "artifacts/final_run/run.json",
+      "manifest_sha256": "9661514af8ee9deb580eabb4f2d24a7805b31d79e50c8e00d6da8b8241e99997",
       "fit_inputs": [
         {
-          "artifacts/h6_and_h24/random_forest_xgboost/fits/xgboost_market_matched_h24_2021/fit.json": "7dadbf17d536c2de433683488c6a263f25924f1c52fee9f469461bbd650bbc08",
-          "artifacts/h6_and_h24/random_forest_xgboost/fits/xgboost_market_matched_h24_2021/test.parquet": "f0d185eb539b1d6ba9c93a1dceb7e3ac0561b4c0c9596a5e70dc94db2e32aedc",
-          "artifacts/h6_and_h24/random_forest_xgboost/fits/xgboost_market_matched_h24_2021/alarms.csv": "dbeafaf3d56c565e2ff1b318cd1872ec6165384f921c523b9ee37cc39d253a46",
-          "artifacts/h6_and_h24/random_forest_xgboost/episodes.parquet": "d7047ce6633500aab03abcc1d6f07663d0fe87d2ad50a40573c6edb6e3a154d9"
+          "artifacts/final_run/fits/xgboost_market_matched_h24_2021/fit.json": "14153aec56169476ad2d42098e5219525aec648510cb4fe8d84c0a74c268afaa",
+          "artifacts/final_run/fits/xgboost_market_matched_h24_2021/test.parquet": "1c38eec071c6568c9fb767ec833e98ae978c6bb5941bf9b47cc8ce11e5306d00",
+          "artifacts/final_run/fits/xgboost_market_matched_h24_2021/alarms.csv": "dbeafaf3d56c565e2ff1b318cd1872ec6165384f921c523b9ee37cc39d253a46",
+          "artifacts/final_run/episodes.parquet": "d7047ce6633500aab03abcc1d6f07663d0fe87d2ad50a40573c6edb6e3a154d9"
         },
         {
-          "artifacts/h6_and_h24/random_forest_xgboost/fits/xgboost_market_matched_h24_2022/fit.json": "2ed5e2d29f22adcab532e22766fd934b48c405bbb8dabc72a68f761823ba3870",
-          "artifacts/h6_and_h24/random_forest_xgboost/fits/xgboost_market_matched_h24_2022/test.parquet": "dd37a9fcef6ad476e53b76c0f03977a124cabc510fa7c2e7b8d062f2977875db",
-          "artifacts/h6_and_h24/random_forest_xgboost/fits/xgboost_market_matched_h24_2022/alarms.csv": "668c5979badf6c368d24f2dd4cb29703dc156b970fd821c91eb6a1c919de5094",
-          "artifacts/h6_and_h24/random_forest_xgboost/episodes.parquet": "d7047ce6633500aab03abcc1d6f07663d0fe87d2ad50a40573c6edb6e3a154d9"
+          "artifacts/final_run/fits/xgboost_market_matched_h24_2022/fit.json": "b62a78c6a88bf54bcfb6ae6c21a780fab9e6851e0e3b6b6afb9b1654a1ae67a7",
+          "artifacts/final_run/fits/xgboost_market_matched_h24_2022/test.parquet": "2f5a33d53395e40c5873b3c32bce61784db7ce496864aa224ccf8daf94edd8c7",
+          "artifacts/final_run/fits/xgboost_market_matched_h24_2022/alarms.csv": "668c5979badf6c368d24f2dd4cb29703dc156b970fd821c91eb6a1c919de5094",
+          "artifacts/final_run/episodes.parquet": "d7047ce6633500aab03abcc1d6f07663d0fe87d2ad50a40573c6edb6e3a154d9"
         },
         {
-          "artifacts/h6_and_h24/random_forest_xgboost/fits/xgboost_market_matched_h24_2023/fit.json": "cad2aa0ad0021fce641b87bda79f393ace73f8d4f61ac7755cf754eeb9928709",
-          "artifacts/h6_and_h24/random_forest_xgboost/fits/xgboost_market_matched_h24_2023/test.parquet": "11db331f375f702d713c2294e626d6b4d2a4699791dbb0e67a4b0e5cd83230df",
-          "artifacts/h6_and_h24/random_forest_xgboost/fits/xgboost_market_matched_h24_2023/alarms.csv": "e86c111be31cb2a840e45dfabf1e8ce328af410669ceae301bd85db5353c2357",
-          "artifacts/h6_and_h24/random_forest_xgboost/episodes.parquet": "d7047ce6633500aab03abcc1d6f07663d0fe87d2ad50a40573c6edb6e3a154d9"
+          "artifacts/final_run/fits/xgboost_market_matched_h24_2023/fit.json": "1897aec8ef95756ee3d4c412137fa665279d59bb3cbe14ea4618d66bb3725680",
+          "artifacts/final_run/fits/xgboost_market_matched_h24_2023/test.parquet": "caa6470317bee5cf0ed434702448a3c768d27198a05967eccb4d7062be2ec062",
+          "artifacts/final_run/fits/xgboost_market_matched_h24_2023/alarms.csv": "324a60d92b60ba848db86edd2b60d2c265b793b7f1a16d67e8b8b9f5f8dcc406",
+          "artifacts/final_run/episodes.parquet": "d7047ce6633500aab03abcc1d6f07663d0fe87d2ad50a40573c6edb6e3a154d9"
         },
         {
-          "artifacts/h6_and_h24/random_forest_xgboost/fits/xgboost_market_matched_h24_2024/fit.json": "1fe1308d9d6f5f36bafb5b8b5c1b2551f7323e46ae1ccc93dbe26bd214535f9f",
-          "artifacts/h6_and_h24/random_forest_xgboost/fits/xgboost_market_matched_h24_2024/test.parquet": "2d75035d949e14db2b771aa1bb32811d231dd92585557157ff9b142f11290de2",
-          "artifacts/h6_and_h24/random_forest_xgboost/fits/xgboost_market_matched_h24_2024/alarms.csv": "cf8411271bbe20712e0901be55af854784a23fc406d5b0b5aa17240a4f60e11d",
-          "artifacts/h6_and_h24/random_forest_xgboost/episodes.parquet": "d7047ce6633500aab03abcc1d6f07663d0fe87d2ad50a40573c6edb6e3a154d9"
+          "artifacts/final_run/fits/xgboost_market_matched_h24_2024/fit.json": "c70c430e1f69f16f219bed66a2aa9f3f9112d0d32810ea69456f341e1c74a24d",
+          "artifacts/final_run/fits/xgboost_market_matched_h24_2024/test.parquet": "911eace6b8ff2c198be937921fe0b86b8d51e38cf914f08011c9cf649299757f",
+          "artifacts/final_run/fits/xgboost_market_matched_h24_2024/alarms.csv": "e90378c065f4212989af76fbb201e2bb6b9ab720e11825880a8977ae0759f477",
+          "artifacts/final_run/episodes.parquet": "d7047ce6633500aab03abcc1d6f07663d0fe87d2ad50a40573c6edb6e3a154d9"
         },
         {
-          "artifacts/h6_and_h24/random_forest_xgboost/fits/xgboost_market_matched_h24_2025/fit.json": "bb80cc660f80021a87dbc20acbfeb74312c55c90c7b923818a9bfaad8f3aa781",
-          "artifacts/h6_and_h24/random_forest_xgboost/fits/xgboost_market_matched_h24_2025/test.parquet": "d7d00a13c7d7733b0cecc0531a4c5c29ef6e9afe2b35e4be68f86faad2412d9f",
-          "artifacts/h6_and_h24/random_forest_xgboost/fits/xgboost_market_matched_h24_2025/alarms.csv": "894a121755f4c4d29fc37386f10a570644fe0a7a4c663a8e68068e9167313463",
-          "artifacts/h6_and_h24/random_forest_xgboost/episodes.parquet": "d7047ce6633500aab03abcc1d6f07663d0fe87d2ad50a40573c6edb6e3a154d9"
+          "artifacts/final_run/fits/xgboost_market_matched_h24_2025/fit.json": "907edc44332522f9141c17a175b80185f37d74406ce9585210231d9d373f49b7",
+          "artifacts/final_run/fits/xgboost_market_matched_h24_2025/test.parquet": "775553810658fcd95b7a430a28b44efb3f0e417556a107017bbae7d3d750746b",
+          "artifacts/final_run/fits/xgboost_market_matched_h24_2025/alarms.csv": "d85790606603f6222dca6bac16e71cad50dc2396c9c4777c4b15c58c66a9962b",
+          "artifacts/final_run/episodes.parquet": "d7047ce6633500aab03abcc1d6f07663d0fe87d2ad50a40573c6edb6e3a154d9"
         }
       ]
     },
@@ -607,39 +607,39 @@
       "model": "xgboost",
       "config": "market_onchain",
       "horizon_hours": 1,
-      "run_id": "c2cf3957-6d75-4b4d-96f0-916c81df7ead",
-      "manifest": "artifacts/h1/random_forest_xgboost/run.json",
-      "manifest_sha256": "e22531653f48163a46290ea111368eef310d2afd4ebfbd5a7cf95f0e61714f52",
+      "run_id": "a4b62db2-1fc8-42ec-9a5f-3a94999860f5",
+      "manifest": "artifacts/final_run/run.json",
+      "manifest_sha256": "9661514af8ee9deb580eabb4f2d24a7805b31d79e50c8e00d6da8b8241e99997",
       "fit_inputs": [
         {
-          "artifacts/h1/random_forest_xgboost/fits/xgboost_market_onchain_h1_2021/fit.json": "89d1f555fab47f42c74b6850c8d62b5fd3b835316370e669795ef5901dbadf3a",
-          "artifacts/h1/random_forest_xgboost/fits/xgboost_market_onchain_h1_2021/test.parquet": "509799c114f98252d7d1e24d249d74f661e0e5782ef3a5a9cbc8d17e8cc5af50",
-          "artifacts/h1/random_forest_xgboost/fits/xgboost_market_onchain_h1_2021/alarms.csv": "3822db347d7efed50dcc8b6f18cc2ba03ec668164ec4d9fae2dd53e0bc27be16",
-          "artifacts/h1/random_forest_xgboost/episodes.parquet": "d7047ce6633500aab03abcc1d6f07663d0fe87d2ad50a40573c6edb6e3a154d9"
+          "artifacts/final_run/fits/xgboost_market_onchain_h1_2021/fit.json": "90ff78dbc5ec0548cfebfd8ac74d4ca661371428f210d5dad95cb6b9243ae4b1",
+          "artifacts/final_run/fits/xgboost_market_onchain_h1_2021/test.parquet": "89eba69f0f3a4a9161db8f1b6bb29bbd3dea0710dd4e0c5832cbea4f86c4098f",
+          "artifacts/final_run/fits/xgboost_market_onchain_h1_2021/alarms.csv": "3822db347d7efed50dcc8b6f18cc2ba03ec668164ec4d9fae2dd53e0bc27be16",
+          "artifacts/final_run/episodes.parquet": "d7047ce6633500aab03abcc1d6f07663d0fe87d2ad50a40573c6edb6e3a154d9"
         },
         {
-          "artifacts/h1/random_forest_xgboost/fits/xgboost_market_onchain_h1_2022/fit.json": "d2dae821f9be982b901c760173e2a4bc8f3571f374cb23690a686e649a3eca07",
-          "artifacts/h1/random_forest_xgboost/fits/xgboost_market_onchain_h1_2022/test.parquet": "e55ce7710298658964e35861f910eba414701752e912201445902aa17c29bc79",
-          "artifacts/h1/random_forest_xgboost/fits/xgboost_market_onchain_h1_2022/alarms.csv": "d8d84bc6b38ed8676b008860c25b7b560db70d291e13ba28ef51cc967fcf8b21",
-          "artifacts/h1/random_forest_xgboost/episodes.parquet": "d7047ce6633500aab03abcc1d6f07663d0fe87d2ad50a40573c6edb6e3a154d9"
+          "artifacts/final_run/fits/xgboost_market_onchain_h1_2022/fit.json": "7fa3ea04b58cdb4a8eb52d25afd850ea4e823fc76a14d4d53a557239e0330ab4",
+          "artifacts/final_run/fits/xgboost_market_onchain_h1_2022/test.parquet": "6ff60e2bae374e2160ac8afab13cbbd5f39fd4f604f866ae8dfa4cb91b4a1f61",
+          "artifacts/final_run/fits/xgboost_market_onchain_h1_2022/alarms.csv": "d8d84bc6b38ed8676b008860c25b7b560db70d291e13ba28ef51cc967fcf8b21",
+          "artifacts/final_run/episodes.parquet": "d7047ce6633500aab03abcc1d6f07663d0fe87d2ad50a40573c6edb6e3a154d9"
         },
         {
-          "artifacts/h1/random_forest_xgboost/fits/xgboost_market_onchain_h1_2023/fit.json": "3476539e3c63283ecfd9a633d7458a9c00c787c2603d0c0a621beed5c34a532b",
-          "artifacts/h1/random_forest_xgboost/fits/xgboost_market_onchain_h1_2023/test.parquet": "1190674dec5207fc9132f89d7ec6ce9e451ebf31301edf4367ffcc73270197f9",
-          "artifacts/h1/random_forest_xgboost/fits/xgboost_market_onchain_h1_2023/alarms.csv": "596d006ecea5a3bc154943dc10d2c9cfba61f3080eef1fa72d48480b39c95c41",
-          "artifacts/h1/random_forest_xgboost/episodes.parquet": "d7047ce6633500aab03abcc1d6f07663d0fe87d2ad50a40573c6edb6e3a154d9"
+          "artifacts/final_run/fits/xgboost_market_onchain_h1_2023/fit.json": "aa285616d06818c01ebaf61e9fcf768b9c3597f75ace75073ec4e517c30433e7",
+          "artifacts/final_run/fits/xgboost_market_onchain_h1_2023/test.parquet": "6d741d3b22760ff5f04f9709a929533cc4b7192fdbee1886b29ef91915eaa0c5",
+          "artifacts/final_run/fits/xgboost_market_onchain_h1_2023/alarms.csv": "f0ff728f54c5cc92bcd7f1badcf4d627c3111982dcccf8ada399f8a53714bd51",
+          "artifacts/final_run/episodes.parquet": "d7047ce6633500aab03abcc1d6f07663d0fe87d2ad50a40573c6edb6e3a154d9"
         },
         {
-          "artifacts/h1/random_forest_xgboost/fits/xgboost_market_onchain_h1_2024/fit.json": "b6091c90f6bc93525f55ec91367a4632d83c5928df5af8ee3dc89f2298258edd",
-          "artifacts/h1/random_forest_xgboost/fits/xgboost_market_onchain_h1_2024/test.parquet": "a281d5327c075f3cc808a466a12b3cc53fcb13d1124be2dc0ef6016d9d0b81ea",
-          "artifacts/h1/random_forest_xgboost/fits/xgboost_market_onchain_h1_2024/alarms.csv": "0d3433255432ad746971a77127b02b364f75f9fe2a301a3526dd2e80d38b9f38",
-          "artifacts/h1/random_forest_xgboost/episodes.parquet": "d7047ce6633500aab03abcc1d6f07663d0fe87d2ad50a40573c6edb6e3a154d9"
+          "artifacts/final_run/fits/xgboost_market_onchain_h1_2024/fit.json": "1f824e0e9383aaa5ac9870067bd805bd43ea644fdf73214e382bd2f8082d5dbb",
+          "artifacts/final_run/fits/xgboost_market_onchain_h1_2024/test.parquet": "2f7aa1d6e2297c30d34875649dc12376912b7dbc72860ccbed8769d3618c687d",
+          "artifacts/final_run/fits/xgboost_market_onchain_h1_2024/alarms.csv": "de4658cb7d503945a759f25eefa6fe1ab80342920f1d31da30711d6000c478aa",
+          "artifacts/final_run/episodes.parquet": "d7047ce6633500aab03abcc1d6f07663d0fe87d2ad50a40573c6edb6e3a154d9"
         },
         {
-          "artifacts/h1/random_forest_xgboost/fits/xgboost_market_onchain_h1_2025/fit.json": "16bb17a51cd426a56d4342021f685563cdbd3ad901c0880d7e51f35ed8a16e0e",
-          "artifacts/h1/random_forest_xgboost/fits/xgboost_market_onchain_h1_2025/test.parquet": "c7e50a7843255fe95979f006d4e401146617d6ea5a2698f42a00a983bafe4c07",
-          "artifacts/h1/random_forest_xgboost/fits/xgboost_market_onchain_h1_2025/alarms.csv": "1bd3655f7e2ae6b661048d0a55b96b1dd8ca5b60e245fb53665f5819ea96c7b5",
-          "artifacts/h1/random_forest_xgboost/episodes.parquet": "d7047ce6633500aab03abcc1d6f07663d0fe87d2ad50a40573c6edb6e3a154d9"
+          "artifacts/final_run/fits/xgboost_market_onchain_h1_2025/fit.json": "ffb99d8be57c326d5fd55367a39483242e5666c0cdcc5e8c5ab79a014676fe2f",
+          "artifacts/final_run/fits/xgboost_market_onchain_h1_2025/test.parquet": "035ee32eab2003606eeaa340a6d5e300c34f789969642eed0c8d304eeef27719",
+          "artifacts/final_run/fits/xgboost_market_onchain_h1_2025/alarms.csv": "b544fb4f501fd0a8870bd19eb8ad7dba61eb0768c3934449b1e70a4691c8ea77",
+          "artifacts/final_run/episodes.parquet": "d7047ce6633500aab03abcc1d6f07663d0fe87d2ad50a40573c6edb6e3a154d9"
         }
       ]
     },
@@ -647,39 +647,39 @@
       "model": "xgboost",
       "config": "market_onchain",
       "horizon_hours": 6,
-      "run_id": "f2c840d7-2ff9-4552-84fe-cbc4c616ea5d",
-      "manifest": "artifacts/h6_and_h24/random_forest_xgboost/run.json",
-      "manifest_sha256": "c920bd6418c14a81d180870da3c486b1c0bab947e59b193beb1e0f4da3582146",
+      "run_id": "a4b62db2-1fc8-42ec-9a5f-3a94999860f5",
+      "manifest": "artifacts/final_run/run.json",
+      "manifest_sha256": "9661514af8ee9deb580eabb4f2d24a7805b31d79e50c8e00d6da8b8241e99997",
       "fit_inputs": [
         {
-          "artifacts/h6_and_h24/random_forest_xgboost/fits/xgboost_market_onchain_h6_2021/fit.json": "e67937e78a28d595d76e10683b93985a2af24169c8d11f0d2fe2d8699734f46a",
-          "artifacts/h6_and_h24/random_forest_xgboost/fits/xgboost_market_onchain_h6_2021/test.parquet": "4e4546a921d7e3847d0c996dc496e41556161814e18ca288562334b83a2079b7",
-          "artifacts/h6_and_h24/random_forest_xgboost/fits/xgboost_market_onchain_h6_2021/alarms.csv": "e3865480ae5d5a22a11d6a0eafcbf78410c1d704bf7aff4e7a0862626d753910",
-          "artifacts/h6_and_h24/random_forest_xgboost/episodes.parquet": "d7047ce6633500aab03abcc1d6f07663d0fe87d2ad50a40573c6edb6e3a154d9"
+          "artifacts/final_run/fits/xgboost_market_onchain_h6_2021/fit.json": "c8d298ba75d5cff9dfdc5cc7ed02db43b74a2bcdf61f05e47d1cd5530009d58a",
+          "artifacts/final_run/fits/xgboost_market_onchain_h6_2021/test.parquet": "3002298ca6db21981f2f1c3446066c4edd561a71f1224d0449fcb0b5b58fdf00",
+          "artifacts/final_run/fits/xgboost_market_onchain_h6_2021/alarms.csv": "e3865480ae5d5a22a11d6a0eafcbf78410c1d704bf7aff4e7a0862626d753910",
+          "artifacts/final_run/episodes.parquet": "d7047ce6633500aab03abcc1d6f07663d0fe87d2ad50a40573c6edb6e3a154d9"
         },
         {
-          "artifacts/h6_and_h24/random_forest_xgboost/fits/xgboost_market_onchain_h6_2022/fit.json": "03221e398d5d07ffd14210bd0d6ba607cf7507bf18a2bc86cab17791d458fa68",
-          "artifacts/h6_and_h24/random_forest_xgboost/fits/xgboost_market_onchain_h6_2022/test.parquet": "e6e73d956081ed25ac10f815224ce1ff962052adf9da6db961631d322642e8fe",
-          "artifacts/h6_and_h24/random_forest_xgboost/fits/xgboost_market_onchain_h6_2022/alarms.csv": "768febdac8b14ae57b483874a6c623587b5c4171ed409bc34895ae58de71511d",
-          "artifacts/h6_and_h24/random_forest_xgboost/episodes.parquet": "d7047ce6633500aab03abcc1d6f07663d0fe87d2ad50a40573c6edb6e3a154d9"
+          "artifacts/final_run/fits/xgboost_market_onchain_h6_2022/fit.json": "50a3071ffc503baccefbb4daecc1af2f9617bcf9afd8fa6469d7f05782238c30",
+          "artifacts/final_run/fits/xgboost_market_onchain_h6_2022/test.parquet": "2ecdefef217b21dec7a77de2d30e013d629fc04fbdb38207a87c2b906bf36d9e",
+          "artifacts/final_run/fits/xgboost_market_onchain_h6_2022/alarms.csv": "768febdac8b14ae57b483874a6c623587b5c4171ed409bc34895ae58de71511d",
+          "artifacts/final_run/episodes.parquet": "d7047ce6633500aab03abcc1d6f07663d0fe87d2ad50a40573c6edb6e3a154d9"
         },
         {
-          "artifacts/h6_and_h24/random_forest_xgboost/fits/xgboost_market_onchain_h6_2023/fit.json": "469b16a1f9b902bc8166f197a414e4b92f8cdb1902d9c9712cf0556e0e058b7b",
-          "artifacts/h6_and_h24/random_forest_xgboost/fits/xgboost_market_onchain_h6_2023/test.parquet": "deabbe386da440511ea3b70cc89fb7300ca10ab3c1d81c0700695dcf3b4d41fd",
-          "artifacts/h6_and_h24/random_forest_xgboost/fits/xgboost_market_onchain_h6_2023/alarms.csv": "91d9e18d71055492f8373107c6d140acedd484233d6ed3d3707a3fd4e23d9e35",
-          "artifacts/h6_and_h24/random_forest_xgboost/episodes.parquet": "d7047ce6633500aab03abcc1d6f07663d0fe87d2ad50a40573c6edb6e3a154d9"
+          "artifacts/final_run/fits/xgboost_market_onchain_h6_2023/fit.json": "d77bc4034aec92db4d319b264e5c9bf01b82f4eca8971eee82ee43f8a449bd75",
+          "artifacts/final_run/fits/xgboost_market_onchain_h6_2023/test.parquet": "3326cccb882e34bb12ee7a51d450186448ec98ab493e351e37d30bcda78e6f56",
+          "artifacts/final_run/fits/xgboost_market_onchain_h6_2023/alarms.csv": "9003de25f0ef0bb7f50684792d191eacd7c1478f46feda5f26a87a0aab0e3bb2",
+          "artifacts/final_run/episodes.parquet": "d7047ce6633500aab03abcc1d6f07663d0fe87d2ad50a40573c6edb6e3a154d9"
         },
         {
-          "artifacts/h6_and_h24/random_forest_xgboost/fits/xgboost_market_onchain_h6_2024/fit.json": "6fa9e84f6e3ca0743f8978e0131652460344590aa2305dc5a1ab8649f7410c8a",
-          "artifacts/h6_and_h24/random_forest_xgboost/fits/xgboost_market_onchain_h6_2024/test.parquet": "a5ef1e3b20e500d2719e6f76daa3f93940735e26a7eefa2bb251d8e22004257c",
-          "artifacts/h6_and_h24/random_forest_xgboost/fits/xgboost_market_onchain_h6_2024/alarms.csv": "6124e531c4efcd5385d5f2862a02bda7e6e8bc4ebc14221e9d3819bc93771bcc",
-          "artifacts/h6_and_h24/random_forest_xgboost/episodes.parquet": "d7047ce6633500aab03abcc1d6f07663d0fe87d2ad50a40573c6edb6e3a154d9"
+          "artifacts/final_run/fits/xgboost_market_onchain_h6_2024/fit.json": "4cd18139cea9d4237c070758ea2aafd67fec88300ff7dcb2fc26325b2918b48c",
+          "artifacts/final_run/fits/xgboost_market_onchain_h6_2024/test.parquet": "433da428a0768b74dd909d8da7b496310196296cd0bf4d42d7e6aaa946d8dc5d",
+          "artifacts/final_run/fits/xgboost_market_onchain_h6_2024/alarms.csv": "69f5ed6ed0cc1821fe103608c4d8fe976183ff5748b59fdd28d103ae7aa809ac",
+          "artifacts/final_run/episodes.parquet": "d7047ce6633500aab03abcc1d6f07663d0fe87d2ad50a40573c6edb6e3a154d9"
         },
         {
-          "artifacts/h6_and_h24/random_forest_xgboost/fits/xgboost_market_onchain_h6_2025/fit.json": "b167c072b6742067c4155d83ac0b004e8ae8a74605eee7bbeb5ad035b665f1b3",
-          "artifacts/h6_and_h24/random_forest_xgboost/fits/xgboost_market_onchain_h6_2025/test.parquet": "d69fd5c78016c7f0aa4f7391f8d27661ceaae66962780cfa22ff1a9df08ca8b8",
-          "artifacts/h6_and_h24/random_forest_xgboost/fits/xgboost_market_onchain_h6_2025/alarms.csv": "de31a55de0bbbb67ad55d75c495733a97a9910f5904abccd098f6ee5f17a998e",
-          "artifacts/h6_and_h24/random_forest_xgboost/episodes.parquet": "d7047ce6633500aab03abcc1d6f07663d0fe87d2ad50a40573c6edb6e3a154d9"
+          "artifacts/final_run/fits/xgboost_market_onchain_h6_2025/fit.json": "41789df75d7d9c83c7877ab91ef31b9825520f6ead43724aa126c847ef3a8334",
+          "artifacts/final_run/fits/xgboost_market_onchain_h6_2025/test.parquet": "9acee8e13d3b8acd1d5ea42184a3910798bef9f1d785cd6a19d689d84566ea86",
+          "artifacts/final_run/fits/xgboost_market_onchain_h6_2025/alarms.csv": "7f38b0c2381f257d50a577540594b7745685ddae0b3d4ebc729c3d3aeac18796",
+          "artifacts/final_run/episodes.parquet": "d7047ce6633500aab03abcc1d6f07663d0fe87d2ad50a40573c6edb6e3a154d9"
         }
       ]
     },
@@ -687,39 +687,39 @@
       "model": "xgboost",
       "config": "market_onchain",
       "horizon_hours": 24,
-      "run_id": "f2c840d7-2ff9-4552-84fe-cbc4c616ea5d",
-      "manifest": "artifacts/h6_and_h24/random_forest_xgboost/run.json",
-      "manifest_sha256": "c920bd6418c14a81d180870da3c486b1c0bab947e59b193beb1e0f4da3582146",
+      "run_id": "a4b62db2-1fc8-42ec-9a5f-3a94999860f5",
+      "manifest": "artifacts/final_run/run.json",
+      "manifest_sha256": "9661514af8ee9deb580eabb4f2d24a7805b31d79e50c8e00d6da8b8241e99997",
       "fit_inputs": [
         {
-          "artifacts/h6_and_h24/random_forest_xgboost/fits/xgboost_market_onchain_h24_2021/fit.json": "705a8115f5cb4613044259d1927dad59b08f30303cb331b7256acf06dbfc1860",
-          "artifacts/h6_and_h24/random_forest_xgboost/fits/xgboost_market_onchain_h24_2021/test.parquet": "0f5f1fcb3c6e3fc655f843922fa60e9663fee41777a83858c5e111ae3b1f9fb6",
-          "artifacts/h6_and_h24/random_forest_xgboost/fits/xgboost_market_onchain_h24_2021/alarms.csv": "f371629e632d02e52e8a22eb06b9589ff94267c284768c4f29dce7b3ab34bd9c",
-          "artifacts/h6_and_h24/random_forest_xgboost/episodes.parquet": "d7047ce6633500aab03abcc1d6f07663d0fe87d2ad50a40573c6edb6e3a154d9"
+          "artifacts/final_run/fits/xgboost_market_onchain_h24_2021/fit.json": "20e585aac2fe05574ee2d78d632709723ac84bccc8f7dd18a26ff9f97bb0ba51",
+          "artifacts/final_run/fits/xgboost_market_onchain_h24_2021/test.parquet": "4073c6fab2b24d53874d4046496e8c98d70a05709e3fd2f677a236c84ae33f43",
+          "artifacts/final_run/fits/xgboost_market_onchain_h24_2021/alarms.csv": "f371629e632d02e52e8a22eb06b9589ff94267c284768c4f29dce7b3ab34bd9c",
+          "artifacts/final_run/episodes.parquet": "d7047ce6633500aab03abcc1d6f07663d0fe87d2ad50a40573c6edb6e3a154d9"
         },
         {
-          "artifacts/h6_and_h24/random_forest_xgboost/fits/xgboost_market_onchain_h24_2022/fit.json": "55991b3dedee97e7a5f785f29d228160335494da054aa0a4290cf5df593186e7",
-          "artifacts/h6_and_h24/random_forest_xgboost/fits/xgboost_market_onchain_h24_2022/test.parquet": "704312f1b3804e274f4e4e4fc5256e1f64f8e0c4d030d3975914b2fda3632937",
-          "artifacts/h6_and_h24/random_forest_xgboost/fits/xgboost_market_onchain_h24_2022/alarms.csv": "53fbb8f134585972993231a49beeaca207a8dee1c6d3aa36228510883af7f314",
-          "artifacts/h6_and_h24/random_forest_xgboost/episodes.parquet": "d7047ce6633500aab03abcc1d6f07663d0fe87d2ad50a40573c6edb6e3a154d9"
+          "artifacts/final_run/fits/xgboost_market_onchain_h24_2022/fit.json": "555ea8ecd004a2e355ce254261f8fb4712c3f1b4723f681ec9fc8307bc4fc470",
+          "artifacts/final_run/fits/xgboost_market_onchain_h24_2022/test.parquet": "f10ad1deb1b76de81f5c3c8548106b760ac1130a05b334096bf03e9e951475fe",
+          "artifacts/final_run/fits/xgboost_market_onchain_h24_2022/alarms.csv": "53fbb8f134585972993231a49beeaca207a8dee1c6d3aa36228510883af7f314",
+          "artifacts/final_run/episodes.parquet": "d7047ce6633500aab03abcc1d6f07663d0fe87d2ad50a40573c6edb6e3a154d9"
         },
         {
-          "artifacts/h6_and_h24/random_forest_xgboost/fits/xgboost_market_onchain_h24_2023/fit.json": "8ef86c9487c9529c9131bd0640c1be0cb0d54133ec60d0534ca0bbe491960630",
-          "artifacts/h6_and_h24/random_forest_xgboost/fits/xgboost_market_onchain_h24_2023/test.parquet": "77a6224a628683a2b06cb39f12aaa60a71ebc249416ad289a3e5e47e91ec1ea1",
-          "artifacts/h6_and_h24/random_forest_xgboost/fits/xgboost_market_onchain_h24_2023/alarms.csv": "a8227153b359f1a8784daa6a19fd79d73086f801c23c386031642e700fd7a444",
-          "artifacts/h6_and_h24/random_forest_xgboost/episodes.parquet": "d7047ce6633500aab03abcc1d6f07663d0fe87d2ad50a40573c6edb6e3a154d9"
+          "artifacts/final_run/fits/xgboost_market_onchain_h24_2023/fit.json": "3670916796dd951d8f0ecdfcb45d6479cca79afa7863601743ef7df982630876",
+          "artifacts/final_run/fits/xgboost_market_onchain_h24_2023/test.parquet": "23ad7209b9f8708b7a3a12c1b947a19856b7e5760cdb548549e0cae8487e09dd",
+          "artifacts/final_run/fits/xgboost_market_onchain_h24_2023/alarms.csv": "173e7036cc2ab54ee60b50143f1c8835ecdc6171cfe0b8183add8830000dc4ce",
+          "artifacts/final_run/episodes.parquet": "d7047ce6633500aab03abcc1d6f07663d0fe87d2ad50a40573c6edb6e3a154d9"
         },
         {
-          "artifacts/h6_and_h24/random_forest_xgboost/fits/xgboost_market_onchain_h24_2024/fit.json": "5c7803994c43ccc6c1a768254666f25903ed00aa71d7ae70bd59833529fb4a69",
-          "artifacts/h6_and_h24/random_forest_xgboost/fits/xgboost_market_onchain_h24_2024/test.parquet": "093c49eb97e880236fbe500eb0b6b45ffff8a7a93fce653fb870cf6d119b98cb",
-          "artifacts/h6_and_h24/random_forest_xgboost/fits/xgboost_market_onchain_h24_2024/alarms.csv": "4dfeafa89458df48828ab23e9a3a33beac173b3745514ed4c7767b1a01aac7ed",
-          "artifacts/h6_and_h24/random_forest_xgboost/episodes.parquet": "d7047ce6633500aab03abcc1d6f07663d0fe87d2ad50a40573c6edb6e3a154d9"
+          "artifacts/final_run/fits/xgboost_market_onchain_h24_2024/fit.json": "0a4239771024e857e82d6aca371a412bcf1ad2dcf042bb51c39e5d24c30e9180",
+          "artifacts/final_run/fits/xgboost_market_onchain_h24_2024/test.parquet": "fa31629e50fd99a108ffd5f1f7bbfe72611108f3923c866b6c8e104161067f13",
+          "artifacts/final_run/fits/xgboost_market_onchain_h24_2024/alarms.csv": "371c8f2fbf4316e19a512ca2c7bfe7b6bb827e608946fcf43c599454c88f3452",
+          "artifacts/final_run/episodes.parquet": "d7047ce6633500aab03abcc1d6f07663d0fe87d2ad50a40573c6edb6e3a154d9"
         },
         {
-          "artifacts/h6_and_h24/random_forest_xgboost/fits/xgboost_market_onchain_h24_2025/fit.json": "670d0eab48198345f30ffc666d22334433ea524f71567abc25649b0321480076",
-          "artifacts/h6_and_h24/random_forest_xgboost/fits/xgboost_market_onchain_h24_2025/test.parquet": "df8b8faa35ff8c6e0be0084ad385ac2bef44aa7fd3b330c38563d895cf24f7f3",
-          "artifacts/h6_and_h24/random_forest_xgboost/fits/xgboost_market_onchain_h24_2025/alarms.csv": "84396ed22d16c3a18ffcc5fb863ed2fb27980e045afbb807c26408727bcfbe8e",
-          "artifacts/h6_and_h24/random_forest_xgboost/episodes.parquet": "d7047ce6633500aab03abcc1d6f07663d0fe87d2ad50a40573c6edb6e3a154d9"
+          "artifacts/final_run/fits/xgboost_market_onchain_h24_2025/fit.json": "da201287ad8ec3de2cd8cb4197f4e054c8fcf1fe755329f771417caea15cd0bb",
+          "artifacts/final_run/fits/xgboost_market_onchain_h24_2025/test.parquet": "30f0742f2bf1e4df5f8ad73a8b1722b2f33c02cdde45613c359dfbadaca61175",
+          "artifacts/final_run/fits/xgboost_market_onchain_h24_2025/alarms.csv": "d076ae8abd43c35bebd9119d243ef0d69dc73a5ada7275581e3acd7a5de5732a",
+          "artifacts/final_run/episodes.parquet": "d7047ce6633500aab03abcc1d6f07663d0fe87d2ad50a40573c6edb6e3a154d9"
         }
       ]
     }

@@ -1,13 +1,17 @@
 {
-  "run_id": "d429d3d5-937c-49aa-b3c8-6ead1446fb9d",
+  "run_id": "a4b62db2-1fc8-42ec-9a5f-3a94999860f5",
   "status": "complete",
-  "started_utc": "2026-11-02T15:54:19.028007+00:00",
+  "started_utc": "2026-11-11T03:50:00.555045+00:00",
   "dataset_version": "corrected_v1",
   "models": [
-    "logreg"
+    "logreg",
+    "random_forest",
+    "xgboost"
   ],
   "horizons": [
-    1
+    1,
+    6,
+    24
   ],
   "years": [
     2021,
@@ -27,6 +31,7 @@
   "embargo_hours": 24,
   "protocol": "practice inner_train -> calibrate inner_val -> refit train -> test; cutoff unchanged",
   "logreg_selection": "calendar-year CV inside inner_train; keep selected C for refit",
+  "rf_prediction_summation": "serial tree order; fitting uses fixed n_jobs",
   "packages": {
     "numpy": "2.5.4",
     "pandas": "2.2.3",
@@ -34,8 +39,8 @@
     "xgboost": "3.4.1"
   },
   "input_sha256": {
-    "data/processed/master_corrected_v1.parquet": "450865153d17b95627daeb48d8f64baf7d0f403b3c9b57d564e2a9aeaf284a37",
-    "data/processed/depeg_episodes_corrected_v1.parquet": "dcf23bf6662556d5432e6b1afa7127a5376c7154ec0403cf50a5d6f6131e9bdf"
+    "/Users/alyssacjx/Desktop/stablecoin-depegging-analysis/artifacts/reproduction-stable-a/data/processed/master.parquet": "1486801a1bb5897be4ecc440e2a86b0d29a6a04e760d0ec36b076a3edc19cf38",
+    "/Users/alyssacjx/Desktop/stablecoin-depegging-analysis/artifacts/reproduction-stable-a/data/processed/depeg_episodes.parquet": "d7047ce6633500aab03abcc1d6f07663d0fe87d2ad50a40573c6edb6e3a154d9"
   },
-  "finished_utc": "2026-11-02T23:02:36.696667+00:00"
+  "finished_utc": "2026-11-11T06:26:35.797508+00:00"
 }

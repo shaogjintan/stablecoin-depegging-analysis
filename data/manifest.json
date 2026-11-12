@@ -3,8 +3,8 @@
   "files": [
     {
       "path": "data/processed/master.parquet",
-      "bytes": 73545833,
-      "sha256": "450865153d17b95627daeb48d8f64baf7d0f403b3c9b57d564e2a9aeaf284a37",
+      "bytes": 73522368,
+      "sha256": "1486801a1bb5897be4ecc440e2a86b0d29a6a04e760d0ec36b076a3edc19cf38",
       "rows": 345361,
       "columns": [
         "hour",
@@ -87,8 +87,8 @@
     },
     {
       "path": "data/processed/depeg_episodes.parquet",
-      "bytes": 8436,
-      "sha256": "dcf23bf6662556d5432e6b1afa7127a5376c7154ec0403cf50a5d6f6131e9bdf",
+      "bytes": 8468,
+      "sha256": "d7047ce6633500aab03abcc1d6f07663d0fe87d2ad50a40573c6edb6e3a154d9",
       "rows": 79,
       "columns": [
         "coin",
@@ -104,7 +104,7 @@
     {
       "path": "data/processed/dataset_metadata.json",
       "bytes": 2360,
-      "sha256": "e17273df97163e74855d6edd0c758037180fb063e97d0319cb4c446e42cc413d"
+      "sha256": "dc71c4f64fb2faca6e151e36ee11d0aa8c8e6de387293b1fb05cfb4317410d01"
     },
     {
       "path": "data/raw/hourly_stablecoin.parquet",
@@ -123,9 +123,9 @@
     },
     {
       "path": "data/interim/hourly_stablecoin_market_features.parquet",
-      "bytes": 37056095,
-      "sha256": "7324b4ab913cfbde123418e1f1c7834953411568cec3792ac07b9e3c5d5d0363",
-      "rows": 344729,
+      "bytes": 39946335,
+      "sha256": "20d63178d4691805bed28dab74726f969681d615ac385606034f04863f06b4e1",
+      "rows": 345361,
       "columns": [
         "coin",
         "hour",
@@ -142,13 +142,14 @@
         "trading_volume",
         "volume_pct_change_1h",
         "volume_pct_change_6h",
-        "volume_pct_change_24h"
+        "volume_pct_change_24h",
+        "peg_stress"
       ]
     },
     {
       "path": "data/interim/hourly_stablecoin_onchain_features.parquet",
-      "bytes": 34515354,
-      "sha256": "3eb69edfd80ae6fa9aace15f77003cd0e94814b936f250024c915850987ffe4f",
+      "bytes": 31049359,
+      "sha256": "adb8c4f06abd3d6bd0697345463d341c86fc18e4f6a4edbe634af8264db58942",
       "rows": 368103,
       "columns": [
         "coin",
@@ -366,5 +367,7 @@
       "ZIP member timestamps have no timezone and must not be interpreted as verified export dates.",
       "Archived contract/decimal settings are candidates only. No values were rescaled or replaced."
     ]
-  }
+  },
+  "published_baseline": "reports/baseline.json",
+  "note": "Current canonical processed pair is the validated final reviewer run. Superseded data copies were removed; relocation checksums remain in reports/validation_checks/reproducibility/reviewer_relocation.json."
 }

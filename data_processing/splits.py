@@ -57,7 +57,13 @@ def active_input_paths():
 def resolve_recorded_input(path):
     """Resolve old frozen-manifest names without editing historical evidence."""
     from pathlib import Path
+    from modelling.utils.artifacts import published_baseline
+
     path = Path(path)
+    baseline = published_baseline()
+    relocation = (baseline or {}).get('input_relocations', {}).get(str(path))
+    if relocation:
+        return Path(__file__).resolve().parents[1] / relocation['path']
     aliases = {
         "master_corrected_v1.parquet": ACTIVE_MASTER_PATH,
         "depeg_episodes_corrected_v1.parquet": ACTIVE_EPISODES_PATH,

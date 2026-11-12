@@ -1,27 +1,64 @@
 {
   "sources": [
     {
-      "path": "artifacts/h6_and_h24/random_forest_xgboost",
-      "run_id": "f2c840d7-2ff9-4552-84fe-cbc4c616ea5d",
-      "manifest_sha256": "c920bd6418c14a81d180870da3c486b1c0bab947e59b193beb1e0f4da3582146"
+      "path": "artifacts/final_run",
+      "run_id": "a4b62db2-1fc8-42ec-9a5f-3a94999860f5",
+      "manifest_sha256": "9661514af8ee9deb580eabb4f2d24a7805b31d79e50c8e00d6da8b8241e99997"
     },
     {
-      "path": "artifacts/h6_and_h24/logistic_regression",
-      "run_id": "ac334862-a86f-4a75-9fea-5180ef51e6af",
-      "manifest_sha256": "1dd8fe7c66dfd56268abf401fd189d09e4ab2d342aa164fac0ff9987ab7b1c05"
+      "path": "artifacts/final_run/fits/xgboost_market_onchain_h6_2021/test.parquet",
+      "sha256": "3002298ca6db21981f2f1c3446066c4edd561a71f1224d0449fcb0b5b58fdf00",
+      "pipeline_sha256": "3976d316286deb5a15e352b9c11fa10f95921e55e10ebca5cfe244fd4f5e6921"
     },
     {
-      "path": "artifacts/h6_and_h24/random_forest_xgboost/shap_ranking_xgboost_t2_h6.csv",
-      "sha256": "618fbb3e54ab1e60aaecb62264e6f429866e44da71d966781e95f3b187ddeec6"
+      "path": "artifacts/final_run/fits/xgboost_market_onchain_h6_2022/test.parquet",
+      "sha256": "2ecdefef217b21dec7a77de2d30e013d629fc04fbdb38207a87c2b906bf36d9e",
+      "pipeline_sha256": "4b2225478eb36cc5638283c89be7318ae0ba649c721f0d9c6dbe1d20455a79f1"
     },
     {
-      "path": "artifacts/h6_and_h24/random_forest_xgboost/shap_ranking_xgboost_t2_h24.csv",
-      "sha256": "549572b26a7bbbeb291b39172f949579c6020fee0d5091b2c3790cdb88566050"
+      "path": "artifacts/final_run/fits/xgboost_market_onchain_h6_2023/test.parquet",
+      "sha256": "3326cccb882e34bb12ee7a51d450186448ec98ab493e351e37d30bcda78e6f56",
+      "pipeline_sha256": "75381e5595dc19b03ed6973777d120d25d6fa91589f5813c7625cb9550409d69"
+    },
+    {
+      "path": "artifacts/final_run/fits/xgboost_market_onchain_h6_2024/test.parquet",
+      "sha256": "433da428a0768b74dd909d8da7b496310196296cd0bf4d42d7e6aaa946d8dc5d",
+      "pipeline_sha256": "3ce6ae4765565c6ecf16c23ee06d7d5b8f119ad901ca5a8f0d2702044722b4df"
+    },
+    {
+      "path": "artifacts/final_run/fits/xgboost_market_onchain_h6_2025/test.parquet",
+      "sha256": "9acee8e13d3b8acd1d5ea42184a3910798bef9f1d785cd6a19d689d84566ea86",
+      "pipeline_sha256": "c571b6439bc956f8d39db46438193ade4bc5008c7b1acf07b0fa1fcee282251f"
+    },
+    {
+      "path": "artifacts/final_run/fits/xgboost_market_onchain_h24_2021/test.parquet",
+      "sha256": "4073c6fab2b24d53874d4046496e8c98d70a05709e3fd2f677a236c84ae33f43",
+      "pipeline_sha256": "76541b99468f90c860ac4e80a23d7ffb8447f37d7ec26c443c6585173e22f30c"
+    },
+    {
+      "path": "artifacts/final_run/fits/xgboost_market_onchain_h24_2022/test.parquet",
+      "sha256": "f10ad1deb1b76de81f5c3c8548106b760ac1130a05b334096bf03e9e951475fe",
+      "pipeline_sha256": "35f7b71d8d747f4df883a70b5771a850995fcf635f4ed8ac00f411030f8a05b7"
+    },
+    {
+      "path": "artifacts/final_run/fits/xgboost_market_onchain_h24_2023/test.parquet",
+      "sha256": "23ad7209b9f8708b7a3a12c1b947a19856b7e5760cdb548549e0cae8487e09dd",
+      "pipeline_sha256": "ad38c466ae9584a9512e016cfcec4f17057c68408ab8d7ea3b988b8a50cd7a9f"
+    },
+    {
+      "path": "artifacts/final_run/fits/xgboost_market_onchain_h24_2024/test.parquet",
+      "sha256": "fa31629e50fd99a108ffd5f1f7bbfe72611108f3923c866b6c8e104161067f13",
+      "pipeline_sha256": "4ccab8694ef976474081fa30d0a9c02719af60e19709d44e60cb2112915c5c72"
+    },
+    {
+      "path": "artifacts/final_run/fits/xgboost_market_onchain_h24_2025/test.parquet",
+      "sha256": "30f0742f2bf1e4df5f8ad73a8b1722b2f33c02cdde45613c359dfbadaca61175",
+      "pipeline_sha256": "23bb639458fc6a2f795ba43cf973c55bcbf12663100843dd6b79180e67ddf32c"
     }
   ],
   "notes": [
     "LR coefficients follow training winsorisation and standardisation, with derived features.",
     "RF impurity importance and SHAP are descriptive, not causal.",
-    "XGB SHAP rankings reused from saved final-model analysis."
+    "XGB SHAP recalculated from selected test partitions."
   ]
 }

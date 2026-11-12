@@ -1,16 +1,19 @@
-"""Resolve relocated saved fits without modifying original run manifests."""
+"""Select reviewer evidence and resolve fits without rewriting run manifests."""
 import json
 from pathlib import Path
 
-FINAL_RUNS = [
-    Path('artifacts') / horizons / models
-    for horizons, models in [
-        ('h6_and_h24', 'random_forest_xgboost'),
-        ('h6_and_h24', 'logistic_regression'),
-        ('h1', 'random_forest_xgboost'),
-        ('h1', 'logistic_regression'),
-    ]
-]
+def published_baseline():
+    """Read the selected report baseline without loading model evidence.
+
+    Returns:
+        Published workspace and run paths, or None for legacy repositories.
+    """
+    path = Path(__file__).resolve().parents[2] / 'reports/baseline.json'
+    return json.loads(path.read_text()) if path.exists() else None
+
+
+_baseline = published_baseline()
+FINAL_RUNS = [Path(_baseline['run_dir'])] if _baseline else [Path('artifacts/final_run')]
 
 
 def evidence_dir(run):

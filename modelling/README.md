@@ -14,6 +14,9 @@ Run package commands from the repository root. The primary workflow uses a pract
 
 Feature definitions, sample preparation, matched populations, dataset transformations, and canonical dataset construction live in `data_processing/`. See `data_processing/dataset_transformation.py` and `data_processing/build_dataset.py`.
 
+The single reviewer run is `artifacts/final_run/`. Its exact inputs are under
+`data/processed/`; published outputs are under `reports/`.
+
 ## Main commands
 
 ```sh

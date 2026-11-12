@@ -1,6 +1,6 @@
 # Reporting
 
-Run exporters as modules from the repository root. `python -m reports.reproduce` runs the saved-evidence reporting workflow; it does not retrain models. Outputs go under `reports/`.
+Run exporters as modules from the repository root. `python -m reports.reproduce` runs the saved-evidence reporting workflow; it does not refit primary models. The selected evidence is `artifacts/final_run/`, with canonical inputs under `data/`. Outputs go under `reports/`.
 
 ## Performance comparison layout
 

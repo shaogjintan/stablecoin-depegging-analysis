@@ -29,58 +29,50 @@ with `py -3.12 -m venv .venv` and activate it with
 `.venv\Scripts\Activate.ps1`. The dependency freeze was checked on macOS with
 CPython 3.12; installation on other platforms has not been validated.
 
-The retained hourly source is explicitly allowed in Git for same-input
-reproduction. Saved fitted-model evidence remains separate:
+## Reproduction and reviewer evidence
 
-| Workflow | Additional files needed |
-|---|---|
-| Full reproduction | `data/raw/hourly_stablecoin.parquet` and the `data/raw/dune_onchain.zip` |
-| Verify saved models or regenerate their reports | Retained inputs and saved run evidence described in [artifacts/README.md](artifacts/README.md) |
+The repository retains one published run under `artifacts/final_run/`.
+It contains saved models, data splits, predictions, alarms and run settings.
+The exact input dataset is under `data/processed/`, and published tables and
+figures are under `reports/`. `reports/baseline.json` selects these locations.
 
-The hourly Parquet must be included in the repository commit before reviewers
-clone it; changing `.gitignore` alone does not add the file to Git. If your copy
-omits it, obtain the retained file from the project owner or use the fresh-data route.
-There is currently no published download for separately supplied model files.
-Check their paths and SHA-256 hashes against [data/manifest.json](data/manifest.json).
-Installing Python packages does not supply research data or saved models.
+With the large saved-model evidence supplied, regenerate published reports:
 
-Reviewers can also generate their own hourly market table by installing the
-optional acquisition dependencies and running
-`python -m data_processing.fetch_stablecoin_data`. This uses external APIs and
-replaces `data/raw/hourly_stablecoin.parquet`. It reruns the method on newly
-downloaded observations; the values and resulting metrics may differ from the
-reported analysis. Use the supplied hourly source to reproduce the same inputs.
-See the [fresh-data route](docs/reproduction.md#rerun-with-newly-downloaded-market-data).
+```sh
+python -m reports.reproduce
+```
 
-The hourly source is now tracked, so a separate distribution ZIP is unnecessary.
-
-## Reproduce from retained source data
-
-After setup, run the complete workflow with:
+To rebuild features and data, retrain all models and create fresh reports from
+the retained local sources:
 
 ```sh
 python -m reports.reproduce --full
 ```
 
-This rebuilds features and the dataset, trains logistic regression, random
-forest and XGBoost for h1/h6/h24 across 2021–2025, verifies the new predictions,
-and generates robustness checks, benchmarks and reports. It requires the
-retained `data/raw/hourly_stablecoin.parquet` and `data/raw/dune_onchain.zip`, not
-historical fitted models. It does not download updated data.
+Fresh outputs go to `output/reproduction/`, leaving the published final run
+unchanged. Existing output folders are rejected; use `--out-dir <new-folder>`
+for another run. `--dry-run` previews either workflow. Full training is intensive.
+The required raw inputs are `data/raw/hourly_stablecoin.parquet` and
+`data/raw/dune_onchain.zip`; their hashes are recorded in `data/manifest.json`.
+No fresh API calls are made by this workflow.
 
-All fresh outputs go under `artifacts/reproduction/`, leaving the retained
-research evidence unchanged. Preview stages with `--full --dry-run`. An existing
-output folder is rejected; use `--out-dir <new-folder>` for another run. Full
-retraining is computationally intensive. See the [workflow details](docs/reproduction.md).
+Two independent full reproductions passed their 90-cell model-score audits and
+matched scientific results across 490 checks. Their duplicate workspaces were
+removed after one validated run was retained for reviewers. Small comparison
+records remain under `reports/validation_checks/reproducibility/`. Expected
+run IDs and workspace paths differed; other software environments and image
+bytes were not independently validated.
 
-With the separately supplied saved-model artifacts in place, verify or regenerate
-the original reports without retraining:
+Some RF/XGBoost numbers changed from the earlier baseline after the numerical
+fix. Superseded report and input copies were removed; the current
+published CSVs use the final reproducible run. See the
+[comparison and change list](docs/stable_reproduction_comparison.md).
 
-```sh
-python -m data_processing.build_dataset
-python -W ignore::DeprecationWarning -m modelling.validation.verify_model_results
-python -m reports.reproduce
-```
+Large fitted models, partition Parquets and source snapshots are supplied
+separately rather than stored in Git. A clone with the retained raw inputs can
+run full source reproduction; saved-model replay requires that large evidence.
+Reacquiring source data can change results and is separate from reproduction.
+See [detailed instructions](docs/reproduction.md).
 
 ## Repository
 
@@ -91,8 +83,9 @@ data_processing/       acquisition, feature building, sample preparation and spl
 data/                  frozen inputs, source snapshots and intermediates
 tests/                 maintained data/threshold/model checks
 reports/               report outputs, provenance and reproduce.py
-artifacts/  final fitted models, predictions and run manifests
+artifacts/final_run/    one final fitted run and its verification evidence
 docs/                  methodology, reproduction and relocation records
+output/                fresh reproduction workspaces and review deliverables
 archive/       earlier experiments and original implementations
 delete/                preserved deletion candidates; not used by the pipeline
 ```

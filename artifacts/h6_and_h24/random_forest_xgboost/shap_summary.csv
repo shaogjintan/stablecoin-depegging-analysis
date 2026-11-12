@@ -1,3 +1,0 @@
-tier,horizon_hours,explained_rows,onchain_share,market_share,background,model_output,max_additivity_error
-2,6,182541,0.24681047784724908,0.7531895221527509,final full-training tree-path cover counts; no test background,raw,6.632995791733265e-06
-2,24,181276,0.2600684879625641,0.7399315120374359,final full-training tree-path cover counts; no test background,raw,5.1140086725354195e-06

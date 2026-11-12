@@ -1,5 +1,10 @@
 # Results guide
 
+Current outputs use `artifacts/final_run/`, selected in `reports/baseline.json`.
+An independent full reproduction matched its scientific results. Previous outputs
+were removed after validation; promotion checksums remain in
+`reports/validation_checks/reproducibility/report_promotion.json`.
+
 | Report claim or exhibit | Authoritative output |
 |---|---|
 | Model performance, matched tiers, h1/h6/h24 | reports/model_results/model_comparison_summary.csv |
@@ -16,7 +21,7 @@
 | Final RF importance | reports/model_interpretation/random_forest/rf_importance_by_year.csv |
 | Final XGB SHAP ranking/figures | reports/model_interpretation/ |
 
-The h1 results are supplementary, retained under artifacts/h1/. Model interpretation figures and benchmark comparisons cover primary h6/h24. Counts by type also cover h1. Historical annotations must be reviewed as context; date membership is not evidence of causation.
+The h1 results are supplementary and belong to the same published final run. Model interpretation figures and benchmark comparisons cover primary h6/h24. Counts by type also cover h1. Historical annotations must be reviewed as context; date membership is not evidence of causation.
 
 All old final_results/, fixed/tuned figures and non-refit coefficients are archived. Do not combine their values with the current final-model outputs. Frozen JSON manifests may contain old paths; resolve them with archive/maintenance/cleanup_moves.json rather than editing the original provenance.
 
@@ -40,3 +45,7 @@ with its fixed-cutoff OR rule. Both contain yearly and pooled summaries and
 source manifests. Models and original cutoffs are unchanged; calibration rates
 are reported separately. These are distinct from alternative episode definitions.
 Smoothing AP uses unchanged model scores. Binary OR AP is undefined and blank.
+
+Final run locations and exact report-organisation wording are documented in
+`docs/reviewer_code_organisation.md`. The temporary validation workspaces are
+not required for reviewers.

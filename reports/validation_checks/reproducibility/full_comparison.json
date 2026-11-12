@@ -1,0 +1,2791 @@
+{
+  "status": "passed",
+  "a": "/Users/alyssacjx/Desktop/stablecoin-depegging-analysis/artifacts/reproduction-stable-a",
+  "b": "/Users/alyssacjx/Desktop/stablecoin-depegging-analysis/artifacts/reproduction-stable-b",
+  "checks": [
+    {
+      "check": "Both 90-cell audits and model-score replay",
+      "status": "passed"
+    },
+    {
+      "check": "Recorded acquisition hashes",
+      "status": "exact"
+    },
+    {
+      "path": "data/interim/hourly_stablecoin_market_features.parquet",
+      "status": "exact",
+      "rows": 345361
+    },
+    {
+      "path": "data/interim/hourly_stablecoin_onchain_features.parquet",
+      "status": "exact",
+      "rows": 368103
+    },
+    {
+      "path": "data/processed/depeg_episodes.parquet",
+      "status": "exact",
+      "rows": 79
+    },
+    {
+      "path": "data/processed/master.parquet",
+      "status": "exact",
+      "rows": 345361
+    },
+    {
+      "path": "data/raw/hourly_stablecoin.parquet",
+      "status": "exact",
+      "rows": 344729
+    },
+    {
+      "path": "artifacts/runs/primary/ALL-MODELS/fits/logreg_market_matched_h1_2021/inner_train.parquet",
+      "status": "exact",
+      "rows": 35431
+    },
+    {
+      "path": "artifacts/runs/primary/ALL-MODELS/fits/logreg_market_matched_h1_2021/inner_val.parquet",
+      "status": "exact",
+      "rows": 48725
+    },
+    {
+      "path": "artifacts/runs/primary/ALL-MODELS/fits/logreg_market_matched_h1_2021/train.parquet",
+      "status": "exact",
+      "rows": 84358
+    },
+    {
+      "path": "artifacts/runs/primary/ALL-MODELS/fits/logreg_market_matched_h1_2021/test.parquet",
+      "status": "exact",
+      "rows": 50680
+    },
+    {
+      "path": "artifacts/runs/primary/ALL-MODELS/fits/logreg_market_matched_h1_2021/alarms.csv",
+      "status": "exact",
+      "rows": 398
+    },
+    {
+      "path": "artifacts/runs/primary/ALL-MODELS/fits/logreg_market_matched_h1_2022/inner_train.parquet",
+      "status": "exact",
+      "rows": 84358
+    },
+    {
+      "path": "artifacts/runs/primary/ALL-MODELS/fits/logreg_market_matched_h1_2022/inner_val.parquet",
+      "status": "exact",
+      "rows": 50533
+    },
+    {
+      "path": "artifacts/runs/primary/ALL-MODELS/fits/logreg_market_matched_h1_2022/train.parquet",
+      "status": "exact",
+      "rows": 135182
+    },
+    {
+      "path": "artifacts/runs/primary/ALL-MODELS/fits/logreg_market_matched_h1_2022/test.parquet",
+      "status": "exact",
+      "rows": 42433
+    },
+    {
+      "path": "artifacts/runs/primary/ALL-MODELS/fits/logreg_market_matched_h1_2022/alarms.csv",
+      "status": "exact",
+      "rows": 0
+    },
+    {
+      "path": "artifacts/runs/primary/ALL-MODELS/fits/logreg_market_matched_h1_2023/inner_train.parquet",
+      "status": "exact",
+      "rows": 135182
+    },
+    {
+      "path": "artifacts/runs/primary/ALL-MODELS/fits/logreg_market_matched_h1_2023/inner_val.parquet",
+      "status": "exact",
+      "rows": 42358
+    },
+    {
+      "path": "artifacts/runs/primary/ALL-MODELS/fits/logreg_market_matched_h1_2023/train.parquet",
+      "status": "exact",
+      "rows": 177827
+    },
+    {
+      "path": "artifacts/runs/primary/ALL-MODELS/fits/logreg_market_matched_h1_2023/test.parquet",
+      "status": "exact",
+      "rows": 37642
+    },
+    {
+      "path": "artifacts/runs/primary/ALL-MODELS/fits/logreg_market_matched_h1_2023/alarms.csv",
+      "status": "exact",
+      "rows": 11
+    },
+    {
+      "path": "artifacts/runs/primary/ALL-MODELS/fits/logreg_market_matched_h1_2024/inner_train.parquet",
+      "status": "exact",
+      "rows": 177827
+    },
+    {
+      "path": "artifacts/runs/primary/ALL-MODELS/fits/logreg_market_matched_h1_2024/inner_val.parquet",
+      "status": "exact",
+      "rows": 37561
+    },
+    {
+      "path": "artifacts/runs/primary/ALL-MODELS/fits/logreg_market_matched_h1_2024/train.parquet",
+      "status": "exact",
+      "rows": 215535
+    },
+    {
+      "path": "artifacts/runs/primary/ALL-MODELS/fits/logreg_market_matched_h1_2024/test.parquet",
+      "status": "exact",
+      "rows": 28055
+    },
+    {
+      "path": "artifacts/runs/primary/ALL-MODELS/fits/logreg_market_matched_h1_2024/alarms.csv",
+      "status": "exact",
+      "rows": 37
+    },
+    {
+      "path": "artifacts/runs/primary/ALL-MODELS/fits/logreg_market_matched_h1_2025/inner_train.parquet",
+      "status": "exact",
+      "rows": 215535
+    },
+    {
+      "path": "artifacts/runs/primary/ALL-MODELS/fits/logreg_market_matched_h1_2025/inner_val.parquet",
+      "status": "exact",
+      "rows": 27979
+    },
+    {
+      "path": "artifacts/runs/primary/ALL-MODELS/fits/logreg_market_matched_h1_2025/train.parquet",
+      "status": "exact",
+      "rows": 243678
+    },
+    {
+      "path": "artifacts/runs/primary/ALL-MODELS/fits/logreg_market_matched_h1_2025/test.parquet",
+      "status": "exact",
+      "rows": 24108
+    },
+    {
+      "path": "artifacts/runs/primary/ALL-MODELS/fits/logreg_market_matched_h1_2025/alarms.csv",
+      "status": "exact",
+      "rows": 19
+    },
+    {
+      "path": "artifacts/runs/primary/ALL-MODELS/fits/logreg_market_matched_h24_2021/inner_train.parquet",
+      "status": "exact",
+      "rows": 35306
+    },
+    {
+      "path": "artifacts/runs/primary/ALL-MODELS/fits/logreg_market_matched_h24_2021/inner_val.parquet",
+      "status": "exact",
+      "rows": 48612
+    },
+    {
+      "path": "artifacts/runs/primary/ALL-MODELS/fits/logreg_market_matched_h24_2021/train.parquet",
+      "status": "exact",
+      "rows": 84120
+    },
+    {
+      "path": "artifacts/runs/primary/ALL-MODELS/fits/logreg_market_matched_h24_2021/test.parquet",
+      "status": "exact",
+      "rows": 50657
+    },
+    {
+      "path": "artifacts/runs/primary/ALL-MODELS/fits/logreg_market_matched_h24_2021/alarms.csv",
+      "status": "exact",
+      "rows": 221
+    },
+    {
+      "path": "artifacts/runs/primary/ALL-MODELS/fits/logreg_market_matched_h24_2022/inner_train.parquet",
+      "status": "exact",
+      "rows": 84120
+    },
+    {
+      "path": "artifacts/runs/primary/ALL-MODELS/fits/logreg_market_matched_h24_2022/inner_val.parquet",
+      "status": "exact",
+      "rows": 50510
+    },
+    {
+      "path": "artifacts/runs/primary/ALL-MODELS/fits/logreg_market_matched_h24_2022/train.parquet",
+      "status": "exact",
+      "rows": 134921
+    },
+    {
+      "path": "artifacts/runs/primary/ALL-MODELS/fits/logreg_market_matched_h24_2022/test.parquet",
+      "status": "exact",
+      "rows": 41233
+    },
+    {
+      "path": "artifacts/runs/primary/ALL-MODELS/fits/logreg_market_matched_h24_2022/alarms.csv",
+      "status": "exact",
+      "rows": 21
+    },
+    {
+      "path": "artifacts/runs/primary/ALL-MODELS/fits/logreg_market_matched_h24_2023/inner_train.parquet",
+      "status": "exact",
+      "rows": 134921
+    },
+    {
+      "path": "artifacts/runs/primary/ALL-MODELS/fits/logreg_market_matched_h24_2023/inner_val.parquet",
+      "status": "exact",
+      "rows": 41158
+    },
+    {
+      "path": "artifacts/runs/primary/ALL-MODELS/fits/logreg_market_matched_h24_2023/train.parquet",
+      "status": "exact",
+      "rows": 176366
+    },
+    {
+      "path": "artifacts/runs/primary/ALL-MODELS/fits/logreg_market_matched_h24_2023/test.parquet",
+      "status": "exact",
+      "rows": 37390
+    },
+    {
+      "path": "artifacts/runs/primary/ALL-MODELS/fits/logreg_market_matched_h24_2023/alarms.csv",
+      "status": "exact",
+      "rows": 23
+    },
+    {
+      "path": "artifacts/runs/primary/ALL-MODELS/fits/logreg_market_matched_h24_2024/inner_train.parquet",
+      "status": "exact",
+      "rows": 176366
+    },
+    {
+      "path": "artifacts/runs/primary/ALL-MODELS/fits/logreg_market_matched_h24_2024/inner_val.parquet",
+      "status": "exact",
+      "rows": 37309
+    },
+    {
+      "path": "artifacts/runs/primary/ALL-MODELS/fits/logreg_market_matched_h24_2024/train.parquet",
+      "status": "exact",
+      "rows": 213822
+    },
+    {
+      "path": "artifacts/runs/primary/ALL-MODELS/fits/logreg_market_matched_h24_2024/test.parquet",
+      "status": "exact",
+      "rows": 28026
+    },
+    {
+      "path": "artifacts/runs/primary/ALL-MODELS/fits/logreg_market_matched_h24_2024/alarms.csv",
+      "status": "exact",
+      "rows": 61
+    },
+    {
+      "path": "artifacts/runs/primary/ALL-MODELS/fits/logreg_market_matched_h24_2025/inner_train.parquet",
+      "status": "exact",
+      "rows": 213822
+    },
+    {
+      "path": "artifacts/runs/primary/ALL-MODELS/fits/logreg_market_matched_h24_2025/inner_val.parquet",
+      "status": "exact",
+      "rows": 27959
+    },
+    {
+      "path": "artifacts/runs/primary/ALL-MODELS/fits/logreg_market_matched_h24_2025/train.parquet",
+      "status": "exact",
+      "rows": 241945
+    },
+    {
+      "path": "artifacts/runs/primary/ALL-MODELS/fits/logreg_market_matched_h24_2025/test.parquet",
+      "status": "exact",
+      "rows": 23970
+    },
+    {
+      "path": "artifacts/runs/primary/ALL-MODELS/fits/logreg_market_matched_h24_2025/alarms.csv",
+      "status": "exact",
+      "rows": 17
+    },
+    {
+      "path": "artifacts/runs/primary/ALL-MODELS/fits/logreg_market_matched_h6_2021/inner_train.parquet",
+      "status": "exact",
+      "rows": 35401
+    },
+    {
+      "path": "artifacts/runs/primary/ALL-MODELS/fits/logreg_market_matched_h6_2021/inner_val.parquet",
+      "status": "exact",
+      "rows": 48701
+    },
+    {
+      "path": "artifacts/runs/primary/ALL-MODELS/fits/logreg_market_matched_h6_2021/train.parquet",
+      "status": "exact",
+      "rows": 84304
+    },
+    {
+      "path": "artifacts/runs/primary/ALL-MODELS/fits/logreg_market_matched_h6_2021/test.parquet",
+      "status": "exact",
+      "rows": 50675
+    },
+    {
+      "path": "artifacts/runs/primary/ALL-MODELS/fits/logreg_market_matched_h6_2021/alarms.csv",
+      "status": "exact",
+      "rows": 295
+    },
+    {
+      "path": "artifacts/runs/primary/ALL-MODELS/fits/logreg_market_matched_h6_2022/inner_train.parquet",
+      "status": "exact",
+      "rows": 84304
+    },
+    {
+      "path": "artifacts/runs/primary/ALL-MODELS/fits/logreg_market_matched_h6_2022/inner_val.parquet",
+      "status": "exact",
+      "rows": 50528
+    },
+    {
+      "path": "artifacts/runs/primary/ALL-MODELS/fits/logreg_market_matched_h6_2022/train.parquet",
+      "status": "exact",
+      "rows": 135123
+    },
+    {
+      "path": "artifacts/runs/primary/ALL-MODELS/fits/logreg_market_matched_h6_2022/test.parquet",
+      "status": "exact",
+      "rows": 42151
+    },
+    {
+      "path": "artifacts/runs/primary/ALL-MODELS/fits/logreg_market_matched_h6_2022/alarms.csv",
+      "status": "exact",
+      "rows": 7
+    },
+    {
+      "path": "artifacts/runs/primary/ALL-MODELS/fits/logreg_market_matched_h6_2023/inner_train.parquet",
+      "status": "exact",
+      "rows": 135123
+    },
+    {
+      "path": "artifacts/runs/primary/ALL-MODELS/fits/logreg_market_matched_h6_2023/inner_val.parquet",
+      "status": "exact",
+      "rows": 42076
+    },
+    {
+      "path": "artifacts/runs/primary/ALL-MODELS/fits/logreg_market_matched_h6_2023/train.parquet",
+      "status": "exact",
+      "rows": 177486
+    },
+    {
+      "path": "artifacts/runs/primary/ALL-MODELS/fits/logreg_market_matched_h6_2023/test.parquet",
+      "status": "exact",
+      "rows": 37589
+    },
+    {
+      "path": "artifacts/runs/primary/ALL-MODELS/fits/logreg_market_matched_h6_2023/alarms.csv",
+      "status": "exact",
+      "rows": 12
+    },
+    {
+      "path": "artifacts/runs/primary/ALL-MODELS/fits/logreg_market_matched_h6_2024/inner_train.parquet",
+      "status": "exact",
+      "rows": 177486
+    },
+    {
+      "path": "artifacts/runs/primary/ALL-MODELS/fits/logreg_market_matched_h6_2024/inner_val.parquet",
+      "status": "exact",
+      "rows": 37508
+    },
+    {
+      "path": "artifacts/runs/primary/ALL-MODELS/fits/logreg_market_matched_h6_2024/train.parquet",
+      "status": "exact",
+      "rows": 215141
+    },
+    {
+      "path": "artifacts/runs/primary/ALL-MODELS/fits/logreg_market_matched_h6_2024/test.parquet",
+      "status": "exact",
+      "rows": 28050
+    },
+    {
+      "path": "artifacts/runs/primary/ALL-MODELS/fits/logreg_market_matched_h6_2024/alarms.csv",
+      "status": "exact",
+      "rows": 63
+    },
+    {
+      "path": "artifacts/runs/primary/ALL-MODELS/fits/logreg_market_matched_h6_2025/inner_train.parquet",
+      "status": "exact",
+      "rows": 215141
+    },
+    {
+      "path": "artifacts/runs/primary/ALL-MODELS/fits/logreg_market_matched_h6_2025/inner_val.parquet",
+      "status": "exact",
+      "rows": 27974
+    },
+    {
+      "path": "artifacts/runs/primary/ALL-MODELS/fits/logreg_market_matched_h6_2025/train.parquet",
+      "status": "exact",
+      "rows": 243279
+    },
+    {
+      "path": "artifacts/runs/primary/ALL-MODELS/fits/logreg_market_matched_h6_2025/test.parquet",
+      "status": "exact",
+      "rows": 24076
+    },
+    {
+      "path": "artifacts/runs/primary/ALL-MODELS/fits/logreg_market_matched_h6_2025/alarms.csv",
+      "status": "exact",
+      "rows": 19
+    },
+    {
+      "path": "artifacts/runs/primary/ALL-MODELS/fits/logreg_market_onchain_h1_2021/inner_train.parquet",
+      "status": "exact",
+      "rows": 35431
+    },
+    {
+      "path": "artifacts/runs/primary/ALL-MODELS/fits/logreg_market_onchain_h1_2021/inner_val.parquet",
+      "status": "exact",
+      "rows": 48725
+    },
+    {
+      "path": "artifacts/runs/primary/ALL-MODELS/fits/logreg_market_onchain_h1_2021/train.parquet",
+      "status": "exact",
+      "rows": 84358
+    },
+    {
+      "path": "artifacts/runs/primary/ALL-MODELS/fits/logreg_market_onchain_h1_2021/test.parquet",
+      "status": "exact",
+      "rows": 50680
+    },
+    {
+      "path": "artifacts/runs/primary/ALL-MODELS/fits/logreg_market_onchain_h1_2021/alarms.csv",
+      "status": "exact",
+      "rows": 530
+    },
+    {
+      "path": "artifacts/runs/primary/ALL-MODELS/fits/logreg_market_onchain_h1_2022/inner_train.parquet",
+      "status": "exact",
+      "rows": 84358
+    },
+    {
+      "path": "artifacts/runs/primary/ALL-MODELS/fits/logreg_market_onchain_h1_2022/inner_val.parquet",
+      "status": "exact",
+      "rows": 50533
+    },
+    {
+      "path": "artifacts/runs/primary/ALL-MODELS/fits/logreg_market_onchain_h1_2022/train.parquet",
+      "status": "exact",
+      "rows": 135182
+    },
+    {
+      "path": "artifacts/runs/primary/ALL-MODELS/fits/logreg_market_onchain_h1_2022/test.parquet",
+      "status": "exact",
+      "rows": 42433
+    },
+    {
+      "path": "artifacts/runs/primary/ALL-MODELS/fits/logreg_market_onchain_h1_2022/alarms.csv",
+      "status": "exact",
+      "rows": 2
+    },
+    {
+      "path": "artifacts/runs/primary/ALL-MODELS/fits/logreg_market_onchain_h1_2023/inner_train.parquet",
+      "status": "exact",
+      "rows": 135182
+    },
+    {
+      "path": "artifacts/runs/primary/ALL-MODELS/fits/logreg_market_onchain_h1_2023/inner_val.parquet",
+      "status": "exact",
+      "rows": 42358
+    },
+    {
+      "path": "artifacts/runs/primary/ALL-MODELS/fits/logreg_market_onchain_h1_2023/train.parquet",
+      "status": "exact",
+      "rows": 177827
+    },
+    {
+      "path": "artifacts/runs/primary/ALL-MODELS/fits/logreg_market_onchain_h1_2023/test.parquet",
+      "status": "exact",
+      "rows": 37642
+    },
+    {
+      "path": "artifacts/runs/primary/ALL-MODELS/fits/logreg_market_onchain_h1_2023/alarms.csv",
+      "status": "exact",
+      "rows": 15
+    },
+    {
+      "path": "artifacts/runs/primary/ALL-MODELS/fits/logreg_market_onchain_h1_2024/inner_train.parquet",
+      "status": "exact",
+      "rows": 177827
+    },
+    {
+      "path": "artifacts/runs/primary/ALL-MODELS/fits/logreg_market_onchain_h1_2024/inner_val.parquet",
+      "status": "exact",
+      "rows": 37561
+    },
+    {
+      "path": "artifacts/runs/primary/ALL-MODELS/fits/logreg_market_onchain_h1_2024/train.parquet",
+      "status": "exact",
+      "rows": 215535
+    },
+    {
+      "path": "artifacts/runs/primary/ALL-MODELS/fits/logreg_market_onchain_h1_2024/test.parquet",
+      "status": "exact",
+      "rows": 28055
+    },
+    {
+      "path": "artifacts/runs/primary/ALL-MODELS/fits/logreg_market_onchain_h1_2024/alarms.csv",
+      "status": "exact",
+      "rows": 35
+    },
+    {
+      "path": "artifacts/runs/primary/ALL-MODELS/fits/logreg_market_onchain_h1_2025/inner_train.parquet",
+      "status": "exact",
+      "rows": 215535
+    },
+    {
+      "path": "artifacts/runs/primary/ALL-MODELS/fits/logreg_market_onchain_h1_2025/inner_val.parquet",
+      "status": "exact",
+      "rows": 27979
+    },
+    {
+      "path": "artifacts/runs/primary/ALL-MODELS/fits/logreg_market_onchain_h1_2025/train.parquet",
+      "status": "exact",
+      "rows": 243678
+    },
+    {
+      "path": "artifacts/runs/primary/ALL-MODELS/fits/logreg_market_onchain_h1_2025/test.parquet",
+      "status": "exact",
+      "rows": 24108
+    },
+    {
+      "path": "artifacts/runs/primary/ALL-MODELS/fits/logreg_market_onchain_h1_2025/alarms.csv",
+      "status": "exact",
+      "rows": 15
+    },
+    {
+      "path": "artifacts/runs/primary/ALL-MODELS/fits/logreg_market_onchain_h24_2021/inner_train.parquet",
+      "status": "exact",
+      "rows": 35306
+    },
+    {
+      "path": "artifacts/runs/primary/ALL-MODELS/fits/logreg_market_onchain_h24_2021/inner_val.parquet",
+      "status": "exact",
+      "rows": 48612
+    },
+    {
+      "path": "artifacts/runs/primary/ALL-MODELS/fits/logreg_market_onchain_h24_2021/train.parquet",
+      "status": "exact",
+      "rows": 84120
+    },
+    {
+      "path": "artifacts/runs/primary/ALL-MODELS/fits/logreg_market_onchain_h24_2021/test.parquet",
+      "status": "exact",
+      "rows": 50657
+    },
+    {
+      "path": "artifacts/runs/primary/ALL-MODELS/fits/logreg_market_onchain_h24_2021/alarms.csv",
+      "status": "exact",
+      "rows": 208
+    },
+    {
+      "path": "artifacts/runs/primary/ALL-MODELS/fits/logreg_market_onchain_h24_2022/inner_train.parquet",
+      "status": "exact",
+      "rows": 84120
+    },
+    {
+      "path": "artifacts/runs/primary/ALL-MODELS/fits/logreg_market_onchain_h24_2022/inner_val.parquet",
+      "status": "exact",
+      "rows": 50510
+    },
+    {
+      "path": "artifacts/runs/primary/ALL-MODELS/fits/logreg_market_onchain_h24_2022/train.parquet",
+      "status": "exact",
+      "rows": 134921
+    },
+    {
+      "path": "artifacts/runs/primary/ALL-MODELS/fits/logreg_market_onchain_h24_2022/test.parquet",
+      "status": "exact",
+      "rows": 41233
+    },
+    {
+      "path": "artifacts/runs/primary/ALL-MODELS/fits/logreg_market_onchain_h24_2022/alarms.csv",
+      "status": "exact",
+      "rows": 22
+    },
+    {
+      "path": "artifacts/runs/primary/ALL-MODELS/fits/logreg_market_onchain_h24_2023/inner_train.parquet",
+      "status": "exact",
+      "rows": 134921
+    },
+    {
+      "path": "artifacts/runs/primary/ALL-MODELS/fits/logreg_market_onchain_h24_2023/inner_val.parquet",
+      "status": "exact",
+      "rows": 41158
+    },
+    {
+      "path": "artifacts/runs/primary/ALL-MODELS/fits/logreg_market_onchain_h24_2023/train.parquet",
+      "status": "exact",
+      "rows": 176366
+    },
+    {
+      "path": "artifacts/runs/primary/ALL-MODELS/fits/logreg_market_onchain_h24_2023/test.parquet",
+      "status": "exact",
+      "rows": 37390
+    },
+    {
+      "path": "artifacts/runs/primary/ALL-MODELS/fits/logreg_market_onchain_h24_2023/alarms.csv",
+      "status": "exact",
+      "rows": 19
+    },
+    {
+      "path": "artifacts/runs/primary/ALL-MODELS/fits/logreg_market_onchain_h24_2024/inner_train.parquet",
+      "status": "exact",
+      "rows": 176366
+    },
+    {
+      "path": "artifacts/runs/primary/ALL-MODELS/fits/logreg_market_onchain_h24_2024/inner_val.parquet",
+      "status": "exact",
+      "rows": 37309
+    },
+    {
+      "path": "artifacts/runs/primary/ALL-MODELS/fits/logreg_market_onchain_h24_2024/train.parquet",
+      "status": "exact",
+      "rows": 213822
+    },
+    {
+      "path": "artifacts/runs/primary/ALL-MODELS/fits/logreg_market_onchain_h24_2024/test.parquet",
+      "status": "exact",
+      "rows": 28026
+    },
+    {
+      "path": "artifacts/runs/primary/ALL-MODELS/fits/logreg_market_onchain_h24_2024/alarms.csv",
+      "status": "exact",
+      "rows": 59
+    },
+    {
+      "path": "artifacts/runs/primary/ALL-MODELS/fits/logreg_market_onchain_h24_2025/inner_train.parquet",
+      "status": "exact",
+      "rows": 213822
+    },
+    {
+      "path": "artifacts/runs/primary/ALL-MODELS/fits/logreg_market_onchain_h24_2025/inner_val.parquet",
+      "status": "exact",
+      "rows": 27959
+    },
+    {
+      "path": "artifacts/runs/primary/ALL-MODELS/fits/logreg_market_onchain_h24_2025/train.parquet",
+      "status": "exact",
+      "rows": 241945
+    },
+    {
+      "path": "artifacts/runs/primary/ALL-MODELS/fits/logreg_market_onchain_h24_2025/test.parquet",
+      "status": "exact",
+      "rows": 23970
+    },
+    {
+      "path": "artifacts/runs/primary/ALL-MODELS/fits/logreg_market_onchain_h24_2025/alarms.csv",
+      "status": "exact",
+      "rows": 20
+    },
+    {
+      "path": "artifacts/runs/primary/ALL-MODELS/fits/logreg_market_onchain_h6_2021/inner_train.parquet",
+      "status": "exact",
+      "rows": 35401
+    },
+    {
+      "path": "artifacts/runs/primary/ALL-MODELS/fits/logreg_market_onchain_h6_2021/inner_val.parquet",
+      "status": "exact",
+      "rows": 48701
+    },
+    {
+      "path": "artifacts/runs/primary/ALL-MODELS/fits/logreg_market_onchain_h6_2021/train.parquet",
+      "status": "exact",
+      "rows": 84304
+    },
+    {
+      "path": "artifacts/runs/primary/ALL-MODELS/fits/logreg_market_onchain_h6_2021/test.parquet",
+      "status": "exact",
+      "rows": 50675
+    },
+    {
+      "path": "artifacts/runs/primary/ALL-MODELS/fits/logreg_market_onchain_h6_2021/alarms.csv",
+      "status": "exact",
+      "rows": 302
+    },
+    {
+      "path": "artifacts/runs/primary/ALL-MODELS/fits/logreg_market_onchain_h6_2022/inner_train.parquet",
+      "status": "exact",
+      "rows": 84304
+    },
+    {
+      "path": "artifacts/runs/primary/ALL-MODELS/fits/logreg_market_onchain_h6_2022/inner_val.parquet",
+      "status": "exact",
+      "rows": 50528
+    },
+    {
+      "path": "artifacts/runs/primary/ALL-MODELS/fits/logreg_market_onchain_h6_2022/train.parquet",
+      "status": "exact",
+      "rows": 135123
+    },
+    {
+      "path": "artifacts/runs/primary/ALL-MODELS/fits/logreg_market_onchain_h6_2022/test.parquet",
+      "status": "exact",
+      "rows": 42151
+    },
+    {
+      "path": "artifacts/runs/primary/ALL-MODELS/fits/logreg_market_onchain_h6_2022/alarms.csv",
+      "status": "exact",
+      "rows": 8
+    },
+    {
+      "path": "artifacts/runs/primary/ALL-MODELS/fits/logreg_market_onchain_h6_2023/inner_train.parquet",
+      "status": "exact",
+      "rows": 135123
+    },
+    {
+      "path": "artifacts/runs/primary/ALL-MODELS/fits/logreg_market_onchain_h6_2023/inner_val.parquet",
+      "status": "exact",
+      "rows": 42076
+    },
+    {
+      "path": "artifacts/runs/primary/ALL-MODELS/fits/logreg_market_onchain_h6_2023/train.parquet",
+      "status": "exact",
+      "rows": 177486
+    },
+    {
+      "path": "artifacts/runs/primary/ALL-MODELS/fits/logreg_market_onchain_h6_2023/test.parquet",
+      "status": "exact",
+      "rows": 37589
+    },
+    {
+      "path": "artifacts/runs/primary/ALL-MODELS/fits/logreg_market_onchain_h6_2023/alarms.csv",
+      "status": "exact",
+      "rows": 14
+    },
+    {
+      "path": "artifacts/runs/primary/ALL-MODELS/fits/logreg_market_onchain_h6_2024/inner_train.parquet",
+      "status": "exact",
+      "rows": 177486
+    },
+    {
+      "path": "artifacts/runs/primary/ALL-MODELS/fits/logreg_market_onchain_h6_2024/inner_val.parquet",
+      "status": "exact",
+      "rows": 37508
+    },
+    {
+      "path": "artifacts/runs/primary/ALL-MODELS/fits/logreg_market_onchain_h6_2024/train.parquet",
+      "status": "exact",
+      "rows": 215141
+    },
+    {
+      "path": "artifacts/runs/primary/ALL-MODELS/fits/logreg_market_onchain_h6_2024/test.parquet",
+      "status": "exact",
+      "rows": 28050
+    },
+    {
+      "path": "artifacts/runs/primary/ALL-MODELS/fits/logreg_market_onchain_h6_2024/alarms.csv",
+      "status": "exact",
+      "rows": 57
+    },
+    {
+      "path": "artifacts/runs/primary/ALL-MODELS/fits/logreg_market_onchain_h6_2025/inner_train.parquet",
+      "status": "exact",
+      "rows": 215141
+    },
+    {
+      "path": "artifacts/runs/primary/ALL-MODELS/fits/logreg_market_onchain_h6_2025/inner_val.parquet",
+      "status": "exact",
+      "rows": 27974
+    },
+    {
+      "path": "artifacts/runs/primary/ALL-MODELS/fits/logreg_market_onchain_h6_2025/train.parquet",
+      "status": "exact",
+      "rows": 243279
+    },
+    {
+      "path": "artifacts/runs/primary/ALL-MODELS/fits/logreg_market_onchain_h6_2025/test.parquet",
+      "status": "exact",
+      "rows": 24076
+    },
+    {
+      "path": "artifacts/runs/primary/ALL-MODELS/fits/logreg_market_onchain_h6_2025/alarms.csv",
+      "status": "exact",
+      "rows": 24
+    },
+    {
+      "path": "artifacts/runs/primary/ALL-MODELS/fits/random_forest_market_matched_h1_2021/inner_train.parquet",
+      "status": "exact",
+      "rows": 35431
+    },
+    {
+      "path": "artifacts/runs/primary/ALL-MODELS/fits/random_forest_market_matched_h1_2021/inner_val.parquet",
+      "status": "exact",
+      "rows": 48725
+    },
+    {
+      "path": "artifacts/runs/primary/ALL-MODELS/fits/random_forest_market_matched_h1_2021/train.parquet",
+      "status": "exact",
+      "rows": 84358
+    },
+    {
+      "path": "artifacts/runs/primary/ALL-MODELS/fits/random_forest_market_matched_h1_2021/test.parquet",
+      "status": "exact",
+      "rows": 50680
+    },
+    {
+      "path": "artifacts/runs/primary/ALL-MODELS/fits/random_forest_market_matched_h1_2021/alarms.csv",
+      "status": "exact",
+      "rows": 348
+    },
+    {
+      "path": "artifacts/runs/primary/ALL-MODELS/fits/random_forest_market_matched_h1_2022/inner_train.parquet",
+      "status": "exact",
+      "rows": 84358
+    },
+    {
+      "path": "artifacts/runs/primary/ALL-MODELS/fits/random_forest_market_matched_h1_2022/inner_val.parquet",
+      "status": "exact",
+      "rows": 50533
+    },
+    {
+      "path": "artifacts/runs/primary/ALL-MODELS/fits/random_forest_market_matched_h1_2022/train.parquet",
+      "status": "exact",
+      "rows": 135182
+    },
+    {
+      "path": "artifacts/runs/primary/ALL-MODELS/fits/random_forest_market_matched_h1_2022/test.parquet",
+      "status": "exact",
+      "rows": 42433
+    },
+    {
+      "path": "artifacts/runs/primary/ALL-MODELS/fits/random_forest_market_matched_h1_2022/alarms.csv",
+      "status": "exact",
+      "rows": 2
+    },
+    {
+      "path": "artifacts/runs/primary/ALL-MODELS/fits/random_forest_market_matched_h1_2023/inner_train.parquet",
+      "status": "exact",
+      "rows": 135182
+    },
+    {
+      "path": "artifacts/runs/primary/ALL-MODELS/fits/random_forest_market_matched_h1_2023/inner_val.parquet",
+      "status": "exact",
+      "rows": 42358
+    },
+    {
+      "path": "artifacts/runs/primary/ALL-MODELS/fits/random_forest_market_matched_h1_2023/train.parquet",
+      "status": "exact",
+      "rows": 177827
+    },
+    {
+      "path": "artifacts/runs/primary/ALL-MODELS/fits/random_forest_market_matched_h1_2023/test.parquet",
+      "status": "exact",
+      "rows": 37642
+    },
+    {
+      "path": "artifacts/runs/primary/ALL-MODELS/fits/random_forest_market_matched_h1_2023/alarms.csv",
+      "status": "exact",
+      "rows": 68
+    },
+    {
+      "path": "artifacts/runs/primary/ALL-MODELS/fits/random_forest_market_matched_h1_2024/inner_train.parquet",
+      "status": "exact",
+      "rows": 177827
+    },
+    {
+      "path": "artifacts/runs/primary/ALL-MODELS/fits/random_forest_market_matched_h1_2024/inner_val.parquet",
+      "status": "exact",
+      "rows": 37561
+    },
+    {
+      "path": "artifacts/runs/primary/ALL-MODELS/fits/random_forest_market_matched_h1_2024/train.parquet",
+      "status": "exact",
+      "rows": 215535
+    },
+    {
+      "path": "artifacts/runs/primary/ALL-MODELS/fits/random_forest_market_matched_h1_2024/test.parquet",
+      "status": "exact",
+      "rows": 28055
+    },
+    {
+      "path": "artifacts/runs/primary/ALL-MODELS/fits/random_forest_market_matched_h1_2024/alarms.csv",
+      "status": "exact",
+      "rows": 48
+    },
+    {
+      "path": "artifacts/runs/primary/ALL-MODELS/fits/random_forest_market_matched_h1_2025/inner_train.parquet",
+      "status": "exact",
+      "rows": 215535
+    },
+    {
+      "path": "artifacts/runs/primary/ALL-MODELS/fits/random_forest_market_matched_h1_2025/inner_val.parquet",
+      "status": "exact",
+      "rows": 27979
+    },
+    {
+      "path": "artifacts/runs/primary/ALL-MODELS/fits/random_forest_market_matched_h1_2025/train.parquet",
+      "status": "exact",
+      "rows": 243678
+    },
+    {
+      "path": "artifacts/runs/primary/ALL-MODELS/fits/random_forest_market_matched_h1_2025/test.parquet",
+      "status": "exact",
+      "rows": 24108
+    },
+    {
+      "path": "artifacts/runs/primary/ALL-MODELS/fits/random_forest_market_matched_h1_2025/alarms.csv",
+      "status": "exact",
+      "rows": 12
+    },
+    {
+      "path": "artifacts/runs/primary/ALL-MODELS/fits/random_forest_market_matched_h24_2021/inner_train.parquet",
+      "status": "exact",
+      "rows": 35306
+    },
+    {
+      "path": "artifacts/runs/primary/ALL-MODELS/fits/random_forest_market_matched_h24_2021/inner_val.parquet",
+      "status": "exact",
+      "rows": 48612
+    },
+    {
+      "path": "artifacts/runs/primary/ALL-MODELS/fits/random_forest_market_matched_h24_2021/train.parquet",
+      "status": "exact",
+      "rows": 84120
+    },
+    {
+      "path": "artifacts/runs/primary/ALL-MODELS/fits/random_forest_market_matched_h24_2021/test.parquet",
+      "status": "exact",
+      "rows": 50657
+    },
+    {
+      "path": "artifacts/runs/primary/ALL-MODELS/fits/random_forest_market_matched_h24_2021/alarms.csv",
+      "status": "exact",
+      "rows": 163
+    },
+    {
+      "path": "artifacts/runs/primary/ALL-MODELS/fits/random_forest_market_matched_h24_2022/inner_train.parquet",
+      "status": "exact",
+      "rows": 84120
+    },
+    {
+      "path": "artifacts/runs/primary/ALL-MODELS/fits/random_forest_market_matched_h24_2022/inner_val.parquet",
+      "status": "exact",
+      "rows": 50510
+    },
+    {
+      "path": "artifacts/runs/primary/ALL-MODELS/fits/random_forest_market_matched_h24_2022/train.parquet",
+      "status": "exact",
+      "rows": 134921
+    },
+    {
+      "path": "artifacts/runs/primary/ALL-MODELS/fits/random_forest_market_matched_h24_2022/test.parquet",
+      "status": "exact",
+      "rows": 41233
+    },
+    {
+      "path": "artifacts/runs/primary/ALL-MODELS/fits/random_forest_market_matched_h24_2022/alarms.csv",
+      "status": "exact",
+      "rows": 18
+    },
+    {
+      "path": "artifacts/runs/primary/ALL-MODELS/fits/random_forest_market_matched_h24_2023/inner_train.parquet",
+      "status": "exact",
+      "rows": 134921
+    },
+    {
+      "path": "artifacts/runs/primary/ALL-MODELS/fits/random_forest_market_matched_h24_2023/inner_val.parquet",
+      "status": "exact",
+      "rows": 41158
+    },
+    {
+      "path": "artifacts/runs/primary/ALL-MODELS/fits/random_forest_market_matched_h24_2023/train.parquet",
+      "status": "exact",
+      "rows": 176366
+    },
+    {
+      "path": "artifacts/runs/primary/ALL-MODELS/fits/random_forest_market_matched_h24_2023/test.parquet",
+      "status": "exact",
+      "rows": 37390
+    },
+    {
+      "path": "artifacts/runs/primary/ALL-MODELS/fits/random_forest_market_matched_h24_2023/alarms.csv",
+      "status": "exact",
+      "rows": 15
+    },
+    {
+      "path": "artifacts/runs/primary/ALL-MODELS/fits/random_forest_market_matched_h24_2024/inner_train.parquet",
+      "status": "exact",
+      "rows": 176366
+    },
+    {
+      "path": "artifacts/runs/primary/ALL-MODELS/fits/random_forest_market_matched_h24_2024/inner_val.parquet",
+      "status": "exact",
+      "rows": 37309
+    },
+    {
+      "path": "artifacts/runs/primary/ALL-MODELS/fits/random_forest_market_matched_h24_2024/train.parquet",
+      "status": "exact",
+      "rows": 213822
+    },
+    {
+      "path": "artifacts/runs/primary/ALL-MODELS/fits/random_forest_market_matched_h24_2024/test.parquet",
+      "status": "exact",
+      "rows": 28026
+    },
+    {
+      "path": "artifacts/runs/primary/ALL-MODELS/fits/random_forest_market_matched_h24_2024/alarms.csv",
+      "status": "exact",
+      "rows": 60
+    },
+    {
+      "path": "artifacts/runs/primary/ALL-MODELS/fits/random_forest_market_matched_h24_2025/inner_train.parquet",
+      "status": "exact",
+      "rows": 213822
+    },
+    {
+      "path": "artifacts/runs/primary/ALL-MODELS/fits/random_forest_market_matched_h24_2025/inner_val.parquet",
+      "status": "exact",
+      "rows": 27959
+    },
+    {
+      "path": "artifacts/runs/primary/ALL-MODELS/fits/random_forest_market_matched_h24_2025/train.parquet",
+      "status": "exact",
+      "rows": 241945
+    },
+    {
+      "path": "artifacts/runs/primary/ALL-MODELS/fits/random_forest_market_matched_h24_2025/test.parquet",
+      "status": "exact",
+      "rows": 23970
+    },
+    {
+      "path": "artifacts/runs/primary/ALL-MODELS/fits/random_forest_market_matched_h24_2025/alarms.csv",
+      "status": "exact",
+      "rows": 19
+    },
+    {
+      "path": "artifacts/runs/primary/ALL-MODELS/fits/random_forest_market_matched_h6_2021/inner_train.parquet",
+      "status": "exact",
+      "rows": 35401
+    },
+    {
+      "path": "artifacts/runs/primary/ALL-MODELS/fits/random_forest_market_matched_h6_2021/inner_val.parquet",
+      "status": "exact",
+      "rows": 48701
+    },
+    {
+      "path": "artifacts/runs/primary/ALL-MODELS/fits/random_forest_market_matched_h6_2021/train.parquet",
+      "status": "exact",
+      "rows": 84304
+    },
+    {
+      "path": "artifacts/runs/primary/ALL-MODELS/fits/random_forest_market_matched_h6_2021/test.parquet",
+      "status": "exact",
+      "rows": 50675
+    },
+    {
+      "path": "artifacts/runs/primary/ALL-MODELS/fits/random_forest_market_matched_h6_2021/alarms.csv",
+      "status": "exact",
+      "rows": 65
+    },
+    {
+      "path": "artifacts/runs/primary/ALL-MODELS/fits/random_forest_market_matched_h6_2022/inner_train.parquet",
+      "status": "exact",
+      "rows": 84304
+    },
+    {
+      "path": "artifacts/runs/primary/ALL-MODELS/fits/random_forest_market_matched_h6_2022/inner_val.parquet",
+      "status": "exact",
+      "rows": 50528
+    },
+    {
+      "path": "artifacts/runs/primary/ALL-MODELS/fits/random_forest_market_matched_h6_2022/train.parquet",
+      "status": "exact",
+      "rows": 135123
+    },
+    {
+      "path": "artifacts/runs/primary/ALL-MODELS/fits/random_forest_market_matched_h6_2022/test.parquet",
+      "status": "exact",
+      "rows": 42151
+    },
+    {
+      "path": "artifacts/runs/primary/ALL-MODELS/fits/random_forest_market_matched_h6_2022/alarms.csv",
+      "status": "exact",
+      "rows": 79
+    },
+    {
+      "path": "artifacts/runs/primary/ALL-MODELS/fits/random_forest_market_matched_h6_2023/inner_train.parquet",
+      "status": "exact",
+      "rows": 135123
+    },
+    {
+      "path": "artifacts/runs/primary/ALL-MODELS/fits/random_forest_market_matched_h6_2023/inner_val.parquet",
+      "status": "exact",
+      "rows": 42076
+    },
+    {
+      "path": "artifacts/runs/primary/ALL-MODELS/fits/random_forest_market_matched_h6_2023/train.parquet",
+      "status": "exact",
+      "rows": 177486
+    },
+    {
+      "path": "artifacts/runs/primary/ALL-MODELS/fits/random_forest_market_matched_h6_2023/test.parquet",
+      "status": "exact",
+      "rows": 37589
+    },
+    {
+      "path": "artifacts/runs/primary/ALL-MODELS/fits/random_forest_market_matched_h6_2023/alarms.csv",
+      "status": "exact",
+      "rows": 18
+    },
+    {
+      "path": "artifacts/runs/primary/ALL-MODELS/fits/random_forest_market_matched_h6_2024/inner_train.parquet",
+      "status": "exact",
+      "rows": 177486
+    },
+    {
+      "path": "artifacts/runs/primary/ALL-MODELS/fits/random_forest_market_matched_h6_2024/inner_val.parquet",
+      "status": "exact",
+      "rows": 37508
+    },
+    {
+      "path": "artifacts/runs/primary/ALL-MODELS/fits/random_forest_market_matched_h6_2024/train.parquet",
+      "status": "exact",
+      "rows": 215141
+    },
+    {
+      "path": "artifacts/runs/primary/ALL-MODELS/fits/random_forest_market_matched_h6_2024/test.parquet",
+      "status": "exact",
+      "rows": 28050
+    },
+    {
+      "path": "artifacts/runs/primary/ALL-MODELS/fits/random_forest_market_matched_h6_2024/alarms.csv",
+      "status": "exact",
+      "rows": 58
+    },
+    {
+      "path": "artifacts/runs/primary/ALL-MODELS/fits/random_forest_market_matched_h6_2025/inner_train.parquet",
+      "status": "exact",
+      "rows": 215141
+    },
+    {
+      "path": "artifacts/runs/primary/ALL-MODELS/fits/random_forest_market_matched_h6_2025/inner_val.parquet",
+      "status": "exact",
+      "rows": 27974
+    },
+    {
+      "path": "artifacts/runs/primary/ALL-MODELS/fits/random_forest_market_matched_h6_2025/train.parquet",
+      "status": "exact",
+      "rows": 243279
+    },
+    {
+      "path": "artifacts/runs/primary/ALL-MODELS/fits/random_forest_market_matched_h6_2025/test.parquet",
+      "status": "exact",
+      "rows": 24076
+    },
+    {
+      "path": "artifacts/runs/primary/ALL-MODELS/fits/random_forest_market_matched_h6_2025/alarms.csv",
+      "status": "exact",
+      "rows": 14
+    },
+    {
+      "path": "artifacts/runs/primary/ALL-MODELS/fits/random_forest_market_onchain_h1_2021/inner_train.parquet",
+      "status": "exact",
+      "rows": 35431
+    },
+    {
+      "path": "artifacts/runs/primary/ALL-MODELS/fits/random_forest_market_onchain_h1_2021/inner_val.parquet",
+      "status": "exact",
+      "rows": 48725
+    },
+    {
+      "path": "artifacts/runs/primary/ALL-MODELS/fits/random_forest_market_onchain_h1_2021/train.parquet",
+      "status": "exact",
+      "rows": 84358
+    },
+    {
+      "path": "artifacts/runs/primary/ALL-MODELS/fits/random_forest_market_onchain_h1_2021/test.parquet",
+      "status": "exact",
+      "rows": 50680
+    },
+    {
+      "path": "artifacts/runs/primary/ALL-MODELS/fits/random_forest_market_onchain_h1_2021/alarms.csv",
+      "status": "exact",
+      "rows": 185
+    },
+    {
+      "path": "artifacts/runs/primary/ALL-MODELS/fits/random_forest_market_onchain_h1_2022/inner_train.parquet",
+      "status": "exact",
+      "rows": 84358
+    },
+    {
+      "path": "artifacts/runs/primary/ALL-MODELS/fits/random_forest_market_onchain_h1_2022/inner_val.parquet",
+      "status": "exact",
+      "rows": 50533
+    },
+    {
+      "path": "artifacts/runs/primary/ALL-MODELS/fits/random_forest_market_onchain_h1_2022/train.parquet",
+      "status": "exact",
+      "rows": 135182
+    },
+    {
+      "path": "artifacts/runs/primary/ALL-MODELS/fits/random_forest_market_onchain_h1_2022/test.parquet",
+      "status": "exact",
+      "rows": 42433
+    },
+    {
+      "path": "artifacts/runs/primary/ALL-MODELS/fits/random_forest_market_onchain_h1_2022/alarms.csv",
+      "status": "exact",
+      "rows": 0
+    },
+    {
+      "path": "artifacts/runs/primary/ALL-MODELS/fits/random_forest_market_onchain_h1_2023/inner_train.parquet",
+      "status": "exact",
+      "rows": 135182
+    },
+    {
+      "path": "artifacts/runs/primary/ALL-MODELS/fits/random_forest_market_onchain_h1_2023/inner_val.parquet",
+      "status": "exact",
+      "rows": 42358
+    },
+    {
+      "path": "artifacts/runs/primary/ALL-MODELS/fits/random_forest_market_onchain_h1_2023/train.parquet",
+      "status": "exact",
+      "rows": 177827
+    },
+    {
+      "path": "artifacts/runs/primary/ALL-MODELS/fits/random_forest_market_onchain_h1_2023/test.parquet",
+      "status": "exact",
+      "rows": 37642
+    },
+    {
+      "path": "artifacts/runs/primary/ALL-MODELS/fits/random_forest_market_onchain_h1_2023/alarms.csv",
+      "status": "exact",
+      "rows": 64
+    },
+    {
+      "path": "artifacts/runs/primary/ALL-MODELS/fits/random_forest_market_onchain_h1_2024/inner_train.parquet",
+      "status": "exact",
+      "rows": 177827
+    },
+    {
+      "path": "artifacts/runs/primary/ALL-MODELS/fits/random_forest_market_onchain_h1_2024/inner_val.parquet",
+      "status": "exact",
+      "rows": 37561
+    },
+    {
+      "path": "artifacts/runs/primary/ALL-MODELS/fits/random_forest_market_onchain_h1_2024/train.parquet",
+      "status": "exact",
+      "rows": 215535
+    },
+    {
+      "path": "artifacts/runs/primary/ALL-MODELS/fits/random_forest_market_onchain_h1_2024/test.parquet",
+      "status": "exact",
+      "rows": 28055
+    },
+    {
+      "path": "artifacts/runs/primary/ALL-MODELS/fits/random_forest_market_onchain_h1_2024/alarms.csv",
+      "status": "exact",
+      "rows": 37
+    },
+    {
+      "path": "artifacts/runs/primary/ALL-MODELS/fits/random_forest_market_onchain_h1_2025/inner_train.parquet",
+      "status": "exact",
+      "rows": 215535
+    },
+    {
+      "path": "artifacts/runs/primary/ALL-MODELS/fits/random_forest_market_onchain_h1_2025/inner_val.parquet",
+      "status": "exact",
+      "rows": 27979
+    },
+    {
+      "path": "artifacts/runs/primary/ALL-MODELS/fits/random_forest_market_onchain_h1_2025/train.parquet",
+      "status": "exact",
+      "rows": 243678
+    },
+    {
+      "path": "artifacts/runs/primary/ALL-MODELS/fits/random_forest_market_onchain_h1_2025/test.parquet",
+      "status": "exact",
+      "rows": 24108
+    },
+    {
+      "path": "artifacts/runs/primary/ALL-MODELS/fits/random_forest_market_onchain_h1_2025/alarms.csv",
+      "status": "exact",
+      "rows": 9
+    },
+    {
+      "path": "artifacts/runs/primary/ALL-MODELS/fits/random_forest_market_onchain_h24_2021/inner_train.parquet",
+      "status": "exact",
+      "rows": 35306
+    },
+    {
+      "path": "artifacts/runs/primary/ALL-MODELS/fits/random_forest_market_onchain_h24_2021/inner_val.parquet",
+      "status": "exact",
+      "rows": 48612
+    },
+    {
+      "path": "artifacts/runs/primary/ALL-MODELS/fits/random_forest_market_onchain_h24_2021/train.parquet",
+      "status": "exact",
+      "rows": 84120
+    },
+    {
+      "path": "artifacts/runs/primary/ALL-MODELS/fits/random_forest_market_onchain_h24_2021/test.parquet",
+      "status": "exact",
+      "rows": 50657
+    },
+    {
+      "path": "artifacts/runs/primary/ALL-MODELS/fits/random_forest_market_onchain_h24_2021/alarms.csv",
+      "status": "exact",
+      "rows": 66
+    },
+    {
+      "path": "artifacts/runs/primary/ALL-MODELS/fits/random_forest_market_onchain_h24_2022/inner_train.parquet",
+      "status": "exact",
+      "rows": 84120
+    },
+    {
+      "path": "artifacts/runs/primary/ALL-MODELS/fits/random_forest_market_onchain_h24_2022/inner_val.parquet",
+      "status": "exact",
+      "rows": 50510
+    },
+    {
+      "path": "artifacts/runs/primary/ALL-MODELS/fits/random_forest_market_onchain_h24_2022/train.parquet",
+      "status": "exact",
+      "rows": 134921
+    },
+    {
+      "path": "artifacts/runs/primary/ALL-MODELS/fits/random_forest_market_onchain_h24_2022/test.parquet",
+      "status": "exact",
+      "rows": 41233
+    },
+    {
+      "path": "artifacts/runs/primary/ALL-MODELS/fits/random_forest_market_onchain_h24_2022/alarms.csv",
+      "status": "exact",
+      "rows": 22
+    },
+    {
+      "path": "artifacts/runs/primary/ALL-MODELS/fits/random_forest_market_onchain_h24_2023/inner_train.parquet",
+      "status": "exact",
+      "rows": 134921
+    },
+    {
+      "path": "artifacts/runs/primary/ALL-MODELS/fits/random_forest_market_onchain_h24_2023/inner_val.parquet",
+      "status": "exact",
+      "rows": 41158
+    },
+    {
+      "path": "artifacts/runs/primary/ALL-MODELS/fits/random_forest_market_onchain_h24_2023/train.parquet",
+      "status": "exact",
+      "rows": 176366
+    },
+    {
+      "path": "artifacts/runs/primary/ALL-MODELS/fits/random_forest_market_onchain_h24_2023/test.parquet",
+      "status": "exact",
+      "rows": 37390
+    },
+    {
+      "path": "artifacts/runs/primary/ALL-MODELS/fits/random_forest_market_onchain_h24_2023/alarms.csv",
+      "status": "exact",
+      "rows": 23
+    },
+    {
+      "path": "artifacts/runs/primary/ALL-MODELS/fits/random_forest_market_onchain_h24_2024/inner_train.parquet",
+      "status": "exact",
+      "rows": 176366
+    },
+    {
+      "path": "artifacts/runs/primary/ALL-MODELS/fits/random_forest_market_onchain_h24_2024/inner_val.parquet",
+      "status": "exact",
+      "rows": 37309
+    },
+    {
+      "path": "artifacts/runs/primary/ALL-MODELS/fits/random_forest_market_onchain_h24_2024/train.parquet",
+      "status": "exact",
+      "rows": 213822
+    },
+    {
+      "path": "artifacts/runs/primary/ALL-MODELS/fits/random_forest_market_onchain_h24_2024/test.parquet",
+      "status": "exact",
+      "rows": 28026
+    },
+    {
+      "path": "artifacts/runs/primary/ALL-MODELS/fits/random_forest_market_onchain_h24_2024/alarms.csv",
+      "status": "exact",
+      "rows": 54
+    },
+    {
+      "path": "artifacts/runs/primary/ALL-MODELS/fits/random_forest_market_onchain_h24_2025/inner_train.parquet",
+      "status": "exact",
+      "rows": 213822
+    },
+    {
+      "path": "artifacts/runs/primary/ALL-MODELS/fits/random_forest_market_onchain_h24_2025/inner_val.parquet",
+      "status": "exact",
+      "rows": 27959
+    },
+    {
+      "path": "artifacts/runs/primary/ALL-MODELS/fits/random_forest_market_onchain_h24_2025/train.parquet",
+      "status": "exact",
+      "rows": 241945
+    },
+    {
+      "path": "artifacts/runs/primary/ALL-MODELS/fits/random_forest_market_onchain_h24_2025/test.parquet",
+      "status": "exact",
+      "rows": 23970
+    },
+    {
+      "path": "artifacts/runs/primary/ALL-MODELS/fits/random_forest_market_onchain_h24_2025/alarms.csv",
+      "status": "exact",
+      "rows": 22
+    },
+    {
+      "path": "artifacts/runs/primary/ALL-MODELS/fits/random_forest_market_onchain_h6_2021/inner_train.parquet",
+      "status": "exact",
+      "rows": 35401
+    },
+    {
+      "path": "artifacts/runs/primary/ALL-MODELS/fits/random_forest_market_onchain_h6_2021/inner_val.parquet",
+      "status": "exact",
+      "rows": 48701
+    },
+    {
+      "path": "artifacts/runs/primary/ALL-MODELS/fits/random_forest_market_onchain_h6_2021/train.parquet",
+      "status": "exact",
+      "rows": 84304
+    },
+    {
+      "path": "artifacts/runs/primary/ALL-MODELS/fits/random_forest_market_onchain_h6_2021/test.parquet",
+      "status": "exact",
+      "rows": 50675
+    },
+    {
+      "path": "artifacts/runs/primary/ALL-MODELS/fits/random_forest_market_onchain_h6_2021/alarms.csv",
+      "status": "exact",
+      "rows": 64
+    },
+    {
+      "path": "artifacts/runs/primary/ALL-MODELS/fits/random_forest_market_onchain_h6_2022/inner_train.parquet",
+      "status": "exact",
+      "rows": 84304
+    },
+    {
+      "path": "artifacts/runs/primary/ALL-MODELS/fits/random_forest_market_onchain_h6_2022/inner_val.parquet",
+      "status": "exact",
+      "rows": 50528
+    },
+    {
+      "path": "artifacts/runs/primary/ALL-MODELS/fits/random_forest_market_onchain_h6_2022/train.parquet",
+      "status": "exact",
+      "rows": 135123
+    },
+    {
+      "path": "artifacts/runs/primary/ALL-MODELS/fits/random_forest_market_onchain_h6_2022/test.parquet",
+      "status": "exact",
+      "rows": 42151
+    },
+    {
+      "path": "artifacts/runs/primary/ALL-MODELS/fits/random_forest_market_onchain_h6_2022/alarms.csv",
+      "status": "exact",
+      "rows": 62
+    },
+    {
+      "path": "artifacts/runs/primary/ALL-MODELS/fits/random_forest_market_onchain_h6_2023/inner_train.parquet",
+      "status": "exact",
+      "rows": 135123
+    },
+    {
+      "path": "artifacts/runs/primary/ALL-MODELS/fits/random_forest_market_onchain_h6_2023/inner_val.parquet",
+      "status": "exact",
+      "rows": 42076
+    },
+    {
+      "path": "artifacts/runs/primary/ALL-MODELS/fits/random_forest_market_onchain_h6_2023/train.parquet",
+      "status": "exact",
+      "rows": 177486
+    },
+    {
+      "path": "artifacts/runs/primary/ALL-MODELS/fits/random_forest_market_onchain_h6_2023/test.parquet",
+      "status": "exact",
+      "rows": 37589
+    },
+    {
+      "path": "artifacts/runs/primary/ALL-MODELS/fits/random_forest_market_onchain_h6_2023/alarms.csv",
+      "status": "exact",
+      "rows": 24
+    },
+    {
+      "path": "artifacts/runs/primary/ALL-MODELS/fits/random_forest_market_onchain_h6_2024/inner_train.parquet",
+      "status": "exact",
+      "rows": 177486
+    },
+    {
+      "path": "artifacts/runs/primary/ALL-MODELS/fits/random_forest_market_onchain_h6_2024/inner_val.parquet",
+      "status": "exact",
+      "rows": 37508
+    },
+    {
+      "path": "artifacts/runs/primary/ALL-MODELS/fits/random_forest_market_onchain_h6_2024/train.parquet",
+      "status": "exact",
+      "rows": 215141
+    },
+    {
+      "path": "artifacts/runs/primary/ALL-MODELS/fits/random_forest_market_onchain_h6_2024/test.parquet",
+      "status": "exact",
+      "rows": 28050
+    },
+    {
+      "path": "artifacts/runs/primary/ALL-MODELS/fits/random_forest_market_onchain_h6_2024/alarms.csv",
+      "status": "exact",
+      "rows": 56
+    },
+    {
+      "path": "artifacts/runs/primary/ALL-MODELS/fits/random_forest_market_onchain_h6_2025/inner_train.parquet",
+      "status": "exact",
+      "rows": 215141
+    },
+    {
+      "path": "artifacts/runs/primary/ALL-MODELS/fits/random_forest_market_onchain_h6_2025/inner_val.parquet",
+      "status": "exact",
+      "rows": 27974
+    },
+    {
+      "path": "artifacts/runs/primary/ALL-MODELS/fits/random_forest_market_onchain_h6_2025/train.parquet",
+      "status": "exact",
+      "rows": 243279
+    },
+    {
+      "path": "artifacts/runs/primary/ALL-MODELS/fits/random_forest_market_onchain_h6_2025/test.parquet",
+      "status": "exact",
+      "rows": 24076
+    },
+    {
+      "path": "artifacts/runs/primary/ALL-MODELS/fits/random_forest_market_onchain_h6_2025/alarms.csv",
+      "status": "exact",
+      "rows": 13
+    },
+    {
+      "path": "artifacts/runs/primary/ALL-MODELS/fits/xgboost_market_matched_h1_2021/inner_train.parquet",
+      "status": "exact",
+      "rows": 35431
+    },
+    {
+      "path": "artifacts/runs/primary/ALL-MODELS/fits/xgboost_market_matched_h1_2021/inner_val.parquet",
+      "status": "exact",
+      "rows": 48725
+    },
+    {
+      "path": "artifacts/runs/primary/ALL-MODELS/fits/xgboost_market_matched_h1_2021/train.parquet",
+      "status": "exact",
+      "rows": 84358
+    },
+    {
+      "path": "artifacts/runs/primary/ALL-MODELS/fits/xgboost_market_matched_h1_2021/test.parquet",
+      "status": "exact",
+      "rows": 50680
+    },
+    {
+      "path": "artifacts/runs/primary/ALL-MODELS/fits/xgboost_market_matched_h1_2021/alarms.csv",
+      "status": "exact",
+      "rows": 477
+    },
+    {
+      "path": "artifacts/runs/primary/ALL-MODELS/fits/xgboost_market_matched_h1_2022/inner_train.parquet",
+      "status": "exact",
+      "rows": 84358
+    },
+    {
+      "path": "artifacts/runs/primary/ALL-MODELS/fits/xgboost_market_matched_h1_2022/inner_val.parquet",
+      "status": "exact",
+      "rows": 50533
+    },
+    {
+      "path": "artifacts/runs/primary/ALL-MODELS/fits/xgboost_market_matched_h1_2022/train.parquet",
+      "status": "exact",
+      "rows": 135182
+    },
+    {
+      "path": "artifacts/runs/primary/ALL-MODELS/fits/xgboost_market_matched_h1_2022/test.parquet",
+      "status": "exact",
+      "rows": 42433
+    },
+    {
+      "path": "artifacts/runs/primary/ALL-MODELS/fits/xgboost_market_matched_h1_2022/alarms.csv",
+      "status": "exact",
+      "rows": 82
+    },
+    {
+      "path": "artifacts/runs/primary/ALL-MODELS/fits/xgboost_market_matched_h1_2023/inner_train.parquet",
+      "status": "exact",
+      "rows": 135182
+    },
+    {
+      "path": "artifacts/runs/primary/ALL-MODELS/fits/xgboost_market_matched_h1_2023/inner_val.parquet",
+      "status": "exact",
+      "rows": 42358
+    },
+    {
+      "path": "artifacts/runs/primary/ALL-MODELS/fits/xgboost_market_matched_h1_2023/train.parquet",
+      "status": "exact",
+      "rows": 177827
+    },
+    {
+      "path": "artifacts/runs/primary/ALL-MODELS/fits/xgboost_market_matched_h1_2023/test.parquet",
+      "status": "exact",
+      "rows": 37642
+    },
+    {
+      "path": "artifacts/runs/primary/ALL-MODELS/fits/xgboost_market_matched_h1_2023/alarms.csv",
+      "status": "exact",
+      "rows": 16
+    },
+    {
+      "path": "artifacts/runs/primary/ALL-MODELS/fits/xgboost_market_matched_h1_2024/inner_train.parquet",
+      "status": "exact",
+      "rows": 177827
+    },
+    {
+      "path": "artifacts/runs/primary/ALL-MODELS/fits/xgboost_market_matched_h1_2024/inner_val.parquet",
+      "status": "exact",
+      "rows": 37561
+    },
+    {
+      "path": "artifacts/runs/primary/ALL-MODELS/fits/xgboost_market_matched_h1_2024/train.parquet",
+      "status": "exact",
+      "rows": 215535
+    },
+    {
+      "path": "artifacts/runs/primary/ALL-MODELS/fits/xgboost_market_matched_h1_2024/test.parquet",
+      "status": "exact",
+      "rows": 28055
+    },
+    {
+      "path": "artifacts/runs/primary/ALL-MODELS/fits/xgboost_market_matched_h1_2024/alarms.csv",
+      "status": "exact",
+      "rows": 56
+    },
+    {
+      "path": "artifacts/runs/primary/ALL-MODELS/fits/xgboost_market_matched_h1_2025/inner_train.parquet",
+      "status": "exact",
+      "rows": 215535
+    },
+    {
+      "path": "artifacts/runs/primary/ALL-MODELS/fits/xgboost_market_matched_h1_2025/inner_val.parquet",
+      "status": "exact",
+      "rows": 27979
+    },
+    {
+      "path": "artifacts/runs/primary/ALL-MODELS/fits/xgboost_market_matched_h1_2025/train.parquet",
+      "status": "exact",
+      "rows": 243678
+    },
+    {
+      "path": "artifacts/runs/primary/ALL-MODELS/fits/xgboost_market_matched_h1_2025/test.parquet",
+      "status": "exact",
+      "rows": 24108
+    },
+    {
+      "path": "artifacts/runs/primary/ALL-MODELS/fits/xgboost_market_matched_h1_2025/alarms.csv",
+      "status": "exact",
+      "rows": 14
+    },
+    {
+      "path": "artifacts/runs/primary/ALL-MODELS/fits/xgboost_market_matched_h24_2021/inner_train.parquet",
+      "status": "exact",
+      "rows": 35306
+    },
+    {
+      "path": "artifacts/runs/primary/ALL-MODELS/fits/xgboost_market_matched_h24_2021/inner_val.parquet",
+      "status": "exact",
+      "rows": 48612
+    },
+    {
+      "path": "artifacts/runs/primary/ALL-MODELS/fits/xgboost_market_matched_h24_2021/train.parquet",
+      "status": "exact",
+      "rows": 84120
+    },
+    {
+      "path": "artifacts/runs/primary/ALL-MODELS/fits/xgboost_market_matched_h24_2021/test.parquet",
+      "status": "exact",
+      "rows": 50657
+    },
+    {
+      "path": "artifacts/runs/primary/ALL-MODELS/fits/xgboost_market_matched_h24_2021/alarms.csv",
+      "status": "exact",
+      "rows": 166
+    },
+    {
+      "path": "artifacts/runs/primary/ALL-MODELS/fits/xgboost_market_matched_h24_2022/inner_train.parquet",
+      "status": "exact",
+      "rows": 84120
+    },
+    {
+      "path": "artifacts/runs/primary/ALL-MODELS/fits/xgboost_market_matched_h24_2022/inner_val.parquet",
+      "status": "exact",
+      "rows": 50510
+    },
+    {
+      "path": "artifacts/runs/primary/ALL-MODELS/fits/xgboost_market_matched_h24_2022/train.parquet",
+      "status": "exact",
+      "rows": 134921
+    },
+    {
+      "path": "artifacts/runs/primary/ALL-MODELS/fits/xgboost_market_matched_h24_2022/test.parquet",
+      "status": "exact",
+      "rows": 41233
+    },
+    {
+      "path": "artifacts/runs/primary/ALL-MODELS/fits/xgboost_market_matched_h24_2022/alarms.csv",
+      "status": "exact",
+      "rows": 11
+    },
+    {
+      "path": "artifacts/runs/primary/ALL-MODELS/fits/xgboost_market_matched_h24_2023/inner_train.parquet",
+      "status": "exact",
+      "rows": 134921
+    },
+    {
+      "path": "artifacts/runs/primary/ALL-MODELS/fits/xgboost_market_matched_h24_2023/inner_val.parquet",
+      "status": "exact",
+      "rows": 41158
+    },
+    {
+      "path": "artifacts/runs/primary/ALL-MODELS/fits/xgboost_market_matched_h24_2023/train.parquet",
+      "status": "exact",
+      "rows": 176366
+    },
+    {
+      "path": "artifacts/runs/primary/ALL-MODELS/fits/xgboost_market_matched_h24_2023/test.parquet",
+      "status": "exact",
+      "rows": 37390
+    },
+    {
+      "path": "artifacts/runs/primary/ALL-MODELS/fits/xgboost_market_matched_h24_2023/alarms.csv",
+      "status": "exact",
+      "rows": 23
+    },
+    {
+      "path": "artifacts/runs/primary/ALL-MODELS/fits/xgboost_market_matched_h24_2024/inner_train.parquet",
+      "status": "exact",
+      "rows": 176366
+    },
+    {
+      "path": "artifacts/runs/primary/ALL-MODELS/fits/xgboost_market_matched_h24_2024/inner_val.parquet",
+      "status": "exact",
+      "rows": 37309
+    },
+    {
+      "path": "artifacts/runs/primary/ALL-MODELS/fits/xgboost_market_matched_h24_2024/train.parquet",
+      "status": "exact",
+      "rows": 213822
+    },
+    {
+      "path": "artifacts/runs/primary/ALL-MODELS/fits/xgboost_market_matched_h24_2024/test.parquet",
+      "status": "exact",
+      "rows": 28026
+    },
+    {
+      "path": "artifacts/runs/primary/ALL-MODELS/fits/xgboost_market_matched_h24_2024/alarms.csv",
+      "status": "exact",
+      "rows": 77
+    },
+    {
+      "path": "artifacts/runs/primary/ALL-MODELS/fits/xgboost_market_matched_h24_2025/inner_train.parquet",
+      "status": "exact",
+      "rows": 213822
+    },
+    {
+      "path": "artifacts/runs/primary/ALL-MODELS/fits/xgboost_market_matched_h24_2025/inner_val.parquet",
+      "status": "exact",
+      "rows": 27959
+    },
+    {
+      "path": "artifacts/runs/primary/ALL-MODELS/fits/xgboost_market_matched_h24_2025/train.parquet",
+      "status": "exact",
+      "rows": 241945
+    },
+    {
+      "path": "artifacts/runs/primary/ALL-MODELS/fits/xgboost_market_matched_h24_2025/test.parquet",
+      "status": "exact",
+      "rows": 23970
+    },
+    {
+      "path": "artifacts/runs/primary/ALL-MODELS/fits/xgboost_market_matched_h24_2025/alarms.csv",
+      "status": "exact",
+      "rows": 30
+    },
+    {
+      "path": "artifacts/runs/primary/ALL-MODELS/fits/xgboost_market_matched_h6_2021/inner_train.parquet",
+      "status": "exact",
+      "rows": 35401
+    },
+    {
+      "path": "artifacts/runs/primary/ALL-MODELS/fits/xgboost_market_matched_h6_2021/inner_val.parquet",
+      "status": "exact",
+      "rows": 48701
+    },
+    {
+      "path": "artifacts/runs/primary/ALL-MODELS/fits/xgboost_market_matched_h6_2021/train.parquet",
+      "status": "exact",
+      "rows": 84304
+    },
+    {
+      "path": "artifacts/runs/primary/ALL-MODELS/fits/xgboost_market_matched_h6_2021/test.parquet",
+      "status": "exact",
+      "rows": 50675
+    },
+    {
+      "path": "artifacts/runs/primary/ALL-MODELS/fits/xgboost_market_matched_h6_2021/alarms.csv",
+      "status": "exact",
+      "rows": 161
+    },
+    {
+      "path": "artifacts/runs/primary/ALL-MODELS/fits/xgboost_market_matched_h6_2022/inner_train.parquet",
+      "status": "exact",
+      "rows": 84304
+    },
+    {
+      "path": "artifacts/runs/primary/ALL-MODELS/fits/xgboost_market_matched_h6_2022/inner_val.parquet",
+      "status": "exact",
+      "rows": 50528
+    },
+    {
+      "path": "artifacts/runs/primary/ALL-MODELS/fits/xgboost_market_matched_h6_2022/train.parquet",
+      "status": "exact",
+      "rows": 135123
+    },
+    {
+      "path": "artifacts/runs/primary/ALL-MODELS/fits/xgboost_market_matched_h6_2022/test.parquet",
+      "status": "exact",
+      "rows": 42151
+    },
+    {
+      "path": "artifacts/runs/primary/ALL-MODELS/fits/xgboost_market_matched_h6_2022/alarms.csv",
+      "status": "exact",
+      "rows": 44
+    },
+    {
+      "path": "artifacts/runs/primary/ALL-MODELS/fits/xgboost_market_matched_h6_2023/inner_train.parquet",
+      "status": "exact",
+      "rows": 135123
+    },
+    {
+      "path": "artifacts/runs/primary/ALL-MODELS/fits/xgboost_market_matched_h6_2023/inner_val.parquet",
+      "status": "exact",
+      "rows": 42076
+    },
+    {
+      "path": "artifacts/runs/primary/ALL-MODELS/fits/xgboost_market_matched_h6_2023/train.parquet",
+      "status": "exact",
+      "rows": 177486
+    },
+    {
+      "path": "artifacts/runs/primary/ALL-MODELS/fits/xgboost_market_matched_h6_2023/test.parquet",
+      "status": "exact",
+      "rows": 37589
+    },
+    {
+      "path": "artifacts/runs/primary/ALL-MODELS/fits/xgboost_market_matched_h6_2023/alarms.csv",
+      "status": "exact",
+      "rows": 26
+    },
+    {
+      "path": "artifacts/runs/primary/ALL-MODELS/fits/xgboost_market_matched_h6_2024/inner_train.parquet",
+      "status": "exact",
+      "rows": 177486
+    },
+    {
+      "path": "artifacts/runs/primary/ALL-MODELS/fits/xgboost_market_matched_h6_2024/inner_val.parquet",
+      "status": "exact",
+      "rows": 37508
+    },
+    {
+      "path": "artifacts/runs/primary/ALL-MODELS/fits/xgboost_market_matched_h6_2024/train.parquet",
+      "status": "exact",
+      "rows": 215141
+    },
+    {
+      "path": "artifacts/runs/primary/ALL-MODELS/fits/xgboost_market_matched_h6_2024/test.parquet",
+      "status": "exact",
+      "rows": 28050
+    },
+    {
+      "path": "artifacts/runs/primary/ALL-MODELS/fits/xgboost_market_matched_h6_2024/alarms.csv",
+      "status": "exact",
+      "rows": 59
+    },
+    {
+      "path": "artifacts/runs/primary/ALL-MODELS/fits/xgboost_market_matched_h6_2025/inner_train.parquet",
+      "status": "exact",
+      "rows": 215141
+    },
+    {
+      "path": "artifacts/runs/primary/ALL-MODELS/fits/xgboost_market_matched_h6_2025/inner_val.parquet",
+      "status": "exact",
+      "rows": 27974
+    },
+    {
+      "path": "artifacts/runs/primary/ALL-MODELS/fits/xgboost_market_matched_h6_2025/train.parquet",
+      "status": "exact",
+      "rows": 243279
+    },
+    {
+      "path": "artifacts/runs/primary/ALL-MODELS/fits/xgboost_market_matched_h6_2025/test.parquet",
+      "status": "exact",
+      "rows": 24076
+    },
+    {
+      "path": "artifacts/runs/primary/ALL-MODELS/fits/xgboost_market_matched_h6_2025/alarms.csv",
+      "status": "exact",
+      "rows": 16
+    },
+    {
+      "path": "artifacts/runs/primary/ALL-MODELS/fits/xgboost_market_onchain_h1_2021/inner_train.parquet",
+      "status": "exact",
+      "rows": 35431
+    },
+    {
+      "path": "artifacts/runs/primary/ALL-MODELS/fits/xgboost_market_onchain_h1_2021/inner_val.parquet",
+      "status": "exact",
+      "rows": 48725
+    },
+    {
+      "path": "artifacts/runs/primary/ALL-MODELS/fits/xgboost_market_onchain_h1_2021/train.parquet",
+      "status": "exact",
+      "rows": 84358
+    },
+    {
+      "path": "artifacts/runs/primary/ALL-MODELS/fits/xgboost_market_onchain_h1_2021/test.parquet",
+      "status": "exact",
+      "rows": 50680
+    },
+    {
+      "path": "artifacts/runs/primary/ALL-MODELS/fits/xgboost_market_onchain_h1_2021/alarms.csv",
+      "status": "exact",
+      "rows": 548
+    },
+    {
+      "path": "artifacts/runs/primary/ALL-MODELS/fits/xgboost_market_onchain_h1_2022/inner_train.parquet",
+      "status": "exact",
+      "rows": 84358
+    },
+    {
+      "path": "artifacts/runs/primary/ALL-MODELS/fits/xgboost_market_onchain_h1_2022/inner_val.parquet",
+      "status": "exact",
+      "rows": 50533
+    },
+    {
+      "path": "artifacts/runs/primary/ALL-MODELS/fits/xgboost_market_onchain_h1_2022/train.parquet",
+      "status": "exact",
+      "rows": 135182
+    },
+    {
+      "path": "artifacts/runs/primary/ALL-MODELS/fits/xgboost_market_onchain_h1_2022/test.parquet",
+      "status": "exact",
+      "rows": 42433
+    },
+    {
+      "path": "artifacts/runs/primary/ALL-MODELS/fits/xgboost_market_onchain_h1_2022/alarms.csv",
+      "status": "exact",
+      "rows": 143
+    },
+    {
+      "path": "artifacts/runs/primary/ALL-MODELS/fits/xgboost_market_onchain_h1_2023/inner_train.parquet",
+      "status": "exact",
+      "rows": 135182
+    },
+    {
+      "path": "artifacts/runs/primary/ALL-MODELS/fits/xgboost_market_onchain_h1_2023/inner_val.parquet",
+      "status": "exact",
+      "rows": 42358
+    },
+    {
+      "path": "artifacts/runs/primary/ALL-MODELS/fits/xgboost_market_onchain_h1_2023/train.parquet",
+      "status": "exact",
+      "rows": 177827
+    },
+    {
+      "path": "artifacts/runs/primary/ALL-MODELS/fits/xgboost_market_onchain_h1_2023/test.parquet",
+      "status": "exact",
+      "rows": 37642
+    },
+    {
+      "path": "artifacts/runs/primary/ALL-MODELS/fits/xgboost_market_onchain_h1_2023/alarms.csv",
+      "status": "exact",
+      "rows": 34
+    },
+    {
+      "path": "artifacts/runs/primary/ALL-MODELS/fits/xgboost_market_onchain_h1_2024/inner_train.parquet",
+      "status": "exact",
+      "rows": 177827
+    },
+    {
+      "path": "artifacts/runs/primary/ALL-MODELS/fits/xgboost_market_onchain_h1_2024/inner_val.parquet",
+      "status": "exact",
+      "rows": 37561
+    },
+    {
+      "path": "artifacts/runs/primary/ALL-MODELS/fits/xgboost_market_onchain_h1_2024/train.parquet",
+      "status": "exact",
+      "rows": 215535
+    },
+    {
+      "path": "artifacts/runs/primary/ALL-MODELS/fits/xgboost_market_onchain_h1_2024/test.parquet",
+      "status": "exact",
+      "rows": 28055
+    },
+    {
+      "path": "artifacts/runs/primary/ALL-MODELS/fits/xgboost_market_onchain_h1_2024/alarms.csv",
+      "status": "exact",
+      "rows": 28
+    },
+    {
+      "path": "artifacts/runs/primary/ALL-MODELS/fits/xgboost_market_onchain_h1_2025/inner_train.parquet",
+      "status": "exact",
+      "rows": 215535
+    },
+    {
+      "path": "artifacts/runs/primary/ALL-MODELS/fits/xgboost_market_onchain_h1_2025/inner_val.parquet",
+      "status": "exact",
+      "rows": 27979
+    },
+    {
+      "path": "artifacts/runs/primary/ALL-MODELS/fits/xgboost_market_onchain_h1_2025/train.parquet",
+      "status": "exact",
+      "rows": 243678
+    },
+    {
+      "path": "artifacts/runs/primary/ALL-MODELS/fits/xgboost_market_onchain_h1_2025/test.parquet",
+      "status": "exact",
+      "rows": 24108
+    },
+    {
+      "path": "artifacts/runs/primary/ALL-MODELS/fits/xgboost_market_onchain_h1_2025/alarms.csv",
+      "status": "exact",
+      "rows": 13
+    },
+    {
+      "path": "artifacts/runs/primary/ALL-MODELS/fits/xgboost_market_onchain_h24_2021/inner_train.parquet",
+      "status": "exact",
+      "rows": 35306
+    },
+    {
+      "path": "artifacts/runs/primary/ALL-MODELS/fits/xgboost_market_onchain_h24_2021/inner_val.parquet",
+      "status": "exact",
+      "rows": 48612
+    },
+    {
+      "path": "artifacts/runs/primary/ALL-MODELS/fits/xgboost_market_onchain_h24_2021/train.parquet",
+      "status": "exact",
+      "rows": 84120
+    },
+    {
+      "path": "artifacts/runs/primary/ALL-MODELS/fits/xgboost_market_onchain_h24_2021/test.parquet",
+      "status": "exact",
+      "rows": 50657
+    },
+    {
+      "path": "artifacts/runs/primary/ALL-MODELS/fits/xgboost_market_onchain_h24_2021/alarms.csv",
+      "status": "exact",
+      "rows": 112
+    },
+    {
+      "path": "artifacts/runs/primary/ALL-MODELS/fits/xgboost_market_onchain_h24_2022/inner_train.parquet",
+      "status": "exact",
+      "rows": 84120
+    },
+    {
+      "path": "artifacts/runs/primary/ALL-MODELS/fits/xgboost_market_onchain_h24_2022/inner_val.parquet",
+      "status": "exact",
+      "rows": 50510
+    },
+    {
+      "path": "artifacts/runs/primary/ALL-MODELS/fits/xgboost_market_onchain_h24_2022/train.parquet",
+      "status": "exact",
+      "rows": 134921
+    },
+    {
+      "path": "artifacts/runs/primary/ALL-MODELS/fits/xgboost_market_onchain_h24_2022/test.parquet",
+      "status": "exact",
+      "rows": 41233
+    },
+    {
+      "path": "artifacts/runs/primary/ALL-MODELS/fits/xgboost_market_onchain_h24_2022/alarms.csv",
+      "status": "exact",
+      "rows": 17
+    },
+    {
+      "path": "artifacts/runs/primary/ALL-MODELS/fits/xgboost_market_onchain_h24_2023/inner_train.parquet",
+      "status": "exact",
+      "rows": 134921
+    },
+    {
+      "path": "artifacts/runs/primary/ALL-MODELS/fits/xgboost_market_onchain_h24_2023/inner_val.parquet",
+      "status": "exact",
+      "rows": 41158
+    },
+    {
+      "path": "artifacts/runs/primary/ALL-MODELS/fits/xgboost_market_onchain_h24_2023/train.parquet",
+      "status": "exact",
+      "rows": 176366
+    },
+    {
+      "path": "artifacts/runs/primary/ALL-MODELS/fits/xgboost_market_onchain_h24_2023/test.parquet",
+      "status": "exact",
+      "rows": 37390
+    },
+    {
+      "path": "artifacts/runs/primary/ALL-MODELS/fits/xgboost_market_onchain_h24_2023/alarms.csv",
+      "status": "exact",
+      "rows": 19
+    },
+    {
+      "path": "artifacts/runs/primary/ALL-MODELS/fits/xgboost_market_onchain_h24_2024/inner_train.parquet",
+      "status": "exact",
+      "rows": 176366
+    },
+    {
+      "path": "artifacts/runs/primary/ALL-MODELS/fits/xgboost_market_onchain_h24_2024/inner_val.parquet",
+      "status": "exact",
+      "rows": 37309
+    },
+    {
+      "path": "artifacts/runs/primary/ALL-MODELS/fits/xgboost_market_onchain_h24_2024/train.parquet",
+      "status": "exact",
+      "rows": 213822
+    },
+    {
+      "path": "artifacts/runs/primary/ALL-MODELS/fits/xgboost_market_onchain_h24_2024/test.parquet",
+      "status": "exact",
+      "rows": 28026
+    },
+    {
+      "path": "artifacts/runs/primary/ALL-MODELS/fits/xgboost_market_onchain_h24_2024/alarms.csv",
+      "status": "exact",
+      "rows": 66
+    },
+    {
+      "path": "artifacts/runs/primary/ALL-MODELS/fits/xgboost_market_onchain_h24_2025/inner_train.parquet",
+      "status": "exact",
+      "rows": 213822
+    },
+    {
+      "path": "artifacts/runs/primary/ALL-MODELS/fits/xgboost_market_onchain_h24_2025/inner_val.parquet",
+      "status": "exact",
+      "rows": 27959
+    },
+    {
+      "path": "artifacts/runs/primary/ALL-MODELS/fits/xgboost_market_onchain_h24_2025/train.parquet",
+      "status": "exact",
+      "rows": 241945
+    },
+    {
+      "path": "artifacts/runs/primary/ALL-MODELS/fits/xgboost_market_onchain_h24_2025/test.parquet",
+      "status": "exact",
+      "rows": 23970
+    },
+    {
+      "path": "artifacts/runs/primary/ALL-MODELS/fits/xgboost_market_onchain_h24_2025/alarms.csv",
+      "status": "exact",
+      "rows": 30
+    },
+    {
+      "path": "artifacts/runs/primary/ALL-MODELS/fits/xgboost_market_onchain_h6_2021/inner_train.parquet",
+      "status": "exact",
+      "rows": 35401
+    },
+    {
+      "path": "artifacts/runs/primary/ALL-MODELS/fits/xgboost_market_onchain_h6_2021/inner_val.parquet",
+      "status": "exact",
+      "rows": 48701
+    },
+    {
+      "path": "artifacts/runs/primary/ALL-MODELS/fits/xgboost_market_onchain_h6_2021/train.parquet",
+      "status": "exact",
+      "rows": 84304
+    },
+    {
+      "path": "artifacts/runs/primary/ALL-MODELS/fits/xgboost_market_onchain_h6_2021/test.parquet",
+      "status": "exact",
+      "rows": 50675
+    },
+    {
+      "path": "artifacts/runs/primary/ALL-MODELS/fits/xgboost_market_onchain_h6_2021/alarms.csv",
+      "status": "exact",
+      "rows": 265
+    },
+    {
+      "path": "artifacts/runs/primary/ALL-MODELS/fits/xgboost_market_onchain_h6_2022/inner_train.parquet",
+      "status": "exact",
+      "rows": 84304
+    },
+    {
+      "path": "artifacts/runs/primary/ALL-MODELS/fits/xgboost_market_onchain_h6_2022/inner_val.parquet",
+      "status": "exact",
+      "rows": 50528
+    },
+    {
+      "path": "artifacts/runs/primary/ALL-MODELS/fits/xgboost_market_onchain_h6_2022/train.parquet",
+      "status": "exact",
+      "rows": 135123
+    },
+    {
+      "path": "artifacts/runs/primary/ALL-MODELS/fits/xgboost_market_onchain_h6_2022/test.parquet",
+      "status": "exact",
+      "rows": 42151
+    },
+    {
+      "path": "artifacts/runs/primary/ALL-MODELS/fits/xgboost_market_onchain_h6_2022/alarms.csv",
+      "status": "exact",
+      "rows": 61
+    },
+    {
+      "path": "artifacts/runs/primary/ALL-MODELS/fits/xgboost_market_onchain_h6_2023/inner_train.parquet",
+      "status": "exact",
+      "rows": 135123
+    },
+    {
+      "path": "artifacts/runs/primary/ALL-MODELS/fits/xgboost_market_onchain_h6_2023/inner_val.parquet",
+      "status": "exact",
+      "rows": 42076
+    },
+    {
+      "path": "artifacts/runs/primary/ALL-MODELS/fits/xgboost_market_onchain_h6_2023/train.parquet",
+      "status": "exact",
+      "rows": 177486
+    },
+    {
+      "path": "artifacts/runs/primary/ALL-MODELS/fits/xgboost_market_onchain_h6_2023/test.parquet",
+      "status": "exact",
+      "rows": 37589
+    },
+    {
+      "path": "artifacts/runs/primary/ALL-MODELS/fits/xgboost_market_onchain_h6_2023/alarms.csv",
+      "status": "exact",
+      "rows": 19
+    },
+    {
+      "path": "artifacts/runs/primary/ALL-MODELS/fits/xgboost_market_onchain_h6_2024/inner_train.parquet",
+      "status": "exact",
+      "rows": 177486
+    },
+    {
+      "path": "artifacts/runs/primary/ALL-MODELS/fits/xgboost_market_onchain_h6_2024/inner_val.parquet",
+      "status": "exact",
+      "rows": 37508
+    },
+    {
+      "path": "artifacts/runs/primary/ALL-MODELS/fits/xgboost_market_onchain_h6_2024/train.parquet",
+      "status": "exact",
+      "rows": 215141
+    },
+    {
+      "path": "artifacts/runs/primary/ALL-MODELS/fits/xgboost_market_onchain_h6_2024/test.parquet",
+      "status": "exact",
+      "rows": 28050
+    },
+    {
+      "path": "artifacts/runs/primary/ALL-MODELS/fits/xgboost_market_onchain_h6_2024/alarms.csv",
+      "status": "exact",
+      "rows": 62
+    },
+    {
+      "path": "artifacts/runs/primary/ALL-MODELS/fits/xgboost_market_onchain_h6_2025/inner_train.parquet",
+      "status": "exact",
+      "rows": 215141
+    },
+    {
+      "path": "artifacts/runs/primary/ALL-MODELS/fits/xgboost_market_onchain_h6_2025/inner_val.parquet",
+      "status": "exact",
+      "rows": 27974
+    },
+    {
+      "path": "artifacts/runs/primary/ALL-MODELS/fits/xgboost_market_onchain_h6_2025/train.parquet",
+      "status": "exact",
+      "rows": 243279
+    },
+    {
+      "path": "artifacts/runs/primary/ALL-MODELS/fits/xgboost_market_onchain_h6_2025/test.parquet",
+      "status": "exact",
+      "rows": 24076
+    },
+    {
+      "path": "artifacts/runs/primary/ALL-MODELS/fits/xgboost_market_onchain_h6_2025/alarms.csv",
+      "status": "exact",
+      "rows": 21
+    },
+    {
+      "path": "artifacts/runs/primary/ALL-MODELS/summary.csv",
+      "status": "exact",
+      "rows": 18
+    },
+    {
+      "path": "artifacts/runs/primary/ALL-MODELS/by_year.csv",
+      "status": "exact",
+      "rows": 90
+    },
+    {
+      "path": "artifacts/runs/primary/ALL-MODELS/alarm_events.csv",
+      "status": "exact",
+      "rows": 6918
+    },
+    {
+      "path": "reports/data_coverage/coverage.csv",
+      "status": "exact",
+      "rows": 24
+    },
+    {
+      "path": "reports/depeg_events/depeg_events_by_year.csv",
+      "status": "exact",
+      "rows": 9
+    },
+    {
+      "path": "reports/depeg_events/episode_event_mapping.csv",
+      "status": "exact",
+      "rows": 79
+    },
+    {
+      "path": "reports/depeg_events/event_classification.csv",
+      "status": "exact",
+      "rows": 56
+    },
+    {
+      "path": "reports/depeg_events/event_types_summary.csv",
+      "status": "exact",
+      "rows": 5
+    },
+    {
+      "path": "reports/depeg_events/grouped_depeg_events.csv",
+      "status": "exact",
+      "rows": 56
+    },
+    {
+      "path": "reports/model_interpretation/xgboost/shap_ranking_xgboost_t2_h24.csv",
+      "status": "exact",
+      "rows": 22
+    },
+    {
+      "path": "reports/model_interpretation/xgboost/shap_ranking_xgboost_t2_h6.csv",
+      "status": "exact",
+      "rows": 22
+    },
+    {
+      "path": "reports/model_results/benchmark.csv",
+      "status": "exact",
+      "rows": 4
+    },
+    {
+      "path": "reports/model_results/benchmark_diagnostics.csv",
+      "status": "exact",
+      "rows": 4
+    },
+    {
+      "path": "reports/model_results/model_comparison_by_coin.csv",
+      "status": "exact",
+      "rows": 108
+    },
+    {
+      "path": "reports/model_results/model_comparison_by_coin_diagnostics.csv",
+      "status": "exact",
+      "rows": 108
+    },
+    {
+      "path": "reports/model_results/model_comparison_by_event_type.csv",
+      "status": "exact",
+      "rows": 90
+    },
+    {
+      "path": "reports/model_results/model_comparison_by_year.csv",
+      "status": "exact",
+      "rows": 90
+    },
+    {
+      "path": "reports/model_results/model_comparison_by_year_diagnostics.csv",
+      "status": "exact",
+      "rows": 90
+    },
+    {
+      "path": "reports/model_results/model_comparison_summary.csv",
+      "status": "exact",
+      "rows": 18
+    },
+    {
+      "path": "reports/model_results/model_comparison_summary_diagnostics.csv",
+      "status": "exact",
+      "rows": 18
+    },
+    {
+      "path": "reports/robustness/alarm_smoothing/alarm_events.csv",
+      "status": "exact",
+      "rows": 4574
+    },
+    {
+      "path": "reports/robustness/alarm_smoothing/by_year.csv",
+      "status": "exact",
+      "rows": 120
+    },
+    {
+      "path": "reports/robustness/alarm_smoothing/summary.csv",
+      "status": "exact",
+      "rows": 24
+    },
+    {
+      "path": "reports/robustness/alt_definitions/metrics.csv",
+      "status": "exact",
+      "rows": 144
+    },
+    {
+      "path": "reports/robustness/alt_definitions/onchain_effects.csv",
+      "status": "exact",
+      "rows": 72
+    },
+    {
+      "path": "reports/robustness/alt_definitions/recall_leaders.csv",
+      "status": "exact",
+      "rows": 48
+    },
+    {
+      "path": "reports/robustness/or_combination/alarm_events.csv",
+      "status": "exact",
+      "rows": 13196
+    },
+    {
+      "path": "reports/robustness/or_combination/by_year.csv",
+      "status": "exact",
+      "rows": 180
+    },
+    {
+      "path": "reports/robustness/or_combination/summary.csv",
+      "status": "exact",
+      "rows": 36
+    },
+    {
+      "path": "reports/validation_checks/calibration_audit.csv",
+      "status": "exact",
+      "rows": 90
+    },
+    {
+      "check": "All fit pipeline hashes",
+      "status": "passed"
+    },
+    {
+      "path": "reports/model_interpretation/log_reg/lr_coefficients.csv",
+      "status": "exact scientific values; expected run_id difference validated",
+      "rows": 540
+    },
+    {
+      "path": "reports/model_interpretation/random_forest/rf_importance_by_year.csv",
+      "status": "exact scientific values; expected run_id difference validated",
+      "rows": 480
+    }
+  ],
+  "differences": [],
+  "original_report_changes": [
+    {
+      "cell": [
+        "random_forest",
+        "market_matched",
+        1,
+        "exhaustive_lowest"
+      ],
+      "metric": "average_precision",
+      "original": 0.002174565640152802,
+      "stable": 0.00217453899741403
+    },
+    {
+      "cell": [
+        "random_forest",
+        "market_matched",
+        6,
+        "exhaustive_lowest"
+      ],
+      "metric": "average_precision",
+      "original": 0.005200923985151815,
+      "stable": 0.0052020165595908245
+    },
+    {
+      "cell": [
+        "random_forest",
+        "market_matched",
+        24,
+        "exhaustive_lowest"
+      ],
+      "metric": "average_precision",
+      "original": 0.017958907603194022,
+      "stable": 0.017956703587783535
+    },
+    {
+      "cell": [
+        "random_forest",
+        "market_onchain",
+        1,
+        "exhaustive_lowest"
+      ],
+      "metric": "false_alarms",
+      "original": "292",
+      "stable": "294"
+    },
+    {
+      "cell": [
+        "random_forest",
+        "market_onchain",
+        1,
+        "exhaustive_lowest"
+      ],
+      "metric": "false_alarms_per_coin_month",
+      "original": 0.9240506329113924,
+      "stable": 0.930379746835443
+    },
+    {
+      "cell": [
+        "random_forest",
+        "market_onchain",
+        1,
+        "exhaustive_lowest"
+      ],
+      "metric": "average_precision",
+      "original": 0.000904236160063761,
+      "stable": 0.0009056990963630595
+    },
+    {
+      "cell": [
+        "random_forest",
+        "market_onchain",
+        6,
+        "exhaustive_lowest"
+      ],
+      "metric": "average_precision",
+      "original": 0.004867767218715068,
+      "stable": 0.004869095117299501
+    },
+    {
+      "cell": [
+        "random_forest",
+        "market_onchain",
+        24,
+        "exhaustive_lowest"
+      ],
+      "metric": "false_alarms",
+      "original": "184",
+      "stable": "183"
+    },
+    {
+      "cell": [
+        "random_forest",
+        "market_onchain",
+        24,
+        "exhaustive_lowest"
+      ],
+      "metric": "false_alarms_per_coin_month",
+      "original": 0.5822784810126582,
+      "stable": 0.5791139240506329
+    },
+    {
+      "cell": [
+        "random_forest",
+        "market_onchain",
+        24,
+        "exhaustive_lowest"
+      ],
+      "metric": "average_precision",
+      "original": 0.017288811254813977,
+      "stable": 0.017289585587408552
+    },
+    {
+      "cell": [
+        "xgboost",
+        "market_matched",
+        1,
+        "exhaustive_lowest"
+      ],
+      "metric": "false_alarms",
+      "original": "631",
+      "stable": "644"
+    },
+    {
+      "cell": [
+        "xgboost",
+        "market_matched",
+        1,
+        "exhaustive_lowest"
+      ],
+      "metric": "false_alarms_per_coin_month",
+      "original": 1.9968354430379747,
+      "stable": 2.037974683544304
+    },
+    {
+      "cell": [
+        "xgboost",
+        "market_matched",
+        1,
+        "exhaustive_lowest"
+      ],
+      "metric": "average_precision",
+      "original": 0.0009647274611565813,
+      "stable": 0.0010150734166198242
+    },
+    {
+      "cell": [
+        "xgboost",
+        "market_matched",
+        6,
+        "exhaustive_lowest"
+      ],
+      "metric": "median_lead_hours",
+      "original": 2.5,
+      "stable": 3.0
+    },
+    {
+      "cell": [
+        "xgboost",
+        "market_matched",
+        6,
+        "exhaustive_lowest"
+      ],
+      "metric": "false_alarms",
+      "original": "303",
+      "stable": "300"
+    },
+    {
+      "cell": [
+        "xgboost",
+        "market_matched",
+        6,
+        "exhaustive_lowest"
+      ],
+      "metric": "false_alarms_per_coin_month",
+      "original": 0.9588607594936709,
+      "stable": 0.9493670886075949
+    },
+    {
+      "cell": [
+        "xgboost",
+        "market_matched",
+        6,
+        "exhaustive_lowest"
+      ],
+      "metric": "average_precision",
+      "original": 0.005263923521842204,
+      "stable": 0.005609594087691604
+    },
+    {
+      "cell": [
+        "xgboost",
+        "market_matched",
+        24,
+        "exhaustive_lowest"
+      ],
+      "metric": "median_lead_hours",
+      "original": 5.5,
+      "stable": 6.5
+    },
+    {
+      "cell": [
+        "xgboost",
+        "market_matched",
+        24,
+        "exhaustive_lowest"
+      ],
+      "metric": "false_alarms",
+      "original": "296",
+      "stable": "301"
+    },
+    {
+      "cell": [
+        "xgboost",
+        "market_matched",
+        24,
+        "exhaustive_lowest"
+      ],
+      "metric": "false_alarms_per_coin_month",
+      "original": 0.9367088607594937,
+      "stable": 0.9525316455696202
+    },
+    {
+      "cell": [
+        "xgboost",
+        "market_matched",
+        24,
+        "exhaustive_lowest"
+      ],
+      "metric": "average_precision",
+      "original": 0.014811499066056942,
+      "stable": 0.014384583057782695
+    },
+    {
+      "cell": [
+        "xgboost",
+        "market_onchain",
+        1,
+        "exhaustive_lowest"
+      ],
+      "metric": "false_alarms",
+      "original": "766",
+      "stable": "764"
+    },
+    {
+      "cell": [
+        "xgboost",
+        "market_onchain",
+        1,
+        "exhaustive_lowest"
+      ],
+      "metric": "false_alarms_per_coin_month",
+      "original": 2.4240506329113924,
+      "stable": 2.4177215189873418
+    },
+    {
+      "cell": [
+        "xgboost",
+        "market_onchain",
+        1,
+        "exhaustive_lowest"
+      ],
+      "metric": "average_precision",
+      "original": 0.0014576844635862947,
+      "stable": 0.0012891422770669493
+    },
+    {
+      "cell": [
+        "xgboost",
+        "market_onchain",
+        6,
+        "exhaustive_lowest"
+      ],
+      "metric": "false_alarms",
+      "original": "421",
+      "stable": "423"
+    },
+    {
+      "cell": [
+        "xgboost",
+        "market_onchain",
+        6,
+        "exhaustive_lowest"
+      ],
+      "metric": "false_alarms_per_coin_month",
+      "original": 1.3322784810126582,
+      "stable": 1.3386075949367089
+    },
+    {
+      "cell": [
+        "xgboost",
+        "market_onchain",
+        6,
+        "exhaustive_lowest"
+      ],
+      "metric": "average_precision",
+      "original": 0.004386863462442705,
+      "stable": 0.0042968857026542025
+    },
+    {
+      "cell": [
+        "xgboost",
+        "market_onchain",
+        24,
+        "exhaustive_lowest"
+      ],
+      "metric": "false_alarms",
+      "original": "245",
+      "stable": "238"
+    },
+    {
+      "cell": [
+        "xgboost",
+        "market_onchain",
+        24,
+        "exhaustive_lowest"
+      ],
+      "metric": "false_alarms_per_coin_month",
+      "original": 0.7753164556962026,
+      "stable": 0.7531645569620253
+    },
+    {
+      "cell": [
+        "xgboost",
+        "market_onchain",
+        24,
+        "exhaustive_lowest"
+      ],
+      "metric": "average_precision",
+      "original": 0.01631451583617477,
+      "stable": 0.016438647393574292
+    }
+  ],
+  "scope": "Exact dataset, partitions, fit settings, cutoffs, predictions, alarms and report CSV comparison; no figures or path-bearing manifests byte comparison",
+  "normalisation_notes": [
+    "Workspace paths normalised. Interpretation-table run_id values differ as expected; each was validated against its own run manifest. All remaining columns match exactly."
+  ]
+}

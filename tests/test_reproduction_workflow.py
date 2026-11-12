@@ -72,6 +72,52 @@ class ReproductionWorkflowTests(unittest.TestCase):
                 b'retained source',
             )
 
+    def test_processed_mode_copies_frozen_inputs_without_rebuilding(self):
+        """Retraining uses exact retained bytes in an isolated workspace."""
+        with tempfile.TemporaryDirectory() as temporary:
+            root = Path(temporary)
+            paths = ['raw/hourly_stablecoin.parquet', 'raw/dune_onchain.zip',
+                     'processed/master.parquet', 'processed/depeg_episodes.parquet',
+                     'processed/dataset_metadata.json']
+            for name in paths:
+                path = root / 'data' / name
+                path.parent.mkdir(parents=True, exist_ok=True)
+                path.write_bytes(name.encode())
+            output = root / 'fresh'
+            env = dict(os.environ, STABLECOIN_DATA_DIR=str(output / 'data'))
+            plan = reproduce.full_plan(output, from_processed=True)
+            self.assertEqual(plan[0][0], 'modelling.training.train_models')
+            self.assertFalse(any(m.startswith('data_processing.')
+                                 for m, _ in plan))
+            with patch.object(reproduce, 'ROOT', root), \
+                    patch.object(reproduce.subprocess, 'run'), \
+                    contextlib.redirect_stdout(io.StringIO()):
+                reproduce.run_full(output, plan, env, from_processed=True)
+            for name in paths:
+                self.assertEqual((output / 'data' / name).read_bytes(),
+                                 name.encode())
+            state = json.loads((output / 'reproduction.json').read_text())
+            self.assertEqual(state['input_mode'], 'retained-processed')
+            self.assertEqual(len(state['sources']), 5)
+
+    def test_saved_reports_use_published_run_and_workspace(self):
+        """Published report regeneration must not select superseded runs."""
+        baseline = {'run_dir': 'artifacts/final_run'}
+        with patch('modelling.utils.artifacts.published_baseline',
+                   return_value=baseline):
+            plan = reproduce.saved_plan()
+        self.assertNotIn('modelling.training.train_models',
+                         [module for module, _ in plan])
+        run = (reproduce.ROOT / baseline['run_dir']).resolve()
+        for module, args in plan:
+            if '--run-dir' in args:
+                self.assertEqual(args[args.index('--run-dir') + 1], str(run))
+            if module == 'modelling.reporting.by_coin':
+                self.assertEqual(args[args.index('--artifacts') + 1],
+                                 str(run.parent.parent))
+        self.assertIn('--include-h1', dict(plan)[
+            'modelling.reporting.calibration_audit'])
+
     def test_dry_run_has_no_output_side_effects(self):
         """Print the entire workflow without acquiring data or making files."""
         with tempfile.TemporaryDirectory() as temporary:

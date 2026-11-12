@@ -4,8 +4,8 @@ horizon_hours,band,duration_hours,config,recall_leaders,reference_recall_leaders
 6,0.005,2,market_matched,xgboost,logreg,True
 6,0.005,2,market_onchain,logreg,logreg,False
 6,0.005,3,market_matched,logreg,logreg,False
-6,0.005,3,market_onchain,logreg|random_forest,logreg,True
-6,0.005,4,market_matched,logreg,logreg,False
+6,0.005,3,market_onchain,logreg|random_forest|xgboost,logreg,True
+6,0.005,4,market_matched,logreg|xgboost,logreg,True
 6,0.005,4,market_onchain,xgboost,logreg,True
 6,0.01,1,market_matched,logreg,logreg,False
 6,0.01,1,market_onchain,logreg|xgboost,logreg,True
@@ -28,7 +28,7 @@ horizon_hours,band,duration_hours,config,recall_leaders,reference_recall_leaders
 24,0.005,2,market_matched,logreg,logreg,False
 24,0.005,2,market_onchain,logreg,logreg,False
 24,0.005,3,market_matched,logreg,logreg,False
-24,0.005,3,market_onchain,logreg|xgboost,logreg,True
+24,0.005,3,market_onchain,logreg,logreg,False
 24,0.005,4,market_matched,xgboost,logreg,True
 24,0.005,4,market_onchain,xgboost,logreg,True
 24,0.01,1,market_matched,logreg,logreg,False

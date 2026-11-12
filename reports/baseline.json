@@ -1,0 +1,21 @@
+{
+  "workspace": ".",
+  "run_dir": "artifacts/final_run",
+  "data_dir": "data",
+  "run_id": "a4b62db2-1fc8-42ec-9a5f-3a94999860f5",
+  "manifest_sha256": "9661514af8ee9deb580eabb4f2d24a7805b31d79e50c8e00d6da8b8241e99997",
+  "source_mode": "source-rebuild",
+  "input_relocations": {
+    "/Users/alyssacjx/Desktop/stablecoin-depegging-analysis/artifacts/reproduction-stable-a/data/processed/master.parquet": {
+      "path": "data/processed/master.parquet",
+      "sha256": "1486801a1bb5897be4ecc440e2a86b0d29a6a04e760d0ec36b076a3edc19cf38"
+    },
+    "/Users/alyssacjx/Desktop/stablecoin-depegging-analysis/artifacts/reproduction-stable-a/data/processed/depeg_episodes.parquet": {
+      "path": "data/processed/depeg_episodes.parquet",
+      "sha256": "d7047ce6633500aab03abcc1d6f07663d0fe87d2ad50a40573c6edb6e3a154d9"
+    }
+  },
+  "comparison": "reports/validation_checks/reproducibility/full_comparison.json",
+  "note": "One published reviewer run; independently reproduced before temporary workspaces were removed.",
+  "change_record": "docs/stable_reproduction_comparison.md"
+}

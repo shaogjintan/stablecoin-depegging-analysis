@@ -10,6 +10,7 @@ from sklearn.metrics import average_precision_score
 
 from data_processing.config import FIAT_COINS
 from modelling.utils.io import sha256
+from modelling.utils.artifacts import published_baseline
 from modelling.reporting.schema import HEADLINE_METRICS, write_comparison
 
 KEYS = ["model", "config", "horizon_hours", "policy"]
@@ -210,7 +211,9 @@ def main():
     """Write per-coin metrics for the scope of the current final summary."""
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument(
-        "--artifacts", type=Path, default=Path("artifacts")
+        "--artifacts", type=Path,
+        default=(Path(published_baseline()['run_dir']).parent.parent
+                 if published_baseline() else Path("artifacts")),
     )
     parser.add_argument(
         "--summary", type=Path,

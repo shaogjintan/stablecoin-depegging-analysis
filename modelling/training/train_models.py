@@ -78,6 +78,7 @@ def main():
                 purge_hours=PURGE_HOURS, embargo_hours=EMBARGO_HOURS,
                 protocol="practice inner_train -> calibrate inner_val -> refit train -> test; cutoff unchanged",
                 logreg_selection="calendar-year CV inside inner_train; keep selected C for refit",
+                rf_prediction_summation="serial tree order; fitting uses fixed n_jobs",
                 packages={p: importlib.metadata.version(p) for p in
                           ["numpy", "pandas", "scikit-learn", "xgboost"]},
                 input_sha256={str(p): sha256(p) for p in active_input_paths()})

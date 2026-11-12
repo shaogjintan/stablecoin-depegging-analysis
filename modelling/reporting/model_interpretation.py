@@ -69,6 +69,10 @@ def main():
     p.add_argument('--recompute-shap', action='store_true',
                    help='calculate SHAP from selected runs, not saved rankings')
     args = p.parse_args()
+    from modelling.utils.artifacts import published_baseline
+
+    if not args.run_dir and published_baseline():
+        args.recompute_shap = True
     runs = args.run_dir or RUNS
     if args.run_dir and not args.recompute_shap:
         p.error('--run-dir requires --recompute-shap to avoid old rankings')

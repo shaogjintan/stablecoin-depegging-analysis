@@ -18,11 +18,12 @@ import tempfile
 ROOT = Path(__file__).resolve().parents[1]
 
 
-def full_plan(output):
+def full_plan(output, from_processed=False):
     """Build ordered module commands sharing one reproduction workspace.
 
     Args:
         output: Absolute or repository-relative output directory.
+        from_processed: Retrain using the retained processed dataset.
 
     Returns:
         Ordered pairs of module names and command-line arguments.
@@ -33,7 +34,7 @@ def full_plan(output):
     run = runs / 'primary' / 'ALL-MODELS'
     selected = ['--run-dir', str(run)]
     results = reports / 'model_results'
-    return [
+    stages = [
         ('data_processing.build_market_features', []),
         ('data_processing.build_onchain_features', []),
         ('data_processing.build_dataset', ['--rebuild']),
@@ -67,10 +68,24 @@ def full_plan(output):
         ('modelling.reporting.model_interpretation', [*selected,
             '--recompute-shap', '--out-dir', str(reports / 'model_interpretation')]),
     ]
+    return stages[3:] if from_processed else stages
 
 
 def saved_plan():
     """Return the existing frozen-evidence report workflow without training."""
+    from modelling.utils.artifacts import published_baseline
+
+    baseline = published_baseline()
+    if baseline:
+        run = (ROOT / baseline['run_dir']).resolve()
+        original = str(ROOT / 'artifacts/runs/primary/ALL-MODELS')
+        original_runs = str(ROOT / 'artifacts/runs')
+        return [
+            (module, [str(run) if arg == original else
+                      str(run.parent.parent) if arg == original_runs else arg
+                      for arg in args])
+            for module, args in full_plan(ROOT)[4:]
+        ]
     return [(module, []) for module in [
         'data_processing.build_dataset',
         'modelling.reporting.model_results',
@@ -83,19 +98,26 @@ def saved_plan():
     ]]
 
 
-def run_full(output, plan, env):
+def run_full(output, plan, env, from_processed=False):
     """Execute a fresh local rebuild and record successful stages or failure.
 
     Args:
         output: Fresh output workspace; existing paths are rejected.
         plan: Ordered module commands from full_plan().
         env: Child-process environment scoped to the new dataset root.
+        from_processed: Copy the retained processed inputs without rebuilding.
     """
     from modelling.utils.io import sha256
 
     hourly = ROOT / 'data/raw/hourly_stablecoin.parquet'
     archive = ROOT / 'data/raw/dune_onchain.zip'
-    for path in (hourly, archive):
+    sources = [hourly, archive]
+    if from_processed:
+        sources.extend(ROOT / 'data/processed' / name for name in (
+            'master.parquet', 'depeg_episodes.parquet',
+            'dataset_metadata.json',
+        ))
+    for path in sources:
         if not path.is_file():
             raise FileNotFoundError(f'Required retained source is missing: {path}')
     output.mkdir(parents=True, exist_ok=False)
@@ -105,9 +127,15 @@ def run_full(output, plan, env):
     raw.mkdir(parents=True)
     shutil.copy2(hourly, raw / hourly.name)
     shutil.copy2(archive, raw / archive.name)
+    if from_processed:
+        processed = output / 'data/processed'
+        processed.mkdir(parents=True)
+        for path in sources[2:]:
+            shutil.copy2(path, processed / path.name)
     state = dict(status='running', sources=[
-        dict(path=str(path), sha256=sha256(path)) for path in (hourly, archive)
-    ], dataset_root=env['STABLECOIN_DATA_DIR'], completed=[],
+        dict(path=str(path), sha256=sha256(path)) for path in sources
+    ], input_mode='retained-processed' if from_processed else 'source-rebuild',
+        dataset_root=env['STABLECOIN_DATA_DIR'], completed=[],
         commands=[dict(module=m, args=a) for m, a in plan])
     manifest = output / 'reproduction.json'
     try:
@@ -132,26 +160,44 @@ def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument('--full', action='store_true',
                         help='rebuild data, retrain all models, and report')
+    parser.add_argument('--from-processed', action='store_true',
+                        help='with --full, retrain on frozen processed inputs')
     parser.add_argument('--out-dir', type=Path,
-                        default=Path('artifacts/reproduction'))
+                        default=Path('output/reproduction'))
     parser.add_argument('--dry-run', action='store_true',
                         help='print the ordered workflow without writing files')
     args = parser.parse_args()
+    if args.from_processed and not args.full:
+        parser.error('--from-processed requires --full')
     output = args.out_dir.resolve()
     env = dict(os.environ, MPLCONFIGDIR=str(
         Path(tempfile.gettempdir()) / 'stablecoin-matplotlib'
     ))
-    plan = full_plan(output) if args.full else saved_plan()
+    if not args.full:
+        from modelling.utils.artifacts import published_baseline
+        from modelling.utils.io import sha256
+
+        baseline = published_baseline()
+        if baseline:
+            run = ROOT / baseline['run_dir']
+            info = json.loads((run / 'run.json').read_text())
+            if (info['run_id'] != baseline['run_id']
+                    or sha256(run / 'run.json') != baseline['manifest_sha256']):
+                raise ValueError('Published baseline run identity has changed')
+            env['STABLECOIN_DATA_DIR'] = str(ROOT / baseline['data_dir'])
+    plan = full_plan(output, args.from_processed) if args.full else saved_plan()
     if args.full:
         env['STABLECOIN_DATA_DIR'] = str(output / 'data')
     if args.dry_run:
         print(json.dumps(dict(
             mode='full' if args.full else 'saved-reports',
+            input_mode=('retained-processed' if args.from_processed
+                        else 'source-rebuild') if args.full else 'saved-evidence',
             dataset_root=env.get('STABLECOIN_DATA_DIR', 'data'),
             commands=[dict(module=m, args=a) for m, a in plan],
         ), indent=2))
     elif args.full:
-        run_full(output, plan, env)
+        run_full(output, plan, env, args.from_processed)
     else:
         for module, arguments in plan:
             subprocess.run([sys.executable, '-W', 'ignore::DeprecationWarning',

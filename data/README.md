@@ -1,45 +1,40 @@
-# Frozen research data
+# Data storage
 
-`processed/master.parquet` and `processed/depeg_episodes.parquet` are the single canonical corrected modelling pair. `dataset_version=corrected_v1` records their protocol. `depeg_episodes_w_event_type.parquet` retains report annotations and is not a fallback modelling input.
+| Folder | Purpose |
+|---|---|
+| `raw/` | Retained source inputs: the acquired hourly market table, original Dune ZIP and extracted study-coin CSVs. |
+| `interim/` | Derived market and on-chain feature tables. |
+| `processed/` | The final hourly modelling dataset, episode records and dataset metadata. |
 
-Both `python -m data_processing.merge_and_label` and `python -m data_processing.build_dataset` use the same direct route: acquired hourly market snapshot + interim market/on-chain feature tables -> corrected features, episodes and labels in memory -> canonical outputs. No old master is needed or written. Existing outputs are validated without overwriting; add `--rebuild` to compare a reconstruction or `--rebuild --out-dir <fresh>` to create a fresh pair.
+`processed/master.parquet` and `processed/depeg_episodes.parquet` are the exact
+inputs used by `artifacts/final_run/`, the published reviewer run.
+`depeg_episodes_w_event_type.parquet` is a reporting annotation file, not an
+alternative modelling input. `manifest.json` records paths, schemas and hashes;
+`processed/dataset_metadata.json` records construction details and feature method.
 
-`raw/` holds the acquired hourly market table, six extracted source CSVs and original ZIP. `interim/` holds the derived market and on-chain feature tables. The Dune ZIP at `data/raw/dune_onchain.zip` is retained. All six CSVs match their ZIP members byte-for-byte; see `dune_export_verification` in `manifest.json`. The old original master and old episode manifest are quarantined under delete/, never used by the maintained build.
+Both `python -m data_processing.merge_and_label` and
+`python -m data_processing.build_dataset` use the same direct route: retained
+hourly observations plus interim feature tables -> corrected features, episodes,
+labels and eligibility -> the canonical output pair. No older master is needed.
+Existing outputs are validated without replacement. Use `--rebuild` to compare
+a reconstruction, or `--rebuild --out-dir <fresh-directory>` to write a new pair.
+New window-local volatility outputs must match exactly during comparison.
 
-The derived interim tables can be rebuilt from retained local sources. The
-market writer now uses the same calendar-based calculation as the final
-dataset builder. Running it replaces the interim market-feature file; the
-current output can differ from the retained historical table. Verify frozen
-model evidence against its recorded hashes, and keep fresh rebuilds separate.
-See [reproduction instructions](../docs/reproduction.md) for both workflows
-and the explicitly reported historical diagnostic differences.
+The retained source is `raw/hourly_stablecoin.parquet`; original market API
+responses are unavailable. Reacquiring market data can produce different values.
+The market writer and dataset builder share calendar-based feature calculations.
+Volatility uses independent window calculations with centered compensated sums,
+not accumulated rolling state. Missing feature observations remain unavailable.
 
-manifest.json records current paths, schemas and hashes. Original market API responses are not available. Existing corrected inputs remain byte-identical to the model evidence. Fresh rolling reductions may vary by up to 1e-9 near zero; see docs/reproduction.md for strict comparison scope. Large source snapshots/intermediates remain local artifacts and require separate distribution.
+The original on-chain bundle is `raw/dune_onchain.zip`; six extracted CSVs sit
+directly under `raw/`. Their identities match their ZIP members byte-for-byte.
+Missing export rows do not establish zero transfer activity. The example SQL in
+`data_processing/dune_hourly_transfers.sql` aggregates one Ethereum contract,
+uses an 18-decimal divisor and is not verified as the query for all six exports.
+Original per-coin query IDs, export dates, contract selections and divisors
+could not be confirmed; the manifest records these provenance limits.
 
-Git rules explicitly allow the retained `raw/hourly_stablecoin.parquet`
-source, alongside the frozen processed inputs. Commit that hourly file to make
-same-input rebuilding available in a clone. Derived interim feature tables,
-extracted raw CSVs, and fitted models remain excluded. The source-data ZIP is
-an optional handoff copy, not a required extra download when the hourly source
-has been included in the repository.
-
-## Dune acquisition query
-
-The user-supplied [hourly transfer query](../data_processing/dune_hourly_transfers.sql) aggregates Ethereum ERC-20 transfer events into `hour`, `tx_count`, `total_volume`, `active_senders`, and `active_receivers`, matching the on-chain importer schema. `tx_count` counts transfer events, not distinct transaction hashes. `total_volume` is token transfer volume, not USD volume. The importer renames it to `tx_volume`.
-
-The supplied query filters one contract (`0xdC035D45d973E3EC169d2276DDab16f1e407384F`) and divides raw values by `1e18`, assuming 18 decimals. It covers 2018-01-01 inclusive through 2026-01-01 exclusive. A grouped query produces rows only for hours containing transfers; missing export hours should not automatically be interpreted as verified zero activity.
-
-The user could not confirm whether the address and divisor were changed for
-each coin. The archived midterm configuration associates this example address
-with USDS, outside the six study coins. It must therefore be treated as an
-example query, not verified SQL for all six exports.
-
-`manifest.json` records verified CSV/ZIP identities, hashes, row counts and
-observed time ranges. Original per-coin query IDs, contract addresses, divisors
-and export dates are explicitly unknown. Archived addresses and decimal
-settings are recorded separately as unverified candidates. ZIP timestamps are
-not verified export dates. No data values have been rescaled to fit assumptions.
-
-The retained files support reproduction from identical inputs. Independently
-reacquiring the same on-chain data requires recovering the original queries
-or establishing and validating replacement per-coin queries.
+The hourly market source, Dune ZIP and processed pair are explicitly allowed in
+Git. Extracted CSVs and derived interim tables are regenerated locally.
+Superseded input copies were removed. Historical input checksums remain in
+`reports/validation_checks/reproducibility/reviewer_relocation.json`.

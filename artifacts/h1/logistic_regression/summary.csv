@@ -1,3 +1,0 @@
-model,config,horizon_hours,policy,false_alarms,coin_months,episodes_caught,targetable_episodes,alarm_events,true_alarms,test_rows,episode_recall,false_alarms_per_coin_month,alarm_precision,budget_fa_per_coin_month,average_precision,median_lead_hours,positive_hours,positive_rate
-logreg,market_matched,1,exhaustive_lowest,464,316,1,32,465,1,182918,0.03125,1.4683544303797469,0.002150537634408602,1.0,0.00126065220968139,1.0,32,0.00017494177718977902
-logreg,market_onchain,1,exhaustive_lowest,595,316,2,32,597,2,182918,0.0625,1.8829113924050633,0.0033500837520938024,1.0,0.0014176889095339192,1.0,32,0.00017494177718977902

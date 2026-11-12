@@ -1,6 +1,7 @@
 """Calculate calendar-based market features for interim and final tables.
 
-Missing hours remain missing; lags refer to calendar hours. The command-line
+Missing hours remain missing; lags refer to calendar hours. Volatility uses
+independent, centered sample-deviation calculations for each window. The command-line
 writer uses the same calculation as the dataset builder. Historical formulas
 are preserved under delete/archive_cleanup/history/data_processing/.
 
@@ -14,11 +15,31 @@ and completeness. Verify frozen model evidence using its recorded input
 hashes; a current rebuild need not reproduce historical file bytes. Normal
 report reproduction reads retained inputs without running this writer.
 """
+import math
+
 import numpy as np
 import pandas as pd
 from data_processing.config import HOURLY_MARKET_PATH, MARKET_FEATURES_PATH
 
 OUT_PATH = MARKET_FEATURES_PATH
+VOLATILITY_METHOD = "window-local centered math.fsum sample std, ddof=1"
+
+
+def window_sample_std(values):
+    """Calculate sample deviation without state from earlier windows.
+
+    Args:
+        values: Finite hourly returns in one complete lookback window.
+
+    Returns:
+        Sample standard deviation using centered, compensated summation.
+        Constant windows return exactly zero without a rounding cutoff.
+    """
+    center = float(values[0])
+    shifted = [float(value) - center for value in values]
+    mean = math.fsum(shifted) / len(shifted)
+    variance = math.fsum((value - mean) ** 2 for value in shifted)
+    return math.sqrt(variance / (len(shifted) - 1))
 
 
 def calendar_market_features(df):
@@ -60,7 +81,9 @@ def calendar_market_features(df):
                 g.hours_since_venue_start >= h + 1
             )
         for h in (6, 24):
-            g[f"realised_vol_{h}h"] = ret.rolling(h, min_periods=h).std()
+            g[f"realised_vol_{h}h"] = ret.rolling(
+                h, min_periods=h
+            ).apply(window_sample_std, raw=True)
         frames.append(g.reset_index())
     return pd.concat(frames, ignore_index=True)
 

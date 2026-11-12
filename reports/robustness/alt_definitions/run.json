@@ -1,0 +1,33 @@
+{
+  "source_runs": [
+    {
+      "path": "artifacts/final_run",
+      "run_id": "a4b62db2-1fc8-42ec-9a5f-3a94999860f5"
+    }
+  ],
+  "input_sha256": {
+    "data/processed/master.parquet": "1486801a1bb5897be4ecc440e2a86b0d29a6a04e760d0ec36b076a3edc19cf38",
+    "data/processed/depeg_episodes.parquet": "d7047ce6633500aab03abcc1d6f07663d0fe87d2ad50a40573c6edb6e3a154d9"
+  },
+  "targetability": "any frozen prediction origin in [episode start - h, episode start); no reference-label filter",
+  "check": "fixed alarm outcome-definition sensitivity",
+  "reference_band": 0.01,
+  "reference_duration": 2,
+  "bands": [
+    0.005,
+    0.01,
+    0.02
+  ],
+  "durations": [
+    1,
+    2,
+    3,
+    4
+  ],
+  "horizons": [
+    6,
+    24
+  ],
+  "frozen": "prediction hours, models, thresholds, alarm timestamps; standard-definition risk set",
+  "ranking": "highest episode recall; ties retained; not an overall performance ranking"
+}

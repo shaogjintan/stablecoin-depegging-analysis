@@ -98,3 +98,22 @@ data/processed/*
 /data/raw/*
 !data/raw/dune_onchain.zip
 !data/raw/hourly_stablecoin.parquet
+
+# Isolated numerical reproducibility experiments.
+/artifacts/reproducibility_checks/*
+
+# Separate full-reproduction workspaces.
+/artifacts/reproduction-*/
+
+# Temporary PDF review renders and extracted text.
+/tmp/pdfs/
+
+# One published reviewer run: retain small records, supply large evidence separately.
+/artifacts/final_run/fits/
+/artifacts/final_run/source/
+/artifacts/final_run/*.parquet
+# Historical processed inputs remain local archival evidence.
+/archive/report_baselines/**/previous_data/
+
+# Fresh source-reproduction outputs are separate from final reviewer evidence.
+/output/reproduction*/

@@ -1,4 +1,5 @@
 {
+  "volatility_method": "window-local centered math.fsum sample std, ddof=1",
   "sources": [
     {
       "path": "data/raw/hourly_stablecoin.parquet",
@@ -6,19 +7,22 @@
     },
     {
       "path": "data/interim/hourly_stablecoin_onchain_features.parquet",
-      "sha256": "3eb69edfd80ae6fa9aace15f77003cd0e94814b936f250024c915850987ffe4f"
+      "sha256": "adb8c4f06abd3d6bd0697345463d341c86fc18e4f6a4edbe634af8264db58942"
     },
     {
       "path": "data/interim/hourly_stablecoin_market_features.parquet",
-      "sha256": "7324b4ab913cfbde123418e1f1c7834953411568cec3792ac07b9e3c5d5d0363"
+      "sha256": "20d63178d4691805bed28dab74726f969681d615ac385606034f04863f06b4e1"
     }
   ],
-  "pipeline": "data/raw/hourly_stablecoin.parquet + data/interim/ (hourly_stablecoin_market_features.parquet + hourly_stablecoin_onchain_features.parquet) -> merge on coin/hour -> compute calendar-based market features, merged-onset labels and causal prediction eligibility -> shift timestamps to completed-bar close -> master.parquet + depeg_episodes.parquet in the output directory",
+  "pipeline": "configured raw root (hourly_stablecoin.parquet) + interim root (hourly_stablecoin_market_features.parquet + hourly_stablecoin_onchain_features.parquet) -> merge on coin/hour -> compute calendar-based market features, merged-onset labels and causal prediction eligibility -> shift timestamps to completed-bar close -> master.parquet + depeg_episodes.parquet in the output directory",
   "master": "data/processed/master.parquet",
-  "master_sha256": "450865153d17b95627daeb48d8f64baf7d0f403b3c9b57d564e2a9aeaf284a37",
+  "master_sha256": "1486801a1bb5897be4ecc440e2a86b0d29a6a04e760d0ec36b076a3edc19cf38",
   "episodes": "data/processed/depeg_episodes.parquet",
-  "episodes_sha256": "dcf23bf6662556d5432e6b1afa7127a5376c7154ec0403cf50a5d6f6131e9bdf",
-  "preparation_sha256": "1ca5204b4b841e61ac256b12df4160a49b2926d829c7b6dea19b93312ca8cb73",
+  "episodes_sha256": "d7047ce6633500aab03abcc1d6f07663d0fe87d2ad50a40573c6edb6e3a154d9",
+  "preparation_source": "data_processing/dataset_transformation.py",
+  "preparation_sha256": "fd28480cb26993500141b9604a102a96af5f28d42ba07df5fbfb543074cd32ac",
+  "market_features_source": "data_processing/build_market_features.py",
+  "market_features_sha256": "f2a1e475fd06aa80f111e168778a181e5e515b72e76e3a74f455e35007cc2b76",
   "rows": 345361,
   "episodes_defined": 79,
   "counts": {
@@ -49,8 +53,5 @@
   },
   "clock": "bar close = source bar start + 1 hour",
   "target": "new merged episode starts in (origin, origin+h]",
-  "recovery": "exclude through 24 hours after recovery anchor of confirmed two-hour dip",
-  "retained_frozen_inputs": true,
-  "build_verification": "All non-volatility columns and episode data match exactly; two rolling volatility columns match within 1e-9 absolute. Frozen Parquet bytes have not been replaced.",
-  "previous_preparation_metadata": "delete/data/processed/corrected_v1_metadata.before_direct_build.json"
+  "recovery": "exclude through 24 hours after recovery anchor of confirmed two-hour dip"
 }

@@ -56,7 +56,13 @@ class RFModel(BaseModel):
         """Return negative- and positive-class scores for the supplied rows."""
         if self.clf_ is None:
             raise RuntimeError("RFModel.fit must be called before predict_proba")
-        proba = self.clf_.predict_proba(X)
+        # Sum trees in a fixed order; parallel accumulation can change ties.
+        jobs = self.clf_.n_jobs
+        try:
+            self.clf_.n_jobs = 1
+            proba = self.clf_.predict_proba(X)
+        finally:
+            self.clf_.n_jobs = jobs
         if proba.shape[1] == 1:
             # Training fold had a single class; return P(y=1) explicitly.
             only = self.clf_.classes_[0]

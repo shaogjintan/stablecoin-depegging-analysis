@@ -73,6 +73,21 @@ class ArtifactUtilitiesTests(unittest.TestCase):
             with patch.object(Path, 'read_bytes', side_effect=AssertionError('unbounded read')):
                 self.assertEqual(sha256(path), hashlib.sha256(payload).hexdigest())
 
+    def test_recorded_input_relocation_is_explicit(self):
+        """Map only approved historical inputs to the canonical dataset."""
+        from data_processing.splits import resolve_recorded_input
+        recorded = '/old/workspace/data/processed/master.parquet'
+        baseline = {'input_relocations': {
+            recorded: {'path': 'data/processed/master.parquet', 'sha256': 'test'}
+        }}
+        with patch('modelling.utils.artifacts.published_baseline',
+                   return_value=baseline):
+            actual = resolve_recorded_input(recorded)
+            self.assertEqual(actual, Path(__file__).resolve().parents[1]
+                             / 'data/processed/master.parquet')
+            unknown = Path('/unrelated/master.parquet')
+            self.assertEqual(resolve_recorded_input(unknown), unknown)
+
     def test_json_serialization_remains_unchanged(self):
         """Check JSON output retains the existing serialization format."""
         path = Path(self.temp.name) / 'metadata.json'

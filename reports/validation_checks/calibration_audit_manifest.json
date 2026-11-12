@@ -1,14 +1,9 @@
 {
   "sources": [
     {
-      "path": "artifacts/h6_and_h24/random_forest_xgboost",
-      "run_id": "f2c840d7-2ff9-4552-84fe-cbc4c616ea5d",
-      "sha256": "c920bd6418c14a81d180870da3c486b1c0bab947e59b193beb1e0f4da3582146"
-    },
-    {
-      "path": "artifacts/h6_and_h24/logistic_regression",
-      "run_id": "ac334862-a86f-4a75-9fea-5180ef51e6af",
-      "sha256": "1dd8fe7c66dfd56268abf401fd189d09e4ab2d342aa164fac0ff9987ab7b1c05"
+      "path": "artifacts/final_run",
+      "run_id": "a4b62db2-1fc8-42ec-9a5f-3a94999860f5",
+      "sha256": "9661514af8ee9deb580eabb4f2d24a7805b31d79e50c8e00d6da8b8241e99997"
     }
   ]
 }

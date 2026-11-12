@@ -26,6 +26,7 @@ from data_processing.config import (
 from data_processing.merge_and_label import flag_feature_samples, merge_sources
 from data_processing.splits import load_master
 from data_processing.dataset_transformation import prepare_corrected
+from data_processing.build_market_features import VOLATILITY_METHOD
 from data_processing.feature_schema import ONCHAIN_FEATURES, ONCHAIN_RAW_METRICS
 
 SOURCES = [HOURLY_MARKET_PATH, ONCHAIN_FEATURES_PATH, MARKET_FEATURES_PATH]
@@ -135,7 +136,8 @@ def build_from_sources(sources=SOURCES):
     return master, episodes
 
 
-def assert_rebuild_matches(rebuilt, frozen, *, allow_historical_diagnostics=False):
+def assert_rebuild_matches(rebuilt, frozen, *, allow_historical_diagnostics=False,
+                           stable_volatility=False):
     """Compare rebuilds, optionally reporting historical diagnostic changes.
 
     Args:
@@ -143,6 +145,7 @@ def assert_rebuild_matches(rebuilt, frozen, *, allow_historical_diagnostics=Fals
         frozen: Retained master used for the reported model results.
         allow_historical_diagnostics: Allow only named historical completeness and
             simple-return diagnostics to differ; print each changed count.
+        stable_volatility: Require exact volatility for the window-local method.
     """
     diagnostics = []
     if allow_historical_diagnostics:
@@ -162,7 +165,7 @@ def assert_rebuild_matches(rebuilt, frozen, *, allow_historical_diagnostics=Fals
     )
     pd.testing.assert_frame_equal(
         rebuilt[volatility], frozen[volatility],
-        check_exact=False, rtol=0, atol=1e-9,
+        check_exact=stable_volatility, rtol=0, atol=1e-9,
     )
 
 
@@ -179,6 +182,7 @@ def metadata(master, episodes, master_path, episodes_path):
                 ),
             }
     return dict(
+        volatility_method=VOLATILITY_METHOD,
         sources=[
             dict(path=str(path), sha256=checksum(path)) for path in SOURCES
         ],
@@ -237,17 +241,20 @@ def main():
 
     master, episodes = build_from_sources()
     if all(exists):
-        # Block layout can perturb rolling reductions near zero. Preserve the
-        # frozen model inputs rather than replacing them on that basis.
+        metadata_path = args.out_dir / DATASET_METADATA_PATH.name
+        prior = json.loads(metadata_path.read_text()) if metadata_path.exists() else {}
+        stable = prior.get("volatility_method") == VOLATILITY_METHOD
         assert_rebuild_matches(
-            master, pd.read_parquet(master_path), allow_historical_diagnostics=True
+            master, pd.read_parquet(master_path),
+            allow_historical_diagnostics=not stable, stable_volatility=stable,
         )
         pd.testing.assert_frame_equal(
             episodes, pd.read_parquet(episodes_path), check_exact=True
         )
         print(
-            "Rebuild model inputs match frozen tables within numerical "
-            "tolerance; existing files preserved."
+            "Rebuild model inputs match "
+            + ("exactly" if stable else "within historical numerical tolerance")
+            + "; existing files preserved."
         )
         return
 
