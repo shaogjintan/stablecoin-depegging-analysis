@@ -140,3 +140,7 @@ in `data_processing/dataset_transformation.py`; matched-sample checks enforce
 common origins and labels across tiers. Tests check implementation behavior;
 verification audits saved research evidence. Historical code is not a supported
 runtime dependency. See `docs/code_organisation.md` for report wording.
+
+Full source reproduction writes regenerated feature tables to
+`output/reproduction/data/interim_reproduction/` (or the equivalent location
+under `--out-dir`). The retained tables in `data/interim/` remain unchanged.

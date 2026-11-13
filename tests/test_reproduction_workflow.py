@@ -129,6 +129,8 @@ class ReproductionWorkflowTests(unittest.TestCase):
             state = json.loads(result.stdout)
             self.assertEqual(state['mode'], 'full')
             self.assertEqual(state['dataset_root'], str(output.resolve() / 'data'))
+            self.assertEqual(state['interim_root'], str(
+                output.resolve() / 'data/interim_reproduction'))
             self.assertFalse(output.exists())
 
     def test_data_root_override_reaches_every_input_path(self):
@@ -145,3 +147,20 @@ class ReproductionWorkflowTests(unittest.TestCase):
             subprocess.run([sys.executable, '-c', code], cwd=reproduce.ROOT,
                            env=dict(os.environ, STABLECOIN_DATA_DIR=temporary),
                            check=True, capture_output=True)
+
+    def test_reproduction_interim_override_reaches_feature_builders(self):
+        """Both feature paths follow the isolated interim output directory."""
+        with tempfile.TemporaryDirectory() as temporary:
+            interim = Path(temporary) / 'interim_reproduction'
+            code = (
+                'from data_processing import config as c; '
+                'from pathlib import Path; '
+                f'expected = Path({str(interim)!r}); '
+                'assert c.MARKET_FEATURES_PATH.parent == expected; '
+                'assert c.ONCHAIN_FEATURES_PATH.parent == expected'
+            )
+            subprocess.run(
+                [sys.executable, '-c', code], cwd=reproduce.ROOT,
+                env=dict(os.environ, STABLECOIN_INTERIM_DIR=str(interim)),
+                check=True, capture_output=True,
+            )

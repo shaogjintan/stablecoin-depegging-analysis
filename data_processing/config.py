@@ -10,7 +10,10 @@ import os
 # Without an override, existing commands continue to use retained repo inputs.
 DATA_DIR = Path(os.environ.get("STABLECOIN_DATA_DIR", "data"))
 RAW_DATA_DIR = DATA_DIR / "raw"
-INTERIM_DATA_DIR = DATA_DIR / "interim"
+# Full reproduction redirects derived features without replacing retained tables.
+INTERIM_DATA_DIR = Path(os.environ.get(
+    "STABLECOIN_INTERIM_DIR", str(DATA_DIR / "interim")
+))
 HOURLY_MARKET_PATH = RAW_DATA_DIR / "hourly_stablecoin.parquet"
 MARKET_FEATURES_PATH = (
     INTERIM_DATA_DIR / "hourly_stablecoin_market_features.parquet"

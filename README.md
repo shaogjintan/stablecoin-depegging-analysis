@@ -109,7 +109,7 @@ See [detailed instructions](docs/reproduction.md).
 ```text
 data/
   raw/                 retained market observations and Dune exports
-  interim/             derived market and on-chain feature tables (local)
+  interim/             retained market and on-chain feature tables
   processed/           modelling dataset, episodes and annotations
 data_processing/       acquisition, features, labels, eligibility and splits
 modelling/
@@ -134,3 +134,7 @@ relocations are recorded in `reports/baseline.json`. The original Dune bundle is
 retained, and its six study-coin CSVs can be extracted locally.
 
 See [Modelling guide](modelling/README.md) for the pipeline structure and current command entry points.
+
+Full source reproduction writes regenerated feature tables to
+`output/reproduction/data/interim_reproduction/` (or the equivalent location
+under `--out-dir`). The retained tables in `data/interim/` remain unchanged.

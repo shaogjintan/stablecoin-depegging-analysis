@@ -118,3 +118,9 @@ data/processed/*
 
 # Historical research material is excluded from new Git additions.
 /archive/
+
+# Retain the feature tables used by the published dataset.
+!data/interim/
+/data/interim/*
+!data/interim/hourly_stablecoin_market_features.parquet
+!data/interim/hourly_stablecoin_onchain_features.parquet

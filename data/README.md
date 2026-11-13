@@ -36,4 +36,9 @@ Original per-coin query IDs, export dates, contract selections and divisors
 could not be confirmed; the manifest records these provenance limits.
 
 The hourly market source, Dune ZIP and processed pair are explicitly allowed in
-Git. Extracted CSVs and derived interim tables are regenerated locally.
+Git. The two retained interim feature Parquets are also versioned in Git.
+Extracted CSVs can be regenerated locally.
+
+Full source reproduction writes regenerated feature tables to
+`output/reproduction/data/interim_reproduction/` (or the equivalent location
+under `--out-dir`). The retained tables in `data/interim/` remain unchanged.

@@ -121,8 +121,9 @@ def run_full(output, plan, env, from_processed=False):
         if not path.is_file():
             raise FileNotFoundError(f'Required retained source is missing: {path}')
     output.mkdir(parents=True, exist_ok=False)
-    interim = output / 'data' / 'interim'
+    interim = output / 'data' / 'interim_reproduction'
     interim.mkdir(parents=True)
+    env = dict(env, STABLECOIN_INTERIM_DIR=str(interim.resolve()))
     raw = output / "data" / "raw"
     raw.mkdir(parents=True)
     shutil.copy2(hourly, raw / hourly.name)
@@ -188,12 +189,15 @@ def main():
     plan = full_plan(output, args.from_processed) if args.full else saved_plan()
     if args.full:
         env['STABLECOIN_DATA_DIR'] = str(output / 'data')
+        env['STABLECOIN_INTERIM_DIR'] = str(
+            output / 'data' / 'interim_reproduction')
     if args.dry_run:
         print(json.dumps(dict(
             mode='full' if args.full else 'saved-reports',
             input_mode=('retained-processed' if args.from_processed
                         else 'source-rebuild') if args.full else 'saved-evidence',
             dataset_root=env.get('STABLECOIN_DATA_DIR', 'data'),
+            interim_root=env.get('STABLECOIN_INTERIM_DIR', 'data/interim'),
             commands=[dict(module=m, args=a) for m, a in plan],
         ), indent=2))
     elif args.full:
