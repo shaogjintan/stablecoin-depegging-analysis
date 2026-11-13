@@ -69,7 +69,7 @@ with `py -3.12 -m venv .venv` and activate it with
 `.venv\Scripts\Activate.ps1`. The dependency freeze was checked on macOS with
 CPython 3.12; installation on other platforms has not been validated.
 
-## Running the analysis
+## Reproduction
 
 The repository retains one published run under `artifacts/final_run/`.
 It contains saved models, data splits, predictions, alarms and run settings.
@@ -94,6 +94,7 @@ unchanged. Existing output folders are rejected; use `--out-dir <new-folder>`
 for another run. `--dry-run` previews either workflow. Full training is intensive.
 The required raw inputs are `data/raw/hourly_stablecoin.parquet` and
 `data/raw/dune_onchain.zip`; their hashes are recorded in `data/manifest.json`.
+No fresh API calls are made by this workflow.
 
 Large fitted models, partition Parquets and source snapshots are supplied
 separately rather than stored in Git. A clone with the retained raw inputs can
@@ -131,7 +132,3 @@ relocations are recorded in `reports/baseline.json`. The original Dune bundle is
 retained and its six study-coin CSVs can be extracted locally.
 
 See [Modelling guide](modelling/README.md) for the pipeline structure and current command entry points.
-
-Full source reproduction writes regenerated feature tables to
-`output/reproduction/data/interim_reproduction/` (or the equivalent location
-under `--out-dir`). The retained tables in `data/interim/` remain unchanged.
