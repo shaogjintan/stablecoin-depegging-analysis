@@ -19,7 +19,7 @@ from modelling.evaluation.threshold_selection import (
 def benchmarks(run, episodes):
     """Fit and pool constant-prior and persistence benchmark results."""
     rows = []
-    for h in [6, 24]:
+    for h in [1, 6, 24]:
         for name in ["baseline", "persistence"]:
             predictions, alarms_all, counts = [], [], []
             for year in range(2021, 2026):

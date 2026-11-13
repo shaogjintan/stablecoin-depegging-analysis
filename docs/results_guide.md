@@ -1,9 +1,7 @@
 # Results guide
 
 Current outputs use `artifacts/final_run/`, selected in `reports/baseline.json`.
-An independent full reproduction matched its scientific results. Previous outputs
-were removed after validation; promotion checksums remain in
-`reports/validation_checks/reproducibility/report_promotion.json`.
+
 
 | Report claim or exhibit | Authoritative output |
 |---|---|
@@ -21,7 +19,7 @@ were removed after validation; promotion checksums remain in
 | Final RF importance | reports/model_interpretation/random_forest/rf_importance_by_year.csv |
 | Final XGB SHAP ranking/figures | reports/model_interpretation/ |
 
-The h1 results are supplementary and belong to the same published final run. Model interpretation figures and benchmark comparisons cover primary h6/h24. Counts by type also cover h1. Historical annotations must be reviewed as context; date membership is not evidence of causation.
+The h1 results are supplementary and belong to the same published final run. Model interpretation and benchmark comparisons cover h1/h6/h24. Counts by type also cover h1. Historical annotations must be reviewed as context; date membership is not evidence of causation.
 
 Use the selected final run for report comparisons. Original training metadata
 may retain execution-time paths; current input relocations are recorded in
@@ -49,5 +47,13 @@ are reported separately. These are distinct from alternative episode definitions
 Smoothing AP uses unchanged model scores. Binary OR AP is undefined and blank.
 
 Final run locations and exact report-organisation wording are documented in
-`docs/reviewer_code_organisation.md`. The temporary validation workspaces are
-not required for reviewers.
+`docs/code_organisation.md`. Temporary validation workspaces are not part of the published outputs.
+
+## Caught-episode cases
+
+`reports/model_results/caught_episodes.csv` identifies each caught episode by
+model, tier and horizon, with event ID, structural type, historical context and
+first-warning lead time. `detection_by_historical_context.csv` compares caught
+and targetable episode counts within each descriptive context. Episodes can
+appear for several models or horizons; do not sum those rows as unique episodes.
+Context annotations do not establish causation or independent statistical tests.

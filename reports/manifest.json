@@ -23,9 +23,6 @@
   "data_manifest": "data/manifest.json",
   "verification": "verification.json",
   "notes": [
-    "One final reviewer run is retained in artifacts/final_run/.",
-    "Independent full reproductions matched across 490 checks; their small comparison records are under reports/validation_checks/reproducibility/.",
-    "Temporary duplicate workspaces were removed after consolidation."
-  ],
-  "change_record": "docs/stable_reproduction_comparison.md"
+    "One final reviewer run is retained in artifacts/final_run/."
+  ]
 }

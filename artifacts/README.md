@@ -1,17 +1,15 @@
-# Final model evidence for reviewers
+# Saved models and predictions
 
 `final_run/` contains the one validated run used by the published report.
 It covers logistic regression, random forest and XGBoost, both feature tiers,
 horizons 1/6/24 and test years 2021-2025. Horizons 6 and 24 are primary; h1 is
-supplementary. Two independent full reproductions agreed before their temporary
-workspaces were removed. Their small comparison records are retained under
-`reports/validation_checks/reproducibility/`.
+supplementary.
 
 | Location | Contents |
 |---|---|
 | `index.json` | Identity, status and manifest checksum of the final run. |
 | `final_run/run.json` | Original training settings, software versions and input hashes. |
-| `final_run/relocation.json` | Mapping from original execution paths to reviewer locations. |
+| `final_run/input_paths.json` | Mapping from original execution paths to current file locations. |
 | `final_run/summary.csv` | Pooled model results. |
 | `final_run/by_year.csv` | Test-year results. |
 | `final_run/alarm_events.csv` | Combined alarm records. |
@@ -31,7 +29,17 @@ paths in `run.json` resolve through an explicit checksum-backed relocation map.
 
 Large fitted models, partition Parquets and source snapshots are ignored by Git
 and must be supplied separately for saved-model replay. Small result records
-are versioned. A reviewer without the large evidence can rebuild and retrain
+are versioned. Without the saved model files, you can rebuild and retrain
 from retained raw inputs using `python -m reports.reproduce --full`.
 New reproduction workspaces go to `output/reproduction/`, leaving this final
-run unchanged. The duplicate validation workspaces are not needed for review.
+run unchanged.
+
+## File availability
+
+`final_run/fits/` and `final_run/source/` exist in the local working copy but
+are ignored by Git. They will not appear in a GitHub clone unless supplied
+separately. `<fit>` is a placeholder for an actual model/tier/horizon/year folder.
+The source folder holds an immutable training-time snapshot, not maintained code.
+
+`reports/model_results/` contains readable summaries. This folder additionally
+holds the models and predictions needed to verify and regenerate those summaries.

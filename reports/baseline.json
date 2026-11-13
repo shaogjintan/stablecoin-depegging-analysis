@@ -15,7 +15,5 @@
       "sha256": "d7047ce6633500aab03abcc1d6f07663d0fe87d2ad50a40573c6edb6e3a154d9"
     }
   },
-  "comparison": "reports/validation_checks/reproducibility/full_comparison.json",
-  "note": "One published reviewer run; independently reproduced before temporary workspaces were removed.",
-  "change_record": "docs/stable_reproduction_comparison.md"
+  "note": "One published reviewer run; independently reproduced before temporary workspaces were removed."
 }

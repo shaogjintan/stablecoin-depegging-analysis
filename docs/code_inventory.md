@@ -22,13 +22,11 @@ they do not produce the study results.
 | `processed/` | `dataset_metadata.json` | Dataset construction settings, feature method and input/output checksums. |
 | - | `manifest.json` | Data file locations, schemas, coverage and checksums. |
 
-## Final reviewer model evidence
+## Saved model evidence
 
 The one published run is `artifacts/final_run/`. Its exact dataset is in
 `data/processed/`, and presentation tables/figures are under `reports/`.
-Independent repeatability records are in
-`reports/validation_checks/reproducibility/`. Temporary validation workspaces
-are not retained. See `docs/reviewer_code_organisation.md` for appendix rows.
+See `docs/code_organisation.md` for appendix rows.
 
 ## data_processing
 
@@ -85,7 +83,7 @@ are not retained. See `docs/reviewer_code_organisation.md` for appendix rows.
 | `modelling/reporting/by_coin.py` | Produces a performance table for each coin using the saved predictions and alarms. |
 | `modelling/reporting/calibration_audit.py` | Produces a table showing the chosen cutoffs, calibration false alarms and training sample sizes. |
 | `modelling/reporting/coverage_table.py` | Shows how much source data and how many complete feature observations are available for each coin. |
-| `modelling/reporting/detection_by_type.py` | Summarises which types of depeg events the models could warn about and actually detected. |
+| `modelling/reporting/detection_by_type.py` | Exports detections by event type, caught episodes with event/context tags and detection counts by historical context. |
 | `modelling/reporting/event_annotations.py` | Adds historical context based on event dates; these annotations do not establish what caused a depeg. |
 | `modelling/reporting/event_table.py` | Groups related depegs across coins into events and creates event tables and charts. |
 | `modelling/reporting/event_types.py` | Classifies grouped events using their timing, duration and severity. |

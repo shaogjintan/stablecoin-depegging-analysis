@@ -24,10 +24,10 @@ AP uses pooled prediction scores. Episode recall uses targetable episodes. Media
 | `model_interpretation` | Export coefficients, RF importance, and figures; calculate XGB SHAP rankings from the selected saved fits under `reports/model_interpretation/`. |
 | `coverage_table` | Source completeness against each coin's full observed timestamp span under `reports/data_coverage/`. |
 | `event_table` | Group episodes into events, add annotations/classifications, and export event tables/figures. Also regenerates `data/processed/depeg_episodes_w_event_type.parquet`; the coin/year heatmap goes under `reports/depeg_episodes/`. |
-| `detection_by_type` | Detection counts and conditional lead time by structural event type. False alarms have no observed event type, so this is not a full five-metric comparison. |
+| `detection_by_type` | Detection counts and conditional lead time by structural event type; also exports caught episodes and a historical-context summary. False alarms have no observed event type, so this is not a full five-metric comparison. |
 | `event_annotations` | Historical context heuristics, not causal labels; helper used by `event_table`. |
 | `event_types` | Structural event classifications; helper used by `event_table`. |
 | `benchmarks` | Fit constant-prior/persistence benchmarks on saved partitions; separate from saved-model-only reproduction. |
 | `schema` | Consistent comparison column order and separation of diagnostics. |
 
-h1 is supplementary; h6/h24 are primary. Benchmark coverage remains h6/h24. Event-type detections cover all three horizons. Figures and interpretation exporters currently cover primary h6/h24.
+h1 is supplementary; h6/h24 are primary. Benchmarks cover h1/h6/h24. Event-type detections cover all three horizons. Figures and interpretation exporters cover h1/h6/h24.

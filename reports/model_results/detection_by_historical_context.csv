@@ -1,0 +1,145 @@
+model,config,horizon_hours,historical_context,targetable_episodes,caught_episodes,missed_episodes,episode_recall,caught_events
+logreg,market_matched,1,Crypto market stress (early 2022),9,0,9,0.0,0
+logreg,market_matched,1,DeFi / liquidity stress (2021),18,1,17,0.05555555555555555,1
+logreg,market_matched,1,FTX collapse (Nov 2022),0,0,0,,0
+logreg,market_matched,1,Paxos regulatory pressure (early 2023),0,0,0,,0
+logreg,market_matched,1,Post-SVB banking contagion (2023),1,0,1,0.0,0
+logreg,market_matched,1,Post-regulation stress (2024-25),3,0,3,0.0,0
+logreg,market_matched,1,SVB bank run (Mar 2023),1,0,1,0.0,0
+logreg,market_matched,1,Unclassified (pre-2021 training),0,0,0,,0
+logreg,market_matched,6,Crypto market stress (early 2022),9,0,9,0.0,0
+logreg,market_matched,6,DeFi / liquidity stress (2021),19,5,14,0.2631578947368421,4
+logreg,market_matched,6,FTX collapse (Nov 2022),0,0,0,,0
+logreg,market_matched,6,Paxos regulatory pressure (early 2023),0,0,0,,0
+logreg,market_matched,6,Post-SVB banking contagion (2023),1,0,1,0.0,0
+logreg,market_matched,6,Post-regulation stress (2024-25),3,3,0,1.0,3
+logreg,market_matched,6,SVB bank run (Mar 2023),1,1,0,1.0,1
+logreg,market_matched,6,Unclassified (pre-2021 training),0,0,0,,0
+logreg,market_matched,24,Crypto market stress (early 2022),9,0,9,0.0,0
+logreg,market_matched,24,DeFi / liquidity stress (2021),19,8,11,0.42105263157894735,5
+logreg,market_matched,24,FTX collapse (Nov 2022),0,0,0,,0
+logreg,market_matched,24,Paxos regulatory pressure (early 2023),0,0,0,,0
+logreg,market_matched,24,Post-SVB banking contagion (2023),2,0,2,0.0,0
+logreg,market_matched,24,Post-regulation stress (2024-25),3,3,0,1.0,3
+logreg,market_matched,24,SVB bank run (Mar 2023),1,1,0,1.0,1
+logreg,market_matched,24,Unclassified (pre-2021 training),0,0,0,,0
+logreg,market_onchain,1,Crypto market stress (early 2022),9,0,9,0.0,0
+logreg,market_onchain,1,DeFi / liquidity stress (2021),18,2,16,0.1111111111111111,2
+logreg,market_onchain,1,FTX collapse (Nov 2022),0,0,0,,0
+logreg,market_onchain,1,Paxos regulatory pressure (early 2023),0,0,0,,0
+logreg,market_onchain,1,Post-SVB banking contagion (2023),1,0,1,0.0,0
+logreg,market_onchain,1,Post-regulation stress (2024-25),3,0,3,0.0,0
+logreg,market_onchain,1,SVB bank run (Mar 2023),1,0,1,0.0,0
+logreg,market_onchain,1,Unclassified (pre-2021 training),0,0,0,,0
+logreg,market_onchain,6,Crypto market stress (early 2022),9,0,9,0.0,0
+logreg,market_onchain,6,DeFi / liquidity stress (2021),19,5,14,0.2631578947368421,4
+logreg,market_onchain,6,FTX collapse (Nov 2022),0,0,0,,0
+logreg,market_onchain,6,Paxos regulatory pressure (early 2023),0,0,0,,0
+logreg,market_onchain,6,Post-SVB banking contagion (2023),1,0,1,0.0,0
+logreg,market_onchain,6,Post-regulation stress (2024-25),3,1,2,0.3333333333333333,1
+logreg,market_onchain,6,SVB bank run (Mar 2023),1,1,0,1.0,1
+logreg,market_onchain,6,Unclassified (pre-2021 training),0,0,0,,0
+logreg,market_onchain,24,Crypto market stress (early 2022),9,0,9,0.0,0
+logreg,market_onchain,24,DeFi / liquidity stress (2021),19,8,11,0.42105263157894735,6
+logreg,market_onchain,24,FTX collapse (Nov 2022),0,0,0,,0
+logreg,market_onchain,24,Paxos regulatory pressure (early 2023),0,0,0,,0
+logreg,market_onchain,24,Post-SVB banking contagion (2023),2,0,2,0.0,0
+logreg,market_onchain,24,Post-regulation stress (2024-25),3,3,0,1.0,3
+logreg,market_onchain,24,SVB bank run (Mar 2023),1,1,0,1.0,1
+logreg,market_onchain,24,Unclassified (pre-2021 training),0,0,0,,0
+random_forest,market_matched,1,Crypto market stress (early 2022),9,0,9,0.0,0
+random_forest,market_matched,1,DeFi / liquidity stress (2021),18,1,17,0.05555555555555555,1
+random_forest,market_matched,1,FTX collapse (Nov 2022),0,0,0,,0
+random_forest,market_matched,1,Paxos regulatory pressure (early 2023),0,0,0,,0
+random_forest,market_matched,1,Post-SVB banking contagion (2023),1,0,1,0.0,0
+random_forest,market_matched,1,Post-regulation stress (2024-25),3,0,3,0.0,0
+random_forest,market_matched,1,SVB bank run (Mar 2023),1,0,1,0.0,0
+random_forest,market_matched,1,Unclassified (pre-2021 training),0,0,0,,0
+random_forest,market_matched,6,Crypto market stress (early 2022),9,1,8,0.1111111111111111,1
+random_forest,market_matched,6,DeFi / liquidity stress (2021),19,1,18,0.05263157894736842,1
+random_forest,market_matched,6,FTX collapse (Nov 2022),0,0,0,,0
+random_forest,market_matched,6,Paxos regulatory pressure (early 2023),0,0,0,,0
+random_forest,market_matched,6,Post-SVB banking contagion (2023),1,0,1,0.0,0
+random_forest,market_matched,6,Post-regulation stress (2024-25),3,2,1,0.6666666666666666,2
+random_forest,market_matched,6,SVB bank run (Mar 2023),1,0,1,0.0,0
+random_forest,market_matched,6,Unclassified (pre-2021 training),0,0,0,,0
+random_forest,market_matched,24,Crypto market stress (early 2022),9,0,9,0.0,0
+random_forest,market_matched,24,DeFi / liquidity stress (2021),19,5,14,0.2631578947368421,3
+random_forest,market_matched,24,FTX collapse (Nov 2022),0,0,0,,0
+random_forest,market_matched,24,Paxos regulatory pressure (early 2023),0,0,0,,0
+random_forest,market_matched,24,Post-SVB banking contagion (2023),2,0,2,0.0,0
+random_forest,market_matched,24,Post-regulation stress (2024-25),3,3,0,1.0,3
+random_forest,market_matched,24,SVB bank run (Mar 2023),1,0,1,0.0,0
+random_forest,market_matched,24,Unclassified (pre-2021 training),0,0,0,,0
+random_forest,market_onchain,1,Crypto market stress (early 2022),9,0,9,0.0,0
+random_forest,market_onchain,1,DeFi / liquidity stress (2021),18,0,18,0.0,0
+random_forest,market_onchain,1,FTX collapse (Nov 2022),0,0,0,,0
+random_forest,market_onchain,1,Paxos regulatory pressure (early 2023),0,0,0,,0
+random_forest,market_onchain,1,Post-SVB banking contagion (2023),1,0,1,0.0,0
+random_forest,market_onchain,1,Post-regulation stress (2024-25),3,0,3,0.0,0
+random_forest,market_onchain,1,SVB bank run (Mar 2023),1,1,0,1.0,1
+random_forest,market_onchain,1,Unclassified (pre-2021 training),0,0,0,,0
+random_forest,market_onchain,6,Crypto market stress (early 2022),9,0,9,0.0,0
+random_forest,market_onchain,6,DeFi / liquidity stress (2021),19,1,18,0.05263157894736842,1
+random_forest,market_onchain,6,FTX collapse (Nov 2022),0,0,0,,0
+random_forest,market_onchain,6,Paxos regulatory pressure (early 2023),0,0,0,,0
+random_forest,market_onchain,6,Post-SVB banking contagion (2023),1,0,1,0.0,0
+random_forest,market_onchain,6,Post-regulation stress (2024-25),3,1,2,0.3333333333333333,1
+random_forest,market_onchain,6,SVB bank run (Mar 2023),1,0,1,0.0,0
+random_forest,market_onchain,6,Unclassified (pre-2021 training),0,0,0,,0
+random_forest,market_onchain,24,Crypto market stress (early 2022),9,1,8,0.1111111111111111,1
+random_forest,market_onchain,24,DeFi / liquidity stress (2021),19,0,19,0.0,0
+random_forest,market_onchain,24,FTX collapse (Nov 2022),0,0,0,,0
+random_forest,market_onchain,24,Paxos regulatory pressure (early 2023),0,0,0,,0
+random_forest,market_onchain,24,Post-SVB banking contagion (2023),2,0,2,0.0,0
+random_forest,market_onchain,24,Post-regulation stress (2024-25),3,3,0,1.0,3
+random_forest,market_onchain,24,SVB bank run (Mar 2023),1,0,1,0.0,0
+random_forest,market_onchain,24,Unclassified (pre-2021 training),0,0,0,,0
+xgboost,market_matched,1,Crypto market stress (early 2022),9,0,9,0.0,0
+xgboost,market_matched,1,DeFi / liquidity stress (2021),18,1,17,0.05555555555555555,1
+xgboost,market_matched,1,FTX collapse (Nov 2022),0,0,0,,0
+xgboost,market_matched,1,Paxos regulatory pressure (early 2023),0,0,0,,0
+xgboost,market_matched,1,Post-SVB banking contagion (2023),1,0,1,0.0,0
+xgboost,market_matched,1,Post-regulation stress (2024-25),3,0,3,0.0,0
+xgboost,market_matched,1,SVB bank run (Mar 2023),1,0,1,0.0,0
+xgboost,market_matched,1,Unclassified (pre-2021 training),0,0,0,,0
+xgboost,market_matched,6,Crypto market stress (early 2022),9,1,8,0.1111111111111111,1
+xgboost,market_matched,6,DeFi / liquidity stress (2021),19,3,16,0.15789473684210525,3
+xgboost,market_matched,6,FTX collapse (Nov 2022),0,0,0,,0
+xgboost,market_matched,6,Paxos regulatory pressure (early 2023),0,0,0,,0
+xgboost,market_matched,6,Post-SVB banking contagion (2023),1,0,1,0.0,0
+xgboost,market_matched,6,Post-regulation stress (2024-25),3,2,1,0.6666666666666666,2
+xgboost,market_matched,6,SVB bank run (Mar 2023),1,0,1,0.0,0
+xgboost,market_matched,6,Unclassified (pre-2021 training),0,0,0,,0
+xgboost,market_matched,24,Crypto market stress (early 2022),9,0,9,0.0,0
+xgboost,market_matched,24,DeFi / liquidity stress (2021),19,3,16,0.15789473684210525,3
+xgboost,market_matched,24,FTX collapse (Nov 2022),0,0,0,,0
+xgboost,market_matched,24,Paxos regulatory pressure (early 2023),0,0,0,,0
+xgboost,market_matched,24,Post-SVB banking contagion (2023),2,0,2,0.0,0
+xgboost,market_matched,24,Post-regulation stress (2024-25),3,3,0,1.0,3
+xgboost,market_matched,24,SVB bank run (Mar 2023),1,0,1,0.0,0
+xgboost,market_matched,24,Unclassified (pre-2021 training),0,0,0,,0
+xgboost,market_onchain,1,Crypto market stress (early 2022),9,1,8,0.1111111111111111,1
+xgboost,market_onchain,1,DeFi / liquidity stress (2021),18,1,17,0.05555555555555555,1
+xgboost,market_onchain,1,FTX collapse (Nov 2022),0,0,0,,0
+xgboost,market_onchain,1,Paxos regulatory pressure (early 2023),0,0,0,,0
+xgboost,market_onchain,1,Post-SVB banking contagion (2023),1,0,1,0.0,0
+xgboost,market_onchain,1,Post-regulation stress (2024-25),3,0,3,0.0,0
+xgboost,market_onchain,1,SVB bank run (Mar 2023),1,0,1,0.0,0
+xgboost,market_onchain,1,Unclassified (pre-2021 training),0,0,0,,0
+xgboost,market_onchain,6,Crypto market stress (early 2022),9,2,7,0.2222222222222222,1
+xgboost,market_onchain,6,DeFi / liquidity stress (2021),19,1,18,0.05263157894736842,1
+xgboost,market_onchain,6,FTX collapse (Nov 2022),0,0,0,,0
+xgboost,market_onchain,6,Paxos regulatory pressure (early 2023),0,0,0,,0
+xgboost,market_onchain,6,Post-SVB banking contagion (2023),1,0,1,0.0,0
+xgboost,market_onchain,6,Post-regulation stress (2024-25),3,2,1,0.6666666666666666,2
+xgboost,market_onchain,6,SVB bank run (Mar 2023),1,0,1,0.0,0
+xgboost,market_onchain,6,Unclassified (pre-2021 training),0,0,0,,0
+xgboost,market_onchain,24,Crypto market stress (early 2022),9,1,8,0.1111111111111111,1
+xgboost,market_onchain,24,DeFi / liquidity stress (2021),19,2,17,0.10526315789473684,2
+xgboost,market_onchain,24,FTX collapse (Nov 2022),0,0,0,,0
+xgboost,market_onchain,24,Paxos regulatory pressure (early 2023),0,0,0,,0
+xgboost,market_onchain,24,Post-SVB banking contagion (2023),2,0,2,0.0,0
+xgboost,market_onchain,24,Post-regulation stress (2024-25),3,3,0,1.0,3
+xgboost,market_onchain,24,SVB bank run (Mar 2023),1,0,1,0.0,0
+xgboost,market_onchain,24,Unclassified (pre-2021 training),0,0,0,,0

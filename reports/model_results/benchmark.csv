@@ -1,4 +1,6 @@
 model,horizon_hours,median_lead_hours,episode_recall,false_alarms,false_alarms_per_coin_month,average_precision,episodes_caught,targetable_episodes,coin_months
+baseline,1,,0.0,0,0.0,0.00021066183277277295,0,32,316
+persistence,1,1.0,0.0625,283,0.8955696202531646,0.0035468745190202385,2,32,316
 baseline,6,,0.0,0,0.0,0.0012515394929152434,0,33,316
 persistence,6,4.0,0.15151515151515152,289,0.9145569620253164,0.0102591781805756,5,33,316
 baseline,24,,0.0,0,0.0,0.004958462511943839,0,34,316

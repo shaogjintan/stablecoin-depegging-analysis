@@ -12,7 +12,7 @@ python -m pip check
 python -W ignore::DeprecationWarning -m unittest discover -s tests -v
 ```
 
-## Reviewer file layout
+## File layout
 
 - `data/raw/`: retained market observations and original on-chain exports.
 - `data/interim/`: derived feature tables.
@@ -20,7 +20,6 @@ python -W ignore::DeprecationWarning -m unittest discover -s tests -v
 - `artifacts/final_run/`: one saved run, including models and prediction evidence.
 - `reports/`: published tables, figures and verification records.
 - `reports/baseline.json`: selected final run, data root and input relocations.
-- `reports/validation_checks/reproducibility/`: independent comparison evidence.
 
 ## Regenerate the published reports from saved models
 
@@ -49,7 +48,7 @@ python -m modelling.validation.verify_model_results --check-model-scores
 
 Original `run.json` and model evidence are preserved byte-for-byte. Historical
 input paths are mapped explicitly to the canonical dataset by
-`reports/baseline.json` and `artifacts/final_run/relocation.json`. Verification
+`reports/baseline.json` and `artifacts/final_run/input_paths.json`. Verification
 checks the resolved files against the original training hashes; an arbitrary
 missing path is not silently mapped by its filename.
 
@@ -117,22 +116,6 @@ exact feature equality on rebuild. The legacy comparison mode retains a 1e-9
 volatility allowance only for historical datasets without that method marker.
 No current published input relies on that allowance.
 
-## Numerical repeatability
-
-Two complete independent source-data runs passed their 90-cell model-score
-verification and matched scientific results across 490 checks. Expected run IDs
-and workspace paths differed. Figures and path-bearing manifests were not
-compared bytewise. The small final comparison records remain in
-`reports/validation_checks/reproducibility/` after the duplicate workspaces were
-removed. See `docs/stable_reproduction_comparison.md` for detailed scope.
-
-Volatility uses centered, compensated sample-deviation calculations independently
-for every complete window (ddof=1); constant windows are exactly zero without
-rounding away genuine variation. RF prediction accumulates trees in fixed order.
-Training settings, seeds, labels and eligibility definitions are unchanged.
-The current report baseline is the validated final run. Other hardware or
-package versions have not been independently checked for identical results.
-
 ## Fresh market acquisition and on-chain provenance
 
 `python -m data_processing.fetch_stablecoin_data` uses external APIs and
@@ -156,4 +139,4 @@ uses calendar validation within practice training. Dataset preparation lives
 in `data_processing/dataset_transformation.py`; matched-sample checks enforce
 common origins and labels across tiers. Tests check implementation behavior;
 verification audits saved research evidence. Historical code is not a supported
-runtime dependency. See `docs/reviewer_code_organisation.md` for report wording.
+runtime dependency. See `docs/code_organisation.md` for report wording.

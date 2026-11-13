@@ -6,6 +6,31 @@
       "manifest_sha256": "9661514af8ee9deb580eabb4f2d24a7805b31d79e50c8e00d6da8b8241e99997"
     },
     {
+      "path": "artifacts/final_run/fits/xgboost_market_onchain_h1_2021/test.parquet",
+      "sha256": "89eba69f0f3a4a9161db8f1b6bb29bbd3dea0710dd4e0c5832cbea4f86c4098f",
+      "pipeline_sha256": "eeead8f36a3067f02a9cdb0112405b4c5723de7109aea5dadc92b9b0bfb6bbd2"
+    },
+    {
+      "path": "artifacts/final_run/fits/xgboost_market_onchain_h1_2022/test.parquet",
+      "sha256": "6ff60e2bae374e2160ac8afab13cbbd5f39fd4f604f866ae8dfa4cb91b4a1f61",
+      "pipeline_sha256": "c451d6d60fbfb3a4463b389f9363149ba0938bbc12f233b86bcbc3e5590ce211"
+    },
+    {
+      "path": "artifacts/final_run/fits/xgboost_market_onchain_h1_2023/test.parquet",
+      "sha256": "6d741d3b22760ff5f04f9709a929533cc4b7192fdbee1886b29ef91915eaa0c5",
+      "pipeline_sha256": "1ace27b2a3a9858368631a769610a430bc7e064858348886144b33f7a9723086"
+    },
+    {
+      "path": "artifacts/final_run/fits/xgboost_market_onchain_h1_2024/test.parquet",
+      "sha256": "2f7aa1d6e2297c30d34875649dc12376912b7dbc72860ccbed8769d3618c687d",
+      "pipeline_sha256": "b52daa3e9030770e8a69122aac77ef64bdf49f3d224239c6a90cf558abb7044d"
+    },
+    {
+      "path": "artifacts/final_run/fits/xgboost_market_onchain_h1_2025/test.parquet",
+      "sha256": "035ee32eab2003606eeaa340a6d5e300c34f789969642eed0c8d304eeef27719",
+      "pipeline_sha256": "0f3f4bba27ce9b1b4842a144584c47ab9a3b5eba5f1df5995bc866efe86f922d"
+    },
+    {
       "path": "artifacts/final_run/fits/xgboost_market_onchain_h6_2021/test.parquet",
       "sha256": "3002298ca6db21981f2f1c3446066c4edd561a71f1224d0449fcb0b5b58fdf00",
       "pipeline_sha256": "3976d316286deb5a15e352b9c11fa10f95921e55e10ebca5cfe244fd4f5e6921"

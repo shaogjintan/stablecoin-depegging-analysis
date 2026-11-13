@@ -115,3 +115,6 @@ data/processed/*
 
 # Fresh source-reproduction outputs are separate from final reviewer evidence.
 /output/reproduction*/
+
+# Historical research material is excluded from new Git additions.
+/archive/

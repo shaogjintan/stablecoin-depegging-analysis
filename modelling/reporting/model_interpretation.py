@@ -101,7 +101,7 @@ def main():
     pd.DataFrame(coefficients).to_csv(args.out_dir / 'log_reg' / 'lr_coefficients.csv', index=False)
     rf = pd.DataFrame(importance)
     rf.to_csv(args.out_dir / 'random_forest' / 'rf_importance_by_year.csv', index=False)
-    for h in [6, 24]:
+    for h in [1, 6, 24]:
         for model, frame, value in [('logreg', pd.DataFrame(coefficients), 'coefficient'), ('random_forest', rf, 'importance')]:
             subset = frame.loc[frame.horizon_hours.eq(h) & frame.config.eq('market_onchain')]
             values = subset.groupby('feature')[value].mean()

@@ -1,5 +1,17 @@
 # Methodology and interpretation
 
+The study asks whether hourly market information anticipates new depeg onsets
+and whether Ethereum transfer activity adds predictive value. The primary
+comparison is market-only versus market-plus-on-chain models on the same
+eligible observations. Forecasts at 6 and 24 hours are primary; 1-hour results
+provide a supplementary short-horizon comparison.
+
+Warnings are assessed by the episodes they catch, their lead time and the false
+alarms they impose, alongside average precision. A feature can contribute to
+a fitted model without improving its operating performance; coefficient, forest
+importance and SHAP outputs should therefore be read alongside the detection
+and false-alarm results.
+
 Dataset timestamps represent completed hourly bars. Downward depegs cross $0.99 for at least two consecutive hours, with the configured 24h merge gap. Targets are merged episode starts in (origin, origin+h]. Prediction eligibility uses the causal risk mask: it excludes missing/below-band prices and the recovery window following a confirmed qualifying dip, using only information available at the origin. It is not selected simply from retrospective episode IDs.
 
 Outer test years are 2021–2025. Practice fitting precedes the calibration year. The lowest feasible cutoff is chosen by exhaustive distinct-score search, including no-alarm, under grouped validation false alarms / observed eligible coin-months <= 1. Cooldown costs are non-monotone. The final model fits the complete outer training partition, with 25h purge and 24h embargo boundaries, and applies the copied practice cutoff. XGB/RF parameters are fixed; LR calendar CV selects C inside practice training and keeps C for refit.
