@@ -19,7 +19,7 @@ Current outputs use `artifacts/final_run/`, selected in `reports/baseline.json`.
 | Final RF importance | reports/model_interpretation/random_forest/rf_importance_by_year.csv |
 | Final XGB SHAP ranking/figures | reports/model_interpretation/ |
 
-The h1 results are supplementary and belong to the same published final run. Model interpretation and benchmark comparisons cover h1/h6/h24. Counts by type also cover h1. Historical annotations must be reviewed as context; date membership is not evidence of causation.
+The h1 results are supplementary and belong to the same published final run. Model interpretation and benchmark comparisons cover h1/h6/h24. Historical annotations should be reviewed as context; date membership is not evidence of causation.
 
 Use the selected final run for report comparisons. Original training metadata
 may retain execution-time paths; current input relocations are recorded in
@@ -27,7 +27,7 @@ may retain execution-time paths; current input relocations are recorded in
 
 ## Per-coin model comparison
 
-`reports/model_results/model_comparison_by_coin.csv` pools saved test years separately for each model, matched sample configuration, forecast horizon and coin. It follows the scope of the current overall summary. Counts sum back to that summary; recall and false-alarm rates use each coin's own denominators. AP pools each coin's predictions across years and cannot be averaged to recover overall AP. Recall is blank for no targetable episodes; AP is blank for no positive hours. Median lead is conditional on true alarms. Coin-months count observed calendar months, including partial exposure.
+`reports/model_results/model_comparison_by_coin.csv` pools saved test years separately for each model, matched sample configuration, forecast horizon and coin. AP pools each coin's predictions across years and cannot be averaged to recover overall AP. Recall is blank for no targetable episodes; AP is blank for no positive hours. Median lead is conditional on true alarms. Coin-months count observed calendar months, including partial exposure.
 
 Regenerate with `python -m modelling.reporting.by_coin`. The adjacent manifest records the source run IDs and hashes of saved fits, predictions, alarms and episode snapshots. No models are retrained.
 
@@ -55,5 +55,5 @@ Final run locations and exact report-organisation wording are documented in
 model, tier and horizon, with event ID, structural type, historical context and
 first-warning lead time. `detection_by_historical_context.csv` compares caught
 and targetable episode counts within each descriptive context. Episodes can
-appear for several models or horizons; do not sum those rows as unique episodes.
+appear for several models or horizons.
 Context annotations do not establish causation or independent statistical tests.

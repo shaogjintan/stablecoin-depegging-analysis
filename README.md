@@ -10,8 +10,7 @@ lead time to act without producing excessive false alarms.
 This project studies hourly market and Ethereum transfer data for USDT, USDC,
 BUSD, DAI, TUSD and PAX over the configured coverage windows within 2018-2025.
 It compares logistic regression, random forest and XGBoost with simple
-constant-prior and persistence benchmarks. DAI uses crypto collateral, so the
-six-coin sample is not described as entirely fiat-backed.
+constant-prior and persistence benchmarks. 
 
 ## Research question
 
@@ -19,8 +18,8 @@ six-coin sample is not described as entirely fiat-backed.
 begin a new depeg episode within the next h hours, and does adding on-chain
 information improve prediction beyond market information alone?**
 
-We address two questions: whether market-based models provide useful advance
-warnings relative to simple benchmarks, and whether Ethereum transfer activity
+We address two questions: whether market-based models provide useful
+warnings relative to simple benchmarks, and whether on-chain Ethereum transfer activity
 adds predictive value once market information is included. The primary horizons
 are 6 and 24 hours; the 1-hour horizon is supplementary.
 
@@ -38,13 +37,12 @@ are 6 and 24 hours; the 1-hour horizon is supplementary.
 - **Alarm policy:** practice models select the lowest feasible calibration
   cutoff under an average budget of one false alarm per observed coin-month.
   Final models refit on the outer training population and retain that cutoff.
-  This calibration budget is not a test-period guarantee.
 - **Measures:** median lead time, episode recall, number of false alarms,
   false alarms per coin-month and average precision. Related episodes across
   coins are also grouped into events to describe shared shocks.
 
 Interpret results within the observed sample: missing source data restricts
-which episodes are targetable, and event groupings do not establish causation.
+which episodes are targetable and event groupings do not establish causation.
 See [Methodology](docs/methodology.md) for the definitions and limitations.
 
 ## Review the results
@@ -96,7 +94,6 @@ unchanged. Existing output folders are rejected; use `--out-dir <new-folder>`
 for another run. `--dry-run` previews either workflow. Full training is intensive.
 The required raw inputs are `data/raw/hourly_stablecoin.parquet` and
 `data/raw/dune_onchain.zip`; their hashes are recorded in `data/manifest.json`.
-No fresh API calls are made by this workflow.
 
 Large fitted models, partition Parquets and source snapshots are supplied
 separately rather than stored in Git. A clone with the retained raw inputs can
@@ -131,7 +128,7 @@ output/                fresh runs and local documents
 Archived code is excluded from the maintained reproduction workflow. Original
 run manifests and source snapshots retain execution-time paths; current input
 relocations are recorded in `reports/baseline.json`. The original Dune bundle is
-retained, and its six study-coin CSVs can be extracted locally.
+retained and its six study-coin CSVs can be extracted locally.
 
 See [Modelling guide](modelling/README.md) for the pipeline structure and current command entry points.
 
