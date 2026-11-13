@@ -37,6 +37,26 @@ The combined model comparison summary, yearly table, and per-coin table include 
 
 Comparison tables order identifiers first, then `median_lead_hours`, `episode_recall`, `false_alarms`, `false_alarms_per_coin_month`, and `average_precision`, followed by supporting counts. Other fields remain available in adjacent `*_diagnostics.csv` files, joined by model/configuration/horizon/policy and applicable year or coin. Benchmark identifiers are model and horizon. Frozen run tables retain their original schemas. Event-type detection counts are a separate analysis: false alarms cannot be assigned an observed event type. See modelling/reporting/README.md for exporter scope.
 
+## Alternative depeg definitions
+
+`reports/robustness/alt_definitions/` evaluates the existing warning system
+against alternative price bands and minimum dip durations. It keeps the
+reference-definition prediction origins, models, cutoffs and alarm timestamps
+fixed. Alternative episodes and their targetability are recalculated against
+those saved origins; prediction eligibility is not recalculated.
+
+- `metrics.csv`: episode recall, lead time and false-alarm costs by definition.
+- `onchain_effects.csv`: whether either tier dominates or represents a tradeoff.
+- `recall_leaders.csv`: highest-recall models, including ties; this is not an
+  overall performance ranking because false-alarm costs can differ.
+
+This is fixed-system outcome-definition sensitivity, not a complete experiment
+trained and operated under each alternative definition. Changing the definition
+can change the valid risk set and recovery exclusions. Broader claims require
+rebuilding labels and eligibility, checking boundary gaps, and retraining and
+recalibrating under each definition. Existing results should be interpreted
+conditional on the reference system's prediction opportunities.
+
 ## Alarm-rule robustness
 
 `reports/robustness/alarm_smoothing/` compares original alarms with consecutive-
